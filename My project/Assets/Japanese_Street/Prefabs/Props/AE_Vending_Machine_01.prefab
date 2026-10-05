@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 7327475697770131555}
   - component: {fileID: 7327475697752712387}
   - component: {fileID: 8081370458228519809}
+  - component: {fileID: 7297152969766852679}
   m_Layer: 0
   m_Name: AE_Vending_Machine_01
   m_TagString: Untagged
@@ -176,6 +177,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300006, guid: 0e8c87d7184929343909e8ac626e45cc, type: 3}
+--- !u!114 &7297152969766852679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7327475697769966659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
+  japanese: "\u81EA\u52D5\u8CA9\u58F2\u6A5F"
+  furigana: "\u3058\u3069\u3046\u306F\u3093\u3070\u3044\u304D"
+  romaji: Jidouhanbaiki
+  meaning: Vending Machine
 --- !u!1 &7327475697769966661
 GameObject:
   m_ObjectHideFlags: 0
