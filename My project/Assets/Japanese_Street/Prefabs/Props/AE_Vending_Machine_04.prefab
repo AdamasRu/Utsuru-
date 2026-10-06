@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 554649503019246727}
   - component: {fileID: 554649503038304295}
   - component: {fileID: 8524075443115019624}
+  - component: {fileID: 2242391137898200473}
   m_Layer: 0
   m_Name: AE_Vending_Machine_04
   m_TagString: Untagged
@@ -361,3 +362,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300006, guid: fbe6c583ac0cdf0429f442b917d4b094, type: 3}
+--- !u!114 &2242391137898200473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554649503018825895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
+  objectid: ICK-02

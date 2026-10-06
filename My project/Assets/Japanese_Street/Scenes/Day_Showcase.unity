@@ -71955,6 +71955,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 604027041}
     m_Modifications:
+    - target: {fileID: 2125570150913006140, guid: edfb5da469d0de64fb8a281ce359ab73, type: 3}
+      propertyPath: objectid
+      value: ICK-01
+      objectReference: {fileID: 0}
     - target: {fileID: 5024233649244510592, guid: edfb5da469d0de64fb8a281ce359ab73, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0

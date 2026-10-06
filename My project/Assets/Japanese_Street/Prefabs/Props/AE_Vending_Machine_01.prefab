@@ -189,10 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
-  japanese: "\u81EA\u52D5\u8CA9\u58F2\u6A5F"
-  furigana: "\u3058\u3069\u3046\u306F\u3093\u3070\u3044\u304D"
-  romaji: Jidouhanbaiki
-  meaning: Vending Machine
+  objectid: ICK-02
 --- !u!1 &7327475697769966661
 GameObject:
   m_ObjectHideFlags: 0
