@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
-  objectid: ICK-70
+  objectid: ICK-72
 --- !u!1 &7115174699664613391
 GameObject:
   m_ObjectHideFlags: 0
