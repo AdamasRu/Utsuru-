@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 7588229659392476338}
   - component: {fileID: 7588229659407601682}
   - component: {fileID: 8012929971480276410}
+  - component: {fileID: 2917268017361543291}
   m_Layer: 0
   m_Name: AE_Electricity_Meter_03
   m_TagString: Untagged
@@ -170,6 +171,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300002, guid: e4377c089a389eb4e83e38be48036172, type: 3}
+--- !u!114 &2917268017361543291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7588229659392448658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
+  objectid: ICK-28
 --- !u!1 &7588229659392448662
 GameObject:
   m_ObjectHideFlags: 0
