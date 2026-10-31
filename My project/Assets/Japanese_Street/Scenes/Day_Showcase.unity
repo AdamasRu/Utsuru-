@@ -1500,7 +1500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 19491670}
   m_Layer: 0
-  m_Name: Light
+  m_Name: Light_Day
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103352,8 +103352,8 @@ MonoBehaviour:
   cutsceneUI: {fileID: 252443176}
   playerController: {fileID: 4496757404770652536}
   playerInputs: {fileID: 200953497353489667}
-  lightDayObject: {fileID: 1661787138}
-  lightNightObject: {fileID: 19491669}
+  lightDayObject: {fileID: 19491669}
+  lightNightObject: {fileID: 1661787138}
   daySkybox: {fileID: 2100000, guid: 31f3c1dbeca8e4d4092c3988e2c37d92, type: 2}
   nightSkybox: {fileID: 2100000, guid: a0f9a0db887d9d14e88a2b7b6621def7, type: 2}
 --- !u!4 &1413658998
