@@ -14,6 +14,7 @@ public class NPCInteractable : MonoBehaviour
 
     private bool isPlayerNearby = false;
     private string npcNameOverride = "";
+    private Sprite npcAvatarOverride = null;
     private Transform playerTransform;
     private Quaternion defaultRotation;
 
@@ -60,15 +61,16 @@ public class NPCInteractable : MonoBehaviour
         {
             if (DialogueManager.Instance != null && npcData != null)
             {
-                DialogueManager.Instance.StartDialogue(npcData, npcNameOverride);
+                DialogueManager.Instance.StartDialogue(npcData, npcNameOverride, npcAvatarOverride);
             }
         }
     }
 
-    public void SetNPCData(NPCData data, string characterName = "")
+    public void SetNPCData(NPCData data, string characterName = "", Sprite avatar = null)
     {
         npcData = data;
         npcNameOverride = characterName;
+        npcAvatarOverride = avatar;
     }
 
     private void OnTriggerEnter(Collider other)

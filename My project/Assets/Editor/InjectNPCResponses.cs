@@ -1,11 +1,12 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class InjectNPCResponses : Editor
 {
-    [MenuItem("Tools/Utsuru/Update All NPC Dialogue & Responses")]
+    [MenuItem("Tools/Utsuru/Update All NPC Dialogue & Responses (English NPC, Romaji Choices)")]
     public static void UpdateAllDialogue()
     {
         NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
@@ -19,274 +20,430 @@ public class InjectNPCResponses : Editor
 
         if (spawner.spawnLocations == null || spawner.spawnLocations.Length < 11)
         {
-            Debug.LogWarning("[Utsuru] spawnLocations kurang dari 11 titik. Memastikan array berukuran 11...");
             System.Array.Resize(ref spawner.spawnLocations, 11);
         }
 
+        GameObject spParent = GameObject.Find("SpawnPoints");
+
         // 1. Vending Machine 1
-        ConfigureLocation(spawner, 0, "VendingMachine", "Aoi",
-            "「自販機にお札が入らないな…小銭持ってる？」\n(Jihanki ni osatsu ga hairanai na... Kozeni motteru?)\n\"Mesinnya nggak nerima uang kertas... Punya koin?\"",
+        ConfigureLocation(spawner, 0, "VendingMachine", "Aoi", "Local Resident", spParent,
+            "「自販機にお札が入らないな…小銭持ってる？」",
+            "(Jihanki ni osatsu ga hairanai na... Kozeni motteru?)",
+            "\"The vending machine won't take bills... Do you have any coins?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「100円玉ならありますよ。」 (Ada koin 100 yen.)",
+                    choiceText = "「100円玉ならありますよ。」",
+                    choiceRomaji = "(Hyaku-en dama nara arimasu yo.)",
                     isCorrect = true,
-                    npcResponse = "「ありがとう！助かったよ、これでジュースが買える！」\n(Arigatou! Tasukatta yo, kore de juusu ga kaeru!)\n\"Makasih! Terbantu banget, jadi bisa beli jus nih!\""
+                    npcResponse = "「ありがとう！助かったよ、これでジュースが買える！」",
+                    npcResponseRomaji = "(Arigatou! Tasukatta yo, kore de juusu ga kaeru!)",
+                    npcResponseEnglish = "\"Thank you! You saved me, now I can buy juice!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「自販機は嫌いです。」 (Saya benci mesin ini.)",
+                    choiceText = "「自販機は嫌いです。」",
+                    choiceRomaji = "(Jihanki wa kirai desu.)",
                     isCorrect = false,
-                    npcResponse = "「えっ、自販機が嫌いなの…！？便利なのに〜！」\n(E', jihanki ga kirai na no...!? Benri na no ni~!)\n\"Eh, benci vending machine...!? Padahal praktis lho〜!\""
+                    npcResponse = "「えっ、自販機が嫌いなの…！？便利なのに〜！」",
+                    npcResponseRomaji = "(E', jihanki ga kirai na no...!? Benri na no ni~!)",
+                    npcResponseEnglish = "\"Eh, you hate vending machines...!? Even though they're so convenient〜!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「お茶が飲みたいです。」 (Saya mau minum teh.)",
+                    choiceText = "「お茶が飲みたいです。」",
+                    choiceRomaji = "(Ocha ga nomitai desu.)",
                     isCorrect = false,
-                    npcResponse = "「あはは、君もお茶が飲みたいんだね！でも小銭がないんだ…」\n(Ahaha, kimi mo ocha ga nomitai n da ne! Demo kozeni ga nai n da...)\n\"Hahaha, kamu juga mau minum teh ya! Tapi aku nggak punya koin nih...\""
+                    npcResponse = "「あはは、君もお茶が飲みたいんだね！でも小銭がないんだ…」",
+                    npcResponseRomaji = "(Ahaha, kimi mo ocha ga nomitai n da ne! Demo kozeni ga nai n da...)",
+                    npcResponseEnglish = "\"Hahaha, you want to drink tea too! But I don't have any coins...\""
                 }
             });
 
         // 2. Toko Kelontong
-        ConfigureLocation(spawner, 1, "Toko", "Ren",
-            "「いらっしゃい！何を探しているのかい？」\n(Irasshai! Nani o sagashite iru no kai?)\n\"Selamat datang! Sedang cari apa?\"",
+        ConfigureLocation(spawner, 1, "Toko", "Ren", "Shopkeeper", spParent,
+            "「いらっしゃい！何を探しているのかい？」",
+            "(Irasshai! Nani o sagashite iru no kai?)",
+            "\"Welcome! What are you looking for?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「おすすめのお菓子をください。」 (Minta rekomendasi kuenya.)",
+                    choiceText = "「おすすめのお菓子をください。」",
+                    choiceRomaji = "(Osusume no okashi o kudasai.)",
                     isCorrect = true,
-                    npcResponse = "「毎度あり！このお煎餅が焼きたてでおすすめだよ！」\n(Maido ari! Kono osenbei ga yakitate de osusume da yo!)\n\"Terima kasih! Kerupuk senbei panggang baru matang ini rekomended banget!\""
+                    npcResponse = "「毎度あり！このお煎餅が焼きたてでおすすめだよ！」",
+                    npcResponseRomaji = "(Maido ari! Kono osenbei ga yakitate de osusume da yo!)",
+                    npcResponseEnglish = "\"Thank you! These freshly baked rice crackers are my recommendation!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「何も買いません。」 (Nggak beli apa-apa.)",
+                    choiceText = "「何も買いません。」",
+                    choiceRomaji = "(Nanimo kaimasen.)",
                     isCorrect = false,
-                    npcResponse = "「見るだけでも大歓迎だよ！ゆっくりしていってね。」\n(Miru dake demo daikangei da yo! Yukkuri shite itte ne.)\n\"Lihat-lihat saja juga boleh banget kok! Santai saja ya.\""
+                    npcResponse = "「見るだけでも大歓迎だよ！ゆっくりしていってね。」",
+                    npcResponseRomaji = "(Miru dake demo daikangei da yo! Yukkuri shite itte ne.)",
+                    npcResponseEnglish = "\"Just looking is very welcome too! Take your time.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「ここはどこですか？」 (Di sini mana ya?)",
+                    choiceText = "「ここはどこですか？」",
+                    choiceRomaji = "(Koko wa doko desu ka.)",
                     isCorrect = false,
-                    npcResponse = "「ここは駄菓子屋だよ！迷子になっちゃったのかい？」\n(Koko wa dagashiya da yo! Maigo ni natchatta no kai?)\n\"Ini toko jajanan tradisional! Kamu tersesat ya?\""
+                    npcResponse = "「ここは駄菓子屋だよ！迷子になっちゃったのかい？」",
+                    npcResponseRomaji = "(Koko wa dagashiya da yo! Maigo ni natchatta no kai?)",
+                    npcResponseEnglish = "\"This is a traditional candy shop! Did you get lost?\""
                 }
             });
 
         // 3. Sampah Botol Plastik
-        ConfigureLocation(spawner, 2, "Sampah", "Sora",
-            "「ペットボトルのキャップは外して捨てるんだっけ？」\n(Pettobotoru no kyappu wa hazushite suterun dakke?)\n\"Tutup botol plastik harus dicopot dulu ya?\"",
+        ConfigureLocation(spawner, 2, "Sampah", "Sora", "Eco Neighbor", spParent,
+            "「ペットボトルのキャップは外して捨てるんだっけ？」",
+            "(Pettobotoru no kyappu wa hazushite suterun dakke?)",
+            "\"Do we take off the plastic bottle cap before throwing it away?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「川に捨てましょう。」 (Buang ke sungai saja.)",
+                    choiceText = "「川に捨てましょう。」",
+                    choiceRomaji = "(Kawa ni sutemashou.)",
                     isCorrect = false,
-                    npcResponse = "「コラコラ！川にゴミを捨てちゃ絶対にダメだよ！」\n(Kora kora! Kawa ni gomi o sutecha zettai ni dame da yo!)\n\"Eits jangan! Nggak boleh buang sampah ke sungai ya!\""
+                    npcResponse = "「コラコラ！川にゴミを捨てちゃ絶対にダメだよ！」",
+                    npcResponseRomaji = "(Kora kora! Kawa ni gomi o sutecha zettai ni dame da yo!)",
+                    npcResponseEnglish = "\"Hey now! You must never throw trash into the river!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「はい、キャップは別ですよ。」 (Iya, tutupnya dipisah.)",
+                    choiceText = "「はい、キャップは別ですよ。」",
+                    choiceRomaji = "(Hai, kyappu wa betsu desu yo.)",
                     isCorrect = true,
-                    npcResponse = "「やっぱりそうだよね！分別ルールを教えてくれて助かったよ。」\n(Yappari sou da yo ne! Bunbetsu ruuru o oshiete kurete tasukatta yo.)\n\"Tuh kan bener! Makasih ya udah ngingetin aturan pilah sampah.\""
+                    npcResponse = "「やっぱりそうだよね！分別ルールを教えてくれて助かったよ。」",
+                    npcResponseRomaji = "(Yappari sou da yo ne! Bunbetsu ruuru o oshiete kurete tasukatta yo.)",
+                    npcResponseEnglish = "\"I knew it! Thanks for reminding me of the sorting rules.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「水が冷たいですね。」 (Airnya dingin ya.)",
+                    choiceText = "「水が冷たいですね。」",
+                    choiceRomaji = "(Mizu ga tsumetai desu ne.)",
                     isCorrect = false,
-                    npcResponse = "「えっ？水の話…？今はゴミの分別の話だよ〜！」\n(E'? Mizu no hanashi...? Ima wa gomi no bunbetsu no hanashi da yo~)\n\"Eh? Air dingin...? Kan kita lagi ngomongin sampah plastik〜!\""
+                    npcResponse = "「えっ？水の話…？今はゴミの分別の話だよ〜！」",
+                    npcResponseRomaji = "(E'? Mizu no hanashi...? Ima wa gomi no bunbetsu no hanashi da yo~)",
+                    npcResponseEnglish = "\"Eh? Cold water...? We're talking about trash sorting right now〜!\""
                 }
             });
 
         // 4. Bunga di Depan Rumah
-        ConfigureLocation(spawner, 3, "Bunga", "Kaoru",
-            "「このお花、綺麗に咲いたでしょう？」\n(Kono ohana, kirei ni saita deshou?)\n\"Bunga ini mekar dengan indah, kan?\"",
+        ConfigureLocation(spawner, 3, "Bunga", "Kaoru", "Garden Lover", spParent,
+            "「このお花、綺麗に咲いたでしょう？」",
+            "(Kono ohana, kirei ni saita deshou?)",
+            "\"These flowers bloomed beautifully, don't you think?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「お花を食べます。」 (Saya makan bunganya.)",
+                    choiceText = "「お花を食べます。」",
+                    choiceRomaji = "(Ohana o tabemasu.)",
                     isCorrect = false,
-                    npcResponse = "「食べちゃダメだよ！観賞用のお花なんだから〜！」\n(Tabecha dame da yo! Kanshou-you no ohana nan dakara~!)\n\"Jangan dimakan dong! Ini kan bunga hiasan〜!\""
+                    npcResponse = "「食べちゃダメだよ！観賞用のお花なんだから〜！」",
+                    npcResponseRomaji = "(Tabecha dame da yo! Kanshou-you no ohana nan dakara~!)",
+                    npcResponseEnglish = "\"Don't eat them! They're decorative flowers〜!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「ちょっと邪魔ですね。」 (Agak sempit jalannya.)",
+                    choiceText = "「ちょっと邪魔ですね。」",
+                    choiceRomaji = "(Chotto jama desu ne.)",
                     isCorrect = false,
-                    npcResponse = "「うーん、道にはみ出さないように少し片付けようかな…」\n(Uun, michi ni hamidasanai you ni sukoshi katazukeyou kana...)\n\"Hmm, mungkin nanti aku rapikan sedikit biar nggak halangi jalan...\""
+                    npcResponse = "「うーん、道にはみ出さないように少し片付けようかな…」",
+                    npcResponseRomaji = "(Uun, michi ni hamidasanai you ni sukoshi katazukeyou kana...)",
+                    npcResponseEnglish = "\"Hmm, maybe I should tidy them up so they don't block the path...\""
                 },
                 new DialogueChoice {
-                    choiceText = "「手入れが素晴らしいですね！」 (Perawatannya luar biasa!)",
+                    choiceText = "「手入れが素晴らしいですね！」",
+                    choiceRomaji = "(Teire ga subarashii desu ne!)",
                     isCorrect = true,
-                    npcResponse = "「ありがとう！毎朝水をあげて大切に育てているんだよ。」\n(Arigatou! Maiasa mizu o agete taisetsu ni sodatete iru n da yo.)\n\"Makasih! Tiap pagi kusiram dan kurawat dengan baik lho.\""
+                    npcResponse = "「ありがとう！毎朝水をあげて大切に育てているんだよ。」",
+                    npcResponseRomaji = "(Arigatou! Maiasa mizu o agete taisetsu ni sodatete iru n da yo.)",
+                    npcResponseEnglish = "\"Thank you! I water and take good care of them every morning.\""
                 }
             });
 
         // 5. Parkir Mobil
-        ConfigureLocation(spawner, 4, "Mobil", "Makoto",
-            "「ここに少し車を停めても平気かな？」\n(Koko ni sukoshi kuruma o tometemo heiki kana?)\n\"Parkir mobil sebentar di sini boleh nggak ya?\"",
+        ConfigureLocation(spawner, 4, "Mobil", "Makoto", "Driver", spParent,
+            "「ここに少し車を止めても平気かな？」",
+            "(Koko ni sukoshi kuruma o tometemo heiki kana?)",
+            "\"Is it okay if I park my car here for a bit?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「寝ても大丈夫です。」 (Tidur juga boleh.)",
-                    isCorrect = false,
-                    npcResponse = "「ここで寝たら怒られちゃうよ！車を停める場所を探してるんだ。」\n(Koko de netara okorarechau yo! Kuruma o tomeru basho o sagashiteru n da.)\n\"Kalau tidur di sini bisa dimarahin dong haha! Aku nyari parkiran nih.\""
-                },
-                new DialogueChoice {
-                    choiceText = "「駐車禁止ですよ。」 (Dilarang parkir di sini.)",
+                    choiceText = "「駐車場にとめましょう。」",
+                    choiceRomaji = "(Chuushajou ni tomemashou.)",
                     isCorrect = true,
-                    npcResponse = "「危ない危ない、標識を見落としてたよ！コインパーキング探すね。」\n(Abunai abunai, hyoushiki o miotoshiteta yo! Koin paakingu sagasu ne.)\n\"Wah hampir saja, nggak liat rambunya! Aku cari parkiran koin aja.\""
+                    npcResponse = "「そうだよね、他の車の邪魔になっちゃうもんね！移動するよ。」",
+                    npcResponseRomaji = "(Sou da yo ne, hoka no kuruma no jama ni natchau mon ne! Idou suru yo.)",
+                    npcResponseEnglish = "\"You're right, it would get in the way of other cars! I'll move it.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「私の車じゃないです。」 (Bukan mobil saya.)",
+                    choiceText = "「車を蹴ります。」",
+                    choiceRomaji = "(Kuruma o kerimasu.)",
                     isCorrect = false,
-                    npcResponse = "「あ、うん…私の車なんだけど、ここに停めていいか聞きたくてね。」\n(A, un... Watashi no kuruma nan dakedo, koko ni tomete ii ka kikitakute ne.)\n\"Oh, iya sih... Ini mobilku, cuma mau nanya boleh parkir nggak hehe.\""
+                    npcResponse = "「ひええっ、車を蹴らないで！すぐ移動させるから〜！」",
+                    npcResponseRomaji = "(Hieee, kuruma o keranaide! Sugu idou saseru kara~!)",
+                    npcResponseEnglish = "\"Eeeek, don't kick the car! I'll move it right away〜!\""
+                },
+                new DialogueChoice {
+                    choiceText = "「車が大きいです。」",
+                    choiceRomaji = "(Kuruma ga ookii desu.)",
+                    isCorrect = false,
+                    npcResponse = "「あはは、確かにちょっと大きいかも！だからこそちゃんと駐車場に入れなきゃね。」",
+                    npcResponseRomaji = "(Ahaha, tashika ni chotto ookii kamo! Dakara koso chanto chuushajou ni irenakya ne.)",
+                    npcResponseEnglish = "\"Hahaha, it is a bit big indeed! All the more reason to park properly in a parking lot.\""
                 }
             });
 
-        // 6. Zebracross / Jalan Santai
-        ConfigureLocation(spawner, 5, "Zebracross", "Haru",
-            "「いい天気ですね。どちらへお出かけですか？」\n(Ii tenki desu ne. Dochira e odekake desu ka?)\n\"Cuaca bagus ya. Mau pergi ke mana?\"",
+        // 6. Zebracross
+        ConfigureLocation(spawner, 5, "Zebracross", "Haru", "Pedestrian", spParent,
+            "「いい天気ですね。どちらへお出かけですか？」",
+            "(Ii tenki desu ne. Dochira e odekake desu ka?)",
+            "\"Nice weather, isn't it? Where are you headed?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「昨日雨が降りました。」 (Kemarin hujan.)",
-                    isCorrect = false,
-                    npcResponse = "「昨日は雨だったね！でも今日は晴れてよかったよ〜。」\n(Kinou wa ame datta ne! Demo kyou wa harete yokatta yo~.)\n\"Kemarin hujan ya! Tapi untung hari ini cerah banget〜.\""
-                },
-                new DialogueChoice {
-                    choiceText = "「傘を買いました。」 (Saya beli payung.)",
-                    isCorrect = false,
-                    npcResponse = "「晴れてるから傘はいらないかもね！日傘なら使えるかな？」\n(Hareteru kara kasa wa iranai kamo ne! Higasa nara tsukaeru kana?)\n\"Lagi cerah gini payung biasa nggak perlu kali ya! Mungkin payung teduh?\""
-                },
-                new DialogueChoice {
-                    choiceText = "「近くを散歩中です。」 (Lagi jalan-jalan santai.)",
+                    choiceText = "「散歩をしているところです。」",
+                    choiceRomaji = "(Sanpo o shite iru tokoro desu.)",
                     isCorrect = true,
-                    npcResponse = "「散歩日和で気持ちいいよね！街の景色を楽しんでいってね。」\n(Sanpo biyori de kimochi ii yo ne! Machi no keshiki o tanoshinde itte ne.)\n\"Enak banget ya jalan-jalan pas cuaca cerah! Selamat menikmati suasana kota ya.\""
+                    npcResponse = "「いいですね！風が気持ちいいから、お散歩には最高の日ですよ。」",
+                    npcResponseRomaji = "(Ii desu ne! Kaze ga kimochi ii kara, osanpo ni wa saikou no hi desu yo.)",
+                    npcResponseEnglish = "\"Sounds nice! The breeze is pleasant, it's a great day for a walk.\""
+                },
+                new DialogueChoice {
+                    choiceText = "「天気が悪いです。」",
+                    choiceRomaji = "(Tenki ga warui desu.)",
+                    isCorrect = false,
+                    npcResponse = "「えっ！？こんなに晴れているのに…？不思議な人ですね〜！」",
+                    npcResponseRomaji = "(E'!? Konna ni harete iru no ni...? Fushigi na hito desu ne~!)",
+                    npcResponseEnglish = "\"Eh!? Even though it's so sunny...? You're an interesting person〜!\""
+                },
+                new DialogueChoice {
+                    choiceText = "「家に帰りたいです。」",
+                    choiceRomaji = "(Ie ni kaeritai desu.)",
+                    isCorrect = false,
+                    npcResponse = "「あらら、疲れちゃったのかな？無理せずお家で休んでね。」",
+                    npcResponseRomaji = "(Arara, tsukarechatta no kana? Muri sezu ouchi de yasunde ne.)",
+                    npcResponseEnglish = "\"Oh dear, are you tired? Don't push yourself and rest at home.\""
                 }
             });
 
-        // 7. Vending Machine 2 (Minuman Panas & Dingin)
-        ConfigureLocation(spawner, 6, "VendingMachine2", "Hikaru",
-            "「喉が渇いたな。どっちがいいと思う？」\n(Nodo ga kawaita na. Docchi ga ii to omou?)\n\"Tenggorokan haus nih. Enakan yang mana ya?\"",
+        // 7. Vending Machine 2
+        ConfigureLocation(spawner, 6, "VendingMachine2", "Hikaru", "Passerby", spParent,
+            "「喉が渇いたな。どっちがいいと思う？」",
+            "(Nodo ga kawaita na. Docchi ga ii to omou?)",
+            "\"I'm thirsty. Which one do you think is good?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「冷たいお茶がおすすめです！」 (Teh dingin rekomended!)",
+                    choiceText = "「お茶がおすすめですよ。」",
+                    choiceRomaji = "(Ocha ga osusume desu yo.)",
                     isCorrect = true,
-                    npcResponse = "「いいね！冷たい緑茶でスッキリしよう！ナイスなチョイスだね。」\n(Ii ne! Tsumetai ryokucha de sukkiri shiyou! Naisu na choisu da ne.)\n\"Mantap! Minum teh hijau dingin biar segar! Pilihan yang bagus.\""
+                    npcResponse = "「おっ、緑茶いいね！スッキリして喉の渇きが潤いそう！」",
+                    npcResponseRomaji = "(O', ryokucha ii ne! Sukkiri shite nodo no kawaki ga uruoisou!)",
+                    npcResponseEnglish = "\"Oh, green tea is great! Refreshing and it will quench my thirst!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「お金を拾いました。」 (Saya nemu uang.)",
+                    choiceText = "「何も飲まないでください。」",
+                    choiceRomaji = "(Nanimo nomanaide kudasai.)",
                     isCorrect = false,
-                    npcResponse = "「えっ、交番に届けたほうがいいよ！ジュースどころじゃないよ〜！」\n(E', kouban ni todoketa hou ga ii yo! Juusu dokoro ja nai yo~!)\n\"Eh, buruan lapor ke pos polisi (kouban) dong! Bukan saatnya beli jus〜!\""
+                    npcResponse = "「えぇーっ！？熱中症になっちゃうよ！水分補給は大事だよ〜！」",
+                    npcResponseRomaji = "(Eee-!? Netchuushou ni natchau yo! Suibun hokyuu wa daiji da yo~!)",
+                    npcResponseEnglish = "\"Eeeh!? You'll get heatstroke! Staying hydrated is important〜!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「お腹いっぱいです。」 (Saya kenyang.)",
+                    choiceText = "「水が好きです。」",
+                    choiceRomaji = "(Mizu ga suki desu.)",
                     isCorrect = false,
-                    npcResponse = "「お腹いっぱいでも飲み物は別腹だよ〜！何にしようかな。」\n(Onaka ippai demo nomimono wa betsubara da yo~! Nani ni shiyou kana.)\n\"Kenyang juga kalau minuman masih muat kok〜! Beli apa ya enaknya.\""
+                    npcResponse = "「水も健康的でいいね！でも今日はちょっと味があるものが飲みたいな〜。」",
+                    npcResponseRomaji = "(Mizu mo kenkou-teki de ii ne! Demo kyou wa chotto aji ga aru mono ga nomitai na~.)",
+                    npcResponseEnglish = "\"Water is healthy too! But today I feel like drinking something with flavor〜.\""
                 }
             });
 
         // 8. Toko Tutup
-        ConfigureLocation(spawner, 7, "TokoTutup", "Yuuki",
-            "「シャッターが閉まってる…今日休みかな？」\n(Shattaa ga shimatteru... Kyou yasumi kana?)\n\"Pintunya tertutup... Hari ini libur ya?\"",
+        ConfigureLocation(spawner, 7, "TokoTutup", "Yuuki", "Curious Shopper", spParent,
+            "「シャッターが閉まってる…今日休みかな？」",
+            "(Shattaa ga shimatteru... Kyou yasumi kana?)",
+            "\"The shutters are closed... Is it closed today?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「鍵を壊しましょう。」 (Rusak saja kuncinya.)",
+                    choiceText = "「ドアを壊しましょう。」",
+                    choiceRomaji = "(Doa o kowashimashou.)",
                     isCorrect = false,
-                    npcResponse = "「捕まっちゃうよ！！冗談でもそんなこと言っちゃダメ〜！」\n(Tsukamatchau yo!! Joudan demo sonna koto itchya dame~)\n\"Bisa ditangkap polisi!! Bercanda pun nggak boleh gitu dong〜!\""
+                    npcResponse = "「警察呼ばれちゃうよ！絶対に壊しちゃダメだよ〜！」",
+                    npcResponseRomaji = "(Keisatsu yobarechau yo! Zettai ni kowashicha dame da yo~!)",
+                    npcResponseEnglish = "\"The police will be called! You must never break it〜!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「靴を脱いでください。」 (Lepas sepatu Anda.)",
-                    isCorrect = false,
-                    npcResponse = "「外で靴を脱いだら靴下が汚れちゃうよ！お店にも入れないし…」\n(Soto de kutsu o nuidara kutsushita ga yogorechau yo! Omise ni mo hairenai shi...)\n\"Kalau copot sepatu di jalan ya kotor kaos kakinya! Lagian tokonya tutup...\""
-                },
-                new DialogueChoice {
-                    choiceText = "「水曜定休と書いてありますよ。」 (Tertulis 'Rabu Libur' lho.)",
+                    choiceText = "「水曜日が定休日みたいですよ。」",
+                    choiceRomaji = "(Suiyoubi ga teikyuubi mitai desu yo.)",
                     isCorrect = true,
-                    npcResponse = "「本当だ！看板をちゃんと見てくれてありがとう。明日また来るよ！」\n(Hontou da! Kanban o chanto mite kurete arigatou. Ashita mata kuru yo!)\n\"Bener juga! Makasih udah cermat baca papannya. Besok aku balik lagi deh!\""
+                    npcResponse = "「あっ、本当だ！看板に書いてあるね。教えてくれてありがとう！」",
+                    npcResponseRomaji = "(A', hontou da! Kanban ni kaite aru ne. Oshiete kurete arigatou!)",
+                    npcResponseEnglish = "\"Oh, you're right! It's written on the sign. Thank you for letting me know!\""
+                },
+                new DialogueChoice {
+                    choiceText = "「お腹が空きました。」",
+                    choiceRomaji = "(Onaka ga sukimashita.)",
+                    isCorrect = false,
+                    npcResponse = "「私もお腹空いてたのに閉まってて残念…他のお店を探そう！」",
+                    npcResponseRomaji = "(Watashi mo onaka suiteta no ni shimattete zannen... Hoka no omise o sagasou!)",
+                    npcResponseEnglish = "\"I was hungry too, such a shame it's closed... Let's look for another shop!\""
                 }
             });
 
-        // 9. Pipa & Gas
-        ConfigureLocation(spawner, 8, "PipadanGas", "Ibuki",
-            "「壁にガスメーターがたくさん並んでいて面白いね。」\n(Kabe ni gasu meetaa ga takusan narande ite omoshiroi ne.)\n\"Banyak meteran gas berjejer di dinding, unik ya.\"",
+        // 9. Pipa dan Gas
+        ConfigureLocation(spawner, 8, "PipadanGas", "Ibuki", "Local Resident", spParent,
+            "「壁にガスメーターがたくさん並んでいて面白いね。」",
+            "(Kabe ni gasu meetaa ga takusan narande ite omoshiroi ne.)",
+            "\"There are lots of gas meters lined up on the wall, interesting isn't it.\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「パイプを引っ張りましょう。」 (Tarik saja pipanya.)",
-                    isCorrect = false,
-                    npcResponse = "「絶対ダメ！ガス漏れしたら大爆発しちゃうよ〜！」\n(Zettai dame! Gasu more shitara daibakuhatsu shichau yo~!)\n\"Jangan sekali-kali! Kalau gasnya bocor bisa meledak〜!\""
-                },
-                new DialogueChoice {
-                    choiceText = "「点検しやすいからですよ。」 (Biar mudah dicek petugas.)",
+                    choiceText = "「触ると危ないですよ。」",
+                    choiceRomaji = "(Sawaru to abunai desu yo.)",
                     isCorrect = true,
-                    npcResponse = "「なるほど！検針員さんが家に入らなくても確認できるからか！物知りだね。」\n(Naruhodo! Kenshin'in-san ga ie ni hairanakutemo kakunin dekiru kara ka! Monoshiri da ne.)\n\"Ooh begitu! Jadi petugas nggak perlu masuk rumah ya! Pintar banget kamu.\""
+                    npcResponse = "「そうだね！ガス設備だから、見るだけにしておこうね。」",
+                    npcResponseRomaji = "(Sou da ne! Gasu setsubi dakara, miru dake ni shite okou ne.)",
+                    npcResponseEnglish = "\"You're right! Since it's gas equipment, let's just look without touching.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「家にガスがないです。」 (Di rumah nggak ada gas.)",
+                    choiceText = "「ボタンを押しましょう！」",
+                    choiceRomaji = "(Botan o oshimashou.)",
                     isCorrect = false,
-                    npcResponse = "「へぇ、オール電化の家なのかな？最近は増えてるらしいね。」\n(Hee, ooru denka no ie na no kana? Saikin wa fueteru rashii ne.)\n\"Wah, rumahmu serba listrik ya? Zaman sekarang makin banyak sih.\""
+                    npcResponse = "「ダメダメ！勝手に触ったら近所迷惑になっちゃうよ！」",
+                    npcResponseRomaji = "(Dame dame! Katte ni sawattara kinjo meiwaku ni natchau yo!)",
+                    npcResponseEnglish = "\"No no! Touching it without permission will cause trouble for the neighbors!\""
+                },
+                new DialogueChoice {
+                    choiceText = "「家にガスがないです。」",
+                    choiceRomaji = "(Ie ni gasu ga nai desu.)",
+                    isCorrect = false,
+                    npcResponse = "「へぇ、オール電化の家なのかな？最近は増えてるらしいね。」",
+                    npcResponseRomaji = "(Hee, ooru denka no ie na no kana? Saikin wa fueteru rashii ne.)",
+                    npcResponseEnglish = "\"Oh, is your home all-electric? I hear that's becoming more common lately.\""
                 }
             });
 
         // 10. Sampah Daur Ulang
-        ConfigureLocation(spawner, 9, "Sampah2", "Chihiro",
-            "「青いゴミ箱があるね。今日は資源ごみの日？」\n(Aoi gomibako ga aru ne. Kyou wa shigen-gomi no hi?)\n\"Ada tempat sampah biru. Hari ini daur ulang?\"",
+        ConfigureLocation(spawner, 9, "Sampah2", "Chihiro", "Eco Volunteer", spParent,
+            "「青いゴミ箱があるね。今日は資源ごみの日？」",
+            "(Aoi gomibako ga aru ne. Kyou wa shigen-gomi no hi?)",
+            "\"There's a blue trash bin. Is today recyclable waste day?\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「道に捨てましょう。」 (Buang di jalan saja.)",
+                    choiceText = "「道に捨てましょう。」",
+                    choiceRomaji = "(Michi ni sutemashou.)",
                     isCorrect = false,
-                    npcResponse = "「ポイ捨ては絶対にダメだよ！日本の街は綺麗に保たなきゃね。」\n(Poisute wa zettai ni dame da yo! Nihon no machi wa kirei ni tamotanakya ne.)\n\"Buang sampah sembarangan dilarang keras! Kota harus tetap bersih.\""
+                    npcResponse = "「ポイ捨ては絶対にダメだよ！日本の街は綺麗に保たなきゃね。」",
+                    npcResponseRomaji = "(Poisute wa zettai ni dame da yo! Nihon no machi wa kirei ni tamotanakya ne.)",
+                    npcResponseEnglish = "\"Littering is strictly forbidden! We must keep Japanese streets clean.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「青色は嫌いです。」 (Saya nggak suka biru.)",
+                    choiceText = "「青色は嫌いです。」",
+                    choiceRomaji = "(Aoiro wa kirai desu.)",
                     isCorrect = false,
-                    npcResponse = "「色の好みの話じゃないよ〜！ゴミ箱の色で分別が決まってるんだよ。」\n(Iro no konomi no hanashi ja nai yo~! Gomibako no iro de bunbetsu ga kimatteru n da yo.)\n\"Bukan soal suka warnanya〜! Warna tong sampah itu tanda jenis sampahnya.\""
+                    npcResponse = "「色の好みの話じゃないよ〜！ゴミ箱の色で分別が決まってるんだよ。」",
+                    npcResponseRomaji = "(Iro no konomi no hanashi ja nai yo~! Gomibako no iro de bunbetsu ga kimatteru n da yo.)",
+                    npcResponseEnglish = "\"It's not about what color you like〜! The bin color indicates the type of waste.\""
                 },
                 new DialogueChoice {
-                    choiceText = "「はい、リサイクルの日ですよ。」 (Iya, hari daur ulang.)",
+                    choiceText = "「はい、リサイクルの日ですよ。」",
+                    choiceRomaji = "(Hai, risaikuru no hi desu yo.)",
                     isCorrect = true,
-                    npcResponse = "「よかった！缶やペットボトルをしっかり分別して捨ててくるね！」\n(Yokatta! Kan ya pettobotoru o shikkari bunbetsu shite sutete kuru ne!)\n\"Syukurlah! Aku buang kaleng dan botol plastik sesuai tempatnya deh!\""
+                    npcResponse = "「よかった！缶やペットボトルをしっかり分別して捨ててくるね！」",
+                    npcResponseRomaji = "(Yokatta! Kan ya pettobotoru o shikkari bunbetsu shite sutete kuru ne!)",
+                    npcResponseEnglish = "\"Great! I'll sort the cans and plastic bottles properly and throw them away!\""
                 }
             });
 
         // 11. Lampu Merah
-        ConfigureLocation(spawner, 10, "LampuMerah", "Rin",
-            "「車は通ってないけど、青になるまで待とうね。」\n(Kuruma wa toottenai kedo, ao ni naru made matou ne.)\n\"Mobil nggak ada sih, tapi tunggu lampu hijau ya.\"",
+        ConfigureLocation(spawner, 10, "LampuMerah", "Rin", "Pedestrian", spParent,
+            "「車は通ってないけど、青になるまで待とうね。」",
+            "(Kuruma wa toottenai kedo, ao ni naru made matou ne.)",
+            "\"There are no cars passing, but let's wait until the light turns green.\"",
             new DialogueChoice[]
             {
                 new DialogueChoice {
-                    choiceText = "「車が好きです。」 (Saya suka mobil.)",
+                    choiceText = "「車が好きです。」",
+                    choiceRomaji = "(Kuruma ga suki desu.)",
                     isCorrect = false,
-                    npcResponse = "「私も車は好きだけど、今は交通ルールの話だよ〜！」\n(Watashi mo kuruma wa suki dako, ima wa koutsuu ruuru no hanashi da yo~)\n\"Aku juga suka mobil sih, tapi sekarang lagi bahas aturan jalan raya〜!\""
+                    npcResponse = "「私も車は好きだけど、今は交通ルールの話だよ〜！」",
+                    npcResponseRomaji = "(Watashi mo kuruma wa suki dakedo, ima wa koutsuu ruuru no hanashi da yo~)",
+                    npcResponseEnglish = "\"I like cars too, but right now we're talking about traffic rules〜!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「そうですね、待ちましょう！」 (Iya, ayo kita tunggu!)",
+                    choiceText = "「そうですね、待ちましょう！」",
+                    choiceRomaji = "(Sou desu ne, machimashou!)",
                     isCorrect = true,
-                    npcResponse = "「うん！誰も見ていなくてもマナーを守るのが大事だよね！」\n(Un! Dare mo mite inakutemo manaa o mamoru no ga daiji da yo ne!)\n\"Yup! Tetap tertib meski sepi itu baru tata krama yang baik!\""
+                    npcResponse = "「うん！誰も見ていなくてもマナーを守るのが大事だよね！」",
+                    npcResponseRomaji = "(Un! Dare mo mite inakutemo manaa o mamoru no ga daiji da yo ne!)",
+                    npcResponseEnglish = "\"Yup! Following manners even when no one is watching is what's truly important!\""
                 },
                 new DialogueChoice {
-                    choiceText = "「急いで渡っちゃおう！」 (Ayo buru-buru nyebrang!)",
+                    choiceText = "「急いで渡っちゃおう！」",
+                    choiceRomaji = "(Isoide watatchaou!)",
                     isCorrect = false,
-                    npcResponse = "「ダメダメ危ないよ！急に車が曲がってくるかもしれないからね。」\n(Dame dame abunai yo! Kyuu ni kuruma ga magatte kuru kamoshirenai kara ne.)\n\"Eits bahaya! Siapa tahu tiba-tiba ada mobil belok kencang.\""
+                    npcResponse = "「ダメダメ危ないよ！急に車が曲がってくるかもしれないからね。」",
+                    npcResponseRomaji = "(Dame dame abunai yo! Kyuu ni kuruma ga magatte kuru kamoshirenai kara ne.)",
+                    npcResponseEnglish = "\"No no, that's dangerous! A car might suddenly turn the corner.\""
                 }
             });
+
+        // Pasang 14 Avatar Karakter BoZo Otomatis ke NPCSpawner
+        string[] avatarNames = new string[] {
+            "Ben", "Chloe", "Dave", "Galvon", "Javi", "Jennifer", "John",
+            "Mary", "Sally", "Tristian", "Yuki", "Zulle", "1DefaultFemale", "1DefaultMale"
+        };
+        List<Sprite> avatars = new List<Sprite>();
+        foreach (var avName in avatarNames)
+        {
+            Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/BoZo_StylizedModularCharacters/CustomCharacters/Icons/Base/{avName}.png");
+            if (s != null) avatars.Add(s);
+        }
+        SetPrivateField(spawner, "characterAvatars", avatars.ToArray());
 
         EditorUtility.SetDirty(spawner);
         EditorSceneManager.MarkSceneDirty(spawner.gameObject.scene);
         EditorSceneManager.SaveScene(spawner.gameObject.scene);
-        Debug.Log("<color=green>[Utsuru] SUKSES! Seluruh 11 soal, pilihan, dan balasan NPC berhasil di-inject ke NPCSpawner dan Scene disimpan!</color>");
+        Debug.Log("<color=green>[Utsuru] SUKSES! Soal telah dipisah rapi ke field Question Japanese, Romaji, dan English di Inspector!</color>");
     }
 
-    private static void ConfigureLocation(NPCSpawner spawner, int index, string locName, string npcName, string question, DialogueChoice[] choices)
+    private static void ConfigureLocation(NPCSpawner spawner, int index, string locName, string npcName, string roleTag, GameObject spParent, string jpQ, string rmQ, string enQ, DialogueChoice[] choices)
     {
         if (spawner.spawnLocations[index] == null)
             spawner.spawnLocations[index] = new ContextualSpawnPoint();
 
         spawner.spawnLocations[index].locationName = locName;
 
+        if (spawner.spawnLocations[index].pointTransform == null && spParent != null)
+        {
+            Transform pt = spParent.transform.Find($"Point_{index + 1}");
+            if (pt != null)
+                spawner.spawnLocations[index].pointTransform = pt;
+        }
+
         NPCData data = new NPCData();
         data.npcName = npcName;
-        data.questionText = question;
+        data.roleTag = roleTag;
+        data.jlptTag = "Formality: Casual & Friendly • JLPT N5";
+        data.questionJapanese = jpQ;
+        data.questionRomaji = rmQ;
+        data.questionEnglish = enQ;
+        data.questionText = "";
         data.choices = choices;
         data.scoreReward = 100;
         data.basePitch = 1.0f;
 
         spawner.spawnLocations[index].locationQuestions = new NPCData[] { data };
     }
+
+    private static void SetPrivateField(object target, string fieldName, object value)
+    {
+        if (target == null) return;
+        var field = target.GetType().GetField(fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        if (field != null)
+        {
+            field.SetValue(target, value);
+        }
+    }
 }
 #endif
-

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -12,69 +13,146 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance { get; private set; }
     public bool IsDialogueActive => dialoguePanel != null && dialoguePanel.activeSelf;
 
-    [Header("UI Komponen")]
+    [Header("Panel Utama")]
     [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private GameObject interactionPrompt; // Objek teks [E] Talk di tengah layar
+    [SerializeField] private GameObject interactionPrompt; // [E] Bicara
+
+    [Header("Avatar & Identitas Karakter")]
+    [SerializeField] private Image avatarImage;
     [SerializeField] private TMP_Text nameText;
-    [SerializeField] private TMP_Text bodyText;
-    [SerializeField] private Transform choicesContainer;    // Parent tombol pilihan
-    [SerializeField] private GameObject choiceButtonPrefab;  // Prefab Tombol UI
-    [Tooltip("Teks pada tombol selesai/lanjut setelah balasan NPC")]
-    [SerializeField] private string closePromptText = "「次へ / Selesai」 (Tekan Spasi atau Klik)";
+    [SerializeField] private TMP_Text roleTagText;
+    [SerializeField] private TMP_Text jlptTagText;
 
-    [Header("Efek Suara Undertale")]
+    [Header("Header Buttons")]
+    [SerializeField] private Button replayAudioButton;
+    [SerializeField] private Button closeButton;
+
+    [Header("Konten Dialog (3 Layer)")]
+    [SerializeField] private TMP_Text textJapanese;
+    [SerializeField] private TMP_Text textRomaji;
+    [SerializeField] private TMP_Text textEnglish;
+
+    [Header("Pilihan & Interaksi")]
+    [SerializeField] private TMP_Text choosePromptText; // CHOOSE YOUR KAIWA RESPONSE [1 or 2]:
+    [SerializeField] private Transform choicesContainer;
+    [SerializeField] private GameObject choiceButtonPrefab;
+
+    [Header("Indikator Skor")]
+    [SerializeField] private GameObject scoreBadgePill; // Badge ★ +20 Learning Points
+    [SerializeField] private TMP_Text scoreBadgeText;
+
+    [Header("Sprite Varian Tombol")]
+    [SerializeField] private Sprite choiceCardNormalBg;
+    [SerializeField] private Sprite choiceCardSelectedBg;
+
+    [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private float typingSpeed = 0.03f;      // Jeda antar huruf
-    [SerializeField] private float pitchVariation = 0.08f;   // Variasi nada acak
+    [SerializeField] private float typingSpeed = 0.025f;
+    [SerializeField] private float pitchVariation = 0.08f;
 
-    [Header("Player Reference")]
+    [Header("Player")]
     [SerializeField] private FirstPersonController playerController;
 
     private Coroutine typingRoutine;
     private NPCData currentData;
-    private string currentResponseText = "";
     private bool isTyping = false;
     private bool isShowingResponse = false;
     private bool isWaitingToClose = false;
+    private List<DialogueChoice> currentActiveChoices = new List<DialogueChoice>();
+
+    private string currentJpQuestion = "";
+    private string currentRmQuestion = "";
+    private string currentEnQuestion = "";
+
+    private string currentJpResponse = "";
+    private string currentRmResponse = "";
+    private string currentEnResponse = "";
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
+
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
+        if (closeButton != null)
+        {
+            closeButton.onClick.RemoveAllListeners();
+            closeButton.onClick.AddListener(CloseDialogue);
+            closeButton.gameObject.SetActive(false);
+        }
+        if (replayAudioButton != null)
+        {
+            replayAudioButton.onClick.RemoveAllListeners();
+            replayAudioButton.onClick.AddListener(PlayDialogueAudio);
+        }
+
+        // Pastikan background / border pada ScoreBadgePill dinonaktifkan (hanya teks murni)
+        if (scoreBadgePill != null)
+        {
+            UnityEngine.UI.Image img = scoreBadgePill.GetComponent<UnityEngine.UI.Image>();
+            if (img != null) img.enabled = false;
+        }
     }
 
     private void Update()
     {
         if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
 
-        bool spaceOrE = false;
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0))
-            spaceOrE = true;
+        // 1. Shortcut Angka 1, 2, 3 untuk memilih jawaban secara instan
+        if (!isShowingResponse && currentActiveChoices.Count > 0)
+        {
+            bool press1 = Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1);
+            bool press2 = Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2);
+            bool press3 = Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3);
+
+#if ENABLE_INPUT_SYSTEM
+            if (Keyboard.current != null)
+            {
+                if (Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame)
+                    press1 = true;
+                if (Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame)
+                    press2 = true;
+                if (Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame)
+                    press3 = true;
+            }
+#endif
+
+            if (press1 && currentActiveChoices.Count >= 1)
+            {
+                OnChoiceClicked(currentActiveChoices[0]);
+                return;
+            }
+            if (press2 && currentActiveChoices.Count >= 2)
+            {
+                OnChoiceClicked(currentActiveChoices[1]);
+                return;
+            }
+            if (press3 && currentActiveChoices.Count >= 3)
+            {
+                OnChoiceClicked(currentActiveChoices[2]);
+                return;
+            }
+        }
+
+        // 2. Tombol Tutup / Lanjut (Space, E, Enter, Escape)
+        bool confirmClose = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E) ||
+                            Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape);
 
 #if ENABLE_INPUT_SYSTEM
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame)
-                spaceOrE = true;
+            if (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame ||
+                Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
+                confirmClose = true;
         }
 #endif
 
-        if (spaceOrE)
+        if (confirmClose)
         {
-            // 1. Jika sedang mengetik (soal atau balasan) -> Skip langsung selesai
             if (isTyping)
             {
-                if (isShowingResponse)
-                {
-                    FinishTypingResponseInstantly();
-                }
-                else
-                {
-                    FinishTypingQuestionInstantly();
-                }
+                FinishTypingInstantly();
             }
-            // 2. Jika balasan sudah selesai tampil -> Tutup dialog
             else if (isWaitingToClose)
             {
                 CloseDialogue();
@@ -82,72 +160,210 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(NPCData data, string customName = "")
+    public void StartDialogue(NPCData data, string customName = "", Sprite customAvatar = null)
     {
         if (data == null) return;
         currentData = data;
         isShowingResponse = false;
         isWaitingToClose = false;
+        currentActiveChoices.Clear();
 
-        // Sembunyikan tulisan [E] Talk saat dialog dibuka
         ShowInteractionPrompt(false);
-
         dialoguePanel.SetActive(true);
 
-        // Kunci pergerakan player & aktifkan kursor mouse
+        // Kunci gerakan pemain & munculkan kursor
         if (playerController != null) playerController.enabled = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Gunakan nama kustom jika ada (misal: Chloe, Dave, Zulle)
-        nameText.text = !string.IsNullOrEmpty(customName) ? customName : data.npcName;
+        // Pasang Nama Karakter & Sesuaikan Lebar Kapsul NamePill Otomatis
+        string displayName = !string.IsNullOrEmpty(customName) ? customName : data.npcName;
+        if (nameText != null)
+        {
+            nameText.text = displayName;
+            if (nameText.transform.parent != null)
+            {
+                nameText.transform.parent.gameObject.SetActive(true);
+                RectTransform pillRt = nameText.transform.parent as RectTransform;
+                if (pillRt != null)
+                {
+                    // Hitung lebar teks secara akurat + beri padding kapsul 36px
+                    float textWidth = nameText.preferredWidth;
+                    float autoWidth = Mathf.Max(textWidth + 36f, 130f);
+                    pillRt.sizeDelta = new Vector2(autoWidth, 36f);
+                }
+            }
+        }
 
-        // Bersihkan tombol pilihan lama
-        ClearChoices();
+        // Pasang Role Tag (Contoh: "Shopkeeper", "Eco Neighbor", dsb.)
+        if (roleTagText != null)
+        {
+            if (!string.IsNullOrEmpty(data.roleTag))
+            {
+                roleTagText.text = data.roleTag;
+                if (roleTagText.transform.parent != null)
+                {
+                    roleTagText.transform.parent.gameObject.SetActive(true);
+                    RectTransform rpRt = roleTagText.transform.parent as RectTransform;
+                    if (rpRt != null)
+                    {
+                        float textWidth = roleTagText.preferredWidth;
+                        float autoWidth = Mathf.Max(textWidth + 28f, 110f);
+                        rpRt.sizeDelta = new Vector2(autoWidth, 34f);
 
-        // Mulai ketik pertanyaan dengan suara
+                        // Geser posisi JLPT tag agar berjarak rapi di sebelah kanan RolePill
+                        if (jlptTagText != null)
+                        {
+                            RectTransform jlptRt = jlptTagText.rectTransform;
+                            if (jlptRt != null)
+                            {
+                                jlptRt.anchoredPosition = new Vector2(autoWidth + 16f, jlptRt.anchoredPosition.y);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (roleTagText.transform.parent != null)
+                    roleTagText.transform.parent.gameObject.SetActive(false);
+
+                if (jlptTagText != null)
+                {
+                    RectTransform jlptRt = jlptTagText.rectTransform;
+                    if (jlptRt != null)
+                    {
+                        jlptRt.anchoredPosition = new Vector2(0f, jlptRt.anchoredPosition.y);
+                    }
+                }
+            }
+        }
+
+        // Pasang JLPT Tag
+        if (jlptTagText != null)
+        {
+            jlptTagText.text = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
+            jlptTagText.gameObject.SetActive(true);
+        }
+
+        // Pasang Foto Avatar Sesuai Karakter yang Bicara
+        Sprite avatarToUse = customAvatar != null ? customAvatar : data.avatarPortrait;
+        if (avatarImage != null)
+        {
+            if (avatarToUse != null)
+            {
+                avatarImage.sprite = avatarToUse;
+                avatarImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                avatarImage.gameObject.SetActive(false);
+            }
+        }
+
+        // Reset state tombol header
+        if (replayAudioButton != null) replayAudioButton.gameObject.SetActive(true);
+        if (closeButton != null) closeButton.gameObject.SetActive(false);
+        if (scoreBadgePill != null) scoreBadgePill.SetActive(false);
+
+        // Aktifkan petunjuk pemilihan & container pilihan
+        if (choosePromptText != null)
+        {
+            int numChoices = (data.choices != null) ? data.choices.Length : 2;
+            choosePromptText.text = $"CHOOSE YOUR KAIWA RESPONSE [1 to {numChoices}]:";
+            choosePromptText.gameObject.SetActive(true);
+        }
+        if (choicesContainer != null) choicesContainer.gameObject.SetActive(true);
+
+        // Mainkan audio jika ada
+        PlayDialogueAudio();
+
+        // Urai Teks Soal: Prioritaskan field terpisah (Japanese, Romaji, English) jika sudah diisi rapi
+        string jpText = "";
+        string rmText = "";
+        string enText = "";
+
+        if (!string.IsNullOrEmpty(data.questionJapanese) && !string.IsNullOrEmpty(data.questionRomaji) && !string.IsNullOrEmpty(data.questionEnglish))
+        {
+            jpText = data.questionJapanese;
+            rmText = data.questionRomaji;
+            enText = data.questionEnglish;
+        }
+        else
+        {
+            string rawText = data.questionText;
+            if (!string.IsNullOrEmpty(rawText) && rawText.Contains("\n"))
+            {
+                string[] lines = rawText.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length >= 1) jpText = lines[0].Trim();
+                if (lines.Length >= 2) rmText = lines[1].Trim();
+                if (lines.Length >= 3) enText = lines[2].Trim();
+            }
+            else
+            {
+                jpText = !string.IsNullOrEmpty(data.questionJapanese) ? data.questionJapanese : rawText;
+                rmText = data.questionRomaji;
+                enText = data.questionEnglish;
+            }
+        }
+
+        currentJpQuestion = jpText;
+        currentRmQuestion = rmText;
+        currentEnQuestion = enText;
+
         if (typingRoutine != null) StopCoroutine(typingRoutine);
-        typingRoutine = StartCoroutine(TypewriterText(data.questionText, data, onComplete: ShowChoices));
+        typingRoutine = StartCoroutine(TypewriterRoutine(jpText, rmText, enText, onComplete: () =>
+        {
+            ShowChoices(data.choices);
+        }));
     }
 
-    private IEnumerator TypewriterText(string fullText, NPCData data, System.Action onComplete)
+    private IEnumerator TypewriterRoutine(string jp, string romaji, string english, System.Action onComplete)
     {
         isTyping = true;
-        bodyText.text = "";
+        if (textJapanese != null) textJapanese.text = "";
+        if (textRomaji != null) textRomaji.text = "";
+        if (textEnglish != null) textEnglish.text = "";
 
-        for (int i = 0; i < fullText.Length; i++)
+        // Ketik teks Jepang huruf per huruf
+        for (int i = 0; i < jp.Length; i++)
         {
-            // Lewati tag formatting <color> agar tidak tampil mentah
-            if (fullText[i] == '<')
+            if (jp[i] == '<')
             {
-                int closingIndex = fullText.IndexOf('>', i);
+                int closingIndex = jp.IndexOf('>', i);
                 if (closingIndex != -1)
                 {
-                    bodyText.text += fullText.Substring(i, closingIndex - i + 1);
+                    if (textJapanese != null) textJapanese.text += jp.Substring(i, closingIndex - i + 1);
                     i = closingIndex;
                     continue;
                 }
             }
 
-            bodyText.text += fullText[i];
+            if (textJapanese != null) textJapanese.text += jp[i];
 
-            // Efek suara Undertale blip tiap huruf non-spasi (gunakan data.voiceSound atau audioSource.clip bawaan)
-            AudioClip soundToPlay = (data != null && data.voiceSound != null) ? data.voiceSound : (audioSource != null ? audioSource.clip : null);
-            if (fullText[i] != ' ' && fullText[i] != '\n' && soundToPlay != null && audioSource != null)
+            if (jp[i] != ' ' && jp[i] != '\n' && audioSource != null)
             {
-                float basePitch = (data != null) ? data.basePitch : 1.0f;
-                audioSource.pitch = basePitch + Random.Range(-pitchVariation, pitchVariation);
-                audioSource.PlayOneShot(soundToPlay);
+                AudioClip clip = (currentData != null && currentData.voiceSound != null) ? currentData.voiceSound : audioSource.clip;
+                if (clip != null)
+                {
+                    float basePitch = (currentData != null) ? currentData.basePitch : 1.0f;
+                    audioSource.pitch = basePitch + Random.Range(-pitchVariation, pitchVariation);
+                    audioSource.PlayOneShot(clip);
+                }
             }
 
             yield return new WaitForSeconds(typingSpeed);
         }
 
+        // Tampilkan teks Romaji dan Terjemahan Inggris
+        if (textRomaji != null) textRomaji.text = romaji;
+        if (textEnglish != null) textEnglish.text = english;
+
         isTyping = false;
         onComplete?.Invoke();
     }
 
-    private void FinishTypingQuestionInstantly()
+    private void FinishTypingInstantly()
     {
         if (typingRoutine != null)
         {
@@ -155,39 +371,73 @@ public class DialogueManager : MonoBehaviour
             typingRoutine = null;
         }
 
-        bodyText.text = currentData.questionText;
         isTyping = false;
-        ShowChoices();
-    }
 
-    private void FinishTypingResponseInstantly()
-    {
-        if (typingRoutine != null)
+        if (!isShowingResponse)
         {
-            StopCoroutine(typingRoutine);
-            typingRoutine = null;
-        }
+            if (textJapanese != null) textJapanese.text = currentJpQuestion;
+            if (textRomaji != null) textRomaji.text = currentRmQuestion;
+            if (textEnglish != null) textEnglish.text = currentEnQuestion;
 
-        bodyText.text = currentResponseText;
-        isTyping = false;
-        ShowClosePromptButton();
+            ShowChoices(currentData.choices);
+        }
+        else
+        {
+            if (textJapanese != null) textJapanese.text = currentJpResponse;
+            if (textRomaji != null) textRomaji.text = currentRmResponse;
+            if (textEnglish != null) textEnglish.text = currentEnResponse;
+
+            isWaitingToClose = true;
+            if (closeButton != null) closeButton.gameObject.SetActive(true);
+        }
     }
 
-    private void ShowChoices()
+    private void ShowChoices(DialogueChoice[] choices)
     {
         ClearChoices();
-        if (currentData.choices == null) return;
+        currentActiveChoices.Clear();
+        if (choices == null || choices.Length == 0) return;
 
-        for (int i = 0; i < currentData.choices.Length; i++)
+        for (int i = 0; i < choices.Length; i++)
         {
-            DialogueChoice choice = currentData.choices[i];
-            GameObject btnObj = Instantiate(choiceButtonPrefab, choicesContainer);
+            DialogueChoice choice = choices[i];
+            currentActiveChoices.Add(choice);
 
-            TMP_Text btnText = btnObj.GetComponentInChildren<TMP_Text>();
-            if (btnText != null) btnText.text = choice.choiceText;
+            if (choiceButtonPrefab != null && choicesContainer != null)
+            {
+                GameObject btnObj = Instantiate(choiceButtonPrefab, choicesContainer);
+                ChoiceButtonUI btnUI = btnObj.GetComponent<ChoiceButtonUI>();
 
-            Button btn = btnObj.GetComponent<Button>();
-            btn.onClick.AddListener(() => OnChoiceClicked(choice));
+                int choiceNumber = i + 1;
+                Sprite bgSprite = (i == 0 && choiceCardSelectedBg != null) ? choiceCardSelectedBg : choiceCardNormalBg;
+                Color? badgeColor = (i == 0) ? new Color(0.36f, 0.24f, 0.15f) : new Color(0.88f, 0.85f, 0.82f);
+
+                // Pisahkan bahasa Jepang dan terjemahan di dalam kurung jika ada
+                string jpChoice = choice.choiceText;
+                string rmChoice = choice.choiceRomaji;
+                if (string.IsNullOrEmpty(rmChoice) && jpChoice != null && jpChoice.Contains("(") && jpChoice.Contains(")"))
+                {
+                    int pOpen = jpChoice.IndexOf('(');
+                    int pClose = jpChoice.IndexOf(')', pOpen);
+                    if (pOpen != -1 && pClose != -1)
+                    {
+                        rmChoice = jpChoice.Substring(pOpen + 1, pClose - pOpen - 1).Trim();
+                        jpChoice = jpChoice.Substring(0, pOpen).Trim();
+                    }
+                }
+
+                if (btnUI != null)
+                {
+                    btnUI.Setup(choiceNumber, jpChoice, rmChoice, () => OnChoiceClicked(choice), bgSprite, badgeColor);
+                }
+                else
+                {
+                    TMP_Text btnText = btnObj.GetComponentInChildren<TMP_Text>();
+                    if (btnText != null) btnText.text = $"{choiceNumber}. {choice.choiceText}";
+                    Button btn = btnObj.GetComponent<Button>();
+                    if (btn != null) btn.onClick.AddListener(() => OnChoiceClicked(choice));
+                }
+            }
         }
     }
 
@@ -196,50 +446,82 @@ public class DialogueManager : MonoBehaviour
         ClearChoices();
         isShowingResponse = true;
 
-        // Tambah skor jika benar
-        if (choice.isCorrect && ScoreManager.Instance != null)
-        {
-            ScoreManager.Instance.AddScore(currentData.scoreReward);
-        }
+        // Sembunyikan prompt pemilihan
+        if (choosePromptText != null) choosePromptText.gameObject.SetActive(false);
+        if (choicesContainer != null) choicesContainer.gameObject.SetActive(false);
 
-        // Tentukan teks balasan dari NPC
-        string response = choice.npcResponse;
-        if (string.IsNullOrEmpty(response))
-        {
-            if (choice.isCorrect)
-                response = "「そうですね！教えてくれてありがとう！」\n(Bener juga ya! Makasih sudah kasih tahu!)";
-            else
-                response = "「えっ、本当に…？ちょっと違う気がするよ〜。」\n(Eh masa sih...? Kayaknya bukan gitu deh〜.)";
-        }
-
-        // Tambahkan info perolehan poin
+        // Hanya tambahkan skor jika jawaban BENAR!
         if (choice.isCorrect)
-            response += $"\n<color=#4CAF50>+{currentData.scoreReward} Poin!</color>";
+        {
+            int reward = choice.scoreReward > 0 ? choice.scoreReward : (currentData.scoreReward > 0 ? currentData.scoreReward : 100);
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.AddScore(reward);
+            }
+
+            if (scoreBadgePill != null)
+            {
+                scoreBadgePill.SetActive(true);
+                if (scoreBadgeText != null)
+                {
+                    scoreBadgeText.text = $"+{reward} Points";
+                }
+            }
+        }
         else
-            response += "\n<color=#FF5252>+0 Poin</color>";
+        {
+            // Jawaban SALAH: Jangan beri skor dan sembunyikan badge skor!
+            if (scoreBadgePill != null)
+            {
+                scoreBadgePill.SetActive(false);
+            }
+        }
 
-        currentResponseText = response;
+        // Urai respon balasan NPC (Jepang, Romaji, Indonesia/Inggris)
+        string rawResponse = choice.npcResponse;
+        string jpResponse = "";
+        string rmResponse = "";
+        string enResponse = "";
 
-        // Ketik balasan NPC dengan suara
+        if (!string.IsNullOrEmpty(rawResponse) && rawResponse.Contains("\n"))
+        {
+            string[] rLines = rawResponse.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+            if (rLines.Length >= 1) jpResponse = rLines[0].Trim();
+            if (rLines.Length >= 2) rmResponse = rLines[1].Trim();
+            if (rLines.Length >= 3) enResponse = rLines[2].Trim();
+        }
+        else
+        {
+            jpResponse = rawResponse;
+            rmResponse = choice.npcResponseRomaji;
+            enResponse = choice.npcResponseEnglish;
+        }
+
+        currentJpResponse = jpResponse;
+        currentRmResponse = rmResponse;
+        currentEnResponse = enResponse;
+
+        // Munculkan tombol close (X) di pojok kanan atas
+        if (closeButton != null) closeButton.gameObject.SetActive(true);
+        isWaitingToClose = true;
+
+        // Ketik balasan
         if (typingRoutine != null) StopCoroutine(typingRoutine);
-        typingRoutine = StartCoroutine(TypewriterText(currentResponseText, currentData, onComplete: ShowClosePromptButton));
+        typingRoutine = StartCoroutine(TypewriterRoutine(jpResponse, rmResponse, enResponse, onComplete: () =>
+        {
+            isWaitingToClose = true;
+        }));
     }
 
-    private void ShowClosePromptButton()
+    public void PlayDialogueAudio()
     {
-        isWaitingToClose = true;
-        ClearChoices();
-
-        // Buat 1 tombol praktis: [ Tekan SPASI atau Klik untuk Selesai ]
-        GameObject btnObj = Instantiate(choiceButtonPrefab, choicesContainer);
-        TMP_Text btnText = btnObj.GetComponentInChildren<TMP_Text>();
-        if (btnText != null)
+        if (audioSource == null) return;
+        AudioClip clip = (currentData != null && currentData.voiceSound != null) ? currentData.voiceSound : audioSource.clip;
+        if (clip != null)
         {
-            btnText.text = closePromptText;
+            audioSource.pitch = (currentData != null) ? currentData.basePitch : 1.0f;
+            audioSource.PlayOneShot(clip);
         }
-
-        Button btn = btnObj.GetComponent<Button>();
-        btn.onClick.AddListener(CloseDialogue);
     }
 
     public void CloseDialogue()
@@ -251,6 +533,7 @@ public class DialogueManager : MonoBehaviour
         ClearChoices();
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (scoreBadgePill != null) scoreBadgePill.SetActive(false);
 
         // Kembalikan kontrol player & kunci kursor kembali
         if (playerController != null) playerController.enabled = true;
@@ -260,6 +543,7 @@ public class DialogueManager : MonoBehaviour
 
     private void ClearChoices()
     {
+        currentActiveChoices.Clear();
         if (choicesContainer != null)
         {
             foreach (Transform child in choicesContainer)
@@ -269,7 +553,6 @@ public class DialogueManager : MonoBehaviour
 
     public void ShowInteractionPrompt(bool show)
     {
-        // Jangan tampilkan tulisan [E] jika kotak dialog sedang terbuka
         if (dialoguePanel != null && dialoguePanel.activeSelf && show)
             return;
 

@@ -31,6 +31,9 @@ public class NPCSpawner : MonoBehaviour
     [Header("Preset Karakter BoZo (11 Karakter)")]
     [SerializeField] private DataObject[] characterPresets;
 
+    [Header("Foto Avatar Karakter BoZo (Sesuai Model 3D)")]
+    [SerializeField] private Sprite[] characterAvatars;
+
     private List<GameObject> activeNPCs = new List<GameObject>();
 
     private void Awake()
@@ -109,13 +112,52 @@ public class NPCSpawner : MonoBehaviour
             if (interactable != null && chosenLoc.locationQuestions != null && chosenLoc.locationQuestions.Length > 0)
             {
                 NPCData chosenQuestion = chosenLoc.locationQuestions[Random.Range(0, chosenLoc.locationQuestions.Length)];
-                // Prioritaskan nama dari soal (Inspector), jika tidak ada baru pakai nama model 
-                string characterName = !string.IsNullOrEmpty(chosenQuestion.npcName) && chosenQuestion.npcName != "Warga"
-                    ? chosenQuestion.npcName
-                    : chosenPreset.name;
+                
+                // Gunakan nama NPC warga lokal sesuai soal di lokasi tersebut (format Figma: Nama (カナ))!
+                string characterName = GetFigmaFormattedName(chosenQuestion.npcName);
+                Sprite avatarSprite = (chosenPreset != null) ? GetAvatarForPreset(chosenPreset.name) : chosenQuestion.avatarPortrait;
 
-                interactable.SetNPCData(chosenQuestion, characterName);
+                interactable.SetNPCData(chosenQuestion, characterName, avatarSprite);
             }
         }
+    }
+
+    public static string GetFigmaFormattedName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return "Hana (ハナ)";
+        name = name.Trim();
+
+        switch (name)
+        {
+            case "Aoi": return "Aoi (アオイ)";
+            case "Ren": return "Ren (レン)";
+            case "Sora": return "Sora (ソラ)";
+            case "Kaoru": return "Kaoru (カオル)";
+            case "Makoto": return "Makoto (マコト)";
+            case "Haru": return "Haru (ハル)";
+            case "Hikaru": return "Hikaru (ヒカル)";
+            case "Yuuki": return "Yuuki (ユウキ)";
+            case "Ibuki": return "Ibuki (イブキ)";
+            case "Chihiro": return "Chihiro (チヒロ)";
+            case "Rin": return "Rin (リン)";
+            case "Natsuki": return "Natsuki (ナツキ)";
+            case "Hana": return "Hana (ハナ)";
+            default:
+                if (name.Contains("(") && name.Contains(")")) return name;
+                return name;
+        }
+    }
+
+    public Sprite GetAvatarForPreset(string presetName)
+    {
+        if (characterAvatars != null)
+        {
+            foreach (var s in characterAvatars)
+            {
+                if (s != null && s.name.Equals(presetName, System.StringComparison.OrdinalIgnoreCase))
+                    return s;
+            }
+        }
+        return null;
     }
 }
