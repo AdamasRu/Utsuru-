@@ -15,9 +15,17 @@ namespace Utsuru.Capture
 
         private void Awake()
         {
+            Init();
+        }
+
+        private void Init()
+        {
+            if (lookup.Count > 0) return;
+
             // Seed default entries agar pengujian objek jalanan langsung memiliki kosakata lengkap
             EnsureDefault("ICK-01", "Sepeda", 1, "自転車", "じてんしゃ", "Jitensha", "Sepeda", "駅前に自転車がたくさん止まっています。", "Transport");
             EnsureDefault("ICK-02", "Mesin Penjual Otomatis", 2, "自動販売機", "じどうはんばいき", "Jidouhanbaiki", "Mesin Penjual Otomatis", "自動販売機で冷たいお茶を買いました。", "Sign");
+            EnsureDefault("ICK-03", "Poster", 3, "ポスター", "ぽすたー", "Posutaa", "Poster", "壁にきれいなポスターが貼ってあります。", "Sign");
 
             foreach (ObjectInfo entry in entries)
             {
@@ -55,7 +63,19 @@ namespace Utsuru.Capture
                 info = null;
                 return false;
             }
+            Init();
             return lookup.TryGetValue(objectId, out info);
+        }
+
+        public override IReadOnlyList<ObjectInfo> GetAllObjects()
+        {
+            Init();
+            var list = new List<ObjectInfo>();
+            foreach (var kv in lookup)
+            {
+                list.Add(kv.Value);
+            }
+            return list;
         }
     }
 }

@@ -15,5 +15,8 @@ namespace Utsuru.Capture
         /// tapi tetap sebaiknya cepat, mis. memakai Dictionary yang dimuat saat Awake.
         /// </summary>
         public abstract bool TryGetObject(string objectId, out ObjectInfo info);
+
+        /// <summary>Daftar seluruh objek/kosakata dalam database (untuk katalog Tab Kosakata di Dictionary).</summary>
+        public virtual System.Collections.Generic.IReadOnlyList<ObjectInfo> GetAllObjects() => null;
     }
 }

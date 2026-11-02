@@ -13,6 +13,7 @@ namespace Utsuru.Capture
     public class InteractableObject : MonoBehaviour
     {
         [Tooltip("ID unik objek, harus sama dengan ID di database.")]
+        [HideInInspector]
         [SerializeField] private string objectId;
 
         private readonly List<GameObject> outlineClones = new List<GameObject>();

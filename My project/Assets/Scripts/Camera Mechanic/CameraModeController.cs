@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
+using StarterAssets;
+using UnityEngine.InputSystem;
 
 namespace Utsuru.Capture
 {
@@ -75,6 +78,21 @@ namespace Utsuru.Capture
                 viewfinderRoot = GameObject.Find("ViewfinderRoot");
             }
             if (viewfinderRoot != null) viewfinderRoot.SetActive(false);
+
+            // Auto-populate playerControlBehaviours jika belum di-assign di Inspector
+            if (playerControlBehaviours == null || playerControlBehaviours.Length == 0)
+            {
+                var player = GameObject.FindWithTag("Player") ?? GameObject.Find("PlayerCapsule");
+                if (player != null)
+                {
+                    var list = new List<Behaviour>();
+                    var fpc = player.GetComponent<FirstPersonController>();
+                    if (fpc != null) list.Add(fpc);
+                    var pi = player.GetComponent<PlayerInput>();
+                    if (pi != null) list.Add(pi);
+                    if (list.Count > 0) playerControlBehaviours = list.ToArray();
+                }
+            }
         }
 
         private void OnDestroy()
@@ -115,21 +133,48 @@ namespace Utsuru.Capture
         }
 
         /// <summary>
-        /// Dipakai popup Polaroid: mengunci kontrol player dan memunculkan kursor,
-        /// lalu mengembalikannya saat popup ditutup.
+        /// Dipakai popup Polaroid dan Dictionary: mengunci kontrol player dan memunculkan kursor,
+        /// lalu mengembalikannya saat popup/menu ditutup.
         /// </summary>
         public void SetControlsLocked(bool locked)
         {
             controlsLocked = locked;
 
-            if (playerControlBehaviours != null)
+            // 1. Nonaktifkan behaviour kontrol player (FirstPersonController, PlayerInput)
+            if (playerControlBehaviours != null && playerControlBehaviours.Length > 0)
             {
                 foreach (var behaviour in playerControlBehaviours)
                 {
                     if (behaviour != null) behaviour.enabled = !locked;
                 }
             }
+            else
+            {
+                // Fallback jika belum diisi
+                var player = GameObject.FindWithTag("Player") ?? GameObject.Find("PlayerCapsule");
+                if (player != null)
+                {
+                    var fpc = player.GetComponent<FirstPersonController>();
+                    if (fpc != null) fpc.enabled = !locked;
+                    var pi = player.GetComponent<PlayerInput>();
+                    if (pi != null) pi.enabled = !locked;
+                }
+            }
 
+            // 2. Kunci / buka input look pada StarterAssetsInputs
+            var inputs = FindFirstObjectByType<StarterAssetsInputs>();
+            if (inputs != null)
+            {
+                inputs.cursorInputForLook = !locked;
+                inputs.cursorLocked = !locked;
+                if (locked)
+                {
+                    inputs.look = Vector2.zero;
+                    inputs.move = Vector2.zero;
+                }
+            }
+
+            // 3. Atur visibilitas kursor
             Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = locked;
         }

@@ -15,6 +15,7 @@ namespace Utsuru.Capture
         public string objectName;
         public string imagePath;   // relatif terhadap persistentDataPath
         public string dateTaken;   // ISO 8601
+        public bool isFavorite;
     }
 
     /// <summary>
@@ -57,6 +58,27 @@ namespace Utsuru.Capture
             var texture = new Texture2D(2, 2);
             texture.LoadImage(File.ReadAllBytes(fullPath));
             return texture;
+        }
+
+        /// <summary>Hapus berkas foto fisik dari persistentDataPath.</summary>
+        public static bool Delete(string relativePath)
+        {
+            if (string.IsNullOrEmpty(relativePath)) return false;
+            string fullPath = Path.Combine(Application.persistentDataPath, relativePath);
+            if (File.Exists(fullPath))
+            {
+                try
+                {
+                    File.Delete(fullPath);
+                    Debug.Log($"[PhotoFileStore] File foto dihapus: {fullPath}");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"[PhotoFileStore] Gagal menghapus file: {e.Message}");
+                }
+            }
+            return false;
         }
 
         private static string Sanitize(string value)
