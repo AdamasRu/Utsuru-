@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +23,9 @@ namespace Utsuru.Capture
         public List<PhotoRecord> photos = new List<PhotoRecord>();
         public int activeAlbumId;
         public int nextAlbumId = 1;
+        public List<string> completedCourseActivityIds = new List<string>();
+        public string lastCourseLesson = "";
+        public int lastCourseActivityIdx = 0;
     }
 
     /// <summary>
@@ -190,6 +193,41 @@ namespace Utsuru.Capture
         }
 
         /// <summary>Mendapatkan seluruh daftar katalog objek & kosakata dari database.</summary>
+        // --- COURSE PROGRESS METHODS ---
+        public bool IsCourseActivityCompleted(string activityId)
+        {
+            return data != null && data.completedCourseActivityIds != null && data.completedCourseActivityIds.Contains(activityId);
+        }
+
+        public void MarkCourseActivityCompleted(string activityId)
+        {
+            if (data == null) return;
+            if (data.completedCourseActivityIds == null) data.completedCourseActivityIds = new List<string>();
+            if (!data.completedCourseActivityIds.Contains(activityId))
+            {
+                data.completedCourseActivityIds.Add(activityId);
+                Persist();
+            }
+        }
+
+        public string GetLastCourseLesson()
+        {
+            return data != null ? data.lastCourseLesson : "";
+        }
+
+        public int GetLastCourseActivityIndex()
+        {
+            return data != null ? data.lastCourseActivityIdx : 0;
+        }
+
+        public void SaveCoursePosition(string lessonId, int activityIndex)
+        {
+            if (data == null) return;
+            data.lastCourseLesson = lessonId;
+            data.lastCourseActivityIdx = activityIndex;
+            Persist();
+        }
+
         public IReadOnlyList<ObjectInfo> GetAllCatalogObjects()
         {
             if (database == null) database = FindFirstObjectByType<ObjectDatabaseProvider>();

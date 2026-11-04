@@ -1,0 +1,3497 @@
+{
+  "topics": [
+    {
+      "topicId": "IR-A1-T01",
+      "titleEn": "Starting to Speak Japanese",
+      "titleJp": "はじめての日本語",
+      "titleId": "Starting to Speak Japanese",
+      "description": "The foundation for first interactions: greeting people, saying goodbye, thanking, apologizing, asking someone to repeat information, describing language ability, and asking how to say an object’s name in Japanese.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L01",
+          "lessonNumber": 1,
+          "titleEn": "Good morning!",
+          "titleJp": "おはようございます",
+          "titleId": "Good morning!",
+          "objective": "Use basic expressions to begin and end simple interactions and respond in common social situations, including when someone helps you.",
+          "priority": 0,
+          "aksaraNote": "Hiragana introduction: recognize basic characters and read words. The practice also highlights character variations across printed and handwritten forms, long vowels, and the small っ used for doubled consonants.",
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A01",
+              "titleJp": "こんにちは",
+              "titleEn": "Greeting someone",
+              "titleId": "Greeting someone",
+              "explanation": "Choose a greeting that fits the time of day and the situation. This activity distinguishes morning, daytime, and evening greetings, and introduces both more polite and more casual forms.",
+              "keyPhrases": [
+                "おはようございます",
+                "おはよう",
+                "こんにちは",
+                "こんばんは"
+              ],
+              "panelImages": [
+                "FR-01_01_PDF_44"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Greeting someone'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "おはようございます",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'こんにちは' (Greeting someone)?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "おはよう",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T01-L01-A02",
+              "titleJp": "お先に失礼します",
+              "titleEn": "Saying goodbye",
+              "titleId": "Saying goodbye",
+              "explanation": "Recognize expressions used when leaving someone, ending a meeting, leaving work, or saying good night. The appropriate expression depends on the relationship and situation.",
+              "keyPhrases": [
+                "お先に失礼します",
+                "じゃあ、また",
+                "失礼します",
+                "おやすみなさい"
+              ],
+              "panelImages": [
+                "FR-02_01_PDF_47"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Saying goodbye'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "お先に失礼します",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'お先に失礼します' (Saying goodbye)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "じゃあ、また"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T01-L01-A03",
+              "titleJp": "ありがとうございます",
+              "titleEn": "Thanking and apologizing",
+              "titleId": "Thanking and apologizing",
+              "explanation": "Use expressions to say thank you and apologize. Learners discover that すみません can express both an apology and gratitude, especially when someone has gone to some trouble to help.",
+              "keyPhrases": [
+                "ありがとうございます",
+                "ありがとう",
+                "すみません",
+                "ごめん",
+                "どうぞ"
+              ],
+              "panelImages": [
+                "FR-03_01_PDF_49",
+                "FR-04_01_PDF_60",
+                "FR-04_02_PDF_60"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Thanking and apologizing'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'ありがとうございます' (Thanking and apologizing)?",
+                  "options": [
+                    "ありがとう",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T01-L01-A04",
+              "titleJp": "メッセージスタンプ",
+              "titleEn": "Understanding message stickers",
+              "titleId": "Understanding message stickers",
+              "explanation": "Recognize the meaning of simple stickers in a messaging app, such as good-morning greetings, good-night messages, thanks, and apologies. The focus is on understanding the message in its sending context.",
+              "keyPhrases": [
+                "おはよう",
+                "おやすみ",
+                "ありがとう",
+                "ごめん"
+              ],
+              "panelImages": [
+                "FR-05_01_PDF_52"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Understanding message stickers'?",
+                  "options": [
+                    "おはよう",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'メッセージスタンプ' (Understanding message stickers)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "おやすみ",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "There is no formal Grammar Notes section in this lesson.",
+              "explanation": "Lesson 1 does not contain a formal Grammar Notes section. The language focus is on fixed expressions, levels of politeness, and choosing greetings that fit the time and situation."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L01-CT01",
+            "content": "The etiquette of ojigi (bowing) when greeting or thanking someone; why sayoonara is not used for every type of goodbye; and the different contexts for using sumimasen and arigatoo."
+          },
+          "kanjiWords": [
+            "The specific writing-system materials in Lesson 1 are Hiragana Words and the Hiragana chart"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L02",
+          "lessonNumber": 2,
+          "titleEn": "I’m sorry, I don’t really understand.",
+          "titleJp": "すみません、よくわかりません",
+          "titleId": "I’m sorry, I don’t really understand.",
+          "objective": "Handle basic communication difficulties by asking someone to repeat or slow down, describing language ability, and asking how to name an object.",
+          "priority": 0,
+          "aksaraNote": "Katakana introduction: recognize the character chart, basic sounds, and combined forms used to write loanwords. Reading practice focuses on long vowels, doubled consonants, and Katakana spellings for particular sounds.",
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L02-A01",
+              "titleJp": "もういちど、お願いします",
+              "titleEn": "Asking someone to repeat",
+              "titleId": "Asking someone to repeat",
+              "explanation": "Ask someone to repeat information when you have not understood it. Learners also practice asking the speaker to talk a little more slowly or explain again.",
+              "keyPhrases": [
+                "もういちど、お願いします",
+                "もう少し、ゆっくり言ってください"
+              ],
+              "panelImages": [
+                "FR-06_01_PDF_62"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking someone to repeat'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "もういちど、お願いします",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'もういちど、お願いします' (Asking someone to repeat)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "もう少し、ゆっくり言ってください"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T01-L02-A02",
+              "titleJp": "日本語、できますか？",
+              "titleEn": "Asking about language ability",
+              "titleId": "Asking about language ability",
+              "explanation": "Ask whether someone can speak or understand a language, then describe your own ability simply—for example, that you can, can speak a little, or cannot yet.",
+              "keyPhrases": [
+                "日本語、できますか？",
+                "少しできます",
+                "わかりません"
+              ],
+              "panelImages": [
+                "FR-08_01_PDF_65"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking about language ability'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "日本語、できますか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '日本語、できますか？' (Asking about language ability)?",
+                  "options": [
+                    "少しできます",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T01-L02-A03",
+              "titleJp": "これは日本語で何と言いますか？",
+              "titleEn": "Asking how to say an object in Japanese",
+              "titleId": "Asking how to say an object in Japanese",
+              "explanation": "Use an unfamiliar object or word as a context for asking how to say it in Japanese. After hearing the answer, learners can ask for repetition and confirm that they understand.",
+              "keyPhrases": [
+                "これは日本語で何と言いますか？",
+                "もういちど、お願いします"
+              ],
+              "panelImages": [
+                "FR-07_01_PDF_69"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking how to say an object in Japanese'?",
+                  "options": [
+                    "これは日本語で何と言いますか？",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'これは日本語で何と言いますか？' (Asking how to say an object in Japanese)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "もういちど、お願いします",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "There is no formal Grammar Notes section in this lesson.",
+              "explanation": "Unlike Lesson 3 and later lessons, Lesson 2 has no formal Grammar Notes section. It focuses on practical expressions for repairing communication, asking about language ability, and asking “How do you say ... in Japanese?”."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L02-CT01",
+            "content": "The residence card as an identification card for foreign residents in Japan; oden as an example of Japanese food; the use of shortened words in Japanese; and basic information about mosquitoes as part of everyday-life context."
+          },
+          "kanjiWords": [
+            "The specific writing-system materials in Lesson 2 are Katakana Words and the Katakana chart"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T02",
+      "titleEn": "About Myself",
+      "titleJp": "私のこと",
+      "titleId": "About Myself",
+      "description": "Introduce personal and family information, hometown or country of origin, age, and place of residence, and understand simple information in photographs, name tags, and forms.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L03",
+          "lessonNumber": 3,
+          "titleEn": "Nice to meet you.",
+          "titleJp": "よろしくお願いします",
+          "titleId": "Nice to meet you.",
+          "objective": "Give a brief self-introduction and ask the name and place of origin of someone you have just met.",
+          "priority": 0,
+          "aksaraNote": "Introduction to the Japanese writing system: Hiragana, Katakana, Kanji, and Romaji have different functions. This overview introduces their general roles; it is not a complete curriculum for mastering all Kanji characters.",
+          "activities": [
+            {
+              "activityId": "IR-A1-T02-L03-A01",
+              "titleJp": "はじめまして",
+              "titleEn": "First-time self-introduction",
+              "titleId": "First-time self-introduction",
+              "explanation": "Give a simple self-introduction by stating your name and country or hometown. Opening and closing expressions help the conversation sound natural.",
+              "keyPhrases": [
+                "はじめまして。トンです。タイから来ました。よろしくお願いします。"
+              ],
+              "panelImages": [
+                "DL-01_01_PDF_81"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'First-time self-introduction'?",
+                  "options": [
+                    "はじめまして。トンです。タイから来ました。よろしくお願いします。",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'First-time self-introduction'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'はじめまして' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L03-A02",
+              "titleJp": "名札",
+              "titleEn": "Filling in a name tag",
+              "titleId": "Filling in a name tag",
+              "explanation": "Read a sample name tag, identify the name and country information, and write that information on a simple name tag.",
+              "keyPhrases": [
+                "名前",
+                "国"
+              ],
+              "panelImages": [
+                "DL-02_01_PDF_84"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Filling in a name tag'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "名前",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '名札' (Filling in a name tag)?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "国",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L03-A03",
+              "titleJp": "ご出身は？",
+              "titleEn": "Asking about someone’s name and origin",
+              "titleId": "Asking about someone’s name and origin",
+              "explanation": "Ask simple questions about someone’s name and place of origin, and give short answers. Question forms can be adjusted to sound more polite.",
+              "keyPhrases": [
+                "お名前は？",
+                "ご出身は？",
+                "～から来ました"
+              ],
+              "panelImages": [
+                "DL-01_01_PDF_81"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking about someone’s name and origin'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "お名前は？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'ご出身は？' (Asking about someone’s name and origin)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "ご出身は？"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L03-A04",
+              "titleJp": "申込書",
+              "titleEn": "Completing an application form",
+              "titleId": "Completing an application form",
+              "explanation": "Identify personal-information fields on a form, such as full name, nationality, and date of birth, and understand how to fill them in.",
+              "keyPhrases": [
+                "名前",
+                "国籍",
+                "生年月日"
+              ],
+              "panelImages": [
+                "DL-02_01_PDF_84"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Completing an application form'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "名前"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '申込書' (Completing an application form)?",
+                  "options": [
+                    "国籍",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L03-GR01",
+              "explanation": "Grammar IDs: IR-A1-L03-GR01 through IR-A1-L03-GR06."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L03-CT01",
+            "content": "Japanese writing systems; ways of addressing or calling someone; and Japanese era names in relevant contexts."
+          },
+          "kanjiWords": [
+            "名前 (name)",
+            "国 (country)",
+            "私 (I/me)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L04",
+          "lessonNumber": 4,
+          "titleEn": "I live in Tokyo.",
+          "titleJp": "東京に住んでいます",
+          "titleId": "I live in Tokyo.",
+          "objective": "Recognize family relationships, ask about age and place of residence, and describe people or animals in photographs.",
+          "priority": 0,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T02-L04-A01",
+              "titleJp": "夫と子どもです",
+              "titleEn": "Introducing family members",
+              "titleId": "Introducing family members",
+              "explanation": "Understand how family members and their relationships are introduced, such as a spouse, child, parent, or sibling.",
+              "keyPhrases": [
+                "夫と子どもです",
+                "父と母です"
+              ],
+              "panelImages": [
+                "DL-03_01_PDF_105"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Introducing family members'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "夫と子どもです",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '夫と子どもです' (Introducing family members)?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "父と母です",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A02",
+              "titleJp": "25歳です",
+              "titleEn": "Stating age and residence",
+              "titleId": "Stating age and residence",
+              "explanation": "Ask and answer questions about age and where someone lives. Learners also notice that age questions can have different levels of politeness.",
+              "keyPhrases": [
+                "何歳ですか？",
+                "25歳です",
+                "どこに住んでいますか？"
+              ],
+              "panelImages": [
+                "DL-03_02_PDF_108"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Stating age and residence'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "何歳ですか？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '25歳です' (Stating age and residence)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "25歳です"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A03",
+              "titleJp": "ペットのジョンです",
+              "titleEn": "Identifying a person or animal in a photo",
+              "titleId": "Identifying a person or animal in a photo",
+              "explanation": "Ask a simple question about a photograph, such as who a person or animal is, and answer by stating the relationship or identity.",
+              "keyPhrases": [
+                "これ、だれですか？",
+                "ペットのジョンです"
+              ],
+              "panelImages": [
+                "DL-03_01_PDF_105"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Identifying a person or animal in a photo'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "これ、だれですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'ペットのジョンです' (Identifying a person or animal in a photo)?",
+                  "options": [
+                    "ペットのジョンです",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A04",
+              "titleJp": "友だちと海！",
+              "titleEn": "Understanding a short post with a photo",
+              "titleId": "Understanding a short post with a photo",
+              "explanation": "Read a simple post about friends and activities. Use the photograph to identify the topic or understand who is involved.",
+              "keyPhrases": [
+                "友だち",
+                "海",
+                "写真"
+              ],
+              "panelImages": [
+                "DL-03_02_PDF_108"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Understanding a short post with a photo'?",
+                  "options": [
+                    "友だち",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '友だちと海！' (Understanding a short post with a photo)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "海",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L04-GR01",
+              "explanation": "Grammar IDs: IR-A1-L04-GR01 through IR-A1-L04-GR04."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L04-CT01",
+            "content": "Major cities in Japan; cross-cultural differences in asking someone’s age; and coastal life in Japan."
+          },
+          "kanjiWords": [
+            "父 (father)",
+            "母 (mother)",
+            "子ども (child)",
+            "日本 (Japan)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T03",
+      "titleEn": "My Favorite Foods",
+      "titleJp": "好きな食べ物",
+      "titleId": "My Favorite Foods",
+      "description": "Talk about foods and drinks you like, choose from a menu, order food, and understand signs outside eating places.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L05",
+          "lessonNumber": 5,
+          "titleEn": "I like udon.",
+          "titleJp": "うどんが好きです",
+          "titleId": "I like udon.",
+          "objective": "Express food preferences, respond to drink offers, and talk about simple eating habits.",
+          "priority": 0,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L05-A01",
+              "titleJp": "魚、好きですか？",
+              "titleEn": "Expressing food preferences",
+              "titleId": "Expressing food preferences",
+              "explanation": "Answer questions about foods you like or dislike. Learners connect food names with expressions of preference.",
+              "keyPhrases": [
+                "魚、好きですか？",
+                "魚が好きです"
+              ],
+              "panelImages": [
+                "DL-04_01_PDF_124"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Expressing food preferences'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "魚、好きですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '魚、好きですか？' (Expressing food preferences)?",
+                  "options": [
+                    "魚が好きです",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A02",
+              "titleJp": "わさびは、ちょっと…",
+              "titleEn": "Talking about Japanese food",
+              "titleId": "Talking about Japanese food",
+              "explanation": "Ask and answer questions about Japanese food preferences. An answer does not always have to be a direct “like” or “dislike”; ちょっと… can express hesitation or a gentle refusal.",
+              "keyPhrases": [
+                "わさびは、ちょっと…"
+              ],
+              "panelImages": [
+                "DL-05_01_PDF_131"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about Japanese food'?",
+                  "options": [
+                    "わさびは、ちょっと…",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about Japanese food'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'わさびは、ちょっと…' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A03",
+              "titleJp": "お茶、飲みますか？",
+              "titleEn": "Responding to a drink offer",
+              "titleId": "Responding to a drink offer",
+              "explanation": "Understand a question offering a drink and answer by naming the drink you want or politely declining in a simple way.",
+              "keyPhrases": [
+                "お茶、飲みますか？",
+                "何、飲みますか？"
+              ],
+              "panelImages": [
+                "DL-06_01_PDF_135"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Responding to a drink offer'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "お茶、飲みますか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'お茶、飲みますか？' (Responding to a drink offer)?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "何、飲みますか？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A04",
+              "titleJp": "朝ご飯は、あまり食べません",
+              "titleEn": "Talking about breakfast habits",
+              "titleId": "Talking about breakfast habits",
+              "explanation": "Ask and answer questions about what you usually eat and drink for breakfast. This activity introduces simple ways to describe frequency and habits.",
+              "keyPhrases": [
+                "朝ご飯は、あまり食べません"
+              ],
+              "panelImages": [
+                "DL-04_01_PDF_124"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about breakfast habits'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "朝ご飯は、あまり食べません",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about breakfast habits'?",
+                  "options": [
+                    "Learning and using '朝ご飯は、あまり食べません' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A05",
+              "titleJp": "今日の朝ご飯",
+              "titleEn": "Describing a food photo",
+              "titleId": "Describing a food photo",
+              "explanation": "Write a short description of a food photograph, such as what was eaten or drunk. The photo provides a cue for communicating simple information.",
+              "keyPhrases": [
+                "今日の朝ご飯"
+              ],
+              "panelImages": [
+                "DL-06_01_PDF_135"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Describing a food photo'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "今日の朝ご飯"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Describing a food photo'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '今日の朝ご飯' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L05-GR01",
+              "explanation": "Grammar IDs: IR-A1-L05-GR01 through IR-A1-L05-GR06."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L05-CT01",
+            "content": "Examples of Japanese food such as sashimi, sushi, tempura, udon, soba, and curry; foods whose taste or texture may be unfamiliar to some newcomers; and an introduction to sake as part of Japanese food and drink culture."
+          },
+          "kanjiWords": [
+            "水 (water)",
+            "食べます (to eat)",
+            "飲みます (to drink)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L06",
+          "lessonNumber": 6,
+          "titleEn": "A cheeseburger, please.",
+          "titleJp": "チーズバーガーください",
+          "titleId": "A cheeseburger, please.",
+          "objective": "Read menus, choose food, order at restaurants, and understand signs identifying eating places.",
+          "priority": 0,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L06-A01",
+              "titleJp": "ハンバーガー店のメニュー",
+              "titleEn": "Reading a fast-food menu",
+              "titleId": "Reading a fast-food menu",
+              "explanation": "Recognize menu items and available choices on a fast-food restaurant menu. Learners find the information they need to decide what to order.",
+              "keyPhrases": [
+                "メニュー",
+                "ハンバーガー"
+              ],
+              "panelImages": [
+                "DL-07_01_PDF_159"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a fast-food menu'?",
+                  "options": [
+                    "メニュー",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'ハンバーガー店のメニュー' (Reading a fast-food menu)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "ハンバーガー",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A02",
+              "titleJp": "こちらでおめしあがりですか？",
+              "titleEn": "Ordering at a fast-food restaurant",
+              "titleId": "Ordering at a fast-food restaurant",
+              "explanation": "Understand the staff member’s question about eating in or taking the order away, then answer and place an order.",
+              "keyPhrases": [
+                "こちらでおめしあがりですか？"
+              ],
+              "panelImages": [
+                "DL-07_01_PDF_159"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Ordering at a fast-food restaurant'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "こちらでおめしあがりですか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Ordering at a fast-food restaurant'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'こちらでおめしあがりですか？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A03",
+              "titleJp": "私はカレーにします",
+              "titleEn": "Choosing food with others",
+              "titleId": "Choosing food with others",
+              "explanation": "State your food choice and understand a friend’s choice when eating together. The activity emphasizes expressions for choosing one option.",
+              "keyPhrases": [
+                "私はカレーにします"
+              ],
+              "panelImages": [
+                "DL-07_01_PDF_159"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Choosing food with others'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "私はカレーにします",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Choosing food with others'?",
+                  "options": [
+                    "Learning and using '私はカレーにします' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A04",
+              "titleJp": "枝豆2つください",
+              "titleEn": "Ordering food and requesting tableware",
+              "titleId": "Ordering food and requesting tableware",
+              "explanation": "Order a specific quantity of food and request related items such as a plate or a glass.",
+              "keyPhrases": [
+                "枝豆2つください",
+                "お皿をお願いします"
+              ],
+              "panelImages": [
+                "DL-07_01_PDF_159"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Ordering food and requesting tableware'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "枝豆2つください"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '枝豆2つください' (Ordering food and requesting tableware)?",
+                  "options": [
+                    "お皿をお願いします",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A05",
+              "titleJp": "飲食店の看板",
+              "titleEn": "Recognizing restaurant signs",
+              "titleId": "Recognizing restaurant signs",
+              "explanation": "Read a restaurant sign or exterior display to understand what kind of eating place it is and what it offers.",
+              "keyPhrases": [
+                "飲食店",
+                "看板"
+              ],
+              "panelImages": [
+                "DL-07_01_PDF_159"
+              ],
+              "priority": 0,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Recognizing restaurant signs'?",
+                  "options": [
+                    "飲食店",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '飲食店の看板' (Recognizing restaurant signs)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "看板",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L06-GR01",
+              "explanation": "Grammar IDs: IR-A1-L06-GR01 through IR-A1-L06-GR04."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L06-CT01",
+            "content": "Different types of burger restaurants in Japan; meal-ticket ordering systems; basic ordering and payment practices; izakaya and side dishes; and the custom of providing oshibori (moist hand towels) and water at eating places."
+          },
+          "kanjiWords": [
+            "魚 (fish)",
+            "肉 (meat)",
+            "好き（な） (liked/favorite)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T04",
+      "titleEn": "Homes and Workplaces",
+      "titleJp": "家と職場",
+      "titleId": "Homes and Workplaces",
+      "description": "Describe homes, rooms, and furniture, and understand where people and objects are located in a home or workplace.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L07",
+          "lessonNumber": 7,
+          "titleEn": "There are four rooms.",
+          "titleJp": "部屋が４つあります",
+          "titleId": "There are four rooms.",
+          "objective": "Understand a basic explanation of a home’s layout, ask about facilities, describe living conditions, and read appliance buttons.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T04-L07-A01",
+              "titleJp": "ここは台所です",
+              "titleEn": "Identifying rooms in a home",
+              "titleId": "Identifying rooms in a home",
+              "explanation": "Listen to a simple explanation while someone shows you around a home. Recognize room names and understand the basic layout.",
+              "keyPhrases": [
+                "ここは台所です"
+              ],
+              "panelImages": [
+                "DL-08_01_PDF_182"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Identifying rooms in a home'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "ここは台所です",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Identifying rooms in a home'?",
+                  "options": [
+                    "Learning and using 'ここは台所です' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A02",
+              "titleJp": "電子レンジはありますか？",
+              "titleEn": "Asking about home facilities",
+              "titleId": "Asking about home facilities",
+              "explanation": "Ask whether a room or home has the equipment you need, then confirm whether the item is available.",
+              "keyPhrases": [
+                "電子レンジはありますか？"
+              ],
+              "panelImages": [
+                "DL-09_01_PDF_189"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking about home facilities'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "電子レンジはありますか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking about home facilities'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '電子レンジはありますか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A03",
+              "titleJp": "ちょっとせまいです",
+              "titleEn": "Describing living conditions",
+              "titleId": "Describing living conditions",
+              "explanation": "Give a simple answer about your home and describe its condition, for example as spacious, small, quiet, or not very quiet.",
+              "keyPhrases": [
+                "ちょっとせまいです"
+              ],
+              "panelImages": [
+                "DL-08_01_PDF_182"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Describing living conditions'?",
+                  "options": [
+                    "ちょっとせまいです",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Describing living conditions'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'ちょっとせまいです' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A04",
+              "titleJp": "アパートに住んでいます",
+              "titleEn": "Describing the type of home",
+              "titleId": "Describing the type of home",
+              "explanation": "Ask and answer questions about the type of housing or home where someone lives.",
+              "keyPhrases": [
+                "アパートに住んでいます"
+              ],
+              "panelImages": [
+                "DL-09_01_PDF_189"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Describing the type of home'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "アパートに住んでいます",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Describing the type of home'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'アパートに住んでいます' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A05",
+              "titleJp": "洗濯機・エアコンのボタン",
+              "titleEn": "Reading appliance buttons",
+              "titleId": "Reading appliance buttons",
+              "explanation": "Recognize words on household-appliance buttons, such as those on a washing machine or air-conditioner remote, to understand which function a button operates.",
+              "keyPhrases": [
+                "洗濯機",
+                "エアコン",
+                "ボタン"
+              ],
+              "panelImages": [
+                "DL-08_01_PDF_182"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading appliance buttons'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "洗濯機",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '洗濯機・エアコンのボタン' (Reading appliance buttons)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "エアコン"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L07-GR01",
+              "explanation": "Grammar IDs: IR-A1-L07-GR01 through IR-A1-L07-GR05."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L07-CT01",
+            "content": "Common features of Japanese homes, how to use the bathing area, futon as bedding, and different types of housing including apartments and shared houses."
+          },
+          "kanjiWords": [
+            "家 (house/home)",
+            "新しい (new)",
+            "広い (spacious)",
+            "古い (old)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L08",
+          "lessonNumber": 8,
+          "titleEn": "Where is Yamada-san?",
+          "titleJp": "山田さんはどこにいますか？",
+          "titleId": "Where is Yamada-san?",
+          "objective": "Ask where people and objects are, understand explanations of workplace rooms, and recognize room labels.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T04-L08-A01",
+              "titleJp": "ここで打ち合わせをします",
+              "titleEn": "Identifying workplace rooms",
+              "titleId": "Identifying workplace rooms",
+              "explanation": "Listen to a simple explanation while being shown rooms at a workplace and understand the name or function of each room.",
+              "keyPhrases": [
+                "ここで打ち合わせをします"
+              ],
+              "panelImages": [
+                "DL-10_01_PDF_215"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Identifying workplace rooms'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "ここで打ち合わせをします"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Identifying workplace rooms'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'ここで打ち合わせをします' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L08-A02",
+              "titleJp": "食堂にいます",
+              "titleEn": "Asking where someone is",
+              "titleId": "Asking where someone is",
+              "explanation": "Ask and answer where a person is, for example whether someone is in the dining room or another location.",
+              "keyPhrases": [
+                "山田さんは、食堂にいます"
+              ],
+              "panelImages": [
+                "DL-10_01_PDF_215"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking where someone is'?",
+                  "options": [
+                    "山田さんは、食堂にいます",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking where someone is'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '食堂にいます' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L08-A03",
+              "titleJp": "はさみは、そこにあります",
+              "titleEn": "Asking where equipment is",
+              "titleId": "Asking where equipment is",
+              "explanation": "Ask and answer where an object or piece of equipment is, using place words such as here, there, and over there.",
+              "keyPhrases": [
+                "はさみは、そこにあります"
+              ],
+              "panelImages": [
+                "DL-10_01_PDF_215"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking where equipment is'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "はさみは、そこにあります",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking where equipment is'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'はさみは、そこにあります' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T04-L08-A04",
+              "titleJp": "部屋の表示",
+              "titleEn": "Reading room signs",
+              "titleId": "Reading room signs",
+              "explanation": "Recognize signs on room doors or at entrances to identify the name or function of a room.",
+              "keyPhrases": [
+                "部屋の表示"
+              ],
+              "panelImages": [
+                "DL-10_01_PDF_215"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading room signs'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "部屋の表示",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading room signs'?",
+                  "options": [
+                    "Learning and using '部屋の表示' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L08-GR01",
+              "explanation": "Grammar IDs: IR-A1-L08-GR01 through IR-A1-L08-GR05."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L08-CT01",
+            "content": "Work uniforms, tea, and fax machines as objects or practices that appear in Japanese workplace settings."
+          },
+          "kanjiWords": [
+            "上 (above)",
+            "下 (below)",
+            "中 (inside/middle)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T05",
+      "titleEn": "Daily Life",
+      "titleJp": "毎日の生活",
+      "titleId": "Daily Life",
+      "description": "Talk about routines and time, understand schedules, follow instructions, ask for help, and borrow equipment.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L09",
+          "lessonNumber": 9,
+          "titleEn": "Lunch break is from 12 to 1.",
+          "titleJp": "12時から1時まで昼休みです",
+          "titleId": "Lunch break is from 12 to 1.",
+          "objective": "Talk about the times of daily activities and agree on a suitable time.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T05-L09-A01",
+              "titleJp": "何時に起きますか？",
+              "titleEn": "Asking when an activity takes place",
+              "titleId": "Asking when an activity takes place",
+              "explanation": "Ask and answer when someone gets up and goes to bed. This activity introduces simple ways to state the time of an activity.",
+              "keyPhrases": [
+                "何時に起きますか？"
+              ],
+              "panelImages": [
+                "DL-11_01_PDF_240"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking when an activity takes place'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "何時に起きますか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking when an activity takes place'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using '何時に起きますか？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L09-A02",
+              "titleJp": "1日のスケジュールを説明します",
+              "titleEn": "Understanding a daily schedule",
+              "titleId": "Understanding a daily schedule",
+              "explanation": "Listen to a short explanation of the sequence of activities in one day, especially a schedule described in a workplace context.",
+              "keyPhrases": [
+                "1日のスケジュール"
+              ],
+              "panelImages": [
+                "DL-11_01_PDF_240"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Understanding a daily schedule'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "1日のスケジュール",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Understanding a daily schedule'?",
+                  "options": [
+                    "Learning and using '1日のスケジュールを説明します' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L09-A03",
+              "titleJp": "スケジュールボード",
+              "titleEn": "Reading a schedule board",
+              "titleId": "Reading a schedule board",
+              "explanation": "Understand the main information on a schedule board or whiteboard that shows several people’s schedules.",
+              "keyPhrases": [
+                "スケジュールボード"
+              ],
+              "panelImages": [
+                "DL-11_01_PDF_240"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a schedule board'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "スケジュールボード"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a schedule board'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'スケジュールボード' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L09-A04",
+              "titleJp": "私は日曜日がいいです",
+              "titleEn": "Agreeing on a suitable time",
+              "titleId": "Agreeing on a suitable time",
+              "explanation": "Ask about someone’s availability and state a suitable day or time to make an appointment or arrange a schedule.",
+              "keyPhrases": [
+                "私は日曜日がいいです"
+              ],
+              "panelImages": [
+                "DL-11_01_PDF_240"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Agreeing on a suitable time'?",
+                  "options": [
+                    "私は日曜日がいいです",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Agreeing on a suitable time'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '私は日曜日がいいです' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L09-GR01",
+              "explanation": "Grammar IDs: IR-A1-L09-GR01 through IR-A1-L09-GR03."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L09-CT01",
+            "content": "Morning gatherings, public swimming pools, and watching films as examples of everyday-life contexts."
+          },
+          "kanjiWords": [
+            "月",
+            "火",
+            "水",
+            "木",
+            "金",
+            "土",
+            "日",
+            "～曜日 (days of the week)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L10",
+          "lessonNumber": 10,
+          "titleEn": "Please lend me the stapler.",
+          "titleJp": "ホチキス貸してください",
+          "titleId": "Please lend me the stapler.",
+          "objective": "Understand simple instructions, confirm information, read workplace notes, and ask to borrow items.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T05-L10-A01",
+              "titleJp": "ちょっと手伝ってください",
+              "titleEn": "Asking for help",
+              "titleId": "Asking for help",
+              "explanation": "Understand short, simple instructions at work and identify the action being requested.",
+              "keyPhrases": [
+                "ちょっと手伝ってください"
+              ],
+              "panelImages": [
+                "DL-12_01_PDF_260"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking for help'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "ちょっと手伝ってください",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking for help'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'ちょっと手伝ってください' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L10-A02",
+              "titleJp": "すみません、いくつですか？",
+              "titleEn": "Confirming instructions",
+              "titleId": "Confirming instructions",
+              "explanation": "Repeat or confirm important parts of an instruction, such as a quantity or detail that needs to be completed, before carrying it out.",
+              "keyPhrases": [
+                "すみません、いくつですか？"
+              ],
+              "panelImages": [
+                "DL-12_01_PDF_260"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Confirming instructions'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません、いくつですか？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Confirming instructions'?",
+                  "options": [
+                    "Learning and using 'すみません、いくつですか？' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L10-A03",
+              "titleJp": "仕事のメモ",
+              "titleEn": "Reading a work memo",
+              "titleId": "Reading a work memo",
+              "explanation": "Read a short handwritten memo and identify the instructions or important information it contains.",
+              "keyPhrases": [
+                "仕事のメモ"
+              ],
+              "panelImages": [
+                "DL-12_01_PDF_260"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a work memo'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "仕事のメモ"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a work memo'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '仕事のメモ' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L10-A04",
+              "titleJp": "スマホの充電器、ありますか？",
+              "titleEn": "Borrowing an item",
+              "titleId": "Borrowing an item",
+              "explanation": "Ask someone to lend you an item or ask whether the item you need is available.",
+              "keyPhrases": [
+                "スマホの充電器、ありますか？",
+                "貸してください"
+              ],
+              "panelImages": [
+                "DL-12_01_PDF_260"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Borrowing an item'?",
+                  "options": [
+                    "スマホの充電器、ありますか？",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'スマホの充電器、ありますか？' (Borrowing an item)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "貸してください",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T05-L10-A05",
+              "titleJp": "チェックリスト",
+              "titleEn": "Checking an equipment list",
+              "titleId": "Checking an equipment list",
+              "explanation": "Read an equipment list and confirm that all required items are available.",
+              "keyPhrases": [
+                "チェックリスト"
+              ],
+              "panelImages": [
+                "DL-12_01_PDF_260"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Checking an equipment list'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "チェックリスト",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Checking an equipment list'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'チェックリスト' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L10-GR01",
+              "explanation": "Grammar IDs: IR-A1-L10-GR01 through IR-A1-L10-GR03."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L10-CT01",
+            "content": "Expressions that look like English but have meanings specific to Japan; charging a mobile phone; and the 24-hour clock."
+          },
+          "kanjiWords": [
+            "朝 (morning)",
+            "昼 (daytime/noon)",
+            "夜 (night)",
+            "～時 (o’clock)",
+            "～分 (minute)",
+            "～半 (half)",
+            "～枚 (counter for flat or thin objects)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T06",
+      "titleEn": "What I Like to Do",
+      "titleJp": "私の好きなこと",
+      "titleId": "What I Like to Do",
+      "description": "Talk about hobbies and preferences, activities on days off, read event notices, invite friends, and reply to invitations.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L11",
+          "lessonNumber": 11,
+          "titleEn": "What kind of manga do you like?",
+          "titleJp": "どんなマンガが好きですか？",
+          "titleId": "What kind of manga do you like?",
+          "objective": "Ask and answer questions about hobbies, favorite things, and activities people usually do on their days off.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T06-L11-A01",
+              "titleJp": "趣味は何ですか？",
+              "titleEn": "Talking about hobbies",
+              "titleId": "Talking about hobbies",
+              "explanation": "Give a simple answer when asked about your hobbies or activities you enjoy.",
+              "keyPhrases": [
+                "趣味は何ですか？"
+              ],
+              "panelImages": [
+                "DL-13_01_PDF_285"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about hobbies'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "趣味は何ですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about hobbies'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '趣味は何ですか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L11-A02",
+              "titleJp": "「ドラゴンボール」が大好きです",
+              "titleEn": "Talking about favorite things",
+              "titleId": "Talking about favorite things",
+              "explanation": "Ask and answer questions about favorite kinds of entertainment or activities, including manga and other interests.",
+              "keyPhrases": [
+                "「ドラゴンボール」が大好きです"
+              ],
+              "panelImages": [
+                "DL-13_01_PDF_285"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about favorite things'?",
+                  "options": [
+                    "「ドラゴンボール」が大好きです",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about favorite things'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '「ドラゴンボール」が大好きです' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L11-A03",
+              "titleJp": "うちでゆっくりします",
+              "titleEn": "Talking about days off",
+              "titleId": "Talking about days off",
+              "explanation": "Ask and answer questions about what you do on days off, such as relaxing at home or doing another activity.",
+              "keyPhrases": [
+                "うちでゆっくりします"
+              ],
+              "panelImages": [
+                "DL-13_01_PDF_285"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about days off'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "うちでゆっくりします",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about days off'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'うちでゆっくりします' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L11-A04",
+              "titleJp": "SNSのプロフィール",
+              "titleEn": "Reading a short profile",
+              "titleId": "Reading a short profile",
+              "explanation": "Read a simple social-media profile and find information about the profile owner’s interests or preferences.",
+              "keyPhrases": [
+                "SNSのプロフィール"
+              ],
+              "panelImages": [
+                "DL-13_01_PDF_285"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a short profile'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "SNSのプロフィール",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a short profile'?",
+                  "options": [
+                    "Learning and using 'SNSのプロフィール' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L11-GR01",
+              "explanation": "Grammar IDs: IR-A1-L11-GR01 through IR-A1-L11-GR05."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L11-CT01",
+            "content": "Manga, video games, Japanese literature, soccer/rugby, and pachinko as examples of entertainment and activities discussed in Japanese contexts."
+          },
+          "kanjiWords": [
+            "読みます (to read)",
+            "聞きます (to listen)",
+            "見ます (to watch/see)",
+            "本 (book)",
+            "友だち (friend)",
+            "何 (what)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L12",
+          "lessonNumber": 12,
+          "titleEn": "Would you like to go for a drink together?",
+          "titleJp": "いっしょに飲みに行きませんか？",
+          "titleId": "Would you like to go for a drink together?",
+          "objective": "Understand event information, invite someone, say when you are available, and respond to an invitation.",
+          "priority": 1,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T06-L12-A01",
+              "titleJp": "イベントの案内",
+              "titleEn": "Reading an event notice",
+              "titleId": "Reading an event notice",
+              "explanation": "Find the date, time, and place in an event announcement to understand the essential details.",
+              "keyPhrases": [
+                "イベントの案内"
+              ],
+              "panelImages": [
+                "DL-14_01_PDF_311"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading an event notice'?",
+                  "options": [
+                    "イベントの案内",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading an event notice'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'イベントの案内' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A02",
+              "titleJp": "来週、夏祭りがありますね",
+              "titleEn": "Talking about upcoming events",
+              "titleId": "Talking about upcoming events",
+              "explanation": "Ask and answer whether someone will attend an event or activity that will take place in the future.",
+              "keyPhrases": [
+                "来週、夏祭りがありますね"
+              ],
+              "panelImages": [
+                "DL-14_02_PDF_311"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about upcoming events'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "来週、夏祭りがありますね",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about upcoming events'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using '来週、夏祭りがありますね' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A03",
+              "titleJp": "いっしょに行きましょう",
+              "titleEn": "Inviting someone and agreeing on a time",
+              "titleId": "Inviting someone and agreeing on a time",
+              "explanation": "Say when you are available, invite someone to do an activity together, or respond to an invitation.",
+              "keyPhrases": [
+                "いっしょに行きましょう",
+                "行きませんか？"
+              ],
+              "panelImages": [
+                "DL-14_01_PDF_311"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Inviting someone and agreeing on a time'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "いっしょに行きましょう",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'いっしょに行きましょう' (Inviting someone and agreeing on a time)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "行きませんか？"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A04",
+              "titleJp": "誘いの返事",
+              "titleEn": "Replying to an invitation",
+              "titleId": "Replying to an invitation",
+              "explanation": "Write a short reply to a friend who has sent an invitation, accepting it or otherwise responding to the invitation.",
+              "keyPhrases": [
+                "誘いの返事"
+              ],
+              "panelImages": [
+                "DL-14_02_PDF_311"
+              ],
+              "priority": 1,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Replying to an invitation'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "誘いの返事"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Replying to an invitation'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '誘いの返事' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L12-GR01",
+              "explanation": "Grammar IDs: IR-A1-L12-GR01 through IR-A1-L12-GR05."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L12-CT01",
+            "content": "Summer festivals, Japanese mountains, the Otoko wa Tsurai yo film series, and karate as contexts for events and activities."
+          },
+          "kanjiWords": [
+            "～年 (year)",
+            "～月 (month)",
+            "～日 (date/day)",
+            "今日 (today)",
+            "今週 (this week)",
+            "今度 (next time/another time)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T07",
+      "titleEn": "Walking around Town",
+      "titleJp": "街を歩く",
+      "titleId": "Walking around Town",
+      "description": "Use public transportation, ask for directions and facility locations, explain your current position, and read signs around town.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L13",
+          "lessonNumber": 13,
+          "titleEn": "Does this bus go to the airport?",
+          "titleJp": "このバスは空港に行きますか？",
+          "titleId": "Does this bus go to the airport?",
+          "objective": "Find routes and modes of transportation, understand travel information, and ask how to get to a destination.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L13-A01",
+              "titleJp": "何番線ですか？",
+              "titleEn": "Asking about a platform or service number",
+              "titleId": "Asking about a platform or service number",
+              "explanation": "Ask whether a train or bus goes to the place you want to reach and understand the answer.",
+              "keyPhrases": [
+                "何番線ですか？",
+                "このバスは空港に行きますか？"
+              ],
+              "panelImages": [
+                "CT-01_01_PDF_336"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking about a platform or service number'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "何番線ですか？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '何番線ですか？' (Asking about a platform or service number)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "このバスは空港に行きますか？"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L13-A02",
+              "titleJp": "すみません、今どこですか？",
+              "titleEn": "Confirming your location while travelling",
+              "titleId": "Confirming your location while travelling",
+              "explanation": "Listen to a station name announced on a train. If you do not understand the announcement, ask another person for help or clarification.",
+              "keyPhrases": [
+                "すみません、今どこですか？"
+              ],
+              "panelImages": [
+                "CT-01_01_PDF_336"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Confirming your location while travelling'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "すみません、今どこですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Confirming your location while travelling'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'すみません、今どこですか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L13-A03",
+              "titleJp": "1時間ぐらいかかります",
+              "titleEn": "Describing a route and travel time",
+              "titleId": "Describing a route and travel time",
+              "explanation": "Say how you travel to work or another destination and approximately how long the journey takes.",
+              "keyPhrases": [
+                "1時間ぐらいかかります"
+              ],
+              "panelImages": [
+                "CT-01_01_PDF_336"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Describing a route and travel time'?",
+                  "options": [
+                    "1時間ぐらいかかります",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Describing a route and travel time'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '1時間ぐらいかかります' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L13-A04",
+              "titleJp": "市役所まで、どうやって行きますか？",
+              "titleEn": "Asking for directions",
+              "titleId": "Asking for directions",
+              "explanation": "Ask how to get to a particular destination and understand the route or vehicle information provided.",
+              "keyPhrases": [
+                "どうやって行きますか？"
+              ],
+              "panelImages": [
+                "CT-01_01_PDF_336"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking for directions'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "どうやって行きますか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking for directions'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using '市役所まで、どうやって行きますか？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L13-A05",
+              "titleJp": "駅の中の表示",
+              "titleEn": "Reading signs inside a station",
+              "titleId": "Reading signs inside a station",
+              "explanation": "Recognize common signs inside a station and understand the information they show, such as directions, platforms, or facilities.",
+              "keyPhrases": [
+                "駅の中の表示"
+              ],
+              "panelImages": [
+                "CT-01_01_PDF_336"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading signs inside a station'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "駅の中の表示",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading signs inside a station'?",
+                  "options": [
+                    "Learning and using '駅の中の表示' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L13-GR01",
+              "explanation": "Grammar IDs: IR-A1-L13-GR01 through IR-A1-L13-GR06."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L13-CT01",
+            "content": "Commuting to work and using public transportation in Japan."
+          },
+          "kanjiWords": [
+            "東 (east)",
+            "西 (west)",
+            "南 (south)",
+            "北 (north)",
+            "会社 (company)",
+            "来ます (to come)",
+            "行きます (to go)",
+            "乗ります (to board/take a vehicle)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L14",
+          "lessonNumber": 14,
+          "titleEn": "That is a big building, isn’t it?",
+          "titleJp": "大きな建物ですね",
+          "titleId": "That is a big building, isn’t it?",
+          "objective": "Ask where public facilities are, explain your own position, share impressions of an area, and read opening hours.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L14-A01",
+              "titleJp": "トイレはどこですか？",
+              "titleEn": "Asking where a facility is",
+              "titleId": "Asking where a facility is",
+              "explanation": "Ask where public facilities such as toilets or ATMs are located, then understand the directions in the answer.",
+              "keyPhrases": [
+                "トイレはどこですか？"
+              ],
+              "panelImages": [
+                "CT-02_01_PDF_369"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking where a facility is'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "トイレはどこですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking where a facility is'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'トイレはどこですか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L14-A02",
+              "titleJp": "今、改札の前にいます",
+              "titleEn": "Explaining your current position",
+              "titleId": "Explaining your current position",
+              "explanation": "Tell someone your location over the phone so that the other person can find or meet you.",
+              "keyPhrases": [
+                "今、改札の前にいます"
+              ],
+              "panelImages": [
+                "CT-03_01_PDF_377"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Explaining your current position'?",
+                  "options": [
+                    "今、改札の前にいます",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Explaining your current position'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '今、改札の前にいます' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L14-A03",
+              "titleJp": "ここは十条商店街です",
+              "titleEn": "Sharing impressions of a town",
+              "titleId": "Sharing impressions of a town",
+              "explanation": "Express simple impressions when someone shows you around a town, such as saying that a street is lively or a park is spacious.",
+              "keyPhrases": [
+                "にぎやかな通りですね",
+                "広い公園ですね"
+              ],
+              "panelImages": [
+                "CT-04_01_PDF_390",
+                "CT-04_02_PDF_390",
+                "CT-04_03_PDF_390"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Sharing impressions of a town'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "にぎやかな通りですね",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'ここは十条商店街です' (Sharing impressions of a town)?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "広い公園ですね",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T07-L14-A04",
+              "titleJp": "街にある看板",
+              "titleEn": "Reading signs and opening hours",
+              "titleId": "Reading signs and opening hours",
+              "explanation": "Read signs in shops or restaurants to find information such as opening hours, closing times, or regular closing days.",
+              "keyPhrases": [
+                "街にある看板"
+              ],
+              "panelImages": [
+                "CT-02_01_PDF_369"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading signs and opening hours'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "街にある看板",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading signs and opening hours'?",
+                  "options": [
+                    "Learning and using '街にある看板' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L14-GR01",
+              "explanation": "Grammar IDs: IR-A1-L14-GR01 through IR-A1-L14-GR03."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L14-CT01",
+            "content": "Coin lockers, vending machines, ATMs, Japanese rivers, high-rise buildings, and the concept of wabi-sabi as enrichment for exploring a town."
+          },
+          "kanjiWords": [
+            "大きい (big)",
+            "小さい (small)",
+            "高い (high/expensive)",
+            "低い (low)",
+            "前 (front/in front)",
+            "後ろ (behind)",
+            "横 (beside/side)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T08",
+      "titleEn": "At Stores",
+      "titleJp": "店で",
+      "titleId": "At Stores",
+      "description": "Find items in shopping centers, understand floor guides, ask store staff, comment on products, and understand prices and payment procedures.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L15",
+          "lessonNumber": 15,
+          "titleEn": "I need some batteries.",
+          "titleJp": "電池がほしいんですが…",
+          "titleId": "I need some batteries.",
+          "objective": "Find where to buy an item, understand store guides, ask where products are located, and make simple comments.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L15-A01",
+              "titleJp": "どこで買えますか？",
+              "titleEn": "Asking where to buy an item",
+              "titleId": "Asking where to buy an item",
+              "explanation": "Ask where an item you need can be purchased and understand the answer about a suitable place or type of store.",
+              "keyPhrases": [
+                "どこで買えますか？"
+              ],
+              "panelImages": [
+                "CT-05_01_PDF_395"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking where to buy an item'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "どこで買えますか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking where to buy an item'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'どこで買えますか？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L15-A02",
+              "titleJp": "フロアガイド",
+              "titleEn": "Reading a store floor guide",
+              "titleId": "Reading a store floor guide",
+              "explanation": "Use a shopping-center map or floor guide to find the section or store where a particular item is sold.",
+              "keyPhrases": [
+                "フロアガイド"
+              ],
+              "panelImages": [
+                "CT-05_01_PDF_395"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a store floor guide'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "フロアガイド",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a store floor guide'?",
+                  "options": [
+                    "Learning and using 'フロアガイド' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L15-A03",
+              "titleJp": "カメラは何階ですか？",
+              "titleEn": "Asking staff where a product is located",
+              "titleId": "Asking staff where a product is located",
+              "explanation": "Ask shopping-center staff which floor has the item you are looking for, then understand the directions.",
+              "keyPhrases": [
+                "カメラは何階ですか？"
+              ],
+              "panelImages": [
+                "CT-06_01_PDF_409"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking staff where a product is located'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "カメラは何階ですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking staff where a product is located'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'カメラは何階ですか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L15-A04",
+              "titleJp": "わあ、かっこいいですね",
+              "titleEn": "Commenting on a product",
+              "titleId": "Commenting on a product",
+              "explanation": "Share a simple impression about an item while shopping with a friend, for example that it looks cool, nice, or cute.",
+              "keyPhrases": [
+                "かっこいいですね",
+                "かわいいですね"
+              ],
+              "panelImages": [
+                "CT-06_02_PDF_409"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Commenting on a product'?",
+                  "options": [
+                    "かっこいいですね",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "Which of the following is a key expression studied in 'わあ、かっこいいですね' (Commenting on a product)?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "かわいいですね",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L15-A05",
+              "titleJp": "ショッピングセンターの表示",
+              "titleEn": "Understanding shopping-center signs",
+              "titleId": "Understanding shopping-center signs",
+              "explanation": "Recognize common signs in department stores or shopping centers, such as entrance, exit, floor, push, and pull.",
+              "keyPhrases": [
+                "ショッピングセンターの表示"
+              ],
+              "panelImages": [
+                "CT-06_01_PDF_409"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Understanding shopping-center signs'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "ショッピングセンターの表示",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Understanding shopping-center signs'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'ショッピングセンターの表示' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L15-GR01",
+              "explanation": "Grammar IDs: IR-A1-L15-GR01 through IR-A1-L15-GR02."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L15-CT01",
+            "content": "Types of stores in Japan, how building floors are counted, umbrellas, different words for “toilet,” and elevator buttons."
+          },
+          "kanjiWords": [
+            "入口 (entrance)",
+            "出口 (exit)",
+            "～階 (floor)",
+            "押す (push)",
+            "引く (pull)",
+            "安い (inexpensive/cheap)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L16",
+          "lessonNumber": 16,
+          "titleEn": "How much is this?",
+          "titleJp": "これ、いくらですか？",
+          "titleId": "How much is this?",
+          "objective": "Understand and ask about prices, state the quantity of items needed, and respond to questions at checkout.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L16-A01",
+              "titleJp": "1,980円です",
+              "titleEn": "Understanding a product price",
+              "titleId": "Understanding a product price",
+              "explanation": "Listen to the price of a product and recognize the amount of money stated.",
+              "keyPhrases": [
+                "1",
+                "980円です"
+              ],
+              "panelImages": [
+                "CT-07_01_PDF_422"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Understanding a product price'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "1",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "Which of the following is a key expression studied in '1,980円です' (Understanding a product price)?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "980円です"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A02",
+              "titleJp": "あのTシャツ、いくらですか？",
+              "titleEn": "Asking how much something costs",
+              "titleId": "Asking how much something costs",
+              "explanation": "Ask store staff the price of a particular item and understand the price given in response.",
+              "keyPhrases": [
+                "あのTシャツ、いくらですか？"
+              ],
+              "panelImages": [
+                "CT-08_01_PDF_450"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Asking how much something costs'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "あのTシャツ、いくらですか？"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Asking how much something costs'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'あのTシャツ、いくらですか？' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A03",
+              "titleJp": "ひき肉200gください",
+              "titleEn": "Stating a quantity or amount",
+              "titleId": "Stating a quantity or amount",
+              "explanation": "Say how much of an item or ingredient you want to buy, including the appropriate quantity or weight unit.",
+              "keyPhrases": [
+                "ひき肉200gください"
+              ],
+              "panelImages": [
+                "CT-08_02_PDF_451"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Stating a quantity or amount'?",
+                  "options": [
+                    "ひき肉200gください",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Stating a quantity or amount'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'ひき肉200gください' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A04",
+              "titleJp": "こちら、温めますか？",
+              "titleEn": "Responding to a cashier’s question",
+              "titleId": "Responding to a cashier’s question",
+              "explanation": "Understand common questions at a convenience-store checkout, such as whether you need chopsticks or a bag, or whether food should be heated.",
+              "keyPhrases": [
+                "こちら、温めますか？"
+              ],
+              "panelImages": [
+                "CT-07_01_PDF_422"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Responding to a cashier’s question'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "こちら、温めますか？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Responding to a cashier’s question'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'こちら、温めますか？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A05",
+              "titleJp": "割引表示",
+              "titleEn": "Reading a discount sign",
+              "titleId": "Reading a discount sign",
+              "explanation": "Recognize discount information and understand the reduced price displayed on a store discount sign.",
+              "keyPhrases": [
+                "割引表示"
+              ],
+              "panelImages": [
+                "CT-08_01_PDF_450"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a discount sign'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "割引表示",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a discount sign'?",
+                  "options": [
+                    "Learning and using '割引表示' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L16-GR01",
+              "explanation": "Grammar IDs: IR-A1-L16-GR01 through IR-A1-L16-GR03."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L16-CT01",
+            "content": "Japanese banknotes and coins, asking about prices, maneki-neko, taiyaki, korokke, onigiri, and electronic payment."
+          },
+          "kanjiWords": [
+            "一",
+            "二",
+            "三",
+            "四",
+            "五",
+            "六",
+            "七",
+            "八",
+            "九",
+            "十 (numbers one through ten)"
+          ]
+        }
+      ]
+    },
+    {
+      "topicId": "IR-A1-T09",
+      "titleEn": "Holidays / Days Off",
+      "titleJp": "休みの日に",
+      "titleId": "Holidays / Days Off",
+      "description": "Talk about past activities, share impressions, discuss plans and wishes, and describe travel experiences.",
+      "lessons": [
+        {
+          "lessonId": "IR-A1-L17",
+          "lessonNumber": 17,
+          "titleEn": "I went to see a movie.",
+          "titleJp": "映画を見に行きました",
+          "titleId": "I went to see a movie.",
+          "objective": "Talk about what you did on a day off, ask about other people’s experiences, and share simple impressions.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L17-A01",
+              "titleJp": "週末は何をしましたか？",
+              "titleEn": "Talking about weekend activities",
+              "titleId": "Talking about weekend activities",
+              "explanation": "Give a simple answer when asked what you did on a day off or over the weekend.",
+              "keyPhrases": [
+                "週末は何をしましたか？"
+              ],
+              "panelImages": [
+                "EX-01_01_PDF_452"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about weekend activities'?",
+                  "options": [
+                    "週末は何をしましたか？",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about weekend activities'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '週末は何をしましたか？' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A02",
+              "titleJp": "楽しかったです",
+              "titleEn": "Sharing impressions of an experience",
+              "titleId": "Sharing impressions of an experience",
+              "explanation": "Ask and answer questions about activities on a day off and share an impression, such as saying that it was enjoyable or ordinary.",
+              "keyPhrases": [
+                "楽しかったです"
+              ],
+              "panelImages": [
+                "EX-02_01_PDF_463"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Sharing impressions of an experience'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "楽しかったです",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Sharing impressions of an experience'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using '楽しかったです' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A03",
+              "titleJp": "家族で水族館に行きました",
+              "titleEn": "Reading a post about an activity",
+              "titleId": "Reading a post about an activity",
+              "explanation": "Read a social-media post about an activity someone did with their family. The photograph helps identify the activity and place visited.",
+              "keyPhrases": [
+                "家族で水族館に行きました"
+              ],
+              "panelImages": [
+                "EX-03_01_PDF_465"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a post about an activity'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "家族で水族館に行きました",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a post about an activity'?",
+                  "options": [
+                    "Learning and using '家族で水族館に行きました' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A04",
+              "titleJp": "料金表",
+              "titleEn": "Reading a price list",
+              "titleId": "Reading a price list",
+              "explanation": "Read the price list for a local facility and find out how much needs to be paid.",
+              "keyPhrases": [
+                "料金表"
+              ],
+              "panelImages": [
+                "EX-01_01_PDF_452"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Reading a price list'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "料金表"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Reading a price list'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '料金表' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A05",
+              "titleJp": "今、家に着きました",
+              "titleEn": "Sending a message after going out",
+              "titleId": "Sending a message after going out",
+              "explanation": "Write a short message to someone you went out with to say that you have arrived or to share an impression of the activity.",
+              "keyPhrases": [
+                "今、家に着きました"
+              ],
+              "panelImages": [
+                "EX-03_01_PDF_465"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Sending a message after going out'?",
+                  "options": [
+                    "今、家に着きました",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Sending a message after going out'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '今、家に着きました' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L17-GR01",
+              "explanation": "Grammar IDs: IR-A1-L17-GR01 through IR-A1-L17-GR05."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L17-CT01",
+            "content": "Godzilla, aquariums, and manga-kissa or internet cafés as examples of places and entertainment people can visit on a day off."
+          },
+          "kanjiWords": [
+            "百 (one hundred)",
+            "千 (one thousand)",
+            "万 (ten thousand)",
+            "～円 (yen)",
+            "休み (day off/holiday)",
+            "映画 (film)",
+            "日本語 (Japanese language)",
+            "勉強します (to study)",
+            "買います (to buy)"
+          ]
+        },
+        {
+          "lessonId": "IR-A1-L18",
+          "lessonNumber": 18,
+          "titleEn": "I want to go to a hot spring.",
+          "titleJp": "温泉に入りたいです",
+          "titleId": "I want to go to a hot spring.",
+          "objective": "Express wishes, make plans for days off, and connect several activities when describing a trip.",
+          "priority": 2,
+          "aksaraNote": "",
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L18-A01",
+              "titleJp": "ゴールデンウィークの予定は？",
+              "titleEn": "Talking about holiday plans",
+              "titleId": "Talking about holiday plans",
+              "explanation": "Ask and answer questions about plans or things you want to do on a day off or during a holiday.",
+              "keyPhrases": [
+                "ゴールデンウィークの予定は？"
+              ],
+              "panelImages": [
+                "EX-04_01_PDF_478"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about holiday plans'?",
+                  "options": [
+                    "ありがとうございます (Thank you very much)",
+                    "ゴールデンウィークの予定は？",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 1
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about holiday plans'?",
+                  "options": [
+                    "Listening to specialized news broadcasts",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Learning and using 'ゴールデンウィークの予定は？' in daily life"
+                  ],
+                  "correctIndex": 3
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A02",
+              "titleJp": "日本で何がしたい？",
+              "titleEn": "Expressing what you want to do in Japan",
+              "titleId": "Expressing what you want to do in Japan",
+              "explanation": "Give a simple answer when asked what you would like to do while in Japan.",
+              "keyPhrases": [
+                "日本で何がしたい？"
+              ],
+              "panelImages": [
+                "EX-05_01_PDF_499"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Expressing what you want to do in Japan'?",
+                  "options": [
+                    "すみません (Excuse me / Sorry)",
+                    "ありがとうございます (Thank you very much)",
+                    "日本で何がしたい？",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 2
+                },
+                {
+                  "question": "What is the main learning goal of 'Expressing what you want to do in Japan'?",
+                  "options": [
+                    "Learning and using '日本で何がしたい？' in daily life",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 0
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A03",
+              "titleJp": "船に乗りました",
+              "titleEn": "Talking about an activity during a holiday",
+              "titleId": "Talking about an activity during a holiday",
+              "explanation": "Write a short post about an activity you did on a day off, such as taking a boat or doing another activity.",
+              "keyPhrases": [
+                "船に乗りました"
+              ],
+              "panelImages": [
+                "EX-05_02_PDF_499"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Talking about an activity during a holiday'?",
+                  "options": [
+                    "おはようございます (Good morning)",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "船に乗りました"
+                  ],
+                  "correctIndex": 3
+                },
+                {
+                  "question": "What is the main learning goal of 'Talking about an activity during a holiday'?",
+                  "options": [
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using '船に乗りました' in daily life",
+                    "Writing formal academic research essays",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 1
+                }
+              ]
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A04",
+              "titleJp": "はじめて露天風呂に入りました",
+              "titleEn": "Describing a travel experience",
+              "titleId": "Describing a travel experience",
+              "explanation": "Describe in simple terms what you did during a trip and how you felt about the experience.",
+              "keyPhrases": [
+                "はじめて露天風呂に入りました"
+              ],
+              "panelImages": [
+                "EX-06_01_PDF_93"
+              ],
+              "priority": 2,
+              "quizQuestions": [
+                {
+                  "question": "Which Japanese expression is appropriate for: 'Describing a travel experience'?",
+                  "options": [
+                    "はじめて露天風呂に入りました",
+                    "ありがとうございます (Thank you very much)",
+                    "すみません (Excuse me / Sorry)",
+                    "おはようございます (Good morning)"
+                  ],
+                  "correctIndex": 0
+                },
+                {
+                  "question": "What is the main learning goal of 'Describing a travel experience'?",
+                  "options": [
+                    "Writing formal academic research essays",
+                    "Memorizing advanced N1 grammar patterns",
+                    "Learning and using 'はじめて露天風呂に入りました' in daily life",
+                    "Listening to specialized news broadcasts"
+                  ],
+                  "correctIndex": 2
+                }
+              ]
+            }
+          ],
+          "grammar": [
+            {
+              "grammarId": "IR-A1-L18-GR01",
+              "explanation": "Grammar IDs: IR-A1-L18-GR01 through IR-A1-L18-GR06."
+            }
+          ],
+          "culturalNote": {
+            "noteId": "IR-A1-L18-CT01",
+            "content": "Golden Week, Tokyo Disney Resort, the Shinkansen, climbing Mount Fuji, Japanese animation, dorayaki, Yokohama, and basic etiquette for using hot-spring baths."
+          },
+          "kanjiWords": [
+            "A4",
+            "Source-Use Principles"
+          ]
+        }
+      ]
+    }
+  ]
+}

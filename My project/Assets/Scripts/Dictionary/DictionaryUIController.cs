@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Utsuru.Capture;
+using Utsuru.Course;
 
 namespace Utsuru.DictionaryUI
 {
@@ -42,6 +43,7 @@ namespace Utsuru.DictionaryUI
         [Header("Sub-Controllers")]
         [SerializeField] private DictionaryVocabularyTabUI vocabTabController;
         [SerializeField] private DictionaryAlbumTabUI albumTabController;
+        [SerializeField] private DictionaryCourseTabUI courseTabController;
 
         [Header("Visual Tab (Aktif vs Tidak Aktif)")]
         [SerializeField] private Color activeTabColor = new Color(0.95f, 0.92f, 0.85f, 1f);
