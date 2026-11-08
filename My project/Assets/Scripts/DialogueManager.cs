@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
+    public static bool HideEnglishTranslation = false;
     public bool IsDialogueActive => dialoguePanel != null && dialoguePanel.activeSelf;
 
     [Header("Panel Utama")]
@@ -47,6 +48,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
+    public AudioSource VoiceAudioSource => audioSource;
     [SerializeField] private float typingSpeed = 0.025f;
     [SerializeField] private float pitchVariation = 0.08f;
 
@@ -71,6 +73,7 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
+        UpdateSettingsVisibility();
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
@@ -160,6 +163,12 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    public void UpdateSettingsVisibility()
+    {
+        HideEnglishTranslation = PlayerPrefs.GetInt("Setting_HideEnglish", 0) == 1;
+        if (textEnglish != null) textEnglish.gameObject.SetActive(!HideEnglishTranslation);
+    }
+
     public void StartDialogue(NPCData data, string customName = "", Sprite customAvatar = null)
     {
         if (data == null) return;
@@ -170,6 +179,7 @@ public class DialogueManager : MonoBehaviour
 
         ShowInteractionPrompt(false);
         dialoguePanel.SetActive(true);
+        UpdateSettingsVisibility();
 
         // Kunci gerakan pemain & munculkan kursor
         if (playerController != null) playerController.enabled = false;
@@ -311,8 +321,24 @@ public class DialogueManager : MonoBehaviour
         currentRmQuestion = rmText;
         currentEnQuestion = enText;
 
+        int charSet = PlayerPrefs.GetInt("Setting_CharacterSet", 0);
+        string displayJp = jpText;
+        string displayRm = rmText;
+        if (charSet == 2) // Romaji Only
+        {
+            displayJp = !string.IsNullOrEmpty(rmText) ? rmText : jpText;
+            displayRm = "";
+        }
+        else if (charSet == 1) // Hiragana Only (hide romaji)
+        {
+            displayRm = "";
+        }
+
+        if (textRomaji != null)
+            textRomaji.gameObject.SetActive(!string.IsNullOrEmpty(displayRm));
+
         if (typingRoutine != null) StopCoroutine(typingRoutine);
-        typingRoutine = StartCoroutine(TypewriterRoutine(jpText, rmText, enText, onComplete: () =>
+        typingRoutine = StartCoroutine(TypewriterRoutine(displayJp, displayRm, enText, onComplete: () =>
         {
             ShowChoices(data.choices);
         }));
@@ -348,7 +374,8 @@ public class DialogueManager : MonoBehaviour
                 {
                     float basePitch = (currentData != null) ? currentData.basePitch : 1.0f;
                     audioSource.pitch = basePitch + Random.Range(-pitchVariation, pitchVariation);
-                    audioSource.PlayOneShot(clip);
+                    float voiceVol = PlayerPrefs.GetFloat("Setting_VoiceVol", 75f) / 100f;
+                    audioSource.PlayOneShot(clip, voiceVol);
                 }
             }
 
@@ -373,19 +400,63 @@ public class DialogueManager : MonoBehaviour
 
         isTyping = false;
 
+        int charSet = PlayerPrefs.GetInt("Setting_CharacterSet", 0);
+
         if (!isShowingResponse)
         {
-            if (textJapanese != null) textJapanese.text = currentJpQuestion;
-            if (textRomaji != null) textRomaji.text = currentRmQuestion;
-            if (textEnglish != null) textEnglish.text = currentEnQuestion;
+            string displayJp = currentJpQuestion;
+            string displayRm = currentRmQuestion;
+
+            if (charSet == 2) // Romaji Only
+            {
+                displayJp = !string.IsNullOrEmpty(currentRmQuestion) ? currentRmQuestion : currentJpQuestion;
+                displayRm = "";
+            }
+            else if (charSet == 1) // Hiragana Only (hide Romaji)
+            {
+                displayRm = "";
+            }
+
+            if (textJapanese != null) textJapanese.text = displayJp;
+            if (textRomaji != null)
+            {
+                textRomaji.text = displayRm;
+                textRomaji.gameObject.SetActive(!string.IsNullOrEmpty(displayRm));
+            }
+            if (textEnglish != null)
+            {
+                textEnglish.text = currentEnQuestion;
+                textEnglish.gameObject.SetActive(!HideEnglishTranslation);
+            }
 
             ShowChoices(currentData.choices);
         }
         else
         {
-            if (textJapanese != null) textJapanese.text = currentJpResponse;
-            if (textRomaji != null) textRomaji.text = currentRmResponse;
-            if (textEnglish != null) textEnglish.text = currentEnResponse;
+            string displayJp = currentJpResponse;
+            string displayRm = currentRmResponse;
+
+            if (charSet == 2) // Romaji Only
+            {
+                displayJp = !string.IsNullOrEmpty(currentRmResponse) ? currentRmResponse : currentJpResponse;
+                displayRm = "";
+            }
+            else if (charSet == 1) // Hiragana Only (hide Romaji)
+            {
+                displayRm = "";
+            }
+
+            if (textJapanese != null) textJapanese.text = displayJp;
+            if (textRomaji != null)
+            {
+                textRomaji.text = displayRm;
+                textRomaji.gameObject.SetActive(!string.IsNullOrEmpty(displayRm));
+            }
+            if (textEnglish != null)
+            {
+                textEnglish.text = currentEnResponse;
+                textEnglish.gameObject.SetActive(!HideEnglishTranslation);
+            }
 
             isWaitingToClose = true;
             if (closeButton != null) closeButton.gameObject.SetActive(true);
@@ -426,9 +497,24 @@ public class DialogueManager : MonoBehaviour
                     }
                 }
 
+                int charSet = PlayerPrefs.GetInt("Setting_CharacterSet", 0);
+                string displayJp = jpChoice;
+                string displayRm = rmChoice;
+                if (charSet == 2)
+                {
+                    displayJp = !string.IsNullOrEmpty(rmChoice) ? rmChoice : jpChoice;
+                    displayRm = "";
+                }
+                else if (charSet == 1)
+                {
+                    displayRm = "";
+                }
+
                 if (btnUI != null)
                 {
-                    btnUI.Setup(choiceNumber, jpChoice, rmChoice, () => OnChoiceClicked(choice), bgSprite, badgeColor);
+                    btnUI.Setup(choiceNumber, displayJp, displayRm, () => OnChoiceClicked(choice), bgSprite, badgeColor);
+                    if (btnUI.romajiText != null)
+                        btnUI.romajiText.gameObject.SetActive(!string.IsNullOrEmpty(displayRm));
                 }
                 else
                 {
@@ -505,9 +591,25 @@ public class DialogueManager : MonoBehaviour
         if (closeButton != null) closeButton.gameObject.SetActive(true);
         isWaitingToClose = true;
 
+        int charSet = PlayerPrefs.GetInt("Setting_CharacterSet", 0);
+        string displayJp = jpResponse;
+        string displayRm = rmResponse;
+        if (charSet == 2)
+        {
+            displayJp = !string.IsNullOrEmpty(rmResponse) ? rmResponse : jpResponse;
+            displayRm = "";
+        }
+        else if (charSet == 1)
+        {
+            displayRm = "";
+        }
+
+        if (textRomaji != null)
+            textRomaji.gameObject.SetActive(!string.IsNullOrEmpty(displayRm));
+
         // Ketik balasan
         if (typingRoutine != null) StopCoroutine(typingRoutine);
-        typingRoutine = StartCoroutine(TypewriterRoutine(jpResponse, rmResponse, enResponse, onComplete: () =>
+        typingRoutine = StartCoroutine(TypewriterRoutine(displayJp, displayRm, enResponse, onComplete: () =>
         {
             isWaitingToClose = true;
         }));
@@ -520,7 +622,8 @@ public class DialogueManager : MonoBehaviour
         if (clip != null)
         {
             audioSource.pitch = (currentData != null) ? currentData.basePitch : 1.0f;
-            audioSource.PlayOneShot(clip);
+            float voiceVol = PlayerPrefs.GetFloat("Setting_VoiceVol", 75f) / 100f;
+            audioSource.PlayOneShot(clip, voiceVol);
         }
     }
 

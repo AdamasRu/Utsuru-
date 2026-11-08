@@ -26,7 +26,7 @@ public class NPCSpawner : MonoBehaviour
     [SerializeField] public ContextualSpawnPoint[] spawnLocations;
 
     [Tooltip("Berapa banyak NPC yang ingin dimunculkan bersamaan")]
-    [SerializeField] private int numberOfNpcs = 2;
+    [SerializeField] private int numberOfNpcs = 7;
 
     [Header("Preset Karakter BoZo (11 Karakter)")]
     [SerializeField] private DataObject[] characterPresets;
