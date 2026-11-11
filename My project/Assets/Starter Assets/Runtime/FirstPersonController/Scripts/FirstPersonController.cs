@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -20,6 +20,8 @@ namespace StarterAssets
 		public float RotationSpeed = 1.0f;
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
+		public bool InvertX = false;
+		public bool InvertY = false;
 
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
@@ -108,6 +110,12 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+			RotationSpeed = (PlayerPrefs.GetFloat("Setting_Sensitivity", 90f) / 90f) * 1.0f;
+			InvertX = PlayerPrefs.GetInt("Setting_InvertX", 0) == 1;
+			InvertY = PlayerPrefs.GetInt("Setting_InvertY", 0) == 1;
+
+
 		}
 
 		private void Update()
@@ -137,8 +145,10 @@ namespace StarterAssets
 				//Don't multiply mouse input by Time.deltaTime
 				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 				
-				_cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
-				_rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
+				float lookX = InvertX ? -_input.look.x : _input.look.x;
+				float lookY = InvertY ? -_input.look.y : _input.look.y;
+				_cinemachineTargetPitch += lookY * RotationSpeed * deltaTimeMultiplier;
+				_rotationVelocity = lookX * RotationSpeed * deltaTimeMultiplier;
 
 				// clamp our pitch rotation
 				_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
@@ -204,6 +214,10 @@ namespace StarterAssets
 			{
 				// reset the fall timeout timer
 				_fallTimeoutDelta = FallTimeout;
+
+			
+
+
 
 				// stop our velocity dropping infinitely when grounded
 				if (_verticalVelocity < 0.0f)
