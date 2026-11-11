@@ -121,9 +121,9 @@ public class SettingsManager : MonoBehaviour
     private float lastVoicePreviewTime = 0f;
 
     // Visual colors
-    private readonly Color activeTabColor = new Color32(74, 46, 27, 255);    // #4A2E1B
-    private readonly Color inactiveTabColor = new Color32(140, 115, 98, 255); // #8C7362
-    private readonly Color toggleOnColor = new Color32(74, 46, 27, 255);     // Dark brown dot
+    private readonly Color activeTabColor = new Color32(106, 67, 47, 255);    // #6A432F
+    private readonly Color inactiveTabColor = new Color32(165, 138, 125, 255); // #A58A7D
+    private readonly Color toggleOnColor = new Color32(106, 67, 47, 255);     // #6A432F
     private readonly Color toggleOffColor = new Color32(213, 199, 188, 255); // Soft grayish-cream dot
 
     private void Awake()
@@ -213,7 +213,7 @@ public class SettingsManager : MonoBehaviour
     {
         if (text == null) return;
         text.color = isActive ? activeTabColor : inactiveTabColor;
-        text.fontStyle = isActive ? FontStyles.Bold : FontStyles.Normal;
+        text.fontStyle = FontStyles.Normal; // Tetap Normal agar font Baloo tidak rusak/terdistorsi saat dipilih
     }
 
     // --- State Handlers ---

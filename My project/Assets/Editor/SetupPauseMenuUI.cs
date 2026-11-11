@@ -18,6 +18,35 @@ public class SetupPauseMenuUI : Editor
         ConfigureSpriteImporter(logoPath);
         Sprite logoSprite = AssetDatabase.LoadAssetAtPath<Sprite>(logoPath);
 
+        string pauseBtnPath = "Assets/UI/SettingsButton1.png";
+        ConfigureSpriteImporter(pauseBtnPath, Vector4.zero);
+        Sprite pauseBtnBg = AssetDatabase.LoadAssetAtPath<Sprite>(pauseBtnPath)
+                         ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+
+        string backToTitlePath = "Assets/UI/BackToTitleBtn1.png";
+        ConfigureSpriteImporter(backToTitlePath, Vector4.zero);
+        Sprite backToTitleSprite = AssetDatabase.LoadAssetAtPath<Sprite>(backToTitlePath)
+                                ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+
+        string frameSettingsPath = "Assets/UI/FrameSettings1.png";
+        ConfigureSpriteImporter(frameSettingsPath, new Vector4(25f, 25f, 30f, 20f));
+        Sprite frameSettingsSprite = AssetDatabase.LoadAssetAtPath<Sprite>(frameSettingsPath)
+                                  ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+
+        string applyBtnPath = "Assets/UI/ApplyButton1.png";
+        ConfigureSpriteImporter(applyBtnPath, Vector4.zero);
+        Sprite applyBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>(applyBtnPath)
+                             ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+
+        string backBtnPath = "Assets/UI/BackButton1.png";
+        ConfigureSpriteImporter(backBtnPath, Vector4.zero);
+        Sprite backBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>(backBtnPath)
+                            ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+
+        ConfigureSpriteImporter("Assets/UI/replayaudiobtn.png", Vector4.zero);
+
+        (Sprite triangleLeft, Sprite triangleRight) = GetOrCreateTriangleSprites();
+
         Sprite btnBg = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png")
                     ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Card_Choice2_Bg.png");
 
@@ -26,6 +55,13 @@ public class SetupPauseMenuUI : Editor
         TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito,Zen_Maru_Gothic/Nunito/static/Nunito-Bold SDF.asset")
                           ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito,Zen_Maru_Gothic/Zen_Maru_Gothic/ZenMaruGothic-Bold SDF.asset")
                           ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/YUGOTHB SDF.asset");
+
+        TMP_FontAsset balooFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo-Regular SDF.asset")
+                               ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo-Regular SDF 1.asset")
+                               ?? font;
+
+        TMP_FontAsset baloo2MediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-Medium SDF.asset")
+                                      ?? balooFont;
 
         // 2. Canvas
         Canvas canvas = Object.FindAnyObjectByType<Canvas>();
@@ -42,8 +78,9 @@ public class SetupPauseMenuUI : Editor
             Undo.DestroyObjectImmediate(oldPanel.gameObject);
         }
 
-        Color32 darkBrown = new Color32(74, 46, 27, 255); // #4A2E1B
-        Color32 mutedBrown = new Color32(140, 115, 98, 255); // #8C7362
+        Color32 darkBrown = new Color32(74, 46, 27, 255); // #4A2E1B (Tombol Pause Menu)
+        Color32 settingsTextColor = new Color32(106, 67, 47, 255); // #6A432F (Semua teks di setting)
+        Color32 settingsMutedColor = new Color32(165, 138, 125, 255); // #A58A7D (Tab non-aktif)
 
         // 3. Panel Overlay Fullscreen
         GameObject pausePanelObj = new GameObject("PauseMenuPanel", typeof(RectTransform));
@@ -58,7 +95,9 @@ public class SetupPauseMenuUI : Editor
         panelRt.offsetMax = Vector2.zero;
 
         Image panelImg = pausePanelObj.AddComponent<Image>();
-        panelImg.color = new Color(0.12f, 0.08f, 0.06f, 0.65f); // Redup hangat #1E140F
+        ColorUtility.TryParseHtmlString("#907864", out Color bgColor);
+        bgColor.a = 0.75f;
+        panelImg.color = bgColor; // HEX #907864 dengan 75% opacity
         panelImg.raycastTarget = true;
 
         // ==========================================
@@ -71,9 +110,9 @@ public class SetupPauseMenuUI : Editor
         mcRt.anchorMax = new Vector2(0.5f, 0.5f);
         mcRt.pivot = new Vector2(0.5f, 0.5f);
         mcRt.anchoredPosition = Vector2.zero;
-        mcRt.sizeDelta = new Vector2(500f, 600f);
+        mcRt.sizeDelta = new Vector2(600f, 650f);
 
-        CreateLogoObject(mainContentObj.transform, "UtsuruLogo", logoSprite, new Vector2(0f, 95f), new Vector2(395f, 202f));
+        CreateLogoObject(mainContentObj.transform, "UtsuruLogo", logoSprite, new Vector2(0f, 130f), new Vector2(395f, 202f));
 
         GameObject btnsGroupObj = new GameObject("ButtonsGroup", typeof(RectTransform));
         btnsGroupObj.transform.SetParent(mainContentObj.transform, false);
@@ -81,17 +120,17 @@ public class SetupPauseMenuUI : Editor
         bgRt.anchorMin = new Vector2(0.5f, 0.5f);
         bgRt.anchorMax = new Vector2(0.5f, 0.5f);
         bgRt.pivot = new Vector2(0.5f, 0.5f);
-        bgRt.anchoredPosition = new Vector2(0f, -80f);
-        bgRt.sizeDelta = new Vector2(400f, 160f);
+        bgRt.anchoredPosition = new Vector2(0f, -85f);
+        bgRt.sizeDelta = new Vector2(542f, 220f);
 
         VerticalLayoutGroup vlg = btnsGroupObj.AddComponent<VerticalLayoutGroup>();
-        vlg.spacing = 16f;
+        vlg.spacing = 18f;
         vlg.childAlignment = TextAnchor.MiddleCenter;
         vlg.childControlWidth = false;
         vlg.childControlHeight = false;
 
-        Button settingsBtn = CreatePillButton(btnsGroupObj.transform, "SettingsButton", "Settings", new Vector2(380f, 58f), btnBg, font, darkBrown, 24f);
-        Button backToMenuBtn = CreatePillButton(btnsGroupObj.transform, "BackToMenuButton", "Back To Menu", new Vector2(380f, 58f), btnBg, font, darkBrown, 24f);
+        Button settingsBtn = CreatePillButton(btnsGroupObj.transform, "SettingsButton", "Settings", new Vector2(542f, 94f), pauseBtnBg, balooFont, darkBrown, 50f, FontStyles.Normal, 0f, Image.Type.Simple, new Vector2(-5f, 5f));
+        Button backToMenuBtn = CreatePillButton(btnsGroupObj.transform, "BackToMenuButton", "Back To Menu", new Vector2(542f, 94f), pauseBtnBg, balooFont, darkBrown, 50f, FontStyles.Normal, 0f, Image.Type.Simple, new Vector2(-5f, 5f));
 
         // ==========================================
         // B. SETTINGS PANEL (Tampilan 4 Tab Lengkap Sesuai Figma)
@@ -104,7 +143,7 @@ public class SetupPauseMenuUI : Editor
         spRt.offsetMin = Vector2.zero;
         spRt.offsetMax = Vector2.zero;
 
-        Button backToTitleBtn = CreateTopLeftBackButton(settingsPanelObj.transform, "BackToTitleButton", "<  Back to Title", btnBg, font, darkBrown);
+        Button backToTitleBtn = CreateTopLeftBackButton(settingsPanelObj.transform, "BackToTitleButton", "← Back to Title", backToTitleSprite, balooFont, settingsTextColor);
 
         GameObject scObj = new GameObject("SettingsCenterContent", typeof(RectTransform));
         scObj.transform.SetParent(settingsPanelObj.transform, false);
@@ -112,10 +151,10 @@ public class SetupPauseMenuUI : Editor
         scRt.anchorMin = new Vector2(0.5f, 0.5f);
         scRt.anchorMax = new Vector2(0.5f, 0.5f);
         scRt.pivot = new Vector2(0.5f, 0.5f);
-        scRt.anchoredPosition = new Vector2(0f, 20f);
-        scRt.sizeDelta = new Vector2(1000f, 720f);
+        scRt.anchoredPosition = new Vector2(0f, -10f);
+        scRt.sizeDelta = new Vector2(1260f, 960f);
 
-        CreateLogoObject(scObj.transform, "UtsuruLogo_Settings", logoSprite, new Vector2(0f, 260f), new Vector2(300f, 153f));
+        CreateLogoObject(scObj.transform, "UtsuruLogo_Settings", logoSprite, new Vector2(0f, 410f), new Vector2(300f, 153f));
 
         // Tab Bar Kapsul (Gameplay | Controls | Graphics | Audio)
         GameObject tabBarObj = new GameObject("TabBar", typeof(RectTransform));
@@ -124,11 +163,11 @@ public class SetupPauseMenuUI : Editor
         tbRt.anchorMin = new Vector2(0.5f, 0.5f);
         tbRt.anchorMax = new Vector2(0.5f, 0.5f);
         tbRt.pivot = new Vector2(0.5f, 0.5f);
-        tbRt.anchoredPosition = new Vector2(0f, 150f);
-        tbRt.sizeDelta = new Vector2(960f, 50f);
+        tbRt.anchoredPosition = new Vector2(0f, 275f);
+        tbRt.sizeDelta = new Vector2(1226f, 84f);
 
         Image tbImg = tabBarObj.AddComponent<Image>();
-        tbImg.sprite = btnBg;
+        tbImg.sprite = frameSettingsSprite;
         tbImg.type = Image.Type.Sliced;
         tbImg.color = Color.white;
 
@@ -138,68 +177,67 @@ public class SetupPauseMenuUI : Editor
         tbHlg.childForceExpandWidth = true;
         tbHlg.childForceExpandHeight = true;
 
-        (Button tabGameplayBtn, TMP_Text tabGameplayTxt) = CreateTabItem(tabBarObj.transform, "Tab_Gameplay", "Gameplay", font, darkBrown, true);
-        (Button tabControlsBtn, TMP_Text tabControlsTxt) = CreateTabItem(tabBarObj.transform, "Tab_Controls", "Controls", font, mutedBrown, false);
-        (Button tabGraphicsBtn, TMP_Text tabGraphicsTxt) = CreateTabItem(tabBarObj.transform, "Tab_Graphics", "Graphics", font, mutedBrown, false);
-        (Button tabAudioBtn, TMP_Text tabAudioTxt) = CreateTabItem(tabBarObj.transform, "Tab_Audio", "Audio", font, mutedBrown, false);
+        (Button tabGameplayBtn, TMP_Text tabGameplayTxt) = CreateTabItem(tabBarObj.transform, "Tab_Gameplay", "Gameplay", balooFont, settingsTextColor, true);
+        (Button tabControlsBtn, TMP_Text tabControlsTxt) = CreateTabItem(tabBarObj.transform, "Tab_Controls", "Controls", balooFont, settingsMutedColor, false);
+        (Button tabGraphicsBtn, TMP_Text tabGraphicsTxt) = CreateTabItem(tabBarObj.transform, "Tab_Graphics", "Graphics", balooFont, settingsMutedColor, false);
+        (Button tabAudioBtn, TMP_Text tabAudioTxt) = CreateTabItem(tabBarObj.transform, "Tab_Audio", "Audio", balooFont, settingsMutedColor, false);
 
-        // Tab Content Panels Container
+        // Tab Content Panels Container (Rows size W: 1226, H: 84)
         GameObject panelsContainer = new GameObject("TabPanelsContainer", typeof(RectTransform));
         panelsContainer.transform.SetParent(scObj.transform, false);
         RectTransform pcRt = panelsContainer.GetComponent<RectTransform>();
         pcRt.anchorMin = new Vector2(0.5f, 0.5f);
         pcRt.anchorMax = new Vector2(0.5f, 0.5f);
         pcRt.pivot = new Vector2(0.5f, 0.5f);
-        pcRt.anchoredPosition = new Vector2(0f, -60f);
-        pcRt.sizeDelta = new Vector2(960f, 360f);
+        pcRt.anchoredPosition = new Vector2(0f, -70f);
+        pcRt.sizeDelta = new Vector2(1226f, 580f);
 
         // 1. GAMEPLAY PANEL
-        GameObject gpObj = CreateTabContentPanel(panelsContainer.transform, "GameplayPanel", 12f);
-        (Button charPrev, Button charNext, TMP_Text charTxt) = CreateSelectorRow(gpObj.transform, "CharacterSetRow", "Character Set", "kanji + furigana", btnBg, font, darkBrown);
-        (Button hideEnBtn, Image hideEnDot) = CreateToggleRow(gpObj.transform, "HideEnglishRow", "Hide English Translation On Cards", false, btnBg, circleSprite, font, darkBrown);
-        (Slider fovSld, TMP_Text fovTxt) = CreateSliderRow(gpObj.transform, "FOVRow", "FOV (Field of View)", 60f, 110f, 90f, btnBg, circleSprite, font, darkBrown);
-        (Button outlineBtn, Image outlineDot) = CreateToggleRow(gpObj.transform, "DisableOutlineRow", "Disable Subject Outline", false, btnBg, circleSprite, font, darkBrown);
+        GameObject gpObj = CreateTabContentPanel(panelsContainer.transform, "GameplayPanel", 18f);
+        (Button charPrev, Button charNext, TMP_Text charTxt) = CreateSelectorRow(gpObj.transform, "CharacterSetRow", "Character Set", "kanji + furigana", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button hideEnBtn, Image hideEnDot) = CreateToggleRow(gpObj.transform, "HideEnglishRow", "Hide English Translation On Cards", false, frameSettingsSprite, circleSprite, balooFont, settingsTextColor);
+        (Slider fovSld, TMP_Text fovTxt) = CreateSliderRow(gpObj.transform, "FOVRow", "FOV (Field of View)", 60f, 110f, 90f, frameSettingsSprite, circleSprite, balooFont, baloo2MediumFont, settingsTextColor);
+        (Button outlineBtn, Image outlineDot) = CreateToggleRow(gpObj.transform, "DisableOutlineRow", "Disable Subject Outline", false, frameSettingsSprite, circleSprite, balooFont, settingsTextColor);
 
         // 2. CONTROLS PANEL
-        GameObject cpObj = CreateTabContentPanel(panelsContainer.transform, "ControlsPanel", 14f);
-        (Slider sensSld, TMP_Text sensTxt) = CreateSliderRow(cpObj.transform, "SensitivityRow", "Mouse Look Sensitivity", 10f, 200f, 90f, btnBg, circleSprite, font, darkBrown);
-        (Button invXBtn, Image invXDot) = CreateToggleRow(cpObj.transform, "InvertXRow", "Invert X-Axis", false, btnBg, circleSprite, font, darkBrown);
-        (Button invYBtn, Image invYDot) = CreateToggleRow(cpObj.transform, "InvertYRow", "Invert Y-Axis", false, btnBg, circleSprite, font, darkBrown);
+        GameObject cpObj = CreateTabContentPanel(panelsContainer.transform, "ControlsPanel", 20f);
+        (Slider sensSld, TMP_Text sensTxt) = CreateSliderRow(cpObj.transform, "SensitivityRow", "Mouse Look Sensitivity", 10f, 200f, 90f, frameSettingsSprite, circleSprite, balooFont, baloo2MediumFont, settingsTextColor);
+        (Button invXBtn, Image invXDot) = CreateToggleRow(cpObj.transform, "InvertXRow", "Invert X-Axis", false, frameSettingsSprite, circleSprite, balooFont, settingsTextColor);
+        (Button invYBtn, Image invYDot) = CreateToggleRow(cpObj.transform, "InvertYRow", "Invert Y-Axis", false, frameSettingsSprite, circleSprite, balooFont, settingsTextColor);
 
         // 3. GRAPHICS PANEL
-        GameObject grpObj = CreateTabContentPanel(panelsContainer.transform, "GraphicsPanel", 8f);
-        (Button dispPrev, Button dispNext, TMP_Text dispTxt) = CreateSelectorRow(grpObj.transform, "DisplayModeRow", "Display Mode", "Full Screen", btnBg, font, darkBrown);
-        (Button resPrev, Button resNext, TMP_Text resTxt) = CreateSelectorRow(grpObj.transform, "ResolutionRow", "Screen Resolution", "1920 x 1080", btnBg, font, darkBrown);
-        (Button qualPrev, Button qualNext, TMP_Text qualTxt) = CreateSelectorRow(grpObj.transform, "QualityRow", "Graphics Quality", "Epic", btnBg, font, darkBrown);
-        (Button fpsPrev, Button fpsNext, TMP_Text fpsTxt) = CreateSelectorRow(grpObj.transform, "FPSLimitRow", "Frame Rate Limit", "Unlimited", btnBg, font, darkBrown);
-        (Button aaPrev, Button aaNext, TMP_Text aaTxt) = CreateSelectorRow(grpObj.transform, "AntiAliasingRow", "Anti-Aliasing Method", "TSR", btnBg, font, darkBrown);
-        (Button vsyncBtn, Image vsyncDot) = CreateToggleRow(grpObj.transform, "VSyncRow", "V-Sync", false, btnBg, circleSprite, font, darkBrown);
+        GameObject grpObj = CreateTabContentPanel(panelsContainer.transform, "GraphicsPanel", 14f);
+        (Button dispPrev, Button dispNext, TMP_Text dispTxt) = CreateSelectorRow(grpObj.transform, "DisplayModeRow", "Display Mode", "Full Screen", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button resPrev, Button resNext, TMP_Text resTxt) = CreateSelectorRow(grpObj.transform, "ResolutionRow", "Screen Resolution", "1920 x 1080", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button qualPrev, Button qualNext, TMP_Text qualTxt) = CreateSelectorRow(grpObj.transform, "QualityRow", "Graphics Quality", "Epic", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button fpsPrev, Button fpsNext, TMP_Text fpsTxt) = CreateSelectorRow(grpObj.transform, "FPSLimitRow", "Frame Rate Limit", "Unlimited", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button aaPrev, Button aaNext, TMP_Text aaTxt) = CreateSelectorRow(grpObj.transform, "AntiAliasingRow", "Anti-Aliasing Method", "TSR", frameSettingsSprite, balooFont, baloo2MediumFont, settingsTextColor, triangleLeft, triangleRight);
+        (Button vsyncBtn, Image vsyncDot) = CreateToggleRow(grpObj.transform, "VSyncRow", "V-Sync", false, frameSettingsSprite, circleSprite, balooFont, settingsTextColor);
 
         // 4. AUDIO PANEL
-        GameObject apObj = CreateTabContentPanel(panelsContainer.transform, "AudioPanel", 14f);
-        (Slider mVolSld, TMP_Text mVolTxt) = CreateSliderRow(apObj.transform, "MasterVolRow", "Master Volume", 0f, 100f, 90f, btnBg, circleSprite, font, darkBrown);
-        (Slider bgmSld, TMP_Text bgmTxt) = CreateSliderRow(apObj.transform, "MusicVolRow", "Music Volume", 0f, 100f, 100f, btnBg, circleSprite, font, darkBrown);
-        (Slider vVolSld, TMP_Text vVolTxt) = CreateSliderRow(apObj.transform, "VoiceVolRow", "Voice Lines Volume", 0f, 100f, 75f, btnBg, circleSprite, font, darkBrown);
+        GameObject apObj = CreateTabContentPanel(panelsContainer.transform, "AudioPanel", 20f);
+        (Slider mVolSld, TMP_Text mVolTxt) = CreateSliderRow(apObj.transform, "MasterVolRow", "Master Volume", 0f, 100f, 90f, frameSettingsSprite, circleSprite, balooFont, baloo2MediumFont, settingsTextColor);
+        (Slider bgmSld, TMP_Text bgmTxt) = CreateSliderRow(apObj.transform, "MusicVolRow", "Music Volume", 0f, 100f, 100f, frameSettingsSprite, circleSprite, balooFont, baloo2MediumFont, settingsTextColor);
+        (Slider vVolSld, TMP_Text vVolTxt) = CreateSliderRow(apObj.transform, "VoiceVolRow", "Voice Lines Volume", 0f, 100f, 75f, frameSettingsSprite, circleSprite, balooFont, baloo2MediumFont, settingsTextColor);
 
-        // Bottom Action Buttons: [ Apply ] [ Back ]
+        // Bottom Action Buttons: [ Apply ] [ Back ] (W: 595, H: 84, total width = 595 + 36 + 595 = 1226)
         GameObject actionBtnsObj = new GameObject("ActionButtonsBar", typeof(RectTransform));
         actionBtnsObj.transform.SetParent(scObj.transform, false);
         RectTransform abRt = actionBtnsObj.GetComponent<RectTransform>();
         abRt.anchorMin = new Vector2(0.5f, 0.5f);
         abRt.anchorMax = new Vector2(0.5f, 0.5f);
         abRt.pivot = new Vector2(0.5f, 0.5f);
-        abRt.anchoredPosition = new Vector2(0f, -290f);
-        abRt.sizeDelta = new Vector2(960f, 50f);
+        abRt.anchoredPosition = new Vector2(0f, -415f);
+        abRt.sizeDelta = new Vector2(1226f, 71f);
 
         HorizontalLayoutGroup abHlg = actionBtnsObj.AddComponent<HorizontalLayoutGroup>();
-        abHlg.spacing = 20f;
-        abHlg.childControlWidth = true;
-        abHlg.childControlHeight = true;
-        abHlg.childForceExpandWidth = true;
-        abHlg.childForceExpandHeight = true;
+        abHlg.spacing = 16f;
+        abHlg.childAlignment = TextAnchor.MiddleCenter;
+        abHlg.childControlWidth = false;
+        abHlg.childControlHeight = false;
 
-        Button applyBtn = CreatePillButton(actionBtnsObj.transform, "ApplyButton", "Apply", Vector2.zero, btnBg, font, darkBrown, 22f);
-        Button backBtn = CreatePillButton(actionBtnsObj.transform, "BackButton", "Back", Vector2.zero, btnBg, font, darkBrown, 22f);
+        Button applyBtn = CreatePillButton(actionBtnsObj.transform, "ApplyButton", "Apply", new Vector2(605f, 71f), applyBtnSprite, balooFont, settingsTextColor, 40f, FontStyles.Normal, 0f, Image.Type.Simple, new Vector2(-5f, 5f));
+        Button backBtn = CreatePillButton(actionBtnsObj.transform, "BackButton", "Back", new Vector2(605f, 71f), backBtnSprite, balooFont, settingsTextColor, 40f, FontStyles.Normal, 85f, Image.Type.Simple, new Vector2(0f, 5f));
 
         // ==========================================
         // C. HUBUNGKAN LOGIKA MANAGER (PauseMenuManager & SettingsManager)
@@ -357,10 +395,11 @@ public class SetupPauseMenuUI : Editor
         TMP_Text tmp = txtObj.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.font = font;
-        tmp.fontSize = 22f;
-        tmp.fontStyle = isBold ? FontStyles.Bold : FontStyles.Normal;
+        tmp.fontSize = 40f;
+        tmp.fontStyle = FontStyles.Normal;
         tmp.color = color;
         tmp.alignment = TextAlignmentOptions.Center;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.raycastTarget = false;
 
         return (btn, tmp);
@@ -378,17 +417,21 @@ public class SetupPauseMenuUI : Editor
 
         VerticalLayoutGroup vlg = panel.AddComponent<VerticalLayoutGroup>();
         vlg.spacing = spacing;
-        vlg.childControlWidth = true;
+        vlg.childControlWidth = false;
         vlg.childControlHeight = false;
-        vlg.childForceExpandWidth = true;
+        vlg.childAlignment = TextAnchor.UpperCenter;
+        vlg.childForceExpandWidth = false;
         vlg.childForceExpandHeight = false;
 
         return panel;
     }
 
-    private static (Button prev, Button next, TMP_Text val) CreateSelectorRow(Transform parent, string name, string label, string defaultVal, Sprite bg, TMP_FontAsset font, Color textColor)
+    private static (Button prev, Button next, TMP_Text val) CreateSelectorRow(
+        Transform parent, string name, string label, string defaultVal,
+        Sprite bg, TMP_FontAsset labelFont, TMP_FontAsset valFont, Color textColor,
+        Sprite triLeft, Sprite triRight)
     {
-        GameObject row = CreateBaseRow(parent, name, label, bg, font, textColor);
+        GameObject row = CreateBaseRow(parent, name, label, bg, labelFont, textColor);
 
         GameObject widget = new GameObject("SelectorWidget", typeof(RectTransform));
         widget.transform.SetParent(row.transform, false);
@@ -398,72 +441,67 @@ public class SetupPauseMenuUI : Editor
         wrt.offsetMin = Vector2.zero;
         wrt.offsetMax = new Vector2(-25f, 0f);
 
-        // Prev Arrow Button (<)
+        // Prev Arrow Button (◀)
         GameObject prevObj = new GameObject("PrevBtn", typeof(RectTransform));
         prevObj.transform.SetParent(widget.transform, false);
         RectTransform prt = prevObj.GetComponent<RectTransform>();
         prt.anchorMin = new Vector2(0f, 0.5f);
         prt.anchorMax = new Vector2(0f, 0.5f);
         prt.pivot = new Vector2(0f, 0.5f);
-        prt.sizeDelta = new Vector2(40f, 40f);
+        prt.sizeDelta = new Vector2(26f, 26f);
         prt.anchoredPosition = Vector2.zero;
 
-        TMP_Text pTxt = prevObj.AddComponent<TextMeshProUGUI>();
-        pTxt.text = "<";
-        pTxt.font = font;
-        pTxt.fontSize = 24f;
-        pTxt.fontStyle = FontStyles.Bold;
-        pTxt.color = textColor;
-        pTxt.alignment = TextAlignmentOptions.Center;
-        pTxt.raycastTarget = true; // TMP Text bertindak sebagai Graphic penangkap klik
+        Image pImg = prevObj.AddComponent<Image>();
+        pImg.sprite = triLeft;
+        pImg.color = textColor;
+        pImg.raycastTarget = true;
 
         Button prevBtn = prevObj.AddComponent<Button>();
-        prevBtn.targetGraphic = pTxt;
+        prevBtn.targetGraphic = pImg;
 
-        // Next Arrow Button (>)
+        // Next Arrow Button (▶)
         GameObject nextObj = new GameObject("NextBtn", typeof(RectTransform));
         nextObj.transform.SetParent(widget.transform, false);
         RectTransform nrt = nextObj.GetComponent<RectTransform>();
         nrt.anchorMin = new Vector2(1f, 0.5f);
         nrt.anchorMax = new Vector2(1f, 0.5f);
         nrt.pivot = new Vector2(1f, 0.5f);
-        nrt.sizeDelta = new Vector2(40f, 40f);
+        nrt.sizeDelta = new Vector2(26f, 26f);
         nrt.anchoredPosition = Vector2.zero;
 
-        TMP_Text nTxt = nextObj.AddComponent<TextMeshProUGUI>();
-        nTxt.text = ">";
-        nTxt.font = font;
-        nTxt.fontSize = 24f;
-        nTxt.fontStyle = FontStyles.Bold;
-        nTxt.color = textColor;
-        nTxt.alignment = TextAlignmentOptions.Center;
-        nTxt.raycastTarget = true; // TMP Text bertindak sebagai Graphic penangkap klik
+        Image nImg = nextObj.AddComponent<Image>();
+        nImg.sprite = triRight;
+        nImg.color = textColor;
+        nImg.raycastTarget = true;
 
         Button nextBtn = nextObj.AddComponent<Button>();
-        nextBtn.targetGraphic = nTxt;
+        nextBtn.targetGraphic = nImg;
 
         // Value Text
         GameObject valObj = new GameObject("ValueText", typeof(RectTransform));
         valObj.transform.SetParent(widget.transform, false);
         RectTransform vrt = valObj.GetComponent<RectTransform>();
-        vrt.anchorMin = new Vector2(0f, 0f);
-        vrt.anchorMax = new Vector2(1f, 1f);
-        vrt.offsetMin = new Vector2(45f, 0f);
-        vrt.offsetMax = new Vector2(-45f, 0f);
+        vrt.anchorMin = Vector2.zero;
+        vrt.anchorMax = Vector2.one;
+        vrt.offsetMin = new Vector2(35f, 0f);
+        vrt.offsetMax = new Vector2(-35f, 0f);
 
         TMP_Text vTxt = valObj.AddComponent<TextMeshProUGUI>();
         vTxt.text = defaultVal;
-        vTxt.font = font;
-        vTxt.fontSize = 20f;
-        vTxt.fontStyle = FontStyles.Bold;
+        vTxt.font = valFont;
+        vTxt.fontSize = 32f;
+        vTxt.fontStyle = FontStyles.Normal;
         vTxt.color = textColor;
         vTxt.alignment = TextAlignmentOptions.Center;
+        vTxt.textWrappingMode = TextWrappingModes.NoWrap;
         vTxt.raycastTarget = false;
 
         return (prevBtn, nextBtn, vTxt);
     }
 
-    private static (Button toggleBtn, Image dot) CreateToggleRow(Transform parent, string name, string label, bool defaultOn, Sprite bg, Sprite circle, TMP_FontAsset font, Color textColor)
+    private static (Button toggleBtn, Image dot) CreateToggleRow(
+        Transform parent, string name, string label, bool defaultOn,
+        Sprite bg, Sprite circle, TMP_FontAsset font, Color textColor)
     {
         GameObject row = CreateBaseRow(parent, name, label, bg, font, textColor);
 
@@ -477,8 +515,8 @@ public class SetupPauseMenuUI : Editor
         drt.anchorMin = new Vector2(1f, 0.5f);
         drt.anchorMax = new Vector2(1f, 0.5f);
         drt.pivot = new Vector2(1f, 0.5f);
-        drt.anchoredPosition = new Vector2(-30f, 0f);
-        drt.sizeDelta = new Vector2(22f, 22f);
+        drt.anchoredPosition = new Vector2(-35f, 0f);
+        drt.sizeDelta = new Vector2(26f, 26f);
 
         Image dotImg = dotObj.AddComponent<Image>();
         dotImg.sprite = circle;
@@ -488,9 +526,11 @@ public class SetupPauseMenuUI : Editor
         return (btn, dotImg);
     }
 
-    private static (Slider slider, TMP_Text valText) CreateSliderRow(Transform parent, string name, string label, float min, float max, float defaultVal, Sprite bg, Sprite circle, TMP_FontAsset font, Color textColor)
+    private static (Slider slider, TMP_Text valText) CreateSliderRow(
+        Transform parent, string name, string label, float min, float max, float defaultVal,
+        Sprite bg, Sprite circle, TMP_FontAsset labelFont, TMP_FontAsset valFont, Color textColor)
     {
-        GameObject row = CreateBaseRow(parent, name, label, bg, font, textColor);
+        GameObject row = CreateBaseRow(parent, name, label, bg, labelFont, textColor);
 
         // Value Text on the far right
         GameObject valObj = new GameObject("ValueText", typeof(RectTransform));
@@ -499,16 +539,17 @@ public class SetupPauseMenuUI : Editor
         vrt.anchorMin = new Vector2(1f, 0.5f);
         vrt.anchorMax = new Vector2(1f, 0.5f);
         vrt.pivot = new Vector2(1f, 0.5f);
-        vrt.anchoredPosition = new Vector2(-25f, 0f);
-        vrt.sizeDelta = new Vector2(55f, 40f);
+        vrt.anchoredPosition = new Vector2(-30f, 0f);
+        vrt.sizeDelta = new Vector2(65f, 40f);
 
         TMP_Text vTxt = valObj.AddComponent<TextMeshProUGUI>();
         vTxt.text = defaultVal.ToString("0");
-        vTxt.font = font;
-        vTxt.fontSize = 20f;
-        vTxt.fontStyle = FontStyles.Bold;
+        vTxt.font = valFont;
+        vTxt.fontSize = 32f;
+        vTxt.fontStyle = FontStyles.Normal;
         vTxt.color = textColor;
         vTxt.alignment = TextAlignmentOptions.Right;
+        vTxt.textWrappingMode = TextWrappingModes.NoWrap;
         vTxt.raycastTarget = false;
 
         // Slider Object
@@ -518,25 +559,25 @@ public class SetupPauseMenuUI : Editor
         srt.anchorMin = new Vector2(1f, 0.5f);
         srt.anchorMax = new Vector2(1f, 0.5f);
         srt.pivot = new Vector2(1f, 0.5f);
-        srt.anchoredPosition = new Vector2(-90f, 0f);
-        srt.sizeDelta = new Vector2(220f, 30f);
+        srt.anchoredPosition = new Vector2(-110f, 0f);
+        srt.sizeDelta = new Vector2(280f, 30f);
 
         Slider slider = sliderObj.AddComponent<Slider>();
         slider.minValue = min;
         slider.maxValue = max;
         slider.value = defaultVal;
 
-        // Background Track (Crisp 5px bar)
+        // Background Track
         GameObject bgTrack = new GameObject("Background", typeof(RectTransform));
         bgTrack.transform.SetParent(sliderObj.transform, false);
         RectTransform bgTrt = bgTrack.GetComponent<RectTransform>();
         bgTrt.anchorMin = new Vector2(0f, 0.5f);
         bgTrt.anchorMax = new Vector2(1f, 0.5f);
         bgTrt.pivot = new Vector2(0.5f, 0.5f);
-        bgTrt.offsetMin = new Vector2(0f, -2.5f);
-        bgTrt.offsetMax = new Vector2(0f, 2.5f);
+        bgTrt.offsetMin = new Vector2(0f, -3f);
+        bgTrt.offsetMax = new Vector2(0f, 3f);
         Image bgImg = bgTrack.AddComponent<Image>();
-        bgImg.color = new Color32(205, 191, 180, 255);
+        bgImg.color = new Color32(213, 199, 188, 255);
 
         // Fill Area & Fill
         GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
@@ -545,8 +586,8 @@ public class SetupPauseMenuUI : Editor
         fart.anchorMin = new Vector2(0f, 0.5f);
         fart.anchorMax = new Vector2(1f, 0.5f);
         fart.pivot = new Vector2(0.5f, 0.5f);
-        fart.offsetMin = new Vector2(0f, -2.5f);
-        fart.offsetMax = new Vector2(0f, 2.5f);
+        fart.offsetMin = new Vector2(0f, -3f);
+        fart.offsetMax = new Vector2(0f, 3f);
 
         GameObject fill = new GameObject("Fill", typeof(RectTransform));
         fill.transform.SetParent(fillArea.transform, false);
@@ -558,19 +599,19 @@ public class SetupPauseMenuUI : Editor
         Image fillImg = fill.AddComponent<Image>();
         fillImg.color = textColor;
 
-        // Handle Slide Area & Handle (Perfect 18x18 circle)
+        // Handle Slide Area & Handle
         GameObject handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
         handleArea.transform.SetParent(sliderObj.transform, false);
         RectTransform hart = handleArea.GetComponent<RectTransform>();
         hart.anchorMin = Vector2.zero;
         hart.anchorMax = Vector2.one;
-        hart.offsetMin = new Vector2(10f, 0f);
-        hart.offsetMax = new Vector2(-10f, 0f);
+        hart.offsetMin = new Vector2(12f, 0f);
+        hart.offsetMax = new Vector2(-12f, 0f);
 
         GameObject handle = new GameObject("Handle", typeof(RectTransform));
         handle.transform.SetParent(handleArea.transform, false);
         RectTransform hrt = handle.GetComponent<RectTransform>();
-        hrt.sizeDelta = new Vector2(18f, 18f);
+        hrt.sizeDelta = new Vector2(24f, 24f);
         Image hImg = handle.AddComponent<Image>();
         hImg.sprite = circle;
         hImg.color = textColor;
@@ -588,7 +629,7 @@ public class SetupPauseMenuUI : Editor
         GameObject row = new GameObject(name, typeof(RectTransform));
         row.transform.SetParent(parent, false);
         RectTransform rt = row.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(960f, 48f);
+        rt.sizeDelta = new Vector2(1226f, 84f);
 
         Image img = row.AddComponent<Image>();
         img.sprite = bg;
@@ -601,16 +642,17 @@ public class SetupPauseMenuUI : Editor
         RectTransform lrt = labelObj.GetComponent<RectTransform>();
         lrt.anchorMin = new Vector2(0f, 0f);
         lrt.anchorMax = new Vector2(0.55f, 1f);
-        lrt.offsetMin = new Vector2(25f, 0f);
+        lrt.offsetMin = new Vector2(40f, 0f);
         lrt.offsetMax = Vector2.zero;
 
         TMP_Text tmp = labelObj.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.font = font;
-        tmp.fontSize = 22f;
-        tmp.fontStyle = FontStyles.Bold;
+        tmp.fontSize = 40f;
+        tmp.fontStyle = FontStyles.Normal;
         tmp.color = textColor;
         tmp.alignment = TextAlignmentOptions.MidlineLeft;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.raycastTarget = false;
 
         return row;
@@ -626,11 +668,11 @@ public class SetupPauseMenuUI : Editor
         rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
         rt.anchoredPosition = new Vector2(40f, -40f);
-        rt.sizeDelta = new Vector2(190f, 48f);
+        rt.sizeDelta = new Vector2(296f, 78f);
 
         Image img = btnObj.AddComponent<Image>();
         img.sprite = bg;
-        img.type = Image.Type.Sliced;
+        img.type = Image.Type.Simple;
         img.color = Color.white;
 
         Button btn = btnObj.AddComponent<Button>();
@@ -640,22 +682,82 @@ public class SetupPauseMenuUI : Editor
         RectTransform trt = txtObj.GetComponent<RectTransform>();
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = Vector2.zero;
-        trt.offsetMax = Vector2.zero;
+        trt.offsetMin = new Vector2(-5f, 5f);
+        trt.offsetMax = new Vector2(-5f, 5f);
 
         TMP_Text tmp = txtObj.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.font = font;
-        tmp.fontSize = 20f;
-        tmp.fontStyle = FontStyles.Bold;
+        tmp.fontSize = 30f;
+        tmp.fontStyle = FontStyles.Normal;
         tmp.color = textColor;
         tmp.alignment = TextAlignmentOptions.Center;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.raycastTarget = false;
 
         return btn;
     }
 
-    private static Button CreatePillButton(Transform parent, string objName, string label, Vector2 size, Sprite bgSprite, TMP_FontAsset font, Color textColor, float fontSize)
+    private static (Sprite left, Sprite right) GetOrCreateTriangleSprites()
+    {
+        string leftPath = "Assets/UI/Triangle_Left.png";
+        string rightPath = "Assets/UI/Triangle_Right.png";
+
+        if (!File.Exists(leftPath) || !File.Exists(rightPath))
+        {
+            int size = 64;
+            int super = size * 4; // 256x256 supersampling
+            Texture2D texRight = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Texture2D texLeft = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Color[] rightCols = new Color[size * size];
+            Color[] leftCols = new Color[size * size];
+
+            for (int sy = 0; sy < size; sy++)
+            {
+                for (int sx = 0; sx < size; sx++)
+                {
+                    float rSum = 0f;
+                    float lSum = 0f;
+                    for (int dy = 0; dy < 4; dy++)
+                    {
+                        for (int dx = 0; dx < 4; dx++)
+                        {
+                            float py = (sy * 4 + dy + 0.5f) / super;
+                            float px = (sx * 4 + dx + 0.5f) / super;
+                            float ny = (py - 0.5f) / 0.38f; // -1 to 1
+                            if (Mathf.Abs(ny) <= 1f)
+                            {
+                                float span = (1f - Mathf.Abs(ny)) * 0.56f;
+                                if (px >= 0.22f && px <= 0.22f + span) rSum += 1f;
+                                if (px <= 0.78f && px >= 0.78f - span) lSum += 1f;
+                            }
+                        }
+                    }
+                    rightCols[sy * size + sx] = new Color(1f, 1f, 1f, rSum / 16f);
+                    leftCols[sy * size + sx] = new Color(1f, 1f, 1f, lSum / 16f);
+                }
+            }
+
+            texRight.SetPixels(rightCols);
+            texRight.Apply();
+            File.WriteAllBytes(rightPath, texRight.EncodeToPNG());
+
+            texLeft.SetPixels(leftCols);
+            texLeft.Apply();
+            File.WriteAllBytes(leftPath, texLeft.EncodeToPNG());
+
+            AssetDatabase.ImportAsset(rightPath, ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset(leftPath, ImportAssetOptions.ForceUpdate);
+            ConfigureSpriteImporter(rightPath);
+            ConfigureSpriteImporter(leftPath);
+        }
+
+        Sprite sLeft = AssetDatabase.LoadAssetAtPath<Sprite>(leftPath);
+        Sprite sRight = AssetDatabase.LoadAssetAtPath<Sprite>(rightPath);
+        return (sLeft, sRight);
+    }
+
+    private static Button CreatePillButton(Transform parent, string objName, string label, Vector2 size, Sprite bgSprite, TMP_FontAsset font, Color textColor, float fontSize, FontStyles fontStyle = FontStyles.Bold, float textLeftOffset = 0f, Image.Type imgType = Image.Type.Simple, Vector2 textOffset = default)
     {
         GameObject btnObj = new GameObject(objName, typeof(RectTransform));
         btnObj.transform.SetParent(parent, false);
@@ -665,7 +767,7 @@ public class SetupPauseMenuUI : Editor
 
         Image img = btnObj.AddComponent<Image>();
         img.sprite = bgSprite;
-        img.type = Image.Type.Sliced;
+        img.type = imgType;
         img.color = Color.white;
 
         Button btn = btnObj.AddComponent<Button>();
@@ -682,22 +784,31 @@ public class SetupPauseMenuUI : Editor
         RectTransform tRt = textObj.GetComponent<RectTransform>();
         tRt.anchorMin = Vector2.zero;
         tRt.anchorMax = Vector2.one;
-        tRt.offsetMin = Vector2.zero;
-        tRt.offsetMax = Vector2.zero;
+        if (textLeftOffset > 0f)
+        {
+            tRt.offsetMin = new Vector2(textLeftOffset, textOffset.y);
+            tRt.offsetMax = new Vector2(-15f + textOffset.x, textOffset.y);
+        }
+        else
+        {
+            tRt.offsetMin = new Vector2(textOffset.x, textOffset.y);
+            tRt.offsetMax = new Vector2(textOffset.x, textOffset.y);
+        }
 
         TMP_Text tmp = textObj.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.font = font;
         tmp.fontSize = fontSize;
-        tmp.fontStyle = FontStyles.Bold;
+        tmp.fontStyle = fontStyle;
         tmp.color = textColor;
-        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.alignment = (textLeftOffset > 0f) ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.Center;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.raycastTarget = false;
 
         return btn;
     }
 
-    private static void ConfigureSpriteImporter(string path)
+    private static void ConfigureSpriteImporter(string path, Vector4? border = null)
     {
         if (!File.Exists(path)) return;
 
@@ -715,9 +826,57 @@ public class SetupPauseMenuUI : Editor
                 importer.spriteImportMode = SpriteImportMode.Single;
                 changed = true;
             }
+            TextureImporterSettings settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            if (settings.spriteMeshType != SpriteMeshType.FullRect)
+            {
+                settings.spriteMeshType = SpriteMeshType.FullRect;
+                importer.SetTextureSettings(settings);
+                changed = true;
+            }
             if (!importer.alphaIsTransparency)
             {
                 importer.alphaIsTransparency = true;
+                changed = true;
+            }
+            if (importer.filterMode != FilterMode.Bilinear)
+            {
+                importer.filterMode = FilterMode.Bilinear;
+                changed = true;
+            }
+            if (importer.mipmapEnabled)
+            {
+                importer.mipmapEnabled = false;
+                changed = true;
+            }
+            if (importer.textureCompression != TextureImporterCompression.Uncompressed)
+            {
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                changed = true;
+            }
+
+            TextureImporterPlatformSettings defaultSettings = importer.GetDefaultPlatformTextureSettings();
+            if (defaultSettings.textureCompression != TextureImporterCompression.Uncompressed || defaultSettings.format != TextureImporterFormat.RGBA32)
+            {
+                defaultSettings.textureCompression = TextureImporterCompression.Uncompressed;
+                defaultSettings.format = TextureImporterFormat.RGBA32;
+                importer.SetPlatformTextureSettings(defaultSettings);
+                changed = true;
+            }
+
+            TextureImporterPlatformSettings standaloneSettings = importer.GetPlatformTextureSettings("Standalone");
+            if (standaloneSettings.textureCompression != TextureImporterCompression.Uncompressed || standaloneSettings.format != TextureImporterFormat.RGBA32)
+            {
+                standaloneSettings.overridden = true;
+                standaloneSettings.textureCompression = TextureImporterCompression.Uncompressed;
+                standaloneSettings.format = TextureImporterFormat.RGBA32;
+                importer.SetPlatformTextureSettings(standaloneSettings);
+                changed = true;
+            }
+
+            if (border.HasValue && importer.spriteBorder != border.Value)
+            {
+                importer.spriteBorder = border.Value;
                 changed = true;
             }
             if (changed)

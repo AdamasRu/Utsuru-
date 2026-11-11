@@ -55,7 +55,7 @@ public class SetupFigmaDialogueUI : Editor
         ConfigureSpriteImporter("Assets/UI/dialogbox.png", new Vector4(24, 24, 24, 24));
         ConfigureSpriteImporter("Assets/UI/Button_Selected.png", new Vector4(20, 20, 20, 20));
         ConfigureSpriteImporter("Assets/UI/Button_Unselected.png", new Vector4(20, 20, 20, 20));
-        ConfigureSpriteImporter("Assets/UI/replayaudiobtn.png", new Vector4(14, 14, 14, 14));
+        ConfigureSpriteImporter("Assets/UI/replayaudiobtn.png", Vector4.zero);
         ConfigureSpriteImporter("Assets/UI/AvatarFrame_Bg.png", new Vector4(24, 24, 24, 24));
         ConfigureSpriteImporter("Assets/UI/DialogueBox_Bg.png", new Vector4(24, 24, 24, 24));
         ConfigureSpriteImporter("Assets/UI/Pill_Brown_Bg.png", new Vector4(17, 9, 17, 9));
@@ -276,42 +276,47 @@ public class SetupFigmaDialogueUI : Editor
         repRt.anchorMax = new Vector2(1f, 0.5f);
         repRt.pivot = new Vector2(1f, 0.5f);
         repRt.anchoredPosition = new Vector2(-42f, 0f);
-        repRt.sizeDelta = new Vector2(150f, 34f);
+        repRt.sizeDelta = new Vector2(171f, 42f);
 
         Image repImg = replayBtnObj.AddComponent<Image>();
         repImg.sprite = bgReplayBtn;
-        repImg.type = Image.Type.Sliced;
+        repImg.type = Image.Type.Simple;
+        repImg.preserveAspect = true;
         Button repBtn = replayBtnObj.AddComponent<Button>();
 
-        // Replay Icon
-        GameObject repIconObj = new GameObject("Icon");
-        repIconObj.transform.SetParent(replayBtnObj.transform, false);
-        RectTransform riRt = repIconObj.AddComponent<RectTransform>();
-        riRt.anchorMin = new Vector2(0f, 0.5f);
-        riRt.anchorMax = new Vector2(0f, 0.5f);
-        riRt.pivot = new Vector2(0f, 0.5f);
-        riRt.anchoredPosition = new Vector2(14f, 0f);
-        riRt.sizeDelta = new Vector2(18f, 18f);
-        Image riImg = repIconObj.AddComponent<Image>();
-        riImg.sprite = speakerIcon;
-        riImg.preserveAspect = true;
-        riImg.color = new Color32(91, 61, 39, 255);
+        bool isBakedReplaySprite = bgReplayBtn != null && bgReplayBtn.name.Contains("replayaudiobtn");
+        if (!isBakedReplaySprite)
+        {
+            // Replay Icon
+            GameObject repIconObj = new GameObject("Icon");
+            repIconObj.transform.SetParent(replayBtnObj.transform, false);
+            RectTransform riRt = repIconObj.AddComponent<RectTransform>();
+            riRt.anchorMin = new Vector2(0f, 0.5f);
+            riRt.anchorMax = new Vector2(0f, 0.5f);
+            riRt.pivot = new Vector2(0f, 0.5f);
+            riRt.anchoredPosition = new Vector2(14f, 0f);
+            riRt.sizeDelta = new Vector2(18f, 18f);
+            Image riImg = repIconObj.AddComponent<Image>();
+            riImg.sprite = speakerIcon;
+            riImg.preserveAspect = true;
+            riImg.color = new Color32(91, 61, 39, 255);
 
-        // Replay Text
-        GameObject repTextObj = new GameObject("Text");
-        repTextObj.transform.SetParent(replayBtnObj.transform, false);
-        RectTransform rptRt = repTextObj.AddComponent<RectTransform>();
-        rptRt.anchorMin = new Vector2(0f, 0f);
-        rptRt.anchorMax = new Vector2(1f, 1f);
-        rptRt.anchoredPosition = new Vector2(14f, 0f);
-        rptRt.sizeDelta = Vector2.zero;
-        TMP_Text repTmp = repTextObj.AddComponent<TextMeshProUGUI>();
-        repTmp.text = "Replay Audio";
-        repTmp.font = nunitoBold;
-        repTmp.fontSize = 13.5f;
-        repTmp.fontStyle = FontStyles.Bold;
-        repTmp.alignment = TextAlignmentOptions.Center;
-        repTmp.color = new Color32(91, 61, 39, 255);
+            // Replay Text
+            GameObject repTextObj = new GameObject("Text");
+            repTextObj.transform.SetParent(replayBtnObj.transform, false);
+            RectTransform rptRt = repTextObj.AddComponent<RectTransform>();
+            rptRt.anchorMin = new Vector2(0f, 0f);
+            rptRt.anchorMax = new Vector2(1f, 1f);
+            rptRt.anchoredPosition = new Vector2(14f, 0f);
+            rptRt.sizeDelta = Vector2.zero;
+            TMP_Text repTmp = repTextObj.AddComponent<TextMeshProUGUI>();
+            repTmp.text = "Replay Audio";
+            repTmp.font = nunitoBold;
+            repTmp.fontSize = 13.5f;
+            repTmp.fontStyle = FontStyles.Bold;
+            repTmp.alignment = TextAlignmentOptions.Center;
+            repTmp.color = new Color32(91, 61, 39, 255);
+        }
 
         // Close Button (X)
         GameObject closeBtnObj = new GameObject("CloseButton");
@@ -716,6 +721,34 @@ public class SetupFigmaDialogueUI : Editor
             if (importer.spriteImportMode != SpriteImportMode.Single)
             {
                 importer.spriteImportMode = SpriteImportMode.Single;
+                changed = true;
+            }
+            TextureImporterSettings settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            if (settings.spriteMeshType != SpriteMeshType.FullRect)
+            {
+                settings.spriteMeshType = SpriteMeshType.FullRect;
+                importer.SetTextureSettings(settings);
+                changed = true;
+            }
+            if (!importer.alphaIsTransparency)
+            {
+                importer.alphaIsTransparency = true;
+                changed = true;
+            }
+            if (importer.filterMode != FilterMode.Bilinear)
+            {
+                importer.filterMode = FilterMode.Bilinear;
+                changed = true;
+            }
+            if (importer.mipmapEnabled)
+            {
+                importer.mipmapEnabled = false;
+                changed = true;
+            }
+            if (importer.textureCompression != TextureImporterCompression.Uncompressed)
+            {
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
                 changed = true;
             }
             if (importer.spriteBorder != borders)
