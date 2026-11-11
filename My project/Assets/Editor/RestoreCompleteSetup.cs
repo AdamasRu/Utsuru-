@@ -10,6 +10,26 @@ using Bozo.ModularCharacters;
 
 public class RestoreCompleteSetup : Editor
 {
+    [InitializeOnLoadMethod]
+    private static void SyncCanonicalSpawnPointsOnLoad()
+    {
+        EditorApplication.delayCall += () =>
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+
+            var scene = EditorSceneManager.GetActiveScene();
+            if (scene.isLoaded && scene.name.Contains("Day_Showcase"))
+            {
+                NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
+                if (spawner != null && NPCSpawner.ApplyCanonicalSpawnPoints(spawner))
+                {
+                    EditorUtility.SetDirty(spawner);
+                    EditorSceneManager.MarkSceneDirty(scene);
+                }
+            }
+        };
+    }
+
     [MenuItem("Tools/Utsuru/Perbesar Kotak Pilihan (Sesuai Ukuran Asli)")]
     public static void FixChoicesSize()
     {
@@ -238,7 +258,7 @@ public class RestoreCompleteSetup : Editor
 
             diagPanelObj.SetActive(false);
         }
-        else
+        else if (diagPanelObj.transform.Find("ContentGroup") == null)
         {
             nameText = diagPanelObj.transform.Find("NameText")?.GetComponent<TMP_Text>();
             bodyText = diagPanelObj.transform.Find("BodyText")?.GetComponent<TMP_Text>();
@@ -287,9 +307,12 @@ public class RestoreCompleteSetup : Editor
 
         SetPrivateField(diagMgr, "dialoguePanel", diagPanelObj);
         SetPrivateField(diagMgr, "interactionPrompt", promptText != null ? promptText.gameObject : null);
-        SetPrivateField(diagMgr, "nameText", nameText);
-        SetPrivateField(diagMgr, "bodyText", bodyText);
-        SetPrivateField(diagMgr, "choicesContainer", choicesContainer);
+        if (diagPanelObj == null || diagPanelObj.transform.Find("ContentGroup") == null)
+        {
+            SetPrivateField(diagMgr, "nameText", nameText);
+            SetPrivateField(diagMgr, "bodyText", bodyText);
+            SetPrivateField(diagMgr, "choicesContainer", choicesContainer);
+        }
         SetPrivateField(diagMgr, "choiceButtonPrefab", choiceBtnPrefab);
         SetPrivateField(diagMgr, "audioSource", audioSrc);
         SetPrivateField(diagMgr, "playerController", player);
@@ -317,44 +340,7 @@ public class RestoreCompleteSetup : Editor
             SetPrivateField(dayNightMgr, "cutsceneUI", transPanelObj.GetComponent<CutsceneTransitionUI>());
         }
 
-        // 6. Setup SpawnPoints
-        GameObject spawnPointsParent = GameObject.Find("SpawnPoints");
-        if (spawnPointsParent == null)
-        {
-            spawnPointsParent = new GameObject("SpawnPoints");
-        }
-
-        Vector3[] pointPositions = new Vector3[]
-        {
-            new Vector3(-1.5f, 0.05f, 5.0f),     // 1. Vending Machine 1
-            new Vector3(-2.5f, 0.05f, 12.0f),    // 2. Toko
-            new Vector3(-9.15f, 0.05f, -5.29f),  // 3. Vending Machine Kopi (Point_3 asli)
-            new Vector3(-5.701f, 0.05f, 29.776f),// 4. Toko Awning (Point_4 asli)
-            new Vector3(4.5f, 0.05f, 15.0f),     // 5. Parkir Mobil
-            new Vector3(1.0f, 0.05f, 0.0f),      // 6. Zebracross
-            new Vector3(3.5f, 0.05f, -8.0f),     // 7. Vending Machine 2
-            new Vector3(-3.0f, 0.05f, 20.0f),    // 8. Toko Tutup
-            new Vector3(-12.88f, 0.05f, -15.02f),// 9. Tanaman Depan Rumah (Point_9 asli)
-            new Vector3(-7.5f, 0.05f, -12.0f),   // 10. Tong Sampah Daur Ulang
-            new Vector3(-5.0f, 0.05f, 35.0f)     // 11. Lampu Merah
-        };
-
-        Transform[] spawnPoints = new Transform[11];
-        for (int i = 0; i < 11; i++)
-        {
-            string ptName = $"Point_{i + 1}";
-            Transform pt = spawnPointsParent.transform.Find(ptName);
-            if (pt == null)
-            {
-                GameObject ptObj = new GameObject(ptName);
-                ptObj.transform.SetParent(spawnPointsParent.transform, false);
-                pt = ptObj.transform;
-            }
-            pt.position = pointPositions[i];
-            spawnPoints[i] = pt;
-        }
-
-        // 7. Setup NPCSpawner
+        // 6. Setup NPCSpawner & Kunci Posisi + Arah Hadap Canonical SpawnPoints (Point_1..Point_11)
         NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
         if (spawner == null)
         {
@@ -363,7 +349,7 @@ public class RestoreCompleteSetup : Editor
         }
 
         SetPrivateField(spawner, "npcPrefab", npcPrefab);
-        SetPrivateField(spawner, "numberOfNpcs", 6);
+        SetPrivateField(spawner, "numberOfNpcs", 7);
 
         // Load 11 Character Presets
         string[] presetNames = new string[] { "Ben", "Chloe", "Dave", "Galvon", "Javi", "Jennifer", "John", "Mary", "Sally", "Tristian", "Zulle" };
@@ -375,13 +361,8 @@ public class RestoreCompleteSetup : Editor
         }
         SetPrivateField(spawner, "characterPresets", presets.ToArray());
 
-        // Setup 11 Contextual Spawn Points
-        spawner.spawnLocations = new ContextualSpawnPoint[11];
-        for (int i = 0; i < 11; i++)
-        {
-            spawner.spawnLocations[i] = new ContextualSpawnPoint();
-            spawner.spawnLocations[i].pointTransform = spawnPoints[i];
-        }
+        // Paksa seluruh Point_1..Point_11 memakai posisi & rotasi kanonis scene saat ini
+        NPCSpawner.ApplyCanonicalSpawnPoints(spawner);
 
         InjectNPCResponses.UpdateAllDialogue();
 

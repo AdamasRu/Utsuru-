@@ -18,6 +18,8 @@ public class InjectNPCResponses : Editor
 
         Undo.RecordObject(spawner, "Update All NPC Dialogue & Responses");
 
+        NPCSpawner.ApplyCanonicalSpawnPoints(spawner);
+
         if (spawner.spawnLocations == null || spawner.spawnLocations.Length < 11)
         {
             System.Array.Resize(ref spawner.spawnLocations, 11);
