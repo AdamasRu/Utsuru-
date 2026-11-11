@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4974703064527148814}
   - component: {fileID: 4273905026297233303}
   - component: {fileID: 8959941367164337655}
-  - component: {fileID: 5780219165683391598}
+  - component: {fileID: 3243971996522378758}
+  - component: {fileID: 4908687177041646711}
   m_Layer: 0
   m_Name: AE_Street_Fence_01
   m_TagString: Untagged
@@ -133,7 +134,29 @@ LODGroup:
     renderers:
     - renderer: {fileID: 4974703064527148814}
   m_Enabled: 1
---- !u!114 &5780219165683391598
+--- !u!64 &3243971996522378758
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4974703064525212110}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 09ecb6297720ad5449733393db760d0e, type: 3}
+--- !u!114 &4908687177041646711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

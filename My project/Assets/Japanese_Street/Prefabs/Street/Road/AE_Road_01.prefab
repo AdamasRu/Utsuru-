@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8450043400969168126}
   - component: {fileID: 937843006586362627}
   - component: {fileID: 7063818559023300851}
-  - component: {fileID: 2854685000438831466}
+  - component: {fileID: 7422362753538503923}
+  - component: {fileID: 6729628364659019057}
   m_Layer: 0
   m_Name: AE_Road_01
   m_TagString: Road
@@ -133,7 +134,29 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 0.030000031, z: 5}
   m_Center: {x: 0, y: 0.0150000155, z: 0}
---- !u!114 &2854685000438831466
+--- !u!64 &7422362753538503923
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8450043400966912574}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: e0b04cc7f30214e408d6e2c6e4411d8e, type: 3}
+--- !u!114 &6729628364659019057
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

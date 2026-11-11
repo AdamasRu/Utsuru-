@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8927939041369032948}
   - component: {fileID: 7224937303892360518}
   - component: {fileID: 468060826350698141}
-  - component: {fileID: 1037405765299623426}
+  - component: {fileID: 3498138148626938674}
   m_Layer: 0
   m_Name: AE_Stone_04
   m_TagString: Untagged
@@ -133,7 +133,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.45011443, y: 0.25339425, z: 0.8422887}
   m_Center: {x: 0, y: 0.1266967, z: -0.000000059604645}
---- !u!114 &1037405765299623426
+--- !u!114 &3498138148626938674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

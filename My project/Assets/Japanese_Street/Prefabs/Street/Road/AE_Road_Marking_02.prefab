@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 272418090764006565}
   - component: {fileID: 272418090765104741}
   - component: {fileID: 4499105399720615732}
-  - component: {fileID: 4454420227964717357}
+  - component: {fileID: 131160280610312312}
   m_Layer: 0
   m_Name: AE_Road_Marking_02
   m_TagString: Road
@@ -111,16 +111,25 @@ LODGroup:
     renderers:
     - renderer: {fileID: 272418090765104741}
   m_Enabled: 1
---- !u!114 &4454420227964717357
-MonoBehaviour:
+--- !u!64 &131160280610312312
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272418090763102373}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
-  objectid: ICK-46
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: a7795f9c75a79314d920d8a322ea2b51, type: 3}

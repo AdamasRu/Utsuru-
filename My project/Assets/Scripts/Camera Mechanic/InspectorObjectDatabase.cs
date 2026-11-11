@@ -1,0 +1,121 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Utsuru.Capture
+{
+    /// <summary>
+    /// SEMENTARA: database yang diisi lewat Inspector, untuk menguji kamera.
+    /// Saat database yang sebenarnya siap, ganti komponen ini dengan skrip turunan ObjectDatabaseProvider.
+    /// </summary>
+    public class InspectorObjectDatabase : ObjectDatabaseProvider
+    {
+        [Tooltip("Path katalog JSON kosakata di Resources tanpa ekstensi")]
+        [SerializeField] private string catalogResourcePath = "Data/vocabulary_catalog";
+
+        [SerializeField] private List<ObjectInfo> entries = new List<ObjectInfo>();
+
+        private readonly Dictionary<string, ObjectInfo> lookup = new Dictionary<string, ObjectInfo>();
+
+        private void Awake()
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            if (lookup.Count > 0) return;
+
+            // Muat dari berkas JSON katalog di Resources jika tersedia
+            if (!string.IsNullOrEmpty(catalogResourcePath))
+            {
+                TextAsset jsonAsset = Resources.Load<TextAsset>(catalogResourcePath);
+                if (jsonAsset != null && !string.IsNullOrEmpty(jsonAsset.text))
+                {
+                    try
+                    {
+                        var catalog = JsonUtility.FromJson<VocabularyCatalogWrapper>(jsonAsset.text);
+                        if (catalog != null && catalog.items != null)
+                        {
+                            foreach (var item in catalog.items)
+                            {
+                                if (item != null && !string.IsNullOrEmpty(item.objectId))
+                                {
+                                    lookup[item.objectId] = item;
+                                }
+                            }
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"[InspectorObjectDatabase] Gagal mem-parse JSON katalog kosakata '{catalogResourcePath}': {ex.Message}", this);
+                    }
+                }
+            }
+
+            // Timpa dengan entri khusus dari Inspector jika ada
+            foreach (ObjectInfo entry in entries)
+            {
+                if (entry == null || string.IsNullOrEmpty(entry.objectId)) continue;
+                lookup[entry.objectId] = entry;
+            }
+
+            // Fallback jika belum ada data sama sekali
+            if (lookup.Count == 0)
+            {
+                EnsureDefault("ICK-01", "Sepeda", 1, "自転車", "じてんしゃ", "Jitensha", "Sepeda", "駅前に自転車がたくさん止まっています。", "Transport");
+                EnsureDefault("ICK-02", "Mesin Penjual Otomatis", 2, "自動販売機", "じどうはんばいき", "Jidouhanbaiki", "Mesin Penjual Otomatis", "自動販売機で冷たいお茶を買いました。", "Sign");
+                EnsureDefault("ICK-03", "Poster", 3, "ポスター", "ぽすたー", "Posutaa", "Poster", "壁にきれいなポスターが貼ってあります。", "Sign");
+            }
+        }
+
+        private void EnsureDefault(string id, string name, int vocabId, string jp, string kana, string romaji, string arti, string example, string cat)
+        {
+            if (!lookup.ContainsKey(id))
+            {
+                lookup[id] = new ObjectInfo
+                {
+                    objectId = id,
+                    objectName = name,
+                    vocabulary = new VocabularyEntry
+                    {
+                        vocabularyId = vocabId,
+                        japaneseWord = jp,
+                        kana = kana,
+                        romaji = romaji,
+                        translation = arti,
+                        exampleSentence = example,
+                        category = cat
+                    }
+                };
+            }
+        }
+
+        public void Reload()
+        {
+            lookup.Clear();
+            Init();
+        }
+
+        public override bool TryGetObject(string objectId, out ObjectInfo info)
+        {
+            if (string.IsNullOrEmpty(objectId))
+            {
+                info = null;
+                return false;
+            }
+            Init();
+            return lookup.TryGetValue(objectId, out info);
+        }
+
+        public override IReadOnlyList<ObjectInfo> GetAllObjects()
+        {
+            Init();
+            var list = new List<ObjectInfo>();
+            foreach (var kv in lookup)
+            {
+                list.Add(kv.Value);
+            }
+            return list;
+        }
+    }
+}

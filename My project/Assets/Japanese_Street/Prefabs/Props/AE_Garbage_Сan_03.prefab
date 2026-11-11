@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7874250734542049625}
   - component: {fileID: 7874250734554973689}
-  - component: {fileID: 1695920315145661843}
+  - component: {fileID: 8481287533467975059}
+  - component: {fileID: 5081202916911310806}
   m_Layer: 0
   m_Name: "AE_Garbage_\u0421an_03"
   m_TagString: Untagged
@@ -58,7 +59,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 7874250734539756475}
   m_Enabled: 1
---- !u!114 &1695920315145661843
+--- !u!114 &8481287533467975059
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,6 +72,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
   objectid: ICK-22
+--- !u!64 &5081202916911310806
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7874250734541950329}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7874250734541950331
 GameObject:
   m_ObjectHideFlags: 0

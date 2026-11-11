@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 6852789399622794042}
   - component: {fileID: 6852789399607504794}
   - component: {fileID: 7940525541186194106}
-  - component: {fileID: 3652926463840749940}
+  - component: {fileID: 4070983330183209509}
   m_Layer: 0
   m_Name: AE_Electricity_Meter_01
   m_TagString: Untagged
@@ -176,7 +176,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300004, guid: 29a7048b215374546a92465d607f2214, type: 3}
---- !u!114 &3652926463840749940
+--- !u!114 &4070983330183209509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

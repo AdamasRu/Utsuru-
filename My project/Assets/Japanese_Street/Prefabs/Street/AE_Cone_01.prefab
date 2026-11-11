@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3388869205172154050}
   - component: {fileID: 3073463534788148374}
   - component: {fileID: 1912342271611361217}
-  - component: {fileID: 637541503001098420}
+  - component: {fileID: 6548740335380523446}
+  - component: {fileID: 4713884260041158465}
   m_Layer: 0
   m_Name: AE_Cone_01
   m_TagString: Untagged
@@ -133,7 +134,29 @@ LODGroup:
     renderers:
     - renderer: {fileID: 3388869205172154050}
   m_Enabled: 1
---- !u!114 &637541503001098420
+--- !u!64 &6548740335380523446
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3388869205174087682}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: ee3bbe2878288cf4e8ee302f62e20c76, type: 3}
+--- !u!114 &4713884260041158465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
