@@ -1,68 +1,60 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Utsuru.Capture;
 
 namespace Utsuru.DictionaryUI
 {
-    public enum DictionaryTab
-    {
-        Vocabulary = 0,
-        Course = 1,
-        Album = 2,
-        Decoration = 3
-    }
-
     /// <summary>
-    /// Controller utama buku Dictionary (DPPL UI-05).
-    /// Skrip ini berada di GameObject yang SELALU AKTIF di bawah Canvas agar selalu mendengarkan input keyboard 'B'.
-    /// Yang diaktifkan/dinonaktifkan adalah viewRoot (panel buku dan dimmer).
+    /// Controller utama buku Dictionary Rework (DPPL UI-05).
+    /// Mengelola fading background (BG_dictionary.png), buka/tutup container buku (Book),
+    /// serta 7 tab bookmark di atas buku (Album, Like, Favorite, Quiz, Hiragana, Module, Exit).
+    /// Berada di GameObject Canvas/Dictionary yang selalu aktif mendengarkan input 'B' / Escape.
     /// </summary>
     public class DictionaryUIController : MonoBehaviour
     {
-        [Header("Tampilan Visual (Yang di-toggle)")]
-        [Tooltip("Kontainer seluruh visual Dictionary (Dimmer + BookContainer). Dinonaktifkan saat tertutup.")]
+        [Header("Tampilan Utama (Yang Di-toggle)")]
+        [Tooltip("Kontainer DictionaryView yang memuat Dimmer + BookContainer.")]
         [SerializeField] private GameObject viewRoot;
+        [SerializeField] private CanvasGroup viewCanvasGroup;
+        [SerializeField] private RectTransform bookContainerRt;
 
-        [Header("Kontrol Buka / Tutup")]
-        [SerializeField] private Button closeButton;
+        [Header("Pengaturan Transisi")]
+        [SerializeField] private float fadeDuration = 0.25f;
         [SerializeField] private KeyCode toggleKey = KeyCode.B;
 
-        [Header("Marker Tab Buttons (Samping Kiri Buku)")]
-        [SerializeField] private Button vocabTabButton;
-        [SerializeField] private Button courseTabButton;
-        [SerializeField] private Button albumTabButton;
-        [SerializeField] private Button decorTabButton;
+        [Header("Tab Bookmark Atas")]
+        [SerializeField] private Button tabAlbumButton;
+        [SerializeField] private Button tabLikeButton;
+        [SerializeField] private Button tabFavoriteButton;
+        [SerializeField] private Button tabQuizButton;
+        [SerializeField] private Button tabHiraganaButton;
+        [SerializeField] private Button tabModuleButton;
+        [SerializeField] private Button tabExitButton;
 
-        [Header("Tab Panels")]
-        [SerializeField] private GameObject vocabPanel;
-        [SerializeField] private GameObject coursePanel; // Placeholder
-        [SerializeField] private GameObject albumPanel;
-        [SerializeField] private GameObject decorPanel;  // Placeholder
-
-        [Header("Sub-Controllers")]
-        [SerializeField] private DictionaryVocabularyTabUI vocabTabController;
-        [SerializeField] private DictionaryAlbumTabUI albumTabController;
-
-        [Header("Visual Tab (Aktif vs Tidak Aktif)")]
-        [SerializeField] private Color activeTabColor = new Color(0.95f, 0.92f, 0.85f, 1f);
-        [SerializeField] private Color inactiveTabColor = new Color(0.55f, 0.5f, 0.45f, 1f);
+        [Header("Spread Buku (Isi 2 Halaman)")]
+        [SerializeField] private DictionaryBookSpreadUI bookSpread;
 
         public bool IsOpen => viewRoot != null && viewRoot.activeSelf;
 
-        private DictionaryTab currentTab = DictionaryTab.Album;
         private float prevTimeScale = 1f;
+        private Coroutine transitionCoroutine;
+        private DictionaryBookMode currentTab = DictionaryBookMode.Album;
 
         private void Awake()
         {
-            if (closeButton != null) closeButton.onClick.AddListener(Close);
+            // Daftarkan listener tombol tab
+            if (tabAlbumButton != null) tabAlbumButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Album));
+            if (tabLikeButton != null) tabLikeButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Like));
+            if (tabFavoriteButton != null) tabFavoriteButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Favorite));
+            if (tabQuizButton != null) tabQuizButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Quiz));
+            if (tabHiraganaButton != null) tabHiraganaButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Hiragana));
+            if (tabModuleButton != null) tabModuleButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Module));
+            if (tabExitButton != null) tabExitButton.onClick.AddListener(Close);
 
-            if (vocabTabButton != null) vocabTabButton.onClick.AddListener(() => SwitchTab(DictionaryTab.Vocabulary));
-            if (courseTabButton != null) courseTabButton.onClick.AddListener(() => SwitchTab(DictionaryTab.Course));
-            if (albumTabButton != null) albumTabButton.onClick.AddListener(() => SwitchTab(DictionaryTab.Album));
-            if (decorTabButton != null) decorTabButton.onClick.AddListener(() => SwitchTab(DictionaryTab.Decoration));
-
-            // Default: tampilan buku tertutup saat mulai, tapi GameObject ini tetap aktif mendengarkan input
+            // Default: tertutup saat awal mulai
             if (viewRoot != null) viewRoot.SetActive(false);
+            if (viewCanvasGroup != null) viewCanvasGroup.alpha = 0f;
         }
 
         private void Update()
@@ -111,11 +103,11 @@ namespace Utsuru.DictionaryUI
             else Open();
         }
 
-        public void Open(DictionaryTab startingTab = DictionaryTab.Album)
+        public void Open(DictionaryBookMode startingTab = DictionaryBookMode.Album)
         {
             if (IsOpen) return;
 
-            // Blok pemotretan kamera saat dictionary terbuka
+            // Blok shutter kamera agar tidak memotret saat buka buku
             if (CameraCaptureSystem.Instance != null)
             {
                 CameraCaptureSystem.Instance.InputBlocked = true;
@@ -137,7 +129,11 @@ namespace Utsuru.DictionaryUI
 
             if (viewRoot != null) viewRoot.SetActive(true);
 
-            SwitchTab(startingTab);
+            SelectTab(startingTab);
+
+            if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
+            transitionCoroutine = StartCoroutine(FadeRoutine(true));
+
             Debug.Log("[DictionaryUIController] Dictionary DIBUKA.");
         }
 
@@ -145,62 +141,94 @@ namespace Utsuru.DictionaryUI
         {
             if (!IsOpen) return;
 
-            if (viewRoot != null) viewRoot.SetActive(false);
-
-            Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
-
-            if (CameraCaptureSystem.Instance != null)
+            if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
+            transitionCoroutine = StartCoroutine(FadeRoutine(false, () =>
             {
-                CameraCaptureSystem.Instance.InputBlocked = false;
-            }
+                if (viewRoot != null) viewRoot.SetActive(false);
 
-            // Kembalikan kontrol player dan kunci kursor kembali
-            var cameraMode = FindFirstObjectByType<CameraModeController>();
-            if (cameraMode != null)
-            {
-                cameraMode.SetControlsLocked(false);
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+                Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
 
-            Debug.Log("[DictionaryUIController] Dictionary DITUTUP.");
+                if (CameraCaptureSystem.Instance != null)
+                {
+                    CameraCaptureSystem.Instance.InputBlocked = false;
+                }
+
+                var cameraMode = FindFirstObjectByType<CameraModeController>();
+                if (cameraMode != null)
+                {
+                    cameraMode.SetControlsLocked(false);
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+
+                Debug.Log("[DictionaryUIController] Dictionary DITUTUP.");
+            }));
         }
 
-        public void SwitchTab(DictionaryTab tab)
+        public void SelectTab(DictionaryBookMode tab)
         {
             currentTab = tab;
-
-            if (vocabPanel != null) vocabPanel.SetActive(tab == DictionaryTab.Vocabulary);
-            if (coursePanel != null) coursePanel.SetActive(tab == DictionaryTab.Course);
-            if (albumPanel != null) albumPanel.SetActive(tab == DictionaryTab.Album);
-            if (decorPanel != null) decorPanel.SetActive(tab == DictionaryTab.Decoration);
-
-            UpdateTabButtonVisual(vocabTabButton, tab == DictionaryTab.Vocabulary);
-            UpdateTabButtonVisual(courseTabButton, tab == DictionaryTab.Course);
-            UpdateTabButtonVisual(albumTabButton, tab == DictionaryTab.Album);
-            UpdateTabButtonVisual(decorTabButton, tab == DictionaryTab.Decoration);
-
-            if (tab == DictionaryTab.Vocabulary && vocabTabController != null)
+            if (bookSpread != null)
             {
-                vocabTabController.RefreshUI();
+                bookSpread.SetMode(tab);
             }
-            else if (tab == DictionaryTab.Album && albumTabController != null)
-            {
-                albumTabController.RefreshUI();
-            }
+            UpdateTabVisuals();
         }
 
-        private void UpdateTabButtonVisual(Button btn, bool isActive)
+        private void UpdateTabVisuals()
+        {
+            // Highlight visual tab aktif: tab yang aktif sedikit menjorok ke bawah / full opacity
+            SetTabHighlight(tabAlbumButton, currentTab == DictionaryBookMode.Album);
+            SetTabHighlight(tabLikeButton, currentTab == DictionaryBookMode.Like);
+            SetTabHighlight(tabFavoriteButton, currentTab == DictionaryBookMode.Favorite);
+            SetTabHighlight(tabQuizButton, currentTab == DictionaryBookMode.Quiz);
+            SetTabHighlight(tabHiraganaButton, currentTab == DictionaryBookMode.Hiragana);
+            SetTabHighlight(tabModuleButton, currentTab == DictionaryBookMode.Module);
+        }
+
+        private void SetTabHighlight(Button btn, bool isActive)
         {
             if (btn == null) return;
             var img = btn.GetComponent<Image>();
             if (img != null)
             {
-                img.color = isActive ? activeTabColor : inactiveTabColor;
+                img.color = isActive ? Color.white : new Color(0.85f, 0.85f, 0.85f, 0.88f);
             }
+        }
+
+        private IEnumerator FadeRoutine(bool fadeIn, System.Action onComplete = null)
+        {
+            float elapsed = 0f;
+            float startAlpha = viewCanvasGroup != null ? viewCanvasGroup.alpha : (fadeIn ? 0f : 1f);
+            float targetAlpha = fadeIn ? 1f : 0f;
+
+            Vector3 startScale = fadeIn ? Vector3.one * 0.94f : Vector3.one;
+            Vector3 targetScale = fadeIn ? Vector3.one : Vector3.one * 0.94f;
+
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / fadeDuration);
+                // Ease out cubic
+                float ease = 1f - Mathf.Pow(1f - t, 3f);
+
+                if (viewCanvasGroup != null)
+                    viewCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, ease);
+
+                if (bookContainerRt != null)
+                    bookContainerRt.localScale = Vector3.Lerp(startScale, targetScale, ease);
+
+                yield return null;
+            }
+
+            if (viewCanvasGroup != null) viewCanvasGroup.alpha = targetAlpha;
+            if (bookContainerRt != null) bookContainerRt.localScale = targetScale;
+
+            onComplete?.Invoke();
+            transitionCoroutine = null;
         }
     }
 }

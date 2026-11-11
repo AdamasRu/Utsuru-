@@ -22,11 +22,17 @@ namespace Utsuru.Capture
 
         [TextArea] public string exampleSentence;
 
-        [Tooltip("Path audio di folder Resources tanpa ekstensi, mis. Audio/neko (tbl_vocabulary.audioPath)")]
+        [Tooltip("Path audio pelafalan kata di folder Resources tanpa ekstensi, mis. Audio/Bicycle - ICK-01/vocab")]
         public string audioPath;
 
         [Tooltip("Opsional: AudioClip langsung. Jika diisi, dipakai menggantikan audioPath.")]
         public AudioClip audioClip;
+
+        [Tooltip("Path audio contoh kalimat di folder Resources tanpa ekstensi, mis. Audio/Bicycle - ICK-01/sentence")]
+        public string sentenceAudioPath;
+
+        [Tooltip("Opsional: AudioClip kalimat langsung. Jika diisi, dipakai menggantikan sentenceAudioPath.")]
+        public AudioClip sentenceAudioClip;
 
         public string category;
 
@@ -46,5 +52,12 @@ namespace Utsuru.Capture
         public string objectName;
 
         public VocabularyEntry vocabulary = new VocabularyEntry();
+    }
+
+    /// <summary>Wrapper untuk serialisasi JSON daftar ObjectInfo (kompatibel JsonUtility).</summary>
+    [Serializable]
+    public class VocabularyCatalogWrapper
+    {
+        public System.Collections.Generic.List<ObjectInfo> items = new System.Collections.Generic.List<ObjectInfo>();
     }
 }

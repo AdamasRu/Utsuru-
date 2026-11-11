@@ -211,14 +211,10 @@ namespace Utsuru.Capture
 
             InteractableObject result = null;
             var interactable = col.GetComponentInParent<InteractableObject>();
-            if (interactable == null)
-            {
-                interactable = col.GetComponentInParent<DataVocabularyObject>();
-            }
 
             if (interactable != null)
             {
-                bool hasVocab = col.GetComponentInParent<DataVocabularyObject>() != null || interactable is DataVocabularyObject;
+                bool hasVocab = !string.IsNullOrEmpty(interactable.ObjectId);
                 bool tagOk = string.IsNullOrEmpty(requiredTag)
                     || col.CompareTag(requiredTag)
                     || interactable.gameObject.CompareTag(requiredTag)

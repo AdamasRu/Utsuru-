@@ -30,6 +30,25 @@ namespace Utsuru.Capture
         [SerializeField] private Button closeButton;
         [SerializeField] private AudioSource audioSource;
 
+        [Header("Banner & Badges")]
+        [SerializeField] private Image bannerImage;
+        [SerializeField] private Sprite bannerNewKotobaSprite;
+        [SerializeField] private Sprite bannerAlreadyDiscoveredSprite;
+        [SerializeField] private TMP_Text dateStampLabel;
+        [SerializeField] private TMP_Text categoryLabel;
+        [SerializeField] private TMP_Text pointBadgeLabel;
+        [SerializeField] private GameObject pointBadgeObject;
+
+        [Header("Save & Retake Buttons")]
+        [SerializeField] private Image saveButtonImage;
+        [SerializeField] private Sprite saveButtonWithPointsSprite;
+        [SerializeField] private Sprite saveButtonWithoutPointsSprite;
+        [SerializeField] private Button retakeButton;
+
+        [Header("Example Sentence")]
+        [SerializeField] private TMP_Text exampleJapaneseLabel;
+        [SerializeField] private TMP_Text exampleTranslationLabel;
+
         [Header("Kemudahan Pengguna (UX)")]
         [Tooltip("Label status perolehan kata (BARU / KAJI ULANG). Opsional.")]
         [SerializeField] private TMP_Text statusBadgeLabel;
@@ -58,6 +77,7 @@ namespace Utsuru.Capture
             if (audioButton != null) audioButton.onClick.AddListener(PlayAudio);
             if (saveButton != null) saveButton.onClick.AddListener(Save);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
+            if (retakeButton != null) retakeButton.onClick.AddListener(Close);
             if (backdropCloseButton != null) backdropCloseButton.onClick.AddListener(Close);
             if (exampleToggle != null)
                 exampleToggle.onValueChanged.AddListener(on => exampleLabel.gameObject.SetActive(on));
@@ -65,17 +85,27 @@ namespace Utsuru.Capture
 
         private void Update()
         {
-            // Izinkan menutup kartu pop-up dengan tombol Escape, C, atau Space agar pemain tidak terjebak
             if (panelRoot != null && panelRoot.activeSelf)
             {
 #if ENABLE_INPUT_SYSTEM
                 var kb = UnityEngine.InputSystem.Keyboard.current;
-                if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.cKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+                if (kb != null)
                 {
-                    Close();
+                    if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame)
+                    {
+                        Save();
+                    }
+                    else if (kb.escapeKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame || kb.cKey.wasPressedThisFrame)
+                    {
+                        Close();
+                    }
                 }
 #else
-                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                {
+                    Save();
+                }
+                else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.C))
                 {
                     Close();
                 }
@@ -94,31 +124,99 @@ namespace Utsuru.Capture
             if (captureSystem != null) captureSystem.OnPhotoCaptured -= Show;
         }
 
-        private void Show(PhotoCaptureResult result)
+        public void Show(PhotoCaptureResult result)
         {
             current = result;
             VocabularyEntry vocab = result.Vocabulary;
 
             if (photoImage != null) photoImage.texture = result.Snapshot;
-            if (kanjiLabel != null) kanjiLabel.text = vocab != null ? vocab.DisplayJapanese : "-";
-            if (romajiLabel != null) romajiLabel.text = vocab != null ? vocab.romaji : "-";
-            if (meaningLabel != null) meaningLabel.text = vocab != null ? vocab.translation : "-";
-            if (exampleLabel != null)
+
+            if (dateStampLabel != null)
             {
-                exampleLabel.text = vocab != null ? vocab.exampleSentence : "";
-                exampleLabel.gameObject.SetActive(false);
+                dateStampLabel.text = result.TakenAt.ToString("yy MM dd");
             }
 
-            // Kalimat contoh opsional lewat toggle: default tersembunyi.
-            if (exampleToggle != null)
+            if (categoryLabel != null)
             {
-                exampleToggle.SetIsOnWithoutNotify(false);
+                categoryLabel.text = FormatCategory(vocab != null ? vocab.category : "");
             }
 
-            if (statusBadgeLabel != null)
+            if (kanjiLabel != null)
             {
-                statusBadgeLabel.text = result.IsNewDiscovery ? "✨ Kosakata Baru Ditemukan! (+10 Poin)" : "📖 Kaji Ulang (Sudah Ada di Album)";
-                statusBadgeLabel.color = result.IsNewDiscovery ? new Color(0.2f, 0.85f, 0.4f) : new Color(1f, 0.75f, 0.2f);
+                if (vocab != null)
+                {
+                    kanjiLabel.text = string.IsNullOrEmpty(vocab.kana) 
+                        ? vocab.japaneseWord 
+                        : $"{vocab.japaneseWord} <size=70%><color=#8C7063>({vocab.kana})</color></size>";
+                }
+                else kanjiLabel.text = "-";
+            }
+
+            if (romajiLabel != null)
+            {
+                if (vocab != null)
+                {
+                    romajiLabel.text = $"<color=#2563EB><b>{vocab.romaji}</b></color> <color=#94A3B8>•</color> <color=#475569>{vocab.translation}</color>";
+                }
+                else romajiLabel.text = "-";
+            }
+
+            if (vocab != null && !string.IsNullOrEmpty(vocab.exampleSentence))
+            {
+                string[] lines = vocab.exampleSentence.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                if (exampleJapaneseLabel != null)
+                {
+                    exampleJapaneseLabel.text = lines.Length > 0 ? lines[0] : "";
+                }
+                if (exampleTranslationLabel != null)
+                {
+                    exampleTranslationLabel.text = lines.Length > 1 ? string.Join(" ", lines, 1, lines.Length - 1) : "";
+                }
+                if (exampleLabel != null)
+                {
+                    exampleLabel.text = vocab.exampleSentence;
+                }
+            }
+
+            // New Discovery vs Already Discovered
+            if (result.IsNewDiscovery)
+            {
+                if (bannerImage != null && bannerNewKotobaSprite != null)
+                {
+                    bannerImage.sprite = bannerNewKotobaSprite;
+                    bannerImage.gameObject.SetActive(true);
+                }
+                if (saveButtonImage != null && saveButtonWithPointsSprite != null)
+                {
+                    saveButtonImage.sprite = saveButtonWithPointsSprite;
+                }
+                if (pointBadgeObject != null)
+                {
+                    pointBadgeObject.SetActive(true);
+                }
+                if (pointBadgeLabel != null)
+                {
+                    pointBadgeLabel.text = "+15 Points";
+                }
+            }
+            else
+            {
+                if (bannerImage != null)
+                {
+                    if (bannerAlreadyDiscoveredSprite != null)
+                        bannerImage.sprite = bannerAlreadyDiscoveredSprite;
+                    else if (bannerNewKotobaSprite != null)
+                        bannerImage.sprite = bannerNewKotobaSprite; // Temporary fallback per user choice
+                    bannerImage.gameObject.SetActive(true);
+                }
+                if (saveButtonImage != null && saveButtonWithoutPointsSprite != null)
+                {
+                    saveButtonImage.sprite = saveButtonWithoutPointsSprite;
+                }
+                if (pointBadgeObject != null)
+                {
+                    pointBadgeObject.SetActive(false);
+                }
             }
 
             if (captureSystem != null) captureSystem.InputBlocked = true;
@@ -133,6 +231,31 @@ namespace Utsuru.Capture
             }
 
             if (panelRoot != null) panelRoot.SetActive(true);
+        }
+
+        private static string FormatCategory(string cat)
+        {
+            if (string.IsNullOrEmpty(cat)) return "PLACES (場所)";
+            switch (cat.Trim().ToLowerInvariant())
+            {
+                case "places":
+                case "road":
+                    return "PLACES (場所)";
+                case "transport":
+                    return "TRANSPORT (交通)";
+                case "sign":
+                    return "SIGNS (看板・標識)";
+                case "facility":
+                    return "FACILITY (施設)";
+                case "infrastructure":
+                    return "INFRASTRUCTURE (設備)";
+                case "nature":
+                    return "NATURE (自然)";
+                case "residential":
+                    return "RESIDENTIAL (住宅)";
+                default:
+                    return $"{cat.ToUpperInvariant()} (分類)";
+            }
         }
 
         // Untuk menguji tampilan popup tanpa harus membidik objek.
@@ -177,7 +300,21 @@ namespace Utsuru.Capture
         {
             if (current == null) return;
 
-            AudioClip clip = ResolveAudio(current.Vocabulary);
+            VocabularyEntry vocab = current.Vocabulary;
+            if (vocab == null) return;
+
+            AudioClip clip = null;
+            // Jika kalimat contoh sedang aktif/terbuka, dahulukan audio kalimat jika ada
+            if (exampleToggle != null && exampleToggle.isOn && (!string.IsNullOrEmpty(vocab.sentenceAudioPath) || vocab.sentenceAudioClip != null))
+            {
+                clip = vocab.sentenceAudioClip != null ? vocab.sentenceAudioClip : Resources.Load<AudioClip>(vocab.sentenceAudioPath);
+            }
+
+            if (clip == null)
+            {
+                clip = ResolveAudio(vocab);
+            }
+
             if (clip == null || audioSource == null)
             {
                 if (hud != null) hud.ShowMessage(audioErrorMessage);
@@ -222,11 +359,15 @@ namespace Utsuru.Capture
         }
 
         // BtnTutup: foto dibuang, kosakata tetap Discovered (sudah dicatat saat shutter).
-        private void Close()
+        public void Close()
         {
             if (panelRoot != null) panelRoot.SetActive(false);
 
-            if (current != null && current.Snapshot != null) Destroy(current.Snapshot);
+            if (current != null && current.Snapshot != null)
+            {
+                if (Application.isPlaying) Destroy(current.Snapshot);
+                else DestroyImmediate(current.Snapshot);
+            }
             current = null;
             testMode = false;
 

@@ -1,33 +1,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace Utsuru.Capture
 {
     /// <summary>
-    /// Objek 3D yang bisa dibidik dan difoto. Hanya menyimpan ID unik;
-    /// nama dan kosakata diambil dari database lewat ID ini.
-    /// Pasang di objek bertag "Interactable" yang punya Collider dan MeshRenderer.
+    /// Objek 3D yang bisa dibidik dan difoto (DPPL Object Interactable).
+    /// Menyimpan ID unik kosakata (mis. ICK-01). Data nama dan teks kosakata diambil dari database lewat ID ini.
+    /// Pasang di objek yang punya Collider dan MeshRenderer dengan tag "Interactable".
     /// </summary>
     [DisallowMultipleComponent]
     public class InteractableObject : MonoBehaviour
     {
-        [Tooltip("ID unik objek, harus sama dengan ID di database.")]
-        [HideInInspector]
+        [Tooltip("ID unik objek yang berelasi ke Database Kosakata (mis. ICK-01).")]
+        [FormerlySerializedAs("objectid")]
         [SerializeField] private string objectId;
 
         private readonly List<GameObject> outlineClones = new List<GameObject>();
         private bool outlineBuilt;
 
-        public string ObjectId
+        public virtual string ObjectId => !string.IsNullOrEmpty(objectId) ? objectId : "";
+
+        /// <summary>Alias kompatibilitas untuk penulisan huruf kecil.</summary>
+        public string objectid
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(objectId)) return objectId;
-                var vocab = GetComponent<DataVocabularyObject>() ?? GetComponentInParent<DataVocabularyObject>();
-                if (vocab != null && !string.IsNullOrEmpty(vocab.objectid)) return vocab.objectid;
-                return objectId;
-            }
+            get => objectId;
+            set => objectId = value;
         }
 
         public void SetObjectId(string id)

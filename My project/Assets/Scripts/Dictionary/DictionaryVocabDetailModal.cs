@@ -73,10 +73,16 @@ namespace Utsuru.DictionaryUI
             if (currentInfo == null || currentInfo.vocabulary == null || audioSource == null) return;
             var vocab = currentInfo.vocabulary;
 
-            AudioClip clip = vocab.audioClip;
-            if (clip == null && !string.IsNullOrEmpty(vocab.audioPath))
+            AudioClip clip = null;
+            // Jika contoh kalimat sedang dibuka, dahulukan audio kalimat jika tersedia
+            if (exampleToggle != null && exampleToggle.isOn && (!string.IsNullOrEmpty(vocab.sentenceAudioPath) || vocab.sentenceAudioClip != null))
             {
-                clip = Resources.Load<AudioClip>(vocab.audioPath);
+                clip = vocab.sentenceAudioClip != null ? vocab.sentenceAudioClip : Resources.Load<AudioClip>(vocab.sentenceAudioPath);
+            }
+
+            if (clip == null)
+            {
+                clip = vocab.audioClip != null ? vocab.audioClip : (!string.IsNullOrEmpty(vocab.audioPath) ? Resources.Load<AudioClip>(vocab.audioPath) : null);
             }
 
             if (clip != null)

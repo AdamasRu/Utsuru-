@@ -105,6 +105,37 @@ namespace Utsuru.Capture
             }
         }
 
+        /// <summary>Ubah status like foto (hati).</summary>
+        public void ToggleLike(string photoId)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null)
+            {
+                photo.isLiked = !photo.isLiked;
+                Persist();
+            }
+        }
+
+        public void SetFavorite(string photoId, bool favorite)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null && photo.isFavorite != favorite)
+            {
+                photo.isFavorite = favorite;
+                Persist();
+            }
+        }
+
+        public void SetLike(string photoId, bool liked)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null && photo.isLiked != liked)
+            {
+                photo.isLiked = liked;
+                Persist();
+            }
+        }
+
         /// <summary>Pindahkan foto ke album lain.</summary>
         public bool MovePhoto(string photoId, int targetAlbumId)
         {

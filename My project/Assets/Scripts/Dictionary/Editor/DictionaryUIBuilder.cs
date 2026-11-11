@@ -1,1095 +1,697 @@
-#if UNITY_EDITOR
-using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utsuru.Capture;
-using Utsuru.DictionaryUI;
 
 namespace Utsuru.DictionaryUI.Editor
 {
     public static class DictionaryUIBuilder
     {
-        private static Sprite defaultSprite;
-        private static TMP_FontAsset defaultFont;
-
-        public static GameObject BuildDictionaryUI()
+        [MenuItem("Tools/Utsuru/Build Dictionary Book UI")]
+        public static void BuildUI()
         {
-            Scene activeScene = SceneManager.GetActiveScene();
-            GameObject canvasGo = GameObject.Find("Canvas");
-            if (canvasGo == null)
+            // 1. Pastikan sprite sudah terkonfigurasi
+            DictionaryAssetImporter.ConfigureSprites();
+
+            // 2. Muat aset Sprite
+            var bgDictSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/BG_dictionary.png");
+            var bookPurpleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Purple.png");
+
+            var bmAlbumSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Album.png");
+            var bmLikeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Like.png");
+            var bmFavoriteSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Favorite.png");
+            var bmQuizSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Quiz.png");
+            var bmHiraganaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Hiragana.png");
+            var bmModuleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Module.png");
+            var bmExitSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Exit.png");
+
+            var polaroidBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Polaroid.png");
+            var tapeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Tape_Washi.png");
+
+            var likeOffSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Btn_Like_Off.png");
+            var likeOnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Btn_Like_On.png");
+            var favOffSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Btn_Favorite_Off.png");
+            var favOnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Btn_Favorite_On.png");
+
+            // 3. Muat Font TMP SDF
+            var zenFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/ZenMaruGothic-Bold SDF.asset");
+            var nunitoFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+            if (zenFont != null) zenFont.ReadFontAssetDefinition();
+            if (nunitoFont != null) nunitoFont.ReadFontAssetDefinition();
+
+            // 4. Cari Canvas
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            if (canvas == null)
             {
-                Debug.LogError("[DictionaryUIBuilder] Canvas tidak ditemukan!");
-                return null;
+                Debug.LogError("[DictionaryUIBuilder] Canvas tidak ditemukan di scene!");
+                return;
             }
 
-            defaultSprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
-            defaultFont = TMP_Settings.defaultFontAsset;
+            Undo.RegisterCompleteObjectUndo(canvas.gameObject, "Build Dictionary Book UI");
 
-            // Hapus jika sudah ada Dictionary lama di bawah Canvas agar selalu segar dan bersih
-            Transform oldDict = canvasGo.transform.Find("Dictionary");
-            if (oldDict != null)
+            // 5. Cari atau Buat Canvas/Dictionary
+            Transform dictTrans = canvas.transform.Find("Dictionary");
+            GameObject dictGo;
+            if (dictTrans == null)
             {
-                Undo.DestroyObjectImmediate(oldDict.gameObject);
+                dictGo = CreateUIObject("Dictionary", canvas.transform);
+                var dictRt = dictGo.GetComponent<RectTransform>();
+                SetStretch(dictRt);
+            }
+            else
+            {
+                dictGo = dictTrans.gameObject;
             }
 
-            // 1. Root Dictionary (SELALU AKTIF di scene agar script controller mendengarkan tombol 'B')
-            GameObject dictRoot = CreateUIObject("Dictionary", canvasGo.transform);
-            RectTransform dictRt = dictRoot.GetComponent<RectTransform>();
-            SetStretch(dictRt);
-            dictRoot.SetActive(true);
+            var controller = dictGo.GetComponent<DictionaryUIController>();
+            if (controller == null) controller = dictGo.AddComponent<DictionaryUIController>();
 
-            var controller = dictRoot.AddComponent<DictionaryUIController>();
+            // 6. Buat atau Reset DictionaryView
+            Transform oldViewTrans = dictGo.transform.Find("DictionaryView");
+            if (oldViewTrans != null)
+            {
+                Object.DestroyImmediate(oldViewTrans.gameObject);
+            }
 
-            // 1.1 View Root (Kontainer tampilan visual yang di-toggle hide/show oleh controller)
-            GameObject viewRoot = CreateUIObject("DictionaryView", dictRoot.transform);
-            SetStretch(viewRoot.GetComponent<RectTransform>());
+            GameObject viewGo = CreateUIObject("DictionaryView", dictGo.transform);
+            RectTransform viewRt = viewGo.GetComponent<RectTransform>();
+            SetStretch(viewRt);
+            var viewCg = viewGo.AddComponent<CanvasGroup>();
+            viewCg.alpha = 1f;
 
-            // Dimmer Backdrop
-            GameObject dimmer = CreateUIObject("BackdropDimmer", viewRoot.transform);
-            SetStretch(dimmer.GetComponent<RectTransform>());
-            var dimmerImg = dimmer.AddComponent<Image>();
-            dimmerImg.color = new Color(0f, 0f, 0f, 0.75f);
-            var dimmerBtn = dimmer.AddComponent<Button>();
+            // 6.1 FadeBackground (BG_dictionary.png)
+            GameObject bgGo = CreateUIObject("FadeBackground", viewGo.transform);
+            RectTransform bgRt = bgGo.GetComponent<RectTransform>();
+            SetStretch(bgRt);
+            var bgImg = bgGo.AddComponent<Image>();
+            bgImg.sprite = bgDictSprite;
+            bgImg.color = Color.white;
+            bgImg.raycastTarget = true; // Blok klik tembus ke dunia 3D
 
-            // 1.2 Book Container (Buku Terbuka)
-            GameObject book = CreateUIObject("BookContainer", viewRoot.transform);
-            RectTransform bookRt = book.GetComponent<RectTransform>();
+            // 6.2 BookContainer (Book_Purple.png)
+            GameObject bookGo = CreateUIObject("BookContainer", viewGo.transform);
+            RectTransform bookRt = bookGo.GetComponent<RectTransform>();
             bookRt.anchorMin = new Vector2(0.5f, 0.5f);
             bookRt.anchorMax = new Vector2(0.5f, 0.5f);
             bookRt.pivot = new Vector2(0.5f, 0.5f);
-            bookRt.sizeDelta = new Vector2(1480f, 840f);
-            bookRt.anchoredPosition = new Vector2(30f, 0f);
+            bookRt.sizeDelta = new Vector2(1720f, 940f);
+            bookRt.anchoredPosition = new Vector2(0f, -25f);
+            var bookImg = bookGo.AddComponent<Image>();
+            bookImg.sprite = bookPurpleSprite;
+            bookImg.preserveAspect = false;
 
-            // Background Cover Buku (Kayu / Kulit Cokelat)
-            var bookCoverImg = book.AddComponent<Image>();
-            bookCoverImg.sprite = defaultSprite;
-            bookCoverImg.type = Image.Type.Sliced;
-            bookCoverImg.color = new Color(0.24f, 0.16f, 0.12f, 1f);
+            // 6.3 TopTabs (Bookmark Tabs di Atas Buku)
+            GameObject tabsGo = CreateUIObject("TopTabs", bookGo.transform);
+            RectTransform tabsRt = tabsGo.GetComponent<RectTransform>();
+            tabsRt.anchorMin = new Vector2(0.5f, 1f);
+            tabsRt.anchorMax = new Vector2(0.5f, 1f);
+            tabsRt.pivot = new Vector2(0.5f, 0f);
+            tabsRt.sizeDelta = new Vector2(1600f, 120f);
+            tabsRt.anchoredPosition = new Vector2(0f, -50f);
 
-            // Spine / Shadow Tengah Buku
-            GameObject spine = CreateUIObject("BookSpine", book.transform);
-            RectTransform spineRt = spine.GetComponent<RectTransform>();
-            spineRt.anchorMin = new Vector2(0.5f, 0f);
-            spineRt.anchorMax = new Vector2(0.5f, 1f);
-            spineRt.pivot = new Vector2(0.5f, 0.5f);
-            spineRt.sizeDelta = new Vector2(16f, 0f);
-            var spineImg = spine.AddComponent<Image>();
-            spineImg.color = new Color(0.12f, 0.08f, 0.06f, 0.7f);
+            // Tab Kiri: Top-Left (Scale 0.9)
+            Button tabAlbum = CreateTabButton("Tab_Album", tabsGo.transform, bmAlbumSprite, new Vector2(86f, 149f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(75.35f, -29.36f), 0.9f);
+            Button tabLike = CreateTabButton("Tab_Like", tabsGo.transform, bmLikeSprite, new Vector2(86f, 149f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(165.35f, -29.36f), 0.9f);
+            Button tabFav = CreateTabButton("Tab_Favorite", tabsGo.transform, bmFavoriteSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(255.35f, -29.36f), 0.9f);
+            Button tabQuiz = CreateTabButton("Tab_Quiz", tabsGo.transform, bmQuizSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(345.35f, -29.36f), 0.9f);
 
-            // Left Page Background (Krem Kertas)
-            GameObject leftPageBg = CreateUIObject("LeftPageBg", book.transform);
-            RectTransform leftPageRt = leftPageBg.GetComponent<RectTransform>();
-            leftPageRt.anchorMin = new Vector2(0f, 0f);
-            leftPageRt.anchorMax = new Vector2(0.5f, 1f);
-            leftPageRt.offsetMin = new Vector2(20f, 20f);
-            leftPageRt.offsetMax = new Vector2(-10f, -20f);
-            var leftPageImg = leftPageBg.AddComponent<Image>();
-            leftPageImg.sprite = defaultSprite;
-            leftPageImg.type = Image.Type.Sliced;
-            leftPageImg.color = new Color(0.97f, 0.95f, 0.91f, 1f);
+            // Tab Kanan: Top-Right (Scale 0.9)
+            Button tabHiragana = CreateTabButton("Tab_Hiragana", tabsGo.transform, bmHiraganaSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-200f, -29.36f), 0.9f);
+            Button tabModule = CreateTabButton("Tab_Module", tabsGo.transform, bmModuleSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-290f, -29.36f), 0.9f);
+            Button tabExit = CreateTabButton("Tab_Exit", tabsGo.transform, bmExitSprite, new Vector2(84f, 85f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-45.45f, -84f), 0.9f);
 
-            // Right Page Background (Krem Kertas)
-            GameObject rightPageBg = CreateUIObject("RightPageBg", book.transform);
-            RectTransform rightPageRt = rightPageBg.GetComponent<RectTransform>();
-            rightPageRt.anchorMin = new Vector2(0.5f, 0f);
-            rightPageRt.anchorMax = new Vector2(1f, 1f);
-            rightPageRt.offsetMin = new Vector2(10f, 20f);
-            rightPageRt.offsetMax = new Vector2(-20f, -20f);
-            var rightPageImg = rightPageBg.AddComponent<Image>();
-            rightPageImg.sprite = defaultSprite;
-            rightPageImg.type = Image.Type.Sliced;
-            rightPageImg.color = new Color(0.97f, 0.95f, 0.91f, 1f);
+            // 6.4 BookSpread (Area Isi Buku 2 Halaman)
+            GameObject spreadGo = CreateUIObject("BookSpread", bookGo.transform);
+            RectTransform spreadRt = spreadGo.GetComponent<RectTransform>();
+            spreadRt.anchorMin = new Vector2(0.5f, 0.5f);
+            spreadRt.anchorMax = new Vector2(0.5f, 0.5f);
+            spreadRt.pivot = new Vector2(0.5f, 0.5f);
+            spreadRt.sizeDelta = new Vector2(1640f, 860f);
+            spreadRt.anchoredPosition = new Vector2(0f, -10f);
 
-            // Tombol Tutup (X) di pojok kanan atas luar buku
-            GameObject closeBtnGo = CreateButton("Btn_Close", book.transform, "X", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(36f, 36f), new Vector2(-10f, 30f));
-            closeBtnGo.GetComponent<Image>().color = new Color(0.85f, 0.25f, 0.2f, 1f);
+            var bookSpread = spreadGo.AddComponent<DictionaryBookSpreadUI>();
 
-            // 1.3 Marker Tabs di sebelah kiri luar buku
-            GameObject tabsRoot = CreateUIObject("MarkerTabs", book.transform);
-            RectTransform tabsRt = tabsRoot.GetComponent<RectTransform>();
-            tabsRt.anchorMin = new Vector2(0f, 0.5f);
-            tabsRt.anchorMax = new Vector2(0f, 0.5f);
-            tabsRt.pivot = new Vector2(1f, 0.5f);
-            tabsRt.sizeDelta = new Vector2(110f, 480f);
-            tabsRt.anchoredPosition = new Vector2(0f, 50f);
+            // 6.4.1 PhotoSpreadRoot
+            GameObject photoSpreadRoot = CreateUIObject("PhotoSpreadRoot", spreadGo.transform);
+            RectTransform photoSpreadRt = photoSpreadRoot.GetComponent<RectTransform>();
+            SetStretch(photoSpreadRt);
+            var photoSpreadCg = photoSpreadRoot.AddComponent<CanvasGroup>();
+            photoSpreadCg.alpha = 1f;
 
-            var tabsLayout = tabsRoot.AddComponent<VerticalLayoutGroup>();
-            tabsLayout.spacing = 16f;
-            tabsLayout.childAlignment = TextAnchor.UpperRight;
-            tabsLayout.childControlHeight = false;
-            tabsLayout.childControlWidth = true;
-            tabsLayout.childForceExpandHeight = false;
-            tabsLayout.childForceExpandWidth = true;
+            // Halaman Kiri (Middle-Left, Pos X = 17)
+            GameObject leftPageGo = CreateUIObject("LeftPage", photoSpreadRoot.transform);
+            RectTransform leftPageRt = leftPageGo.GetComponent<RectTransform>();
+            leftPageRt.anchorMin = new Vector2(0f, 0.5f);
+            leftPageRt.anchorMax = new Vector2(0f, 0.5f);
+            leftPageRt.pivot = new Vector2(0f, 0.5f);
+            leftPageRt.sizeDelta = new Vector2(740f, 820f);
+            leftPageRt.anchoredPosition = new Vector2(17f, 0f);
 
-            GameObject tabVocabGo = CreateTabMarker("Tab_Marker_Vocab", tabsRoot.transform, "Kosakata");
-            GameObject tabCourseGo = CreateTabMarker("Tab_Marker_Course", tabsRoot.transform, "Course");
-            GameObject tabAlbumGo = CreateTabMarker("Tab_Marker_Album", tabsRoot.transform, "Album");
-            GameObject tabDecorGo = CreateTabMarker("Tab_Marker_Decor", tabsRoot.transform, "Dekorasi");
+            // Tombol Klik Halaman Kiri (Previous Spread) - hanya pada strip tepi luar buku (di luar polaroid)
+            GameObject leftClickGo = CreateUIObject("LeftPageClickArea", leftPageGo.transform);
+            RectTransform leftClickRt = leftClickGo.GetComponent<RectTransform>();
+            leftClickRt.anchorMin = new Vector2(0f, 0f);
+            leftClickRt.anchorMax = new Vector2(0f, 1f);
+            leftClickRt.pivot = new Vector2(0f, 0.5f);
+            leftClickRt.sizeDelta = new Vector2(75f, 0f);
+            leftClickRt.anchoredPosition = Vector2.zero;
+            var leftClickImg = leftClickGo.AddComponent<Image>();
+            leftClickImg.color = new Color(0f, 0f, 0f, 0.001f); // Invisible raycast target
+            var leftClickBtn = leftClickGo.AddComponent<Button>();
+            leftClickBtn.transition = Selectable.Transition.None;
 
-            // 1.4 Tab Album Panel
-            GameObject albumPanel = CreateUIObject("Tab_Album_Panel", book.transform);
-            SetStretchMargins(albumPanel.GetComponent<RectTransform>(), 20f, 20f, 20f, 20f);
-            var albumTabUI = albumPanel.AddComponent<DictionaryAlbumTabUI>();
+            // Indikator visual panah halaman sebelumnya (<) di area tepi buku
+            GameObject leftArrowGo = CreateUIObject("ArrowIcon", leftClickGo.transform);
+            RectTransform leftArrowRt = leftArrowGo.GetComponent<RectTransform>();
+            leftArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
+            leftArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
+            leftArrowRt.pivot = new Vector2(0.5f, 0.5f);
+            leftArrowRt.sizeDelta = new Vector2(40f, 60f);
+            leftArrowRt.anchoredPosition = Vector2.zero;
+            var leftArrowTmp = leftArrowGo.AddComponent<TextMeshProUGUI>();
+            leftArrowTmp.font = TMP_Settings.defaultFontAsset;
+            leftArrowTmp.fontSize = 32;
+            leftArrowTmp.fontStyle = FontStyles.Bold;
+            leftArrowTmp.alignment = TextAlignmentOptions.Center;
+            leftArrowTmp.color = new Color(0.48f, 0.42f, 0.55f, 0.65f);
+            leftArrowTmp.text = "<";
+            leftArrowTmp.raycastTarget = false;
 
-            BuildAlbumContent(albumPanel, albumTabUI);
+            // SlotGrid Kiri
+            GameObject leftGridGo = CreateUIObject("SlotGrid_Left", leftPageGo.transform);
+            RectTransform leftGridRt = leftGridGo.GetComponent<RectTransform>();
+            SetStretch(leftGridRt);
 
-            // 1.5 Tab Kosakata Panel
-            GameObject vocabPanel = CreateUIObject("Tab_Vocab_Panel", book.transform);
-            SetStretchMargins(vocabPanel.GetComponent<RectTransform>(), 20f, 20f, 20f, 20f);
-            var vocabTabUI = vocabPanel.AddComponent<DictionaryVocabularyTabUI>();
+            // Halaman Kanan (Middle-Right, Pos X = -100, Pivot = (0, 0.5))
+            GameObject rightPageGo = CreateUIObject("RightPage", photoSpreadRoot.transform);
+            RectTransform rightPageRt = rightPageGo.GetComponent<RectTransform>();
+            rightPageRt.anchorMin = new Vector2(1f, 0.5f);
+            rightPageRt.anchorMax = new Vector2(1f, 0.5f);
+            rightPageRt.pivot = new Vector2(0f, 0.5f);
+            rightPageRt.sizeDelta = new Vector2(740f, 820f);
+            rightPageRt.anchoredPosition = new Vector2(-100f, 0f);
 
-            BuildVocabContent(vocabPanel, vocabTabUI);
+            // Tombol Klik Halaman Kanan (Next Spread) - stretch left dengan posisi x = 25
+            GameObject rightClickGo = CreateUIObject("RightPageClickArea", rightPageGo.transform);
+            RectTransform rightClickRt = rightClickGo.GetComponent<RectTransform>();
+            rightClickRt.anchorMin = new Vector2(0f, 0f);
+            rightClickRt.anchorMax = new Vector2(0f, 1f);
+            rightClickRt.pivot = new Vector2(0f, 0.5f);
+            rightClickRt.sizeDelta = new Vector2(75f, 0f);
+            rightClickRt.anchoredPosition = new Vector2(25f, 0f);
+            var rightClickImg = rightClickGo.AddComponent<Image>();
+            rightClickImg.color = new Color(0f, 0f, 0f, 0.001f); // Invisible raycast target
+            var rightClickBtn = rightClickGo.AddComponent<Button>();
+            rightClickBtn.transition = Selectable.Transition.None;
 
-            // 1.6 Tab Course Placeholder
-            GameObject coursePanel = CreatePlaceholderPanel("Tab_Course_Panel", book.transform, "MODUL PEMBELAJARAN (KANA & N5)\n\nFitur ini sedang dalam tahap perancangan.\nSegera hadir untuk latihan huruf Hiragana, Katakana, dan tata bahasa!");
+            // Indikator visual panah halaman selanjutnya (>) di area tepi buku
+            GameObject rightArrowGo = CreateUIObject("ArrowIcon", rightClickGo.transform);
+            RectTransform rightArrowRt = rightArrowGo.GetComponent<RectTransform>();
+            rightArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
+            rightArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
+            rightArrowRt.pivot = new Vector2(0.5f, 0.5f);
+            rightArrowRt.sizeDelta = new Vector2(40f, 60f);
+            rightArrowRt.anchoredPosition = Vector2.zero;
+            var rightArrowTmp = rightArrowGo.AddComponent<TextMeshProUGUI>();
+            rightArrowTmp.font = TMP_Settings.defaultFontAsset;
+            rightArrowTmp.fontSize = 32;
+            rightArrowTmp.fontStyle = FontStyles.Bold;
+            rightArrowTmp.alignment = TextAlignmentOptions.Center;
+            rightArrowTmp.color = new Color(0.48f, 0.42f, 0.55f, 0.65f);
+            rightArrowTmp.text = ">";
+            rightArrowTmp.raycastTarget = false;
 
-            // 1.7 Tab Dekorasi Placeholder
-            GameObject decorPanel = CreatePlaceholderPanel("Tab_Decor_Panel", book.transform, "KANVAS DEKORASI DICTIONARY\n\nFitur personalisasi buku dengan stiker, bingkai, dan tema.\nSegera hadir!");
+            // SlotGrid Kanan
+            GameObject rightGridGo = CreateUIObject("SlotGrid_Right", rightPageGo.transform);
+            RectTransform rightGridRt = rightGridGo.GetComponent<RectTransform>();
+            SetStretch(rightGridRt);
 
-            // 1.8 Modals & Dialog (di bawah viewRoot agar ikut muncul saat dibuka)
-            GameObject photoModalGo = BuildPhotoDetailModal(viewRoot.transform);
-            var photoModal = photoModalGo.GetComponent<DictionaryPhotoDetailModal>();
+            // Pagination Number Text (Kiri & Kanan Bawah)
+            GameObject leftNumGo = CreateUIObject("LeftPageNum", leftPageGo.transform);
+            RectTransform leftNumRt = leftNumGo.GetComponent<RectTransform>();
+            leftNumRt.anchorMin = new Vector2(0f, 0f);
+            leftNumRt.anchorMax = new Vector2(0f, 0f);
+            leftNumRt.pivot = new Vector2(0f, 0f);
+            leftNumRt.sizeDelta = new Vector2(80f, 30f);
+            leftNumRt.anchoredPosition = new Vector2(30f, 15f);
+            var leftNumTmp = leftNumGo.AddComponent<TextMeshProUGUI>();
+            leftNumTmp.font = nunitoFont;
+            leftNumTmp.fontSize = 18;
+            leftNumTmp.fontStyle = FontStyles.Bold;
+            leftNumTmp.color = new Color(0.48f, 0.42f, 0.52f, 0.8f);
+            leftNumTmp.text = "1";
+            leftNumTmp.raycastTarget = false;
 
-            GameObject vocabModalGo = BuildVocabDetailModal(viewRoot.transform);
-            var vocabModal = vocabModalGo.GetComponent<DictionaryVocabDetailModal>();
+            GameObject rightNumGo = CreateUIObject("RightPageNum", rightPageGo.transform);
+            RectTransform rightNumRt = rightNumGo.GetComponent<RectTransform>();
+            rightNumRt.anchorMin = new Vector2(1f, 0f);
+            rightNumRt.anchorMax = new Vector2(1f, 0f);
+            rightNumRt.pivot = new Vector2(1f, 0f);
+            rightNumRt.sizeDelta = new Vector2(80f, 30f);
+            rightNumRt.anchoredPosition = new Vector2(-30f, 15f);
+            var rightNumTmp = rightNumGo.AddComponent<TextMeshProUGUI>();
+            rightNumTmp.font = nunitoFont;
+            rightNumTmp.fontSize = 18;
+            rightNumTmp.fontStyle = FontStyles.Bold;
+            rightNumTmp.alignment = TextAlignmentOptions.Right;
+            rightNumTmp.color = new Color(0.48f, 0.42f, 0.52f, 0.8f);
+            rightNumTmp.text = "2";
+            rightNumTmp.raycastTarget = false;
 
-            GameObject dialogGo = BuildSimpleDialog(viewRoot.transform);
-            var simpleDialog = dialogGo.GetComponent<DictionarySimpleDialog>();
+            // 6.4.2 Buat 8 Slot Polaroid
+            var polaroidSlots = new DictionaryPolaroidCardUI[8];
+            Vector2 anchorML = new Vector2(0f, 0.5f);
+            Vector2 anchorMR = new Vector2(1f, 0.5f);
 
-            // Hubungkan referensi di Controller
-            SerializedObject soCtrl = new SerializedObject(controller);
-            soCtrl.FindProperty("viewRoot").objectReferenceValue = viewRoot;
-            soCtrl.FindProperty("closeButton").objectReferenceValue = closeBtnGo.GetComponent<Button>();
-            soCtrl.FindProperty("vocabTabButton").objectReferenceValue = tabVocabGo.GetComponent<Button>();
-            soCtrl.FindProperty("courseTabButton").objectReferenceValue = tabCourseGo.GetComponent<Button>();
-            soCtrl.FindProperty("albumTabButton").objectReferenceValue = tabAlbumGo.GetComponent<Button>();
-            soCtrl.FindProperty("decorTabButton").objectReferenceValue = tabDecorGo.GetComponent<Button>();
-            soCtrl.FindProperty("vocabPanel").objectReferenceValue = vocabPanel;
-            soCtrl.FindProperty("coursePanel").objectReferenceValue = coursePanel;
-            soCtrl.FindProperty("albumPanel").objectReferenceValue = albumPanel;
-            soCtrl.FindProperty("decorPanel").objectReferenceValue = decorPanel;
-            soCtrl.FindProperty("vocabTabController").objectReferenceValue = vocabTabUI;
-            soCtrl.FindProperty("albumTabController").objectReferenceValue = albumTabUI;
-            soCtrl.ApplyModifiedProperties();
+            // Halaman Kiri (Slot 1-4: Middle-Left)
+            polaroidSlots[0] = CreatePolaroidSlot("Slot_1", leftGridGo.transform, anchorML, anchorML, new Vector2(225f, 185f), 0, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[1] = CreatePolaroidSlot("Slot_2", leftGridGo.transform, anchorML, anchorML, new Vector2(525f, 185f), 1, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[2] = CreatePolaroidSlot("Slot_3", leftGridGo.transform, anchorML, anchorML, new Vector2(225f, -175f), 2, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[3] = CreatePolaroidSlot("Slot_4", leftGridGo.transform, anchorML, anchorML, new Vector2(525f, -175f), 3, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
 
-            // Hubungkan dialog ke Album Tab & Photo Detail Modal
-            SerializedObject soAlbum = new SerializedObject(albumTabUI);
-            soAlbum.FindProperty("detailModal").objectReferenceValue = photoModal;
-            soAlbum.FindProperty("dialog").objectReferenceValue = simpleDialog;
-            soAlbum.ApplyModifiedProperties();
+            // Halaman Kanan (Slot 5-8: Middle-Left)
+            polaroidSlots[4] = CreatePolaroidSlot("Slot_5", rightGridGo.transform, anchorML, anchorML, new Vector2(-490f, 185f), 4, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[5] = CreatePolaroidSlot("Slot_6", rightGridGo.transform, anchorML, anchorML, new Vector2(-190f, 185f), 5, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[6] = CreatePolaroidSlot("Slot_7", rightGridGo.transform, anchorML, anchorML, new Vector2(-490f, -175f), 6, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
+            polaroidSlots[7] = CreatePolaroidSlot("Slot_8", rightGridGo.transform, anchorML, anchorML, new Vector2(-190f, -175f), 7, polaroidBgSprite, tapeSprite, likeOffSprite, likeOnSprite, favOffSprite, favOnSprite, zenFont, nunitoFont);
 
-            SerializedObject soPhotoModal = new SerializedObject(photoModal);
-            soPhotoModal.FindProperty("confirmDialog").objectReferenceValue = simpleDialog;
-            soPhotoModal.ApplyModifiedProperties();
+            // 6.4.3 EmptyStateNotice
+            GameObject emptyGo = CreateUIObject("EmptyStateNotice", spreadGo.transform);
+            RectTransform emptyRt = emptyGo.GetComponent<RectTransform>();
+            emptyRt.anchorMin = new Vector2(0.5f, 0.5f);
+            emptyRt.anchorMax = new Vector2(0.5f, 0.5f);
+            emptyRt.pivot = new Vector2(0.5f, 0.5f);
+            emptyRt.sizeDelta = new Vector2(700f, 200f);
+            emptyRt.anchoredPosition = new Vector2(0f, 0f);
+            var emptyTmp = emptyGo.AddComponent<TextMeshProUGUI>();
+            emptyTmp.font = nunitoFont;
+            emptyTmp.fontSize = 20;
+            emptyTmp.alignment = TextAlignmentOptions.Center;
+            emptyTmp.color = new Color(0.45f, 0.4f, 0.5f, 0.9f);
+            emptyTmp.text = "No photos captured yet.\nExplore the town and snap photos of objects to fill your dictionary!";
+            emptyGo.SetActive(false);
 
-            SerializedObject soVocab = new SerializedObject(vocabTabUI);
-            soVocab.FindProperty("detailModal").objectReferenceValue = vocabModal;
-            soVocab.ApplyModifiedProperties();
+            // 6.4.4 PlaceholderRoot (Quiz, Hiragana, Module)
+            GameObject placeGo = CreateUIObject("PlaceholderRoot", spreadGo.transform);
+            RectTransform placeRt = placeGo.GetComponent<RectTransform>();
+            placeRt.anchorMin = new Vector2(0.5f, 0.5f);
+            placeRt.anchorMax = new Vector2(0.5f, 0.5f);
+            placeRt.pivot = new Vector2(0.5f, 0.5f);
+            placeRt.sizeDelta = new Vector2(900f, 400f);
+            placeRt.anchoredPosition = new Vector2(0f, 0f);
 
-            // Hubungkan dimmer tombol tutup
-            dimmerBtn.onClick.AddListener(controller.Close);
+            GameObject placeTitleGo = CreateUIObject("PlaceholderTitle", placeGo.transform);
+            RectTransform placeTitleRt = placeTitleGo.GetComponent<RectTransform>();
+            placeTitleRt.anchorMin = new Vector2(0.5f, 1f);
+            placeTitleRt.anchorMax = new Vector2(0.5f, 1f);
+            placeTitleRt.pivot = new Vector2(0.5f, 1f);
+            placeTitleRt.sizeDelta = new Vector2(800f, 60f);
+            placeTitleRt.anchoredPosition = new Vector2(0f, -40f);
+            var placeTitleTmp = placeTitleGo.AddComponent<TextMeshProUGUI>();
+            placeTitleTmp.font = zenFont;
+            placeTitleTmp.fontSize = 34;
+            placeTitleTmp.fontStyle = FontStyles.Bold;
+            placeTitleTmp.alignment = TextAlignmentOptions.Center;
+            placeTitleTmp.color = new Color(0.24f, 0.2f, 0.28f);
+            placeTitleTmp.text = "QUIZ CHALLENGE";
 
-            // Default: viewRoot tertutup
-            viewRoot.SetActive(false);
+            GameObject placeDescGo = CreateUIObject("PlaceholderDesc", placeGo.transform);
+            RectTransform placeDescRt = placeDescGo.GetComponent<RectTransform>();
+            placeDescRt.anchorMin = new Vector2(0.5f, 1f);
+            placeDescRt.anchorMax = new Vector2(0.5f, 1f);
+            placeDescRt.pivot = new Vector2(0.5f, 1f);
+            placeDescRt.sizeDelta = new Vector2(750f, 120f);
+            placeDescRt.anchoredPosition = new Vector2(0f, -120f);
+            var placeDescTmp = placeDescGo.AddComponent<TextMeshProUGUI>();
+            placeDescTmp.font = nunitoFont;
+            placeDescTmp.fontSize = 19;
+            placeDescTmp.alignment = TextAlignmentOptions.Center;
+            placeDescTmp.color = new Color(0.4f, 0.35f, 0.45f);
+            placeDescTmp.text = "Feature under construction.\nComing soon in next update!";
 
-            // Simpan Scene
-            EditorSceneManager.MarkSceneDirty(activeScene);
-            EditorSceneManager.SaveScene(activeScene);
+            placeGo.SetActive(false);
 
-            Debug.Log("[DictionaryUIBuilder] UI Dictionary Buku Terbuka berhasil dibangun!");
-            return dictRoot;
-        }
-
-        private static void BuildAlbumContent(GameObject albumPanel, DictionaryAlbumTabUI albumTabUI)
-        {
-            SerializedObject so = new SerializedObject(albumTabUI);
-
-            // Toolbar Atas (Kiri: Album Selector & Manage | Kanan: Filter Favorit & Sorting)
-            GameObject toolbar = CreateUIObject("Toolbar", albumPanel.transform);
-            RectTransform toolRt = toolbar.GetComponent<RectTransform>();
-            toolRt.anchorMin = new Vector2(0f, 1f);
-            toolRt.anchorMax = new Vector2(1f, 1f);
-            toolRt.pivot = new Vector2(0.5f, 1f);
-            toolRt.sizeDelta = new Vector2(0f, 56f);
-            toolRt.anchoredPosition = new Vector2(0f, -8f);
-
-            // Sisi Kiri Toolbar: Album Dropdown + Tombol Kelola
-            GameObject albumGroup = CreateUIObject("AlbumGroup", toolbar.transform);
-            RectTransform agRt = albumGroup.GetComponent<RectTransform>();
-            agRt.anchorMin = new Vector2(0f, 0.5f);
-            agRt.anchorMax = new Vector2(0.5f, 0.5f);
-            agRt.pivot = new Vector2(0f, 0.5f);
-            agRt.anchoredPosition = new Vector2(16f, 0f);
-            agRt.sizeDelta = new Vector2(400f, 44f);
-            var agLayout = albumGroup.AddComponent<HorizontalLayoutGroup>();
-            agLayout.spacing = 8f;
-            agLayout.childControlWidth = false;
-            agLayout.childControlHeight = false;
-
-            GameObject albumDropdownGo = CreateDropdown("Dropdown_Album", albumGroup.transform, new Vector2(180f, 38f));
-            GameObject btnAddAlbum = CreateButton("Btn_AddAlbum", albumGroup.transform, "+", new Vector2(38f, 38f), new Color(0.2f, 0.65f, 0.3f));
-            GameObject btnRenameAlbum = CreateButton("Btn_RenameAlbum", albumGroup.transform, "Ubah", new Vector2(75f, 38f), new Color(0.35f, 0.45f, 0.6f));
-            GameObject btnDeleteAlbum = CreateButton("Btn_DeleteAlbum", albumGroup.transform, "Hapus", new Vector2(65f, 38f), new Color(0.75f, 0.25f, 0.2f));
-
-            // Sisi Kanan Toolbar: Filter Favorit + Sorting
-            GameObject filterGroup = CreateUIObject("FilterGroup", toolbar.transform);
-            RectTransform fgRt = filterGroup.GetComponent<RectTransform>();
-            fgRt.anchorMin = new Vector2(0.5f, 0.5f);
-            fgRt.anchorMax = new Vector2(1f, 0.5f);
-            fgRt.pivot = new Vector2(1f, 0.5f);
-            fgRt.anchoredPosition = new Vector2(-16f, 0f);
-            fgRt.sizeDelta = new Vector2(400f, 44f);
-            var fgLayout = filterGroup.AddComponent<HorizontalLayoutGroup>();
-            fgLayout.spacing = 10f;
-            fgLayout.childAlignment = TextAnchor.MiddleRight;
-            fgLayout.childControlWidth = false;
-            fgLayout.childControlHeight = false;
-
-            GameObject btnFavFilter = CreateButton("Btn_FavFilter", filterGroup.transform, "Semua Foto", new Vector2(140f, 38f), new Color(0.3f, 0.3f, 0.35f));
-            GameObject sortDropdownGo = CreateDropdown("Dropdown_Sort", filterGroup.transform, new Vector2(180f, 38f));
-
-            // Kontainer Halaman Kiri (4 Slot: Grid 2x2)
-            GameObject leftSlotsRoot = CreateUIObject("LeftPage_Slots", albumPanel.transform);
-            RectTransform leftRt = leftSlotsRoot.GetComponent<RectTransform>();
-            leftRt.anchorMin = new Vector2(0f, 0f);
-            leftRt.anchorMax = new Vector2(0.5f, 1f);
-            leftRt.offsetMin = new Vector2(30f, 70f);
-            leftRt.offsetMax = new Vector2(-30f, -70f);
-            var leftGrid = leftSlotsRoot.AddComponent<GridLayoutGroup>();
-            leftGrid.cellSize = new Vector2(285f, 320f);
-            leftGrid.spacing = new Vector2(25f, 25f);
-            leftGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            leftGrid.constraintCount = 2;
-            leftGrid.childAlignment = TextAnchor.MiddleCenter;
-
-            // Kontainer Halaman Kanan (4 Slot: Grid 2x2)
-            GameObject rightSlotsRoot = CreateUIObject("RightPage_Slots", albumPanel.transform);
-            RectTransform rightRt = rightSlotsRoot.GetComponent<RectTransform>();
-            rightRt.anchorMin = new Vector2(0.5f, 0f);
-            rightRt.anchorMax = new Vector2(1f, 1f);
-            rightRt.offsetMin = new Vector2(30f, 70f);
-            rightRt.offsetMax = new Vector2(-30f, -70f);
-            var rightGrid = rightSlotsRoot.AddComponent<GridLayoutGroup>();
-            rightGrid.cellSize = new Vector2(285f, 320f);
-            rightGrid.spacing = new Vector2(25f, 25f);
-            rightGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            rightGrid.constraintCount = 2;
-            rightGrid.childAlignment = TextAnchor.MiddleCenter;
-
-            // Buat 8 Slot Foto (4 kiri, 4 kanan)
-            DictionaryPhotoSlotUI[] slots = new DictionaryPhotoSlotUI[8];
-            for (int i = 0; i < 4; i++)
-            {
-                slots[i] = CreatePhotoSlot($"PhotoSlot_L{i}", leftSlotsRoot.transform);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                slots[4 + i] = CreatePhotoSlot($"PhotoSlot_R{i}", rightSlotsRoot.transform);
-            }
-
-            // Paginasi Bawah Buku
-            GameObject pagination = CreateUIObject("PaginationBar", albumPanel.transform);
-            RectTransform pagRt = pagination.GetComponent<RectTransform>();
-            pagRt.anchorMin = new Vector2(0f, 0f);
-            pagRt.anchorMax = new Vector2(1f, 0f);
-            pagRt.pivot = new Vector2(0.5f, 0f);
-            pagRt.sizeDelta = new Vector2(0f, 50f);
-            pagRt.anchoredPosition = new Vector2(0f, 10f);
-
-            GameObject btnPrev = CreateButton("Btn_PrevPage", pagination.transform, "< Sebelumnya", new Vector2(160f, 36f), new Color(0.35f, 0.35f, 0.35f));
-            RectTransform bpRt = btnPrev.GetComponent<RectTransform>();
-            bpRt.anchorMin = new Vector2(0f, 0.5f);
-            bpRt.anchorMax = new Vector2(0f, 0.5f);
-            bpRt.pivot = new Vector2(0f, 0.5f);
-            bpRt.anchoredPosition = new Vector2(40f, 0f);
-
-            GameObject labelPageGo = CreateText("Label_PageIndicator", pagination.transform, "Halaman 1 / 1", 18, TextAlignmentOptions.Center, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform lpRt = labelPageGo.GetComponent<RectTransform>();
-            lpRt.anchorMin = new Vector2(0.5f, 0.5f);
-            lpRt.anchorMax = new Vector2(0.5f, 0.5f);
-            lpRt.pivot = new Vector2(0.5f, 0.5f);
-            lpRt.sizeDelta = new Vector2(200f, 40f);
-            lpRt.anchoredPosition = Vector2.zero;
-
-            GameObject btnNext = CreateButton("Btn_NextPage", pagination.transform, "Selanjutnya >", new Vector2(160f, 36f), new Color(0.35f, 0.35f, 0.35f));
-            RectTransform bnRt = btnNext.GetComponent<RectTransform>();
-            bnRt.anchorMin = new Vector2(1f, 0.5f);
-            bnRt.anchorMax = new Vector2(1f, 0.5f);
-            bnRt.pivot = new Vector2(1f, 0.5f);
-            bnRt.anchoredPosition = new Vector2(-40f, 0f);
-
-            // Empty State
-            GameObject emptyState = CreateUIObject("EmptyState", albumPanel.transform);
-            RectTransform esRt = emptyState.GetComponent<RectTransform>();
-            SetStretchMargins(esRt, 100f, 100f, 100f, 100f);
-            GameObject esTextGo = CreateText("EmptyText", emptyState.transform, "Album ini masih kosong.\nBuka Mode Kamera (C) untuk memotret objek jalanan!", 24, TextAlignmentOptions.Center, new Color(0.4f, 0.35f, 0.3f));
-            SetStretch(esTextGo.GetComponent<RectTransform>());
-
-            // Pasang ke SerializedObject
-            so.FindProperty("albumDropdown").objectReferenceValue = albumDropdownGo.GetComponent<TMP_Dropdown>();
-            so.FindProperty("createAlbumButton").objectReferenceValue = btnAddAlbum.GetComponent<Button>();
-            so.FindProperty("renameAlbumButton").objectReferenceValue = btnRenameAlbum.GetComponent<Button>();
-            so.FindProperty("deleteAlbumButton").objectReferenceValue = btnDeleteAlbum.GetComponent<Button>();
-            so.FindProperty("favoriteFilterButton").objectReferenceValue = btnFavFilter.GetComponent<Button>();
-            so.FindProperty("favoriteFilterText").objectReferenceValue = btnFavFilter.GetComponentInChildren<TMP_Text>();
-            so.FindProperty("sortDropdown").objectReferenceValue = sortDropdownGo.GetComponent<TMP_Dropdown>();
-            so.FindProperty("prevPageButton").objectReferenceValue = btnPrev.GetComponent<Button>();
-            so.FindProperty("nextPageButton").objectReferenceValue = btnNext.GetComponent<Button>();
-            so.FindProperty("pageIndicatorLabel").objectReferenceValue = labelPageGo.GetComponent<TMP_Text>();
-            so.FindProperty("emptyStateObject").objectReferenceValue = emptyState;
-            so.FindProperty("emptyStateLabel").objectReferenceValue = esTextGo.GetComponent<TMP_Text>();
-
-            SerializedProperty slotsProp = so.FindProperty("slots");
+            // Wire DictionaryBookSpreadUI fields via SerializedObject
+            var spreadSo = new SerializedObject(bookSpread);
+            var slotsProp = spreadSo.FindProperty("polaroidSlots");
             slotsProp.arraySize = 8;
             for (int i = 0; i < 8; i++)
             {
-                slotsProp.GetArrayElementAtIndex(i).objectReferenceValue = slots[i];
+                slotsProp.GetArrayElementAtIndex(i).objectReferenceValue = polaroidSlots[i];
+            }
+            spreadSo.FindProperty("leftPageClickArea").objectReferenceValue = leftClickBtn;
+            spreadSo.FindProperty("rightPageClickArea").objectReferenceValue = rightClickBtn;
+            spreadSo.FindProperty("leftPageNumberText").objectReferenceValue = leftNumTmp;
+            spreadSo.FindProperty("rightPageNumberText").objectReferenceValue = rightNumTmp;
+            spreadSo.FindProperty("photoSpreadRoot").objectReferenceValue = photoSpreadRoot;
+            spreadSo.FindProperty("placeholderRoot").objectReferenceValue = placeGo;
+            spreadSo.FindProperty("placeholderTitleText").objectReferenceValue = placeTitleTmp;
+            spreadSo.FindProperty("placeholderDescText").objectReferenceValue = placeDescTmp;
+            spreadSo.FindProperty("emptyStateNotice").objectReferenceValue = emptyGo;
+            spreadSo.FindProperty("emptyStateText").objectReferenceValue = emptyTmp;
+            spreadSo.FindProperty("dictionaryManager").objectReferenceValue = Object.FindFirstObjectByType<DictionaryManager>();
+            spreadSo.FindProperty("dominoStaggerDelay").floatValue = 0.045f;
+            spreadSo.FindProperty("dominoFadeOutDuration").floatValue = 0.10f;
+            spreadSo.FindProperty("dominoPopInDuration").floatValue = 0.22f;
+            spreadSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // Wire DictionaryUIController fields via SerializedObject
+            var ctrlSo = new SerializedObject(controller);
+            ctrlSo.FindProperty("viewRoot").objectReferenceValue = viewGo;
+            ctrlSo.FindProperty("viewCanvasGroup").objectReferenceValue = viewCg;
+            ctrlSo.FindProperty("bookContainerRt").objectReferenceValue = bookRt;
+            ctrlSo.FindProperty("tabAlbumButton").objectReferenceValue = tabAlbum;
+            ctrlSo.FindProperty("tabLikeButton").objectReferenceValue = tabLike;
+            ctrlSo.FindProperty("tabFavoriteButton").objectReferenceValue = tabFav;
+            ctrlSo.FindProperty("tabQuizButton").objectReferenceValue = tabQuiz;
+            ctrlSo.FindProperty("tabHiraganaButton").objectReferenceValue = tabHiragana;
+            ctrlSo.FindProperty("tabModuleButton").objectReferenceValue = tabModule;
+            ctrlSo.FindProperty("tabExitButton").objectReferenceValue = tabExit;
+            ctrlSo.FindProperty("bookSpread").objectReferenceValue = bookSpread;
+            ctrlSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // Hubungkan juga Btn_DictionaryHUD (di Canvas/Camera Mechanic) jika ada
+            var hudBtnGo = GameObject.Find("Canvas/Camera Mechanic/Btn_DictionaryHUD");
+            if (hudBtnGo != null)
+            {
+                var hudBtn = hudBtnGo.GetComponent<Button>();
+                if (hudBtn != null)
+                {
+                    // Bersihkan listener lama dan sambungkan ke controller.Toggle
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(hudBtn.onClick, 0);
+                    UnityEditor.Events.UnityEventTools.AddPersistentListener(hudBtn.onClick, controller.Toggle);
+                }
             }
 
-            so.ApplyModifiedProperties();
+            // Awalnya tutup viewRoot
+            viewGo.SetActive(false);
+
+            if (!Application.isPlaying)
+            {
+                EditorUtility.SetDirty(dictGo);
+                EditorUtility.SetDirty(canvas.gameObject);
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(canvas.gameObject.scene);
+            }
+
+            Debug.Log("[DictionaryUIBuilder] Berhasil membangun UI Dictionary Rework di Canvas/Dictionary!");
         }
 
-        private static void BuildVocabContent(GameObject vocabPanel, DictionaryVocabularyTabUI vocabTabUI)
+        private static Button CreateTabButton(string name, Transform parent, Sprite sprite, Vector2 size, Vector2 anchorMin, Vector2 anchorMax, Vector2 pos, float scale = 0.9f)
         {
-            SerializedObject so = new SerializedObject(vocabTabUI);
+            GameObject go = CreateUIObject(name, parent);
+            RectTransform rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = anchorMin;
+            rt.anchorMax = anchorMax;
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.sizeDelta = size;
+            rt.anchoredPosition = pos;
+            rt.localScale = new Vector3(scale, scale, 1f);
 
-            // Toolbar Atas (Search Bar & Progress Label)
-            GameObject toolbar = CreateUIObject("Toolbar", vocabPanel.transform);
-            RectTransform toolRt = toolbar.GetComponent<RectTransform>();
-            toolRt.anchorMin = new Vector2(0f, 1f);
-            toolRt.anchorMax = new Vector2(1f, 1f);
-            toolRt.pivot = new Vector2(0.5f, 1f);
-            toolRt.sizeDelta = new Vector2(0f, 56f);
-            toolRt.anchoredPosition = new Vector2(0f, -8f);
+            var img = go.AddComponent<Image>();
+            img.sprite = sprite;
+            img.preserveAspect = true;
 
-            GameObject searchInputGo = CreateInputField("SearchBar", toolbar.transform, "Cari kanji, romaji, atau arti...", new Vector2(360f, 40f));
-            RectTransform siRt = searchInputGo.GetComponent<RectTransform>();
-            siRt.anchorMin = new Vector2(0f, 0.5f);
-            siRt.anchorMax = new Vector2(0.5f, 0.5f);
-            siRt.pivot = new Vector2(0f, 0.5f);
-            siRt.anchoredPosition = new Vector2(24f, 0f);
+            var btn = go.AddComponent<Button>();
+            btn.targetGraphic = img;
 
-            GameObject progressTextGo = CreateText("ProgressText", toolbar.transform, "Kosakata Ditemukan: 0 / 0 (0%)", 20, TextAlignmentOptions.Right, new Color(0.2f, 0.35f, 0.5f));
-            RectTransform ptRt = progressTextGo.GetComponent<RectTransform>();
-            ptRt.anchorMin = new Vector2(1f, 0.5f);
-            ptRt.anchorMax = new Vector2(1f, 0.5f);
-            ptRt.pivot = new Vector2(1f, 0.5f);
-            ptRt.sizeDelta = new Vector2(400f, 40f);
-            ptRt.anchoredPosition = new Vector2(-24f, 0f);
-
-            // Kontainer Halaman Kiri (4 Kartu)
-            GameObject leftSlotsRoot = CreateUIObject("LeftPage_Cards", vocabPanel.transform);
-            RectTransform leftRt = leftSlotsRoot.GetComponent<RectTransform>();
-            leftRt.anchorMin = new Vector2(0f, 0f);
-            leftRt.anchorMax = new Vector2(0.5f, 1f);
-            leftRt.offsetMin = new Vector2(30f, 70f);
-            leftRt.offsetMax = new Vector2(-30f, -70f);
-            var leftGrid = leftSlotsRoot.AddComponent<GridLayoutGroup>();
-            leftGrid.cellSize = new Vector2(285f, 320f);
-            leftGrid.spacing = new Vector2(25f, 25f);
-            leftGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            leftGrid.constraintCount = 2;
-            leftGrid.childAlignment = TextAnchor.MiddleCenter;
-
-            // Kontainer Halaman Kanan (4 Kartu)
-            GameObject rightSlotsRoot = CreateUIObject("RightPage_Cards", vocabPanel.transform);
-            RectTransform rightRt = rightSlotsRoot.GetComponent<RectTransform>();
-            rightRt.anchorMin = new Vector2(0.5f, 0f);
-            rightRt.anchorMax = new Vector2(1f, 1f);
-            rightRt.offsetMin = new Vector2(30f, 70f);
-            rightRt.offsetMax = new Vector2(-30f, -70f);
-            var rightGrid = rightSlotsRoot.AddComponent<GridLayoutGroup>();
-            rightGrid.cellSize = new Vector2(285f, 320f);
-            rightGrid.spacing = new Vector2(25f, 25f);
-            rightGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            rightGrid.constraintCount = 2;
-            rightGrid.childAlignment = TextAnchor.MiddleCenter;
-
-            // 8 Kartu Kosakata
-            DictionaryVocabCardUI[] cards = new DictionaryVocabCardUI[8];
-            for (int i = 0; i < 4; i++)
-            {
-                cards[i] = CreateVocabCard($"VocabCard_L{i}", leftSlotsRoot.transform);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                cards[4 + i] = CreateVocabCard($"VocabCard_R{i}", rightSlotsRoot.transform);
-            }
-
-            // Paginasi Bawah
-            GameObject pagination = CreateUIObject("PaginationBar", vocabPanel.transform);
-            RectTransform pagRt = pagination.GetComponent<RectTransform>();
-            pagRt.anchorMin = new Vector2(0f, 0f);
-            pagRt.anchorMax = new Vector2(1f, 0f);
-            pagRt.pivot = new Vector2(0.5f, 0f);
-            pagRt.sizeDelta = new Vector2(0f, 50f);
-            pagRt.anchoredPosition = new Vector2(0f, 10f);
-
-            GameObject btnPrev = CreateButton("Btn_PrevPage", pagination.transform, "< Sebelumnya", new Vector2(160f, 36f), new Color(0.35f, 0.35f, 0.35f));
-            RectTransform bpRt = btnPrev.GetComponent<RectTransform>();
-            bpRt.anchorMin = new Vector2(0f, 0.5f);
-            bpRt.anchorMax = new Vector2(0f, 0.5f);
-            bpRt.pivot = new Vector2(0f, 0.5f);
-            bpRt.anchoredPosition = new Vector2(40f, 0f);
-
-            GameObject labelPageGo = CreateText("Label_PageIndicator", pagination.transform, "Halaman 1 / 1", 18, TextAlignmentOptions.Center, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform lpRt = labelPageGo.GetComponent<RectTransform>();
-            lpRt.anchorMin = new Vector2(0.5f, 0.5f);
-            lpRt.anchorMax = new Vector2(0.5f, 0.5f);
-            lpRt.pivot = new Vector2(0.5f, 0.5f);
-            lpRt.sizeDelta = new Vector2(200f, 40f);
-            lpRt.anchoredPosition = Vector2.zero;
-
-            GameObject btnNext = CreateButton("Btn_NextPage", pagination.transform, "Selanjutnya >", new Vector2(160f, 36f), new Color(0.35f, 0.35f, 0.35f));
-            RectTransform bnRt = btnNext.GetComponent<RectTransform>();
-            bnRt.anchorMin = new Vector2(1f, 0.5f);
-            bnRt.anchorMax = new Vector2(1f, 0.5f);
-            bnRt.pivot = new Vector2(1f, 0.5f);
-            bnRt.anchoredPosition = new Vector2(-40f, 0f);
-
-            // Empty State
-            GameObject emptyState = CreateUIObject("EmptyState", vocabPanel.transform);
-            RectTransform esRt = emptyState.GetComponent<RectTransform>();
-            SetStretchMargins(esRt, 100f, 100f, 100f, 100f);
-            GameObject esTextGo = CreateText("EmptyText", emptyState.transform, "Tidak ada kosakata yang ditemukan.", 24, TextAlignmentOptions.Center, new Color(0.4f, 0.35f, 0.3f));
-            SetStretch(esTextGo.GetComponent<RectTransform>());
-
-            // Pasang ke SerializedObject
-            so.FindProperty("searchInput").objectReferenceValue = searchInputGo.GetComponent<TMP_InputField>();
-            so.FindProperty("progressLabel").objectReferenceValue = progressTextGo.GetComponent<TMP_Text>();
-            so.FindProperty("prevPageButton").objectReferenceValue = btnPrev.GetComponent<Button>();
-            so.FindProperty("nextPageButton").objectReferenceValue = btnNext.GetComponent<Button>();
-            so.FindProperty("pageIndicatorLabel").objectReferenceValue = labelPageGo.GetComponent<TMP_Text>();
-            so.FindProperty("emptyStateObject").objectReferenceValue = emptyState;
-            so.FindProperty("emptyStateLabel").objectReferenceValue = esTextGo.GetComponent<TMP_Text>();
-
-            SerializedProperty cardsProp = so.FindProperty("cards");
-            cardsProp.arraySize = 8;
-            for (int i = 0; i < 8; i++)
-            {
-                cardsProp.GetArrayElementAtIndex(i).objectReferenceValue = cards[i];
-            }
-
-            so.ApplyModifiedProperties();
+            return btn;
         }
 
-        private static DictionaryPhotoSlotUI CreatePhotoSlot(string name, Transform parent)
+        private static DictionaryPolaroidCardUI CreatePolaroidSlot(
+            string name, 
+            Transform parent, 
+            Vector2 anchorMin,
+            Vector2 anchorMax,
+            Vector2 anchoredPos, 
+            int slotIdx,
+            Sprite bgSprite, 
+            Sprite tapeSprite,
+            Sprite likeOff, 
+            Sprite likeOn, 
+            Sprite favOff, 
+            Sprite favOn,
+            TMP_FontAsset zenFont, 
+            TMP_FontAsset nunitoFont)
         {
             GameObject slotGo = CreateUIObject(name, parent);
             RectTransform slotRt = slotGo.GetComponent<RectTransform>();
-            slotRt.sizeDelta = new Vector2(285f, 320f);
+            slotRt.anchorMin = anchorMin;
+            slotRt.anchorMax = anchorMax;
+            slotRt.pivot = new Vector2(0.5f, 0.5f);
+            slotRt.sizeDelta = new Vector2(300f, 365f);
+            slotRt.anchoredPosition = anchoredPos;
 
-            // Frame Polaroid Putih
-            var bgImg = slotGo.AddComponent<Image>();
-            bgImg.sprite = defaultSprite;
-            bgImg.type = Image.Type.Sliced;
-            bgImg.color = Color.white;
-            var clickBtn = slotGo.AddComponent<Button>();
+            var cardUI = slotGo.AddComponent<DictionaryPolaroidCardUI>();
 
-            // Foto Snapshot (Kotak di bagian atas)
-            GameObject photoGo = CreateUIObject("Photo", slotGo.transform);
+            // CardContainer (yang berputar saat flip)
+            GameObject containerGo = CreateUIObject("CardContainer", slotGo.transform);
+            RectTransform containerRt = containerGo.GetComponent<RectTransform>();
+            SetStretch(containerRt);
+            var containerCg = containerGo.AddComponent<CanvasGroup>();
+
+            // Washi Tape (Pita perekat atas)
+            GameObject tapeGo = CreateUIObject("TapeGraphic", containerGo.transform);
+            RectTransform tapeRt = tapeGo.GetComponent<RectTransform>();
+            tapeRt.anchorMin = new Vector2(0.5f, 1f);
+            tapeRt.anchorMax = new Vector2(0.5f, 1f);
+            tapeRt.pivot = new Vector2(0.5f, 0.5f);
+            tapeRt.sizeDelta = new Vector2(85f, 22f);
+            tapeRt.anchoredPosition = new Vector2(0f, -4f);
+            var tapeImg = tapeGo.AddComponent<Image>();
+            tapeImg.sprite = tapeSprite;
+            tapeImg.raycastTarget = false;
+
+            // ================= FRONT FACE =================
+            GameObject frontGo = CreateUIObject("CardFace_Front", containerGo.transform);
+            RectTransform frontRt = frontGo.GetComponent<RectTransform>();
+            SetStretch(frontRt);
+
+            // Background Kartu Polaroid dengan bayangan halus
+            var frontBg = frontGo.AddComponent<Image>();
+            frontBg.sprite = bgSprite;
+            frontBg.raycastTarget = false; // Biarkan CardClickTrigger menangani klik kartu penuh
+
+            // Tombol Klik Badan Kartu (untuk trigger flip) - mencakup 100% kartu penuh
+            GameObject clickGo = CreateUIObject("CardClickTrigger", frontGo.transform);
+            RectTransform clickRt = clickGo.GetComponent<RectTransform>();
+            SetStretch(clickRt);
+            var clickImg = clickGo.AddComponent<Image>();
+            clickImg.color = new Color(0, 0, 0, 0.001f);
+            clickImg.raycastTarget = true;
+            var cardClickBtn = clickGo.AddComponent<Button>();
+            cardClickBtn.transition = Selectable.Transition.None;
+
+            // PhotoFrame (Rasio 4:3! Ukuran 240 x 180 px)
+            GameObject photoFrameGo = CreateUIObject("PhotoFrame", frontGo.transform);
+            RectTransform photoFrameRt = photoFrameGo.GetComponent<RectTransform>();
+            photoFrameRt.anchorMin = new Vector2(0.5f, 1f);
+            photoFrameRt.anchorMax = new Vector2(0.5f, 1f);
+            photoFrameRt.pivot = new Vector2(0.5f, 1f);
+            photoFrameRt.sizeDelta = new Vector2(240f, 180f);
+            photoFrameRt.anchoredPosition = new Vector2(0f, -24f);
+
+            // RawImage untuk foto snapshot (raycastTarget = false agar klik tembus ke CardClickTrigger)
+            GameObject photoGo = CreateUIObject("PhotoImage", photoFrameGo.transform);
             RectTransform photoRt = photoGo.GetComponent<RectTransform>();
-            photoRt.anchorMin = new Vector2(0.5f, 1f);
-            photoRt.anchorMax = new Vector2(0.5f, 1f);
-            photoRt.pivot = new Vector2(0.5f, 1f);
-            photoRt.sizeDelta = new Vector2(255f, 240f);
-            photoRt.anchoredPosition = new Vector2(0f, -14f);
-            var rawImg = photoGo.AddComponent<RawImage>();
-            rawImg.color = new Color(0.85f, 0.85f, 0.85f);
-
-            // Bintang Favorit di pojok kanan atas foto
-            GameObject favBtnGo = CreateUIObject("Btn_Favorite", photoGo.transform);
-            RectTransform favRt = favBtnGo.GetComponent<RectTransform>();
-            favRt.anchorMin = new Vector2(1f, 1f);
-            favRt.anchorMax = new Vector2(1f, 1f);
-            favRt.pivot = new Vector2(1f, 1f);
-            favRt.sizeDelta = new Vector2(36f, 36f);
-            favRt.anchoredPosition = new Vector2(-4f, -4f);
-            var favBtn = favBtnGo.AddComponent<Button>();
-            var favImg = favBtnGo.AddComponent<Image>();
-            favImg.color = new Color(0f, 0f, 0f, 0.35f);
-
-            GameObject favTextGo = CreateText("StarText", favBtnGo.transform, "FAV", 11, TextAlignmentOptions.Center, Color.white);
-            SetStretch(favTextGo.GetComponent<RectTransform>());
-
-            // Label Nama Objek di bawah foto polaroid
-            GameObject titleGo = CreateText("Title", slotGo.transform, "Nama Objek", 16, TextAlignmentOptions.Center, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0f, 0f);
-            titleRt.anchorMax = new Vector2(1f, 0f);
-            titleRt.pivot = new Vector2(0.5f, 0.5f);
-            titleRt.sizeDelta = new Vector2(0f, 55f);
-            titleRt.anchoredPosition = Vector2.zero;
-
-            var slotUI = slotGo.AddComponent<DictionaryPhotoSlotUI>();
-            SerializedObject so = new SerializedObject(slotUI);
-            so.FindProperty("rootObject").objectReferenceValue = slotGo;
-            so.FindProperty("photoImage").objectReferenceValue = rawImg;
-            so.FindProperty("titleLabel").objectReferenceValue = titleGo.GetComponent<TMP_Text>();
-            so.FindProperty("clickButton").objectReferenceValue = clickBtn;
-            so.FindProperty("favoriteButton").objectReferenceValue = favBtn;
-            so.FindProperty("favoriteIconText").objectReferenceValue = favTextGo.GetComponent<TMP_Text>();
-            so.ApplyModifiedProperties();
-
-            return slotUI;
-        }
-
-        private static DictionaryVocabCardUI CreateVocabCard(string name, Transform parent)
-        {
-            GameObject cardGo = CreateUIObject(name, parent);
-            RectTransform cardRt = cardGo.GetComponent<RectTransform>();
-            cardRt.sizeDelta = new Vector2(285f, 320f);
-
-            var bgImg = cardGo.AddComponent<Image>();
-            bgImg.sprite = defaultSprite;
-            bgImg.type = Image.Type.Sliced;
-            bgImg.color = new Color(0.92f, 0.90f, 0.85f, 1f);
-            var clickBtn = cardGo.AddComponent<Button>();
-
-            // Discovered Group
-            GameObject discGroup = CreateUIObject("DiscoveredGroup", cardGo.transform);
-            SetStretch(discGroup.GetComponent<RectTransform>());
-
-            GameObject kanjiGo = CreateText("Kanji", discGroup.transform, "Sepeda", 28, TextAlignmentOptions.Center, new Color(0.1f, 0.15f, 0.25f));
-            RectTransform kanjiRt = kanjiGo.GetComponent<RectTransform>();
-            kanjiRt.anchorMin = new Vector2(0f, 0.5f);
-            kanjiRt.anchorMax = new Vector2(1f, 0.5f);
-            kanjiRt.pivot = new Vector2(0.5f, 0.5f);
-            kanjiRt.anchoredPosition = new Vector2(0f, 50f);
-            kanjiRt.sizeDelta = new Vector2(0f, 60f);
-
-            GameObject romajiGo = CreateText("Romaji", discGroup.transform, "Jitensha", 18, TextAlignmentOptions.Center, new Color(0.35f, 0.4f, 0.45f));
-            RectTransform romajiRt = romajiGo.GetComponent<RectTransform>();
-            romajiRt.anchorMin = new Vector2(0f, 0.5f);
-            romajiRt.anchorMax = new Vector2(1f, 0.5f);
-            romajiRt.pivot = new Vector2(0.5f, 0.5f);
-            romajiRt.anchoredPosition = new Vector2(0f, 5f);
-            romajiRt.sizeDelta = new Vector2(0f, 30f);
-
-            GameObject meaningGo = CreateText("Meaning", discGroup.transform, "Sepeda", 20, TextAlignmentOptions.Center, new Color(0.15f, 0.45f, 0.25f));
-            RectTransform meanRt = meaningGo.GetComponent<RectTransform>();
-            meanRt.anchorMin = new Vector2(0.5f, 0.5f);
-            meanRt.anchorMax = new Vector2(0.5f, 0.5f);
-            meanRt.pivot = new Vector2(0.5f, 0.5f);
-            meanRt.anchoredPosition = new Vector2(0f, -40f);
-            meanRt.sizeDelta = new Vector2(260f, 35f);
-
-            GameObject badgeGo = CreateText("Badge", discGroup.transform, "Transport", 14, TextAlignmentOptions.Center, new Color(0.5f, 0.5f, 0.5f));
-            RectTransform badgeRt = badgeGo.GetComponent<RectTransform>();
-            badgeRt.anchorMin = new Vector2(0.5f, 0f);
-            badgeRt.anchorMax = new Vector2(0.5f, 0f);
-            badgeRt.pivot = new Vector2(0.5f, 0f);
-            badgeRt.anchoredPosition = new Vector2(0f, 15f);
-            badgeRt.sizeDelta = new Vector2(150f, 25f);
-
-            // Locked Group
-            GameObject lockedGroup = CreateUIObject("LockedGroup", cardGo.transform);
-            SetStretch(lockedGroup.GetComponent<RectTransform>());
-
-            var lockedBg = lockedGroup.AddComponent<Image>();
-            lockedBg.sprite = defaultSprite;
-            lockedBg.type = Image.Type.Sliced;
-            lockedBg.color = new Color(0.3f, 0.28f, 0.26f, 0.85f);
-
-            GameObject lockHintGo = CreateText("LockHint", lockedGroup.transform, "[TERKUNCI]\n???\n\nBelum Ditemukan\n(Bidik & foto objek di kota)", 16, TextAlignmentOptions.Center, new Color(0.8f, 0.8f, 0.8f));
-            SetStretch(lockHintGo.GetComponent<RectTransform>());
-
-            var cardUI = cardGo.AddComponent<DictionaryVocabCardUI>();
-            SerializedObject so = new SerializedObject(cardUI);
-            so.FindProperty("rootObject").objectReferenceValue = cardGo;
-            so.FindProperty("cardButton").objectReferenceValue = clickBtn;
-            so.FindProperty("discoveredGroup").objectReferenceValue = discGroup;
-            so.FindProperty("kanjiLabel").objectReferenceValue = kanjiGo.GetComponent<TMP_Text>();
-            so.FindProperty("romajiLabel").objectReferenceValue = romajiGo.GetComponent<TMP_Text>();
-            so.FindProperty("meaningLabel").objectReferenceValue = meaningGo.GetComponent<TMP_Text>();
-            so.FindProperty("categoryBadge").objectReferenceValue = badgeGo.GetComponent<TMP_Text>();
-            so.FindProperty("lockedGroup").objectReferenceValue = lockedGroup;
-            so.FindProperty("lockedHintLabel").objectReferenceValue = lockHintGo.GetComponent<TMP_Text>();
-            so.ApplyModifiedProperties();
-
-            return cardUI;
-        }
-
-        private static GameObject BuildPhotoDetailModal(Transform parent)
-        {
-            GameObject modal = CreateUIObject("Modal_PhotoDetail", parent);
-            SetStretch(modal.GetComponent<RectTransform>());
-
-            var dimImg = modal.AddComponent<Image>();
-            dimImg.color = new Color(0f, 0f, 0f, 0.7f);
-            var backdropBtn = modal.AddComponent<Button>();
-
-            GameObject dialog = CreateUIObject("DialogWindow", modal.transform);
-            RectTransform dlgRt = dialog.GetComponent<RectTransform>();
-            dlgRt.anchorMin = new Vector2(0.5f, 0.5f);
-            dlgRt.anchorMax = new Vector2(0.5f, 0.5f);
-            dlgRt.pivot = new Vector2(0.5f, 0.5f);
-            dlgRt.sizeDelta = new Vector2(650f, 750f);
-            var dlgImg = dialog.AddComponent<Image>();
-            dlgImg.sprite = defaultSprite;
-            dlgImg.type = Image.Type.Sliced;
-            dlgImg.color = new Color(0.96f, 0.94f, 0.9f);
-
-            GameObject photoGo = CreateUIObject("PreviewImage", dialog.transform);
-            RectTransform photoRt = photoGo.GetComponent<RectTransform>();
-            photoRt.anchorMin = new Vector2(0.5f, 1f);
-            photoRt.anchorMax = new Vector2(0.5f, 1f);
-            photoRt.pivot = new Vector2(0.5f, 1f);
-            photoRt.sizeDelta = new Vector2(580f, 440f);
-            photoRt.anchoredPosition = new Vector2(0f, -40f);
+            SetStretch(photoRt);
             var photoRaw = photoGo.AddComponent<RawImage>();
+            photoRaw.color = Color.white;
+            photoRaw.raycastTarget = false;
 
-            GameObject titleGo = CreateText("Title", dialog.transform, "Nama Objek", 24, TextAlignmentOptions.Center, new Color(0.15f, 0.15f, 0.2f));
-            RectTransform titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0.5f, 1f);
-            titleRt.anchorMax = new Vector2(0.5f, 1f);
-            titleRt.pivot = new Vector2(0.5f, 1f);
-            titleRt.sizeDelta = new Vector2(580f, 35f);
-            titleRt.anchoredPosition = new Vector2(0f, -495f);
-
-            GameObject vocabGo = CreateText("VocabInfo", dialog.transform, "Info Kosakata", 18, TextAlignmentOptions.Center, new Color(0.3f, 0.3f, 0.35f));
-            RectTransform vocabRt = vocabGo.GetComponent<RectTransform>();
-            vocabRt.anchorMin = new Vector2(0.5f, 1f);
-            vocabRt.anchorMax = new Vector2(0.5f, 1f);
-            vocabRt.pivot = new Vector2(0.5f, 1f);
-            vocabRt.sizeDelta = new Vector2(580f, 50f);
-            vocabRt.anchoredPosition = new Vector2(0f, -535f);
-
-            GameObject dateGo = CreateText("DateTaken", dialog.transform, "Diambil: 2026-10-31", 14, TextAlignmentOptions.Center, new Color(0.5f, 0.5f, 0.5f));
-            RectTransform dateRt = dateGo.GetComponent<RectTransform>();
-            dateRt.anchorMin = new Vector2(0.5f, 1f);
-            dateRt.anchorMax = new Vector2(0.5f, 1f);
-            dateRt.pivot = new Vector2(0.5f, 1f);
-            dateRt.sizeDelta = new Vector2(580f, 25f);
-            dateRt.anchoredPosition = new Vector2(0f, -590f);
-
-            // Action Buttons Bar
-            GameObject actions = CreateUIObject("ActionButtons", dialog.transform);
-            RectTransform actRt = actions.GetComponent<RectTransform>();
-            actRt.anchorMin = new Vector2(0.5f, 0f);
-            actRt.anchorMax = new Vector2(0.5f, 0f);
-            actRt.pivot = new Vector2(0.5f, 0f);
-            actRt.sizeDelta = new Vector2(600f, 50f);
-            actRt.anchoredPosition = new Vector2(0f, 75f);
-            var actLayout = actions.AddComponent<HorizontalLayoutGroup>();
-            actLayout.spacing = 10f;
-            actLayout.childAlignment = TextAnchor.MiddleCenter;
-            actLayout.childControlWidth = false;
-            actLayout.childControlHeight = false;
-
-            GameObject btnFav = CreateButton("Btn_Fav", actions.transform, "Tambah Favorit", new Vector2(150f, 42f), new Color(0.4f, 0.35f, 0.2f));
-            GameObject moveDropdownGo = CreateDropdown("Dropdown_MoveAlbum", actions.transform, new Vector2(180f, 42f));
-            GameObject btnMove = CreateButton("Btn_Move", actions.transform, "Pindah", new Vector2(90f, 42f), new Color(0.2f, 0.5f, 0.7f));
-            GameObject btnDel = CreateButton("Btn_Delete", actions.transform, "Hapus", new Vector2(100f, 42f), new Color(0.8f, 0.25f, 0.2f));
-
-            GameObject btnClose = CreateButton("Btn_Close", dialog.transform, "Tutup", new Vector2(160f, 40f), new Color(0.4f, 0.4f, 0.4f));
-            RectTransform bcRt = btnClose.GetComponent<RectTransform>();
-            bcRt.anchorMin = new Vector2(0.5f, 0f);
-            bcRt.anchorMax = new Vector2(0.5f, 0f);
-            bcRt.pivot = new Vector2(0.5f, 0f);
-            bcRt.anchoredPosition = new Vector2(0f, 20f);
-
-            var modalUI = modal.AddComponent<DictionaryPhotoDetailModal>();
-            SerializedObject so = new SerializedObject(modalUI);
-            so.FindProperty("modalRoot").objectReferenceValue = modal;
-            so.FindProperty("previewImage").objectReferenceValue = photoRaw;
-            so.FindProperty("objectNameLabel").objectReferenceValue = titleGo.GetComponent<TMP_Text>();
-            so.FindProperty("dateTakenLabel").objectReferenceValue = dateGo.GetComponent<TMP_Text>();
-            so.FindProperty("vocabLabel").objectReferenceValue = vocabGo.GetComponent<TMP_Text>();
-            so.FindProperty("favoriteButton").objectReferenceValue = btnFav.GetComponent<Button>();
-            so.FindProperty("favoriteButtonText").objectReferenceValue = btnFav.GetComponentInChildren<TMP_Text>();
-            so.FindProperty("moveAlbumDropdown").objectReferenceValue = moveDropdownGo.GetComponent<TMP_Dropdown>();
-            so.FindProperty("moveAlbumButton").objectReferenceValue = btnMove.GetComponent<Button>();
-            so.FindProperty("deleteButton").objectReferenceValue = btnDel.GetComponent<Button>();
-            so.FindProperty("closeButton").objectReferenceValue = btnClose.GetComponent<Button>();
-            so.FindProperty("backdropCloseButton").objectReferenceValue = backdropBtn;
-            so.ApplyModifiedProperties();
-
-            return modal;
-        }
-
-        private static GameObject BuildVocabDetailModal(Transform parent)
-        {
-            GameObject modal = CreateUIObject("Modal_VocabDetail", parent);
-            SetStretch(modal.GetComponent<RectTransform>());
-
-            var dimImg = modal.AddComponent<Image>();
-            dimImg.color = new Color(0f, 0f, 0f, 0.7f);
-            var backdropBtn = modal.AddComponent<Button>();
-
-            GameObject dialog = CreateUIObject("DialogWindow", modal.transform);
-            RectTransform dlgRt = dialog.GetComponent<RectTransform>();
-            dlgRt.anchorMin = new Vector2(0.5f, 0.5f);
-            dlgRt.anchorMax = new Vector2(0.5f, 0.5f);
-            dlgRt.pivot = new Vector2(0.5f, 0.5f);
-            dlgRt.sizeDelta = new Vector2(560f, 600f);
-            var dlgImg = dialog.AddComponent<Image>();
-            dlgImg.sprite = defaultSprite;
-            dlgImg.type = Image.Type.Sliced;
-            dlgImg.color = new Color(0.96f, 0.94f, 0.9f);
-
-            GameObject kanjiGo = CreateText("Kanji", dialog.transform, "Kata Kosakata", 36, TextAlignmentOptions.Center, new Color(0.1f, 0.15f, 0.25f));
+            // Kanji & Furigana Label (Zen Maru Gothic) (raycastTarget = false)
+            GameObject kanjiGo = CreateUIObject("KanjiLabel", frontGo.transform);
             RectTransform kanjiRt = kanjiGo.GetComponent<RectTransform>();
             kanjiRt.anchorMin = new Vector2(0.5f, 1f);
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
-            kanjiRt.pivot = new Vector2(0.5f, 1f);
-            kanjiRt.sizeDelta = new Vector2(500f, 60f);
-            kanjiRt.anchoredPosition = new Vector2(0f, -40f);
+            kanjiRt.pivot = new Vector2(0f, 1f);
+            kanjiRt.sizeDelta = new Vector2(240f, 28f);
+            kanjiRt.anchoredPosition = new Vector2(-120f, -214f);
+            var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
+            kanjiTmp.font = zenFont;
+            kanjiTmp.fontSize = 20;
+            kanjiTmp.fontStyle = FontStyles.Bold;
+            kanjiTmp.color = new Color(0.15f, 0.12f, 0.12f);
+            kanjiTmp.text = "<b>道</b> <size=75%>(みち)</size>";
+            kanjiTmp.raycastTarget = false;
 
-            GameObject romajiGo = CreateText("Romaji", dialog.transform, "Romaji", 22, TextAlignmentOptions.Center, new Color(0.35f, 0.4f, 0.45f));
-            RectTransform romajiRt = romajiGo.GetComponent<RectTransform>();
-            romajiRt.anchorMin = new Vector2(0.5f, 1f);
-            romajiRt.anchorMax = new Vector2(0.5f, 1f);
-            romajiRt.pivot = new Vector2(0.5f, 1f);
-            romajiRt.sizeDelta = new Vector2(500f, 35f);
-            romajiRt.anchoredPosition = new Vector2(0f, -105f);
-
-            GameObject meanGo = CreateText("Meaning", dialog.transform, "Terjemahan", 24, TextAlignmentOptions.Center, new Color(0.15f, 0.45f, 0.25f));
+            // Meaning & Romaji Label (Nunito) (raycastTarget = false)
+            GameObject meanGo = CreateUIObject("MeaningLabel", frontGo.transform);
             RectTransform meanRt = meanGo.GetComponent<RectTransform>();
             meanRt.anchorMin = new Vector2(0.5f, 1f);
             meanRt.anchorMax = new Vector2(0.5f, 1f);
-            meanRt.pivot = new Vector2(0.5f, 1f);
-            meanRt.sizeDelta = new Vector2(500f, 40f);
-            meanRt.anchoredPosition = new Vector2(0f, -145f);
+            meanRt.pivot = new Vector2(0f, 1f);
+            meanRt.sizeDelta = new Vector2(240f, 22f);
+            meanRt.anchoredPosition = new Vector2(-120f, -244f);
+            var meanTmp = meanGo.AddComponent<TextMeshProUGUI>();
+            meanTmp.font = nunitoFont;
+            meanTmp.fontSize = 13;
+            meanTmp.fontStyle = FontStyles.Bold;
+            meanTmp.color = new Color(0.15f, 0.42f, 0.92f); // Vibrant blue
+            meanTmp.text = "michi • Street / Road";
+            meanTmp.raycastTarget = false;
 
-            GameObject catGo = CreateText("Category", dialog.transform, "Kategori: Umum", 16, TextAlignmentOptions.Center, new Color(0.5f, 0.5f, 0.5f));
-            RectTransform catRt = catGo.GetComponent<RectTransform>();
-            catRt.anchorMin = new Vector2(0.5f, 1f);
-            catRt.anchorMax = new Vector2(0.5f, 1f);
-            catRt.pivot = new Vector2(0.5f, 1f);
-            catRt.sizeDelta = new Vector2(500f, 25f);
-            catRt.anchoredPosition = new Vector2(0f, -190f);
+            // Tombol Like (Hati) di pojok kanan bawah
+            GameObject likeGo = CreateUIObject("Btn_Like", frontGo.transform);
+            RectTransform likeRt = likeGo.GetComponent<RectTransform>();
+            likeRt.anchorMin = new Vector2(1f, 0f);
+            likeRt.anchorMax = new Vector2(1f, 0f);
+            likeRt.pivot = new Vector2(0.5f, 0.5f);
+            likeRt.sizeDelta = new Vector2(30f, 30f);
+            likeRt.anchoredPosition = new Vector2(-84f, 60f);
+            var likeBtn = likeGo.AddComponent<Button>();
+            var likeImg = likeGo.AddComponent<Image>();
+            likeImg.sprite = likeOff;
+            likeImg.preserveAspect = true;
+            likeImg.raycastTarget = true;
+            likeBtn.targetGraphic = likeImg;
 
-            // Tombol Audio
-            GameObject btnAudio = CreateButton("Btn_Audio", dialog.transform, "Audio Pelafalan", new Vector2(200f, 44f), new Color(0.2f, 0.55f, 0.8f));
-            RectTransform baRt = btnAudio.GetComponent<RectTransform>();
-            baRt.anchorMin = new Vector2(0.5f, 1f);
-            baRt.anchorMax = new Vector2(0.5f, 1f);
-            baRt.pivot = new Vector2(0.5f, 1f);
-            baRt.anchoredPosition = new Vector2(0f, -230f);
+            // Tombol Favorite (Bintang) di pojok kanan bawah
+            GameObject favGo = CreateUIObject("Btn_Favorite", frontGo.transform);
+            RectTransform favRt = favGo.GetComponent<RectTransform>();
+            favRt.anchorMin = new Vector2(1f, 0f);
+            favRt.anchorMax = new Vector2(1f, 0f);
+            favRt.pivot = new Vector2(0.5f, 0.5f);
+            favRt.sizeDelta = new Vector2(32f, 32f);
+            favRt.anchoredPosition = new Vector2(-47f, 60f);
+            var favBtn = favGo.AddComponent<Button>();
+            var favImg = favGo.AddComponent<Image>();
+            favImg.sprite = favOff;
+            favImg.preserveAspect = true;
+            favImg.raycastTarget = true;
+            favBtn.targetGraphic = favImg;
 
-            var audioSrc = modal.AddComponent<AudioSource>();
+            // ================= BACK FACE (Flip Side) =================
+            GameObject backGo = CreateUIObject("CardFace_Back", containerGo.transform);
+            RectTransform backRt = backGo.GetComponent<RectTransform>();
+            SetStretch(backRt);
+            var backBg = backGo.AddComponent<Image>();
+            backBg.sprite = bgSprite;
+            backBg.raycastTarget = false;
 
-            GameObject toggleGo = CreateToggle("Toggle_Example", dialog.transform, "Lihat Contoh Kalimat");
-            RectTransform tgRt = toggleGo.GetComponent<RectTransform>();
-            tgRt.anchorMin = new Vector2(0.5f, 1f);
-            tgRt.anchorMax = new Vector2(0.5f, 1f);
-            tgRt.pivot = new Vector2(0.5f, 1f);
-            tgRt.anchoredPosition = new Vector2(0f, -295f);
-            tgRt.sizeDelta = new Vector2(240f, 32f);
+            // Tombol Klik Badan Belakang (Trigger flip kembali ke depan)
+            GameObject backClickGo = CreateUIObject("BackClickTrigger", backGo.transform);
+            RectTransform backClickRt = backClickGo.GetComponent<RectTransform>();
+            SetStretch(backClickRt);
+            var backClickImg = backClickGo.AddComponent<Image>();
+            backClickImg.color = new Color(0, 0, 0, 0.001f);
+            backClickImg.raycastTarget = true;
+            var backClickBtn = backClickGo.AddComponent<Button>();
+            backClickBtn.transition = Selectable.Transition.None;
 
-            GameObject exGo = CreateText("ExampleSentence", dialog.transform, "Contoh kalimat akan muncul di sini.", 18, TextAlignmentOptions.Center, new Color(0.2f, 0.2f, 0.25f));
-            RectTransform exRt = exGo.GetComponent<RectTransform>();
-            exRt.anchorMin = new Vector2(0.5f, 1f);
-            exRt.anchorMax = new Vector2(0.5f, 1f);
-            exRt.pivot = new Vector2(0.5f, 1f);
-            exRt.sizeDelta = new Vector2(480f, 120f);
-            exRt.anchoredPosition = new Vector2(0f, -345f);
+            // Judul Kata Belakang
+            GameObject backTitleGo = CreateUIObject("BackKanjiLabel", backGo.transform);
+            RectTransform backTitleRt = backTitleGo.GetComponent<RectTransform>();
+            backTitleRt.anchorMin = new Vector2(0.5f, 1f);
+            backTitleRt.anchorMax = new Vector2(0.5f, 1f);
+            backTitleRt.pivot = new Vector2(0.5f, 1f);
+            backTitleRt.sizeDelta = new Vector2(240f, 35f);
+            backTitleRt.anchoredPosition = new Vector2(0f, -30f);
+            var backTitleTmp = backTitleGo.AddComponent<TextMeshProUGUI>();
+            backTitleTmp.font = zenFont;
+            backTitleTmp.fontSize = 22;
+            backTitleTmp.fontStyle = FontStyles.Bold;
+            backTitleTmp.alignment = TextAlignmentOptions.Center;
+            backTitleTmp.color = new Color(0.2f, 0.16f, 0.18f);
+            backTitleTmp.text = "道";
+            backTitleTmp.raycastTarget = false;
 
-            GameObject btnClose = CreateButton("Btn_Close", dialog.transform, "Tutup", new Vector2(160f, 40f), new Color(0.4f, 0.4f, 0.4f));
-            RectTransform bcRt = btnClose.GetComponent<RectTransform>();
-            bcRt.anchorMin = new Vector2(0.5f, 0f);
-            bcRt.anchorMax = new Vector2(0.5f, 0f);
-            bcRt.pivot = new Vector2(0.5f, 0f);
-            bcRt.anchoredPosition = new Vector2(0f, 25f);
+            // Kotak Contoh Kalimat
+            GameObject sentBoxGo = CreateUIObject("SentenceContainer", backGo.transform);
+            RectTransform sentBoxRt = sentBoxGo.GetComponent<RectTransform>();
+            sentBoxRt.anchorMin = new Vector2(0.5f, 0.5f);
+            sentBoxRt.anchorMax = new Vector2(0.5f, 0.5f);
+            sentBoxRt.pivot = new Vector2(0.5f, 0.5f);
+            sentBoxRt.sizeDelta = new Vector2(250f, 150f);
+            sentBoxRt.anchoredPosition = new Vector2(0f, 10f);
 
-            var modalUI = modal.AddComponent<DictionaryVocabDetailModal>();
-            SerializedObject so = new SerializedObject(modalUI);
-            so.FindProperty("modalRoot").objectReferenceValue = modal;
-            so.FindProperty("kanjiLabel").objectReferenceValue = kanjiGo.GetComponent<TMP_Text>();
-            so.FindProperty("romajiLabel").objectReferenceValue = romajiGo.GetComponent<TMP_Text>();
-            so.FindProperty("meaningLabel").objectReferenceValue = meanGo.GetComponent<TMP_Text>();
-            so.FindProperty("categoryLabel").objectReferenceValue = catGo.GetComponent<TMP_Text>();
-            so.FindProperty("exampleLabel").objectReferenceValue = exGo.GetComponent<TMP_Text>();
-            so.FindProperty("exampleToggle").objectReferenceValue = toggleGo.GetComponent<Toggle>();
-            so.FindProperty("audioButton").objectReferenceValue = btnAudio.GetComponent<Button>();
-            so.FindProperty("closeButton").objectReferenceValue = btnClose.GetComponent<Button>();
-            so.FindProperty("backdropCloseButton").objectReferenceValue = backdropBtn;
-            so.FindProperty("audioSource").objectReferenceValue = audioSrc;
-            so.ApplyModifiedProperties();
+            GameObject sentJpGo = CreateUIObject("SentenceJapanese", sentBoxGo.transform);
+            RectTransform sentJpRt = sentJpGo.GetComponent<RectTransform>();
+            sentJpRt.anchorMin = new Vector2(0.5f, 1f);
+            sentJpRt.anchorMax = new Vector2(0.5f, 1f);
+            sentJpRt.pivot = new Vector2(0.5f, 1f);
+            sentJpRt.sizeDelta = new Vector2(240f, 60f);
+            sentJpRt.anchoredPosition = new Vector2(0f, 0f);
+            var sentJpTmp = sentJpGo.AddComponent<TextMeshProUGUI>();
+            sentJpTmp.font = zenFont;
+            sentJpTmp.fontSize = 15;
+            sentJpTmp.alignment = TextAlignmentOptions.Center;
+            sentJpTmp.color = new Color(0.12f, 0.16f, 0.22f);
+            sentJpTmp.text = "「この道をまっすぐ行きます。」";
+            sentJpTmp.raycastTarget = false;
 
-            return modal;
-        }
+            GameObject sentEngGo = CreateUIObject("SentenceEnglish", sentBoxGo.transform);
+            RectTransform sentEngRt = sentEngGo.GetComponent<RectTransform>();
+            sentEngRt.anchorMin = new Vector2(0.5f, 0f);
+            sentEngRt.anchorMax = new Vector2(0.5f, 0f);
+            sentEngRt.pivot = new Vector2(0.5f, 0f);
+            sentEngRt.sizeDelta = new Vector2(240f, 75f);
+            sentEngRt.anchoredPosition = new Vector2(0f, 5f);
+            var sentEngTmp = sentEngGo.AddComponent<TextMeshProUGUI>();
+            sentEngTmp.font = nunitoFont;
+            sentEngTmp.fontSize = 12;
+            sentEngTmp.alignment = TextAlignmentOptions.Center;
+            sentEngTmp.color = new Color(0.35f, 0.4f, 0.48f);
+            sentEngTmp.text = "<i>(Kono michi o massugu ikimasu)</i>\nGo straight along this street.";
+            sentEngTmp.raycastTarget = false;
 
-        private static GameObject BuildSimpleDialog(Transform parent)
-        {
-            GameObject modal = CreateUIObject("Dialog_Simple", parent);
-            SetStretch(modal.GetComponent<RectTransform>());
+            // Teks petunjuk balik
+            GameObject hintGo = CreateUIObject("BackFlipHint", backGo.transform);
+            RectTransform hintRt = hintGo.GetComponent<RectTransform>();
+            hintRt.anchorMin = new Vector2(0.5f, 0f);
+            hintRt.anchorMax = new Vector2(0.5f, 0f);
+            hintRt.pivot = new Vector2(0.5f, 0f);
+            hintRt.sizeDelta = new Vector2(200f, 20f);
+            hintRt.anchoredPosition = new Vector2(0f, 15f);
+            var hintTmp = hintGo.AddComponent<TextMeshProUGUI>();
+            hintTmp.font = nunitoFont;
+            hintTmp.fontSize = 11;
+            hintTmp.alignment = TextAlignmentOptions.Center;
+            hintTmp.color = new Color(0.6f, 0.65f, 0.72f);
+            hintTmp.text = "tap to flip card";
+            hintTmp.raycastTarget = false;
 
-            var dimImg = modal.AddComponent<Image>();
-            dimImg.color = new Color(0f, 0f, 0f, 0.7f);
+            backGo.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            backGo.SetActive(false); // Sisi belakang awalnya tersembunyi
 
-            GameObject dialog = CreateUIObject("DialogWindow", modal.transform);
-            RectTransform dlgRt = dialog.GetComponent<RectTransform>();
-            dlgRt.anchorMin = new Vector2(0.5f, 0.5f);
-            dlgRt.anchorMax = new Vector2(0.5f, 0.5f);
-            dlgRt.pivot = new Vector2(0.5f, 0.5f);
-            dlgRt.sizeDelta = new Vector2(460f, 260f);
-            var dlgImg = dialog.AddComponent<Image>();
-            dlgImg.sprite = defaultSprite;
-            dlgImg.type = Image.Type.Sliced;
-            dlgImg.color = new Color(0.96f, 0.94f, 0.9f);
+            // Wire serialized fields on DictionaryPolaroidCardUI
+            var cardSo = new SerializedObject(cardUI);
+            cardSo.FindProperty("cardContainer").objectReferenceValue = containerRt;
+            cardSo.FindProperty("cardCanvasGroup").objectReferenceValue = containerCg;
+            cardSo.FindProperty("frontFace").objectReferenceValue = frontGo;
+            cardSo.FindProperty("backFace").objectReferenceValue = backGo;
+            cardSo.FindProperty("frontClickButton").objectReferenceValue = cardClickBtn;
+            cardSo.FindProperty("backClickButton").objectReferenceValue = backClickBtn;
+            cardSo.FindProperty("cardClickButton").objectReferenceValue = cardClickBtn;
+            cardSo.FindProperty("tapeImage").objectReferenceValue = tapeImg;
+            cardSo.FindProperty("photoImage").objectReferenceValue = photoRaw;
+            cardSo.FindProperty("kanjiLabel").objectReferenceValue = kanjiTmp;
+            cardSo.FindProperty("meaningLabel").objectReferenceValue = meanTmp;
+            cardSo.FindProperty("likeButton").objectReferenceValue = likeBtn;
+            cardSo.FindProperty("likeIcon").objectReferenceValue = likeImg;
+            cardSo.FindProperty("favoriteButton").objectReferenceValue = favBtn;
+            cardSo.FindProperty("favoriteIcon").objectReferenceValue = favImg;
+            cardSo.FindProperty("likeOffSprite").objectReferenceValue = likeOff;
+            cardSo.FindProperty("likeOnSprite").objectReferenceValue = likeOn;
+            cardSo.FindProperty("favoriteOffSprite").objectReferenceValue = favOff;
+            cardSo.FindProperty("favoriteOnSprite").objectReferenceValue = favOn;
+            cardSo.FindProperty("backKanjiLabel").objectReferenceValue = backTitleTmp;
+            cardSo.FindProperty("backSentenceJapanese").objectReferenceValue = sentJpTmp;
+            cardSo.FindProperty("backSentenceEnglish").objectReferenceValue = sentEngTmp;
+            cardSo.ApplyModifiedPropertiesWithoutUndo();
 
-            GameObject titleGo = CreateText("Title", dialog.transform, "Judul Dialog", 22, TextAlignmentOptions.Center, new Color(0.15f, 0.15f, 0.2f));
-            RectTransform titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0.5f, 1f);
-            titleRt.anchorMax = new Vector2(0.5f, 1f);
-            titleRt.pivot = new Vector2(0.5f, 1f);
-            titleRt.sizeDelta = new Vector2(420f, 35f);
-            titleRt.anchoredPosition = new Vector2(0f, -25f);
+            // Sembunyikan slot saat belum ada foto
+            slotGo.SetActive(false);
 
-            GameObject messageGo = CreateText("Message", dialog.transform, "Pesan konfirmasi?", 18, TextAlignmentOptions.Center, new Color(0.3f, 0.3f, 0.3f));
-            RectTransform msgRt = messageGo.GetComponent<RectTransform>();
-            msgRt.anchorMin = new Vector2(0.5f, 1f);
-            msgRt.anchorMax = new Vector2(0.5f, 1f);
-            msgRt.pivot = new Vector2(0.5f, 1f);
-            msgRt.sizeDelta = new Vector2(420f, 60f);
-            msgRt.anchoredPosition = new Vector2(0f, -70f);
-
-            GameObject inputGo = CreateInputField("InputField", dialog.transform, "Masukkan teks...", new Vector2(380f, 44f));
-            RectTransform inRt = inputGo.GetComponent<RectTransform>();
-            inRt.anchorMin = new Vector2(0.5f, 1f);
-            inRt.anchorMax = new Vector2(0.5f, 1f);
-            inRt.pivot = new Vector2(0.5f, 1f);
-            inRt.anchoredPosition = new Vector2(0f, -95f);
-
-            GameObject btnConfirm = CreateButton("Btn_Confirm", dialog.transform, "Ya", new Vector2(130f, 40f), new Color(0.2f, 0.65f, 0.35f));
-            RectTransform bcRt = btnConfirm.GetComponent<RectTransform>();
-            bcRt.anchorMin = new Vector2(0.5f, 0f);
-            bcRt.anchorMax = new Vector2(0.5f, 0f);
-            bcRt.pivot = new Vector2(0.5f, 0f);
-            bcRt.anchoredPosition = new Vector2(80f, 25f);
-
-            GameObject btnCancel = CreateButton("Btn_Cancel", dialog.transform, "Batal", new Vector2(130f, 40f), new Color(0.55f, 0.55f, 0.55f));
-            RectTransform bcanRt = btnCancel.GetComponent<RectTransform>();
-            bcanRt.anchorMin = new Vector2(0.5f, 0f);
-            bcanRt.anchorMax = new Vector2(0.5f, 0f);
-            bcanRt.pivot = new Vector2(0.5f, 0f);
-            bcanRt.anchoredPosition = new Vector2(-80f, 25f);
-
-            var dialogUI = modal.AddComponent<DictionarySimpleDialog>();
-            SerializedObject so = new SerializedObject(dialogUI);
-            so.FindProperty("dialogRoot").objectReferenceValue = modal;
-            so.FindProperty("titleLabel").objectReferenceValue = titleGo.GetComponent<TMP_Text>();
-            so.FindProperty("messageLabel").objectReferenceValue = messageGo.GetComponent<TMP_Text>();
-            so.FindProperty("inputField").objectReferenceValue = inputGo.GetComponent<TMP_InputField>();
-            so.FindProperty("confirmButton").objectReferenceValue = btnConfirm.GetComponent<Button>();
-            so.FindProperty("cancelButton").objectReferenceValue = btnCancel.GetComponent<Button>();
-            so.FindProperty("confirmButtonText").objectReferenceValue = btnConfirm.GetComponentInChildren<TMP_Text>();
-            so.ApplyModifiedProperties();
-
-            return modal;
-        }
-
-        private static GameObject CreatePlaceholderPanel(string name, Transform parent, string message)
-        {
-            GameObject panel = CreateUIObject(name, parent);
-            SetStretchMargins(panel.GetComponent<RectTransform>(), 40f, 40f, 40f, 40f);
-            var text = CreateText("Message", panel.transform, message, 26, TextAlignmentOptions.Center, new Color(0.45f, 0.4f, 0.35f));
-            SetStretch(text.GetComponent<RectTransform>());
-            return panel;
-        }
-
-        private static GameObject CreateTabMarker(string name, Transform parent, string label)
-        {
-            GameObject tabGo = CreateUIObject(name, parent);
-            RectTransform rt = tabGo.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(110f, 58f);
-
-            var img = tabGo.AddComponent<Image>();
-            img.sprite = defaultSprite;
-            img.type = Image.Type.Sliced;
-            img.color = new Color(0.55f, 0.5f, 0.45f, 1f);
-
-            tabGo.AddComponent<Button>();
-
-            GameObject textGo = CreateText("Label", tabGo.transform, label, 16, TextAlignmentOptions.Center, new Color(0.15f, 0.12f, 0.1f));
-            SetStretch(textGo.GetComponent<RectTransform>());
-
-            return tabGo;
-        }
-
-        private static GameObject CreateButton(string name, Transform parent, string text, Vector2 size, Color color)
-        {
-            return CreateButton(name, parent, text, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, Vector2.zero, color);
-        }
-
-        private static GameObject CreateButton(string name, Transform parent, string text, Vector2 anchorMin, Vector2 anchorMax, Vector2 size, Vector2 pos, Color? color = null)
-        {
-            GameObject btnGo = CreateUIObject(name, parent);
-            RectTransform rt = btnGo.GetComponent<RectTransform>();
-            rt.anchorMin = anchorMin;
-            rt.anchorMax = anchorMax;
-            rt.sizeDelta = size;
-            rt.anchoredPosition = pos;
-
-            var img = btnGo.AddComponent<Image>();
-            img.sprite = defaultSprite;
-            img.type = Image.Type.Sliced;
-            img.color = color ?? new Color(0.85f, 0.85f, 0.85f);
-
-            btnGo.AddComponent<Button>();
-
-            GameObject textGo = CreateText("Text", btnGo.transform, text, 16, TextAlignmentOptions.Center, Color.white);
-            SetStretch(textGo.GetComponent<RectTransform>());
-
-            return btnGo;
-        }
-
-        private static GameObject CreateText(string name, Transform parent, string content, float fontSize, TextAlignmentOptions align, Color color)
-        {
-            GameObject textGo = CreateUIObject(name, parent);
-            var tmp = textGo.AddComponent<TextMeshProUGUI>();
-            if (defaultFont != null) tmp.font = defaultFont;
-            tmp.text = content;
-            tmp.fontSize = fontSize;
-            tmp.alignment = align;
-            tmp.color = color;
-            tmp.raycastTarget = false;
-            return textGo;
-        }
-
-        private static GameObject CreateInputField(string name, Transform parent, string placeholder, Vector2 size)
-        {
-            GameObject inputGo = CreateUIObject(name, parent);
-            RectTransform rt = inputGo.GetComponent<RectTransform>();
-            rt.sizeDelta = size;
-
-            var bgImg = inputGo.AddComponent<Image>();
-            bgImg.sprite = defaultSprite;
-            bgImg.type = Image.Type.Sliced;
-            bgImg.color = Color.white;
-
-            GameObject textArea = CreateUIObject("TextArea", inputGo.transform);
-            RectTransform taRt = textArea.GetComponent<RectTransform>();
-            SetStretchMargins(taRt, 10f, 10f, 5f, 5f);
-            textArea.AddComponent<RectMask2D>();
-
-            GameObject placeholderGo = CreateText("Placeholder", textArea.transform, placeholder, 16, TextAlignmentOptions.Left, new Color(0.6f, 0.6f, 0.6f));
-            SetStretch(placeholderGo.GetComponent<RectTransform>());
-
-            GameObject textGo = CreateText("Text", textArea.transform, "", 16, TextAlignmentOptions.Left, new Color(0.2f, 0.2f, 0.2f));
-            SetStretch(textGo.GetComponent<RectTransform>());
-
-            var input = inputGo.AddComponent<TMP_InputField>();
-            input.textViewport = taRt;
-            input.textComponent = textGo.GetComponent<TextMeshProUGUI>();
-            input.placeholder = placeholderGo.GetComponent<TextMeshProUGUI>();
-            input.fontAsset = defaultFont;
-
-            return inputGo;
-        }
-
-        private static GameObject CreateDropdown(string name, Transform parent, Vector2 size)
-        {
-            GameObject ddGo = CreateUIObject(name, parent);
-            RectTransform rt = ddGo.GetComponent<RectTransform>();
-            rt.sizeDelta = size;
-
-            var img = ddGo.AddComponent<Image>();
-            img.sprite = defaultSprite;
-            img.type = Image.Type.Sliced;
-            img.color = new Color(0.9f, 0.9f, 0.9f);
-
-            GameObject labelGo = CreateText("Label", ddGo.transform, "Pilih...", 16, TextAlignmentOptions.Left, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform labelRt = labelGo.GetComponent<RectTransform>();
-            SetStretchMargins(labelRt, 12f, 32f, 0f, 0f);
-
-            GameObject arrowGo = CreateText("Arrow", ddGo.transform, "v", 12, TextAlignmentOptions.Center, new Color(0.4f, 0.4f, 0.4f));
-            RectTransform arrowRt = arrowGo.GetComponent<RectTransform>();
-            arrowRt.anchorMin = new Vector2(1f, 0.5f);
-            arrowRt.anchorMax = new Vector2(1f, 0.5f);
-            arrowRt.sizeDelta = new Vector2(25f, 25f);
-            arrowRt.anchoredPosition = new Vector2(-15f, 0f);
-
-            GameObject template = CreateUIObject("Template", ddGo.transform);
-            RectTransform tRt = template.GetComponent<RectTransform>();
-            tRt.anchorMin = new Vector2(0f, 0f);
-            tRt.anchorMax = new Vector2(1f, 0f);
-            tRt.pivot = new Vector2(0.5f, 1f);
-            tRt.sizeDelta = new Vector2(0f, 200f);
-            var tImg = template.AddComponent<Image>();
-            tImg.sprite = defaultSprite;
-            tImg.type = Image.Type.Sliced;
-            tImg.color = Color.white;
-            var scroll = template.AddComponent<ScrollRect>();
-
-            GameObject viewport = CreateUIObject("Viewport", template.transform);
-            SetStretch(viewport.GetComponent<RectTransform>());
-            viewport.AddComponent<Mask>();
-            var vpImg = viewport.AddComponent<Image>();
-            vpImg.sprite = defaultSprite;
-
-            GameObject content = CreateUIObject("Content", viewport.transform);
-            RectTransform cRt = content.GetComponent<RectTransform>();
-            cRt.anchorMin = new Vector2(0f, 1f);
-            cRt.anchorMax = new Vector2(1f, 1f);
-            cRt.pivot = new Vector2(0.5f, 1f);
-            cRt.sizeDelta = new Vector2(0f, 35f);
-
-            GameObject item = CreateUIObject("Item", content.transform);
-            RectTransform itemRt = item.GetComponent<RectTransform>();
-            itemRt.anchorMin = new Vector2(0f, 0.5f);
-            itemRt.anchorMax = new Vector2(1f, 0.5f);
-            itemRt.sizeDelta = new Vector2(0f, 35f);
-            item.AddComponent<Toggle>();
-
-            GameObject itemLabel = CreateText("Item Label", item.transform, "Item", 16, TextAlignmentOptions.Left, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform ilRt = itemLabel.GetComponent<RectTransform>();
-            SetStretchMargins(ilRt, 12f, 12f, 0f, 0f);
-
-            scroll.content = cRt;
-            scroll.viewport = viewport.GetComponent<RectTransform>();
-            template.SetActive(false);
-
-            var dropdown = ddGo.AddComponent<TMP_Dropdown>();
-            dropdown.captionText = labelGo.GetComponent<TextMeshProUGUI>();
-            dropdown.itemText = itemLabel.GetComponent<TextMeshProUGUI>();
-            dropdown.template = tRt;
-
-            return ddGo;
-        }
-
-        private static GameObject CreateToggle(string name, Transform parent, string label)
-        {
-            GameObject toggleGo = CreateUIObject(name, parent);
-            var toggle = toggleGo.AddComponent<Toggle>();
-
-            GameObject bg = CreateUIObject("Background", toggleGo.transform);
-            RectTransform bgRt = bg.GetComponent<RectTransform>();
-            bgRt.anchorMin = new Vector2(0f, 0.5f);
-            bgRt.anchorMax = new Vector2(0f, 0.5f);
-            bgRt.sizeDelta = new Vector2(24f, 24f);
-            bgRt.anchoredPosition = new Vector2(15f, 0f);
-            var bgImg = bg.AddComponent<Image>();
-            bgImg.sprite = defaultSprite;
-            bgImg.type = Image.Type.Sliced;
-            bgImg.color = Color.white;
-
-            GameObject check = CreateUIObject("Checkmark", bg.transform);
-            SetStretchMargins(check.GetComponent<RectTransform>(), 4f, 4f, 4f, 4f);
-            var checkImg = check.AddComponent<Image>();
-            checkImg.sprite = defaultSprite;
-            checkImg.color = new Color(0.2f, 0.65f, 0.35f);
-
-            GameObject textGo = CreateText("Label", toggleGo.transform, label, 16, TextAlignmentOptions.Left, new Color(0.2f, 0.2f, 0.2f));
-            RectTransform textRt = textGo.GetComponent<RectTransform>();
-            SetStretchMargins(textRt, 35f, 0f, 0f, 0f);
-
-            toggle.targetGraphic = bgImg;
-            toggle.graphic = checkImg;
-
-            return toggleGo;
+            return cardUI;
         }
 
         private static GameObject CreateUIObject(string name, Transform parent)
         {
             GameObject go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
+            go.layer = LayerMask.NameToLayer("UI");
             return go;
         }
 
@@ -1101,15 +703,5 @@ namespace Utsuru.DictionaryUI.Editor
             rt.offsetMax = Vector2.zero;
             rt.pivot = new Vector2(0.5f, 0.5f);
         }
-
-        private static void SetStretchMargins(RectTransform rt, float left, float right, float top, float bottom)
-        {
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
-            rt.offsetMin = new Vector2(left, bottom);
-            rt.offsetMax = new Vector2(-right, -top);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-        }
     }
 }
-#endif

@@ -16,6 +16,7 @@ namespace Utsuru.Capture
         public string imagePath;   // relatif terhadap persistentDataPath
         public string dateTaken;   // ISO 8601
         public bool isFavorite;
+        public bool isLiked;
     }
 
     /// <summary>

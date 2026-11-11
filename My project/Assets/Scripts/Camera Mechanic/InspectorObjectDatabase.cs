@@ -9,6 +9,9 @@ namespace Utsuru.Capture
     /// </summary>
     public class InspectorObjectDatabase : ObjectDatabaseProvider
     {
+        [Tooltip("Path katalog JSON kosakata di Resources tanpa ekstensi")]
+        [SerializeField] private string catalogResourcePath = "Data/vocabulary_catalog";
+
         [SerializeField] private List<ObjectInfo> entries = new List<ObjectInfo>();
 
         private readonly Dictionary<string, ObjectInfo> lookup = new Dictionary<string, ObjectInfo>();
@@ -22,15 +25,46 @@ namespace Utsuru.Capture
         {
             if (lookup.Count > 0) return;
 
-            // Seed default entries agar pengujian objek jalanan langsung memiliki kosakata lengkap
-            EnsureDefault("ICK-01", "Sepeda", 1, "自転車", "じてんしゃ", "Jitensha", "Sepeda", "駅前に自転車がたくさん止まっています。", "Transport");
-            EnsureDefault("ICK-02", "Mesin Penjual Otomatis", 2, "自動販売機", "じどうはんばいき", "Jidouhanbaiki", "Mesin Penjual Otomatis", "自動販売機で冷たいお茶を買いました。", "Sign");
-            EnsureDefault("ICK-03", "Poster", 3, "ポスター", "ぽすたー", "Posutaa", "Poster", "壁にきれいなポスターが貼ってあります。", "Sign");
+            // Muat dari berkas JSON katalog di Resources jika tersedia
+            if (!string.IsNullOrEmpty(catalogResourcePath))
+            {
+                TextAsset jsonAsset = Resources.Load<TextAsset>(catalogResourcePath);
+                if (jsonAsset != null && !string.IsNullOrEmpty(jsonAsset.text))
+                {
+                    try
+                    {
+                        var catalog = JsonUtility.FromJson<VocabularyCatalogWrapper>(jsonAsset.text);
+                        if (catalog != null && catalog.items != null)
+                        {
+                            foreach (var item in catalog.items)
+                            {
+                                if (item != null && !string.IsNullOrEmpty(item.objectId))
+                                {
+                                    lookup[item.objectId] = item;
+                                }
+                            }
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"[InspectorObjectDatabase] Gagal mem-parse JSON katalog kosakata '{catalogResourcePath}': {ex.Message}", this);
+                    }
+                }
+            }
 
+            // Timpa dengan entri khusus dari Inspector jika ada
             foreach (ObjectInfo entry in entries)
             {
                 if (entry == null || string.IsNullOrEmpty(entry.objectId)) continue;
-                lookup[entry.objectId] = entry; // Timpa dengan entri dari Inspector jika ada
+                lookup[entry.objectId] = entry;
+            }
+
+            // Fallback jika belum ada data sama sekali
+            if (lookup.Count == 0)
+            {
+                EnsureDefault("ICK-01", "Sepeda", 1, "自転車", "じてんしゃ", "Jitensha", "Sepeda", "駅前に自転車がたくさん止まっています。", "Transport");
+                EnsureDefault("ICK-02", "Mesin Penjual Otomatis", 2, "自動販売機", "じどうはんばいき", "Jidouhanbaiki", "Mesin Penjual Otomatis", "自動販売機で冷たいお茶を買いました。", "Sign");
+                EnsureDefault("ICK-03", "Poster", 3, "ポスター", "ぽすたー", "Posutaa", "Poster", "壁にきれいなポスターが貼ってあります。", "Sign");
             }
         }
 
@@ -54,6 +88,12 @@ namespace Utsuru.Capture
                     }
                 };
             }
+        }
+
+        public void Reload()
+        {
+            lookup.Clear();
+            Init();
         }
 
         public override bool TryGetObject(string objectId, out ObjectInfo info)

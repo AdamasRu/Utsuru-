@@ -33,9 +33,11 @@ namespace Utsuru.Capture
         [Tooltip("Jika aktif, objek yang sudah pernah difoto tetap membuka kartu Polaroid untuk kaji ulang kosakata (+0 poin).")]
         [SerializeField] private bool allowReviewCaptured = true;
 
-        [Header("Snapshot")]
-        [Tooltip("Ukuran sisi foto persegi (piksel).")]
-        [SerializeField] private int photoSize = 512;
+        [Header("Snapshot (Rasio 4:3)")]
+        [Tooltip("Lebar foto snapshot (piksel, rasio 4:3 horizontal).")]
+        [SerializeField] private int photoWidth = 1024;
+        [Tooltip("Tinggi foto snapshot (piksel, rasio 4:3 horizontal).")]
+        [SerializeField] private int photoHeight = 768;
         [SerializeField] private float cooldown = 0.6f;
 
         [Header("Audio (opsional)")]
@@ -153,16 +155,19 @@ namespace Utsuru.Capture
             });
         }
 
-        // Render kamera pemain ke RenderTexture persegi, tanpa UI (overlay tidak ikut ter-render).
+        // Render kamera pemain ke RenderTexture rasio 4:3, tanpa UI (overlay tidak ikut ter-render).
         private Texture2D TakeSnapshot()
         {
             Camera cam = (cameraMode != null && cameraMode.PlayerCamera != null) ? cameraMode.PlayerCamera : Camera.main;
+            int width = photoWidth > 0 ? photoWidth : 1024;
+            int height = photoHeight > 0 ? photoHeight : 768;
+
             if (cam == null)
             {
                 Debug.LogError("[CameraCaptureSystem] Kamera untuk snapshot tidak ditemukan.");
-                return new Texture2D(photoSize, photoSize);
+                return new Texture2D(width, height);
             }
-            RenderTexture rt = RenderTexture.GetTemporary(photoSize, photoSize, 24, RenderTextureFormat.ARGB32);
+            RenderTexture rt = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.ARGB32);
             RenderTexture previousTarget = cam.targetTexture;
             RenderTexture previousActive = RenderTexture.active;
 
@@ -170,8 +175,8 @@ namespace Utsuru.Capture
             cam.Render();
 
             RenderTexture.active = rt;
-            var texture = new Texture2D(photoSize, photoSize, TextureFormat.RGB24, false);
-            texture.ReadPixels(new Rect(0, 0, photoSize, photoSize), 0, 0);
+            var texture = new Texture2D(width, height, TextureFormat.RGB24, false);
+            texture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             texture.Apply();
 
             cam.targetTexture = previousTarget;

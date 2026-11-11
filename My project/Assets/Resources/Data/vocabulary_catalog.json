@@ -1,0 +1,1084 @@
+{
+  "items": [
+    {
+      "objectId": "ICK-01",
+      "objectName": "Bicycle",
+      "vocabulary": {
+        "vocabularyId": 1,
+        "japaneseWord": "自転車",
+        "kana": "じてんしゃ",
+        "romaji": "Jitensha",
+        "translation": "Bicycle",
+        "exampleSentence": "「毎朝、自転車で学校に行きます。」\n(Maiasa, jitensha de gakkou ni ikimasu) — I go to school by bicycle every morning.",
+        "audioPath": "Audio/Bicycle - ICK-01/vocab",
+        "sentenceAudioPath": "Audio/Bicycle - ICK-01/sentence",
+        "category": "Transport"
+      }
+    },
+    {
+      "objectId": "ICK-02",
+      "objectName": "Vending Machine",
+      "vocabulary": {
+        "vocabularyId": 2,
+        "japaneseWord": "自動販売機",
+        "kana": "じどうはんばいき",
+        "romaji": "Jidouhanbaiki",
+        "translation": "Vending Machine",
+        "exampleSentence": "「駅の前に自動販売機があります。」\n(Eki no mae ni jidouhanbaiki ga arimasu) — There is a vending machine in front of the station.",
+        "audioPath": "Audio/Vending Machine - ICK-02/vocab",
+        "sentenceAudioPath": "Audio/Vending Machine - ICK-02/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-03",
+      "objectName": "Poster 1",
+      "vocabulary": {
+        "vocabularyId": 3,
+        "japaneseWord": "ポスター",
+        "kana": "ぽすたー",
+        "romaji": "Posutaa",
+        "translation": "Poster",
+        "exampleSentence": "「壁に赤と青のポスターがあります。」\n(Kabe ni aka to ao no posutaa ga arimasu) — There is a red and blue poster on the wall.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-04",
+      "objectName": "Poster 2",
+      "vocabulary": {
+        "vocabularyId": 4,
+        "japaneseWord": "ポスター",
+        "kana": "ぽすたー",
+        "romaji": "Posutaa",
+        "translation": "Drink Poster",
+        "exampleSentence": "「ポスターにお酒の写真があります。」\n(Posutaa ni osake no shashin ga arimasu) — There is a photo of sake on the poster.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-05",
+      "objectName": "Poster 3",
+      "vocabulary": {
+        "vocabularyId": 5,
+        "japaneseWord": "ポスター",
+        "kana": "ぽすたー",
+        "romaji": "Posutaa",
+        "translation": "Event Poster",
+        "exampleSentence": "「このポスターは宝探しのイベントです。」\n(Kono posutaa wa takarasagashi no ibento desu) — This poster is for a treasure hunt event.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-06",
+      "objectName": "Poster 4",
+      "vocabulary": {
+        "vocabularyId": 6,
+        "japaneseWord": "ポスター",
+        "kana": "ぽすたー",
+        "romaji": "Posutaa",
+        "translation": "Ferris Wheel Poster",
+        "exampleSentence": "「ポスターに観覧車の絵があります。」\n(Posutaa ni kanransha no e ga arimasu) — There is a picture of a Ferris wheel on the poster.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-07",
+      "objectName": "Tablet 1",
+      "vocabulary": {
+        "vocabularyId": 7,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Signboard",
+        "exampleSentence": "「看板に「東京の柱」と書いてあります。」\n(Kanban ni “Toukyou no hashira” to kaite arimasu) — “Tokyo's pillar” is written on the signboard.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-08",
+      "objectName": "Tablet 2",
+      "vocabulary": {
+        "vocabularyId": 8,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Notice Signboard",
+        "exampleSentence": "「看板に「車を入れないでください」と書いてあります。」\n(Kanban ni “Kuruma o irenaide kudasai” to kaite arimasu) — “Please do not enter with cars” is written on the sign.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-09",
+      "objectName": "Tablet 4",
+      "vocabulary": {
+        "vocabularyId": 9,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Warning Signboard",
+        "exampleSentence": "「この看板は黄色と黒です。」\n(Kono kanban wa kiiro to kuro desu) — This signboard is yellow and black.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-10",
+      "objectName": "Sidewalk Descent",
+      "vocabulary": {
+        "vocabularyId": 10,
+        "japaneseWord": "切り下げ",
+        "kana": "きりさげ",
+        "romaji": "Kirisage",
+        "translation": "Sidewalk Descent",
+        "exampleSentence": "「歩道の切り下げを通って車道に出ます。」\n(Hodou no kirisage o tootte shadou ni demasu) — Exit to the street through the sidewalk descent.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-11",
+      "objectName": "Tablet 7",
+      "vocabulary": {
+        "vocabularyId": 11,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Street Signboard",
+        "exampleSentence": "「看板に「扇橋二丁目」と書いてあります。」\n(Kanban ni “Ougibashi nichoume” to kaite arimasu) — “Ougibashi 2-chome” is written on the signboard.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-12",
+      "objectName": "Tablet 8",
+      "vocabulary": {
+        "vocabularyId": 12,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Clinic Signboard",
+        "exampleSentence": "「看板に「皮フ科」と書いてあります。」\n(Kanban ni “Hifuka” to kaite arimasu) — “Dermatology” is written on the signboard.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-13",
+      "objectName": "Tablet 9",
+      "vocabulary": {
+        "vocabularyId": 13,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Address Plaque",
+        "exampleSentence": "「看板に「11-13」と書いてあります。」\n(Kanban ni “juuichi no juusan” to kaite arimasu) — “11-13” is written on the plaque.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-14",
+      "objectName": "Tablet 10",
+      "vocabulary": {
+        "vocabularyId": 14,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Street Name Sign",
+        "exampleSentence": "「看板に「小松通り」と書いてあります。」\n(Kanban ni “Komatsu-doori” to kaite arimasu) — “Komatsu Street” is written on the signboard.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-15",
+      "objectName": "Tablet 11",
+      "vocabulary": {
+        "vocabularyId": 15,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Office Plaque",
+        "exampleSentence": "「看板に「東京西支店 12-6」と書いてあります。」\n(Kanban ni “Toukyou nishi shiten juuni no roku” to kaite arimasu) — “Tokyo West Branch 12-6” is written on the plaque.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-16",
+      "objectName": "Tablet 12",
+      "vocabulary": {
+        "vocabularyId": 16,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Address Plaque",
+        "exampleSentence": "「看板に「小松通り 21-5」と書いてあります。」\n(Kanban ni “Komatsu-doori nijuuichi no go” to kaite arimasu) — “Komatsu Street 21-5” is written on the plaque.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-17",
+      "objectName": "Tablet 13",
+      "vocabulary": {
+        "vocabularyId": 17,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Address Plaque",
+        "exampleSentence": "「看板に「小松通り 23-15」と書いてあります。」\n(Kanban ni “Komatsu-doori nijuusan no juugo” to kaite arimasu) — “Komatsu Street 23-15” is written on the plaque.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-18",
+      "objectName": "Tablet 14",
+      "vocabulary": {
+        "vocabularyId": 18,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "House Number Plaque",
+        "exampleSentence": "「看板に「10-7」と書いてあります。」\n(Kanban ni “juu no nana” to kaite arimasu) — “10-7” is written on the plaque.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-19",
+      "objectName": "Stone 1",
+      "vocabulary": {
+        "vocabularyId": 19,
+        "japaneseWord": "石",
+        "kana": "いし",
+        "romaji": "Ishi",
+        "translation": "Stone",
+        "exampleSentence": "「道ばたに石があります。」\n(Michibata ni ishi ga arimasu) — There is a stone by the roadside.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-20",
+      "objectName": "Stone 2",
+      "vocabulary": {
+        "vocabularyId": 20,
+        "japaneseWord": "石",
+        "kana": "いし",
+        "romaji": "Ishi",
+        "translation": "Stone",
+        "exampleSentence": "「道ばたに石があります。」\n(Michibata ni ishi ga arimasu) — There is a stone by the roadside.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-21",
+      "objectName": "Ventilation System",
+      "vocabulary": {
+        "vocabularyId": 21,
+        "japaneseWord": "換気設備",
+        "kana": "かんきせつび",
+        "romaji": "Kanki setsubi",
+        "translation": "Ventilation System",
+        "exampleSentence": "「この部屋には換気設備があります。」\n(Kono heya ni wa kanki setsubi ga arimasu) — This room has a ventilation system.",
+        "audioPath": "Audio/Ventilation System - ICK-21/vocab",
+        "sentenceAudioPath": "Audio/Ventilation System - ICK-21/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-22",
+      "objectName": "Garbage Can",
+      "vocabulary": {
+        "vocabularyId": 22,
+        "japaneseWord": "ごみ箱",
+        "kana": "ごみばこ",
+        "romaji": "Gomibako",
+        "translation": "Garbage Can",
+        "exampleSentence": "「ごみはごみ箱に捨ててください。」\n(Gomi wa gomibako ni sutete kudasai) — Please throw trash in the garbage can.",
+        "audioPath": "Audio/Garbage Can - ICK-22/vocab",
+        "sentenceAudioPath": "Audio/Garbage Can - ICK-22/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-23",
+      "objectName": "Air Conditioning Support",
+      "vocabulary": {
+        "vocabularyId": 23,
+        "japaneseWord": "架台",
+        "kana": "かだい",
+        "romaji": "Kadai",
+        "translation": "Mounting Frame / Stand",
+        "exampleSentence": "「エアコンの室外機を架台に置きます。」\n(Eakon no shitsugaiki o kadai ni okimasu) — The AC outdoor unit is placed on the mounting frame.",
+        "audioPath": "Audio/Air Conditioning Support - ICK-23/vocab",
+        "sentenceAudioPath": "Audio/Air Conditioning Support - ICK-23/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-24",
+      "objectName": "Flower Pot",
+      "vocabulary": {
+        "vocabularyId": 24,
+        "japaneseWord": "植木鉢",
+        "kana": "うえきばち",
+        "romaji": "Uekibachi",
+        "translation": "Flowerpot",
+        "exampleSentence": "「玄関に植木鉢が並んでいます。」\n(Genkan ni uekibachi ga narande imasu) — Flowerpots are lined up at the entrance.",
+        "audioPath": "Audio/Flower Pot - ICK-24/vocab",
+        "sentenceAudioPath": "Audio/Flower Pot - ICK-24/sentence",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-25",
+      "objectName": "Stand",
+      "vocabulary": {
+        "vocabularyId": 25,
+        "japaneseWord": "台",
+        "kana": "だい",
+        "romaji": "Dai",
+        "translation": "Stand / Shelf",
+        "exampleSentence": "「荷物を台の上に置いてください。」\n(Nimotsu o dai no ue ni oite kudasai) — Please put the luggage on the stand.",
+        "audioPath": "Audio/Stand - ICK-25/vocab",
+        "sentenceAudioPath": "Audio/Stand - ICK-25/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-26",
+      "objectName": "Electric Post",
+      "vocabulary": {
+        "vocabularyId": 26,
+        "japaneseWord": "電柱",
+        "kana": "でんちゅう",
+        "romaji": "Denchuu",
+        "translation": "Utility Pole",
+        "exampleSentence": "「電柱に電線がつながっています。」\n(Denchuu ni densen ga tsunagatte imasu) — Electric wires are connected to the utility pole.",
+        "audioPath": "Audio/Electric Post - ICK-26/vocab",
+        "sentenceAudioPath": "Audio/Electric Post - ICK-26/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-27",
+      "objectName": "Water Meter",
+      "vocabulary": {
+        "vocabularyId": 27,
+        "japaneseWord": "水道メーター",
+        "kana": "すいどうめーたー",
+        "romaji": "Suidou meetaa",
+        "translation": "Water Meter",
+        "exampleSentence": "「水道メーターで使用量を確認します。」\n(Suidou meetaa de shiyouryou o kakunin shimasu) — Check water usage with the water meter.",
+        "audioPath": "Audio/Water Meter - ICK-27/vocab",
+        "sentenceAudioPath": "Audio/Water Meter - ICK-27/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-28",
+      "objectName": "Electricity Meter",
+      "vocabulary": {
+        "vocabularyId": 28,
+        "japaneseWord": "電気メーター",
+        "kana": "でんきめーたー",
+        "romaji": "Denki meetaa",
+        "translation": "Electricity Meter",
+        "exampleSentence": "「電気メーターの数字を見てください。」\n(Denki meetaa no suuji o mite kudasai) — Please look at the numbers on the electricity meter.",
+        "audioPath": "Audio/Electricity Meter - ICK-28/vocab",
+        "sentenceAudioPath": "Audio/Electricity Meter - ICK-28/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-29",
+      "objectName": "Bracing",
+      "vocabulary": {
+        "vocabularyId": 29,
+        "japaneseWord": "筋交い",
+        "kana": "すじかい",
+        "romaji": "Sujikai",
+        "translation": "Diagonal Bracing",
+        "exampleSentence": "「壁の中に筋交いが入っています。」\n(Kabe no naka ni sujikai ga haitte imasu) — There is diagonal bracing inside the wall.",
+        "audioPath": "Audio/Bracing - ICK-29/vocab",
+        "sentenceAudioPath": "Audio/Bracing - ICK-29/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-30",
+      "objectName": "Bottle Crate",
+      "vocabulary": {
+        "vocabularyId": 30,
+        "japaneseWord": "瓶ケース",
+        "kana": "びんけーす",
+        "romaji": "Bin keesu",
+        "translation": "Bottle Crate",
+        "exampleSentence": "「空き瓶を瓶ケースに入れます。」\n(Akibin o bin keesu ni iremasu) — Put empty bottles into the bottle crate.",
+        "audioPath": "Audio/Bottle Crate - ICK-30/vocab",
+        "sentenceAudioPath": "Audio/Bottle Crate - ICK-30/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-31",
+      "objectName": "Road Hatch",
+      "vocabulary": {
+        "vocabularyId": 31,
+        "japaneseWord": "マンホールの蓋",
+        "kana": "まんほーるのふた",
+        "romaji": "Manhooru no futa",
+        "translation": "Manhole Cover",
+        "exampleSentence": "「マンホールの蓋の上は滑りやすいです。」\n(Manhooru no futa no ue wa suberiyasui desu) — The top of a manhole cover is slippery.",
+        "audioPath": "Audio/Road Hatch - ICK-31/vocab",
+        "sentenceAudioPath": "Audio/Road Hatch - ICK-31/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-32",
+      "objectName": "Fence",
+      "vocabulary": {
+        "vocabularyId": 32,
+        "japaneseWord": "柵",
+        "kana": "さく",
+        "romaji": "Saku",
+        "translation": "Fence",
+        "exampleSentence": "「公園のまわりに柵があります。」\n(Kouen no mawari ni saku ga arimasu) — There is a fence around the park.",
+        "audioPath": "Audio/Fence - ICK-32/vocab",
+        "sentenceAudioPath": "Audio/Fence - ICK-32/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-33",
+      "objectName": "Stone 3",
+      "vocabulary": {
+        "vocabularyId": 33,
+        "japaneseWord": "石",
+        "kana": "いし",
+        "romaji": "Ishi",
+        "translation": "Stone",
+        "exampleSentence": "「道ばたに大きな石があります。」\n(Michibata ni ookina ishi ga arimasu) — There is a big stone by the roadside.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-34",
+      "objectName": "Stone 4",
+      "vocabulary": {
+        "vocabularyId": 34,
+        "japaneseWord": "石",
+        "kana": "いし",
+        "romaji": "Ishi",
+        "translation": "Stone",
+        "exampleSentence": "「庭に小さな石を並べました。」\n(Niwa ni chiisana ishi o narabemashita) — I lined up small stones in the garden.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-35",
+      "objectName": "Ground",
+      "vocabulary": {
+        "vocabularyId": 35,
+        "japaneseWord": "地面",
+        "kana": "じめん",
+        "romaji": "Jimen",
+        "translation": "Ground",
+        "exampleSentence": "「雨のあとで、地面がぬれています。」\n(Ame no ato de, jimen ga nurete imasu) — The ground is wet after the rain.",
+        "audioPath": "Audio/Ground - ICK-35/vocab",
+        "sentenceAudioPath": "Audio/Ground - ICK-35/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-36",
+      "objectName": "Curbstone",
+      "vocabulary": {
+        "vocabularyId": 36,
+        "japaneseWord": "縁石",
+        "kana": "えんせき",
+        "romaji": "Enseki",
+        "translation": "Curbstone / Kerb",
+        "exampleSentence": "「道路と歩道の間に縁石があります。」\n(Douro to hodou no aida ni enseki ga arimasu) — There is a curbstone between the road and sidewalk.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-37",
+      "objectName": "Curbstone Descent",
+      "vocabulary": {
+        "vocabularyId": 37,
+        "japaneseWord": "縁石切り下げ",
+        "kana": "えんせききりさげ",
+        "romaji": "Enseki Kirisage",
+        "translation": "Lowered Curbstone",
+        "exampleSentence": "「縁石切り下げから自転車が通ります。」\n(Enseki kirisage kara jitensha ga toorimasu) — Bicycles pass through the lowered curbstone.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-38",
+      "objectName": "Cone",
+      "vocabulary": {
+        "vocabularyId": 38,
+        "japaneseWord": "カラーコーン",
+        "kana": "からーこーん",
+        "romaji": "Karaa koon",
+        "translation": "Traffic Cone",
+        "exampleSentence": "「工事中の道にカラーコーンが置いてあります。」\n(Koujichuu no michi ni karaa koon ga oite arimasu) — Traffic cones are placed on the road under construction.",
+        "audioPath": "Audio/Cone - ICK-38/vocab",
+        "sentenceAudioPath": "Audio/Cone - ICK-38/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-39",
+      "objectName": "Street Fence",
+      "vocabulary": {
+        "vocabularyId": 39,
+        "japaneseWord": "防護柵",
+        "kana": "ぼうごさく",
+        "romaji": "Bougosaku",
+        "translation": "Guard Fence",
+        "exampleSentence": "「道路の端に防護柵があります。」\n(Douro no hashi ni bougosaku ga arimasu) — There is a guard fence at the edge of the road.",
+        "audioPath": "Audio/Street Fence - ICK-39/vocab",
+        "sentenceAudioPath": "Audio/Street Fence - ICK-39/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-40",
+      "objectName": "Road",
+      "vocabulary": {
+        "vocabularyId": 40,
+        "japaneseWord": "道路",
+        "kana": "どうろ",
+        "romaji": "Douro",
+        "translation": "Street / Road",
+        "exampleSentence": "「この道路は車が多いです。」\n(Kono douro wa kuruma ga ooi desu) — There are many cars on this road.",
+        "audioPath": "Audio/Road - ICK-40/vocab",
+        "sentenceAudioPath": "Audio/Road - ICK-40/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-41",
+      "objectName": "Signboard",
+      "vocabulary": {
+        "vocabularyId": 41,
+        "japaneseWord": "看板",
+        "kana": "かんばん",
+        "romaji": "Kanban",
+        "translation": "Shop Signboard",
+        "exampleSentence": "「店の前に大きな看板があります。」\n(Mise no mae ni ookina kanban ga arimasu) — There is a big signboard in front of the shop.",
+        "audioPath": "Audio/Signboard - ICK-41/vocab",
+        "sentenceAudioPath": "Audio/Signboard - ICK-41/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-42",
+      "objectName": "Road Marking (Diamond)",
+      "vocabulary": {
+        "vocabularyId": 42,
+        "japaneseWord": "路面標示（ひし形）",
+        "kana": "ろめんひょうじ（ひしがた）",
+        "romaji": "Romen hyouji (hishigata)",
+        "translation": "Diamond Road Marking ◊",
+        "exampleSentence": "「横断歩道の手前にひし形の路面標示があります。」\n(Oudan hodou no temae ni hishigata no romen hyouji ga arimasu) — There is a diamond marking before the crosswalk.",
+        "audioPath": "Audio/Road Marking (◊) - ICK-42/vocab",
+        "sentenceAudioPath": "Audio/Road Marking (◊) - ICK-42/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-43",
+      "objectName": "Road Marking 2 (Bicycle)",
+      "vocabulary": {
+        "vocabularyId": 43,
+        "japaneseWord": "自転車の路面標示",
+        "kana": "じてんしゃのろめんひょうじ",
+        "romaji": "Jitensha no romen hyouji",
+        "translation": "Bicycle Lane Marking",
+        "exampleSentence": "「道に自転車のマークがかいてあります。」\n(Michi ni jitensha no maaku ga kaite arimasu) — A bicycle symbol is painted on the road.",
+        "audioPath": "Audio/Road Marking 2 (sepeda) - ICK-43/vocab",
+        "sentenceAudioPath": "Audio/Road Marking 2 (sepeda) - ICK-43/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-44",
+      "objectName": "Road Marking (Arrow)",
+      "vocabulary": {
+        "vocabularyId": 44,
+        "japaneseWord": "路面標示（矢印）",
+        "kana": "ろめんひょうじ（やじるし）",
+        "romaji": "Romen hyouji (yajirushi)",
+        "translation": "Arrow Road Marking >",
+        "exampleSentence": "「路面に矢印がかいてあります。」\n(Romen ni yajirushi ga kaite arimasu) — An arrow is painted on the road surface.",
+        "audioPath": "Audio/Road Marking (tanda lebih dari) - ICK-44/vocab",
+        "sentenceAudioPath": "Audio/Road Marking (tanda lebih dari) - ICK-44/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-45",
+      "objectName": "Road Marking (Damaged)",
+      "vocabulary": {
+        "vocabularyId": 45,
+        "japaneseWord": "路面の破損",
+        "kana": "ろめんのはそん",
+        "romaji": "Romen no hason",
+        "translation": "Damaged Road Surface",
+        "exampleSentence": "「路面が破損していて、危ないです。」\n(Romen ga hason shite ite, abunai desu) — The road surface is damaged and dangerous.",
+        "audioPath": "Audio/Road Marking (jalan rusak) - ICK-45/vocab",
+        "sentenceAudioPath": "Audio/Road Marking (jalan rusak) - ICK-45/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-46",
+      "objectName": "Road Marking (Real)",
+      "vocabulary": {
+        "vocabularyId": 46,
+        "japaneseWord": "路面標示",
+        "kana": "ろめんひょうじ",
+        "romaji": "Romen hyouji",
+        "translation": "Pavement Marking",
+        "exampleSentence": "「路面標示は白や黄色の線でかかれています。」\n(Romen hyouji wa shiro ya kiiro no sen de kakarete imasu) — Road markings are painted in white or yellow.",
+        "audioPath": "Audio/Road Marking (real) - ICK-46/vocab",
+        "sentenceAudioPath": "Audio/Road Marking (real) - ICK-46/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-47",
+      "objectName": "Road Sign (X)",
+      "vocabulary": {
+        "vocabularyId": 47,
+        "japaneseWord": "道路標識",
+        "kana": "どうろひょうしき",
+        "romaji": "Douro hyoushiki",
+        "translation": "No Entry Sign (X)",
+        "exampleSentence": "「道路標識を見て運転します。」\n(Douro hyoushiki o mite unten shimasu) — I drive while observing the road signs.",
+        "audioPath": "Audio/Road Sign (X) - ICK-47/vocab",
+        "sentenceAudioPath": "Audio/Road Sign (X) - ICK-47/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-48",
+      "objectName": "Road Sign (-)",
+      "vocabulary": {
+        "vocabularyId": 48,
+        "japaneseWord": "道路標識",
+        "kana": "どうろひょうしき",
+        "romaji": "Douro hyoushiki",
+        "translation": "Road Closed Sign (-)",
+        "exampleSentence": "「交差点の手前に道路標識があります。」\n(Kousaten no temae ni douro hyoushiki ga arimasu) — There is a road sign before the intersection.",
+        "audioPath": "Audio/Road Sign (-) - ICK-48/vocab",
+        "sentenceAudioPath": "Audio/Road Sign (-) - ICK-48/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-49",
+      "objectName": "Road Sign Pole (X)",
+      "vocabulary": {
+        "vocabularyId": 49,
+        "japaneseWord": "標識柱",
+        "kana": "ひょうしきちゅう",
+        "romaji": "Hyoushikichuu",
+        "translation": "Signpost",
+        "exampleSentence": "「標識柱が歩道に立っています。」\n(Hyoushikichuu ga hodou ni tatte imasu) — A signpost stands on the sidewalk.",
+        "audioPath": "Audio/Road Sign Pole (X) - ICK-49/vocab",
+        "sentenceAudioPath": "Audio/Road Sign Pole (X) - ICK-49/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-50",
+      "objectName": "Road Sign Pole (Direction)",
+      "vocabulary": {
+        "vocabularyId": 50,
+        "japaneseWord": "標識柱（指定方向外進行禁止）",
+        "kana": "ひょうしきちゅう（していほうこうがいしんこうきんし）",
+        "romaji": "Hyoushikichuu (shitei houkou gai shinkou kinshi)",
+        "translation": "Mandatory Direction Signpost",
+        "exampleSentence": "「この標識は、直進か左折しかできないという意味です。」\n(Kono hyoushiki wa, chokushin ka sasetsu shika dekinai to iu imi desu) — This sign means go straight or turn left only.",
+        "audioPath": "Audio/Road Sign Pole (Driving straight ahead or turning left mandatory n Motorway ends) - ICK-50/vocab",
+        "sentenceAudioPath": "Audio/Road Sign Pole (Driving straight ahead or turning left mandatory n Motorway ends) - ICK-50/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-51",
+      "objectName": "Road Sign Pole (Pedestrian)",
+      "vocabulary": {
+        "vocabularyId": 51,
+        "japaneseWord": "横断歩道の標識柱",
+        "kana": "おうだんほどうのひょうしきちゅう",
+        "romaji": "Oudan hodou no hyoushikichuu",
+        "translation": "Crosswalk Signpost",
+        "exampleSentence": "「横断歩道の標識柱が立っています。」\n(Oudan hodou no hyoushikichuu ga tatte imasu) — A pedestrian crossing signpost is standing there.",
+        "audioPath": "Audio/Road Sign Pole (Pedestrian crossing) - ICK-51/vocab",
+        "sentenceAudioPath": "Audio/Road Sign Pole (Pedestrian crossing) - ICK-51/sentence",
+        "category": "Sign"
+      }
+    },
+    {
+      "objectId": "ICK-52",
+      "objectName": "Road Crossing",
+      "vocabulary": {
+        "vocabularyId": 52,
+        "japaneseWord": "横断歩道",
+        "kana": "おうだんほどう",
+        "romaji": "Oudan hodou",
+        "translation": "Pedestrian Crossing",
+        "exampleSentence": "「横断歩道を渡るとき、右と左を見ます。」\n(Oudan hodou o wataru toki, migi to hidari o mimasu) — Look right and left when using the crosswalk.",
+        "audioPath": "Audio/Road Crossing - ICK-52/vocab",
+        "sentenceAudioPath": "Audio/Road Crossing - ICK-52/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-53",
+      "objectName": "Sidewalk",
+      "vocabulary": {
+        "vocabularyId": 53,
+        "japaneseWord": "歩道",
+        "kana": "ほどう",
+        "romaji": "Hodou",
+        "translation": "Sidewalk",
+        "exampleSentence": "「歩道を歩いてください。」\n(Hodou o aruite kudasai) — Please walk on the sidewalk.",
+        "audioPath": "",
+        "sentenceAudioPath": "",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-54",
+      "objectName": "Conditioner",
+      "vocabulary": {
+        "vocabularyId": 54,
+        "japaneseWord": "エアコン",
+        "kana": "えあこん",
+        "romaji": "Eakon",
+        "translation": "Air Conditioner",
+        "exampleSentence": "「部屋のエアコンをつけます。」\n(Heya no eakon o tsukemasu) — I turn on the air conditioner in the room.",
+        "audioPath": "Audio/Conditioner - ICK-54/vocab",
+        "sentenceAudioPath": "Audio/Conditioner - ICK-54/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-55",
+      "objectName": "Gas Meter",
+      "vocabulary": {
+        "vocabularyId": 55,
+        "japaneseWord": "ガスメーター",
+        "kana": "がすめーたー",
+        "romaji": "Gasu meetaa",
+        "translation": "Gas Meter",
+        "exampleSentence": "「ガスメーターは家の外にあります。」\n(Gasu meetaa wa ie no soto ni arimasu) — The gas meter is outside the house.",
+        "audioPath": "Audio/Gas Meter - ICK-55/vocab",
+        "sentenceAudioPath": "Audio/Gas Meter - ICK-55/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-56",
+      "objectName": "Grass",
+      "vocabulary": {
+        "vocabularyId": 56,
+        "japaneseWord": "草",
+        "kana": "くさ",
+        "romaji": "Kusa",
+        "translation": "Grass / Weeds",
+        "exampleSentence": "「庭の草を取りました。」\n(Niwa no kusa o torimashita) — I pulled the weeds in the garden.",
+        "audioPath": "Audio/Grass - ICK-56/vocab",
+        "sentenceAudioPath": "Audio/Grass - ICK-56/sentence",
+        "category": "Nature"
+      }
+    },
+    {
+      "objectId": "ICK-57",
+      "objectName": "Pipes",
+      "vocabulary": {
+        "vocabularyId": 57,
+        "japaneseWord": "配管",
+        "kana": "はいかん",
+        "romaji": "Haikan",
+        "translation": "Piping / Plumbing",
+        "exampleSentence": "「壁の裏に配管が通っています。」\n(Kabe no ura ni haikan ga tootte imasu) — Pipes run behind the wall.",
+        "audioPath": "Audio/Pipes - ICK-57/vocab",
+        "sentenceAudioPath": "Audio/Pipes - ICK-57/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-58",
+      "objectName": "Pipes Angle",
+      "vocabulary": {
+        "vocabularyId": 58,
+        "japaneseWord": "エルボ",
+        "kana": "えるぼ",
+        "romaji": "Erubo",
+        "translation": "Pipe Elbow Joint",
+        "exampleSentence": "「配管の角にエルボをつけます。」\n(Haikan no kado ni erubo o tsukemasu) — I attach an elbow fitting at the corner.",
+        "audioPath": "Audio/Pipes Angle - ICK-58/vocab",
+        "sentenceAudioPath": "Audio/Pipes Angle - ICK-58/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-59",
+      "objectName": "Mail Box",
+      "vocabulary": {
+        "vocabularyId": 59,
+        "japaneseWord": "郵便受け",
+        "kana": "ゆうびんうけ",
+        "romaji": "Yuubin uke",
+        "translation": "Mailbox",
+        "exampleSentence": "「郵便受けに手紙が入っています。」\n(Yuubin uke ni tegami ga haitte imasu) — There is a letter in the mailbox.",
+        "audioPath": "Audio/Mail Box - ICK-59/vocab",
+        "sentenceAudioPath": "Audio/Mail Box - ICK-59/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-60",
+      "objectName": "Decals",
+      "vocabulary": {
+        "vocabularyId": 60,
+        "japaneseWord": "ステッカー",
+        "kana": "すてっかー",
+        "romaji": "Sutekkaa",
+        "translation": "Sticker / Decal",
+        "exampleSentence": "「ドアにステッカーが貼ってあります。」\n(Doa ni sutekkaa ga hatte arimasu) — A sticker is placed on the door.",
+        "audioPath": "Audio/Decals - ICK-60/vocab",
+        "sentenceAudioPath": "Audio/Decals - ICK-60/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-61",
+      "objectName": "Street Lamp",
+      "vocabulary": {
+        "vocabularyId": 61,
+        "japaneseWord": "街灯",
+        "kana": "がいとう",
+        "romaji": "Gaitou",
+        "translation": "Street Lamp",
+        "exampleSentence": "「夜、街灯がつきます。」\n(Yoru, gaitou ga tsukimasu) — The street lamp turns on at night.",
+        "audioPath": "Audio/Street Lamp - ICK-61/vocab",
+        "sentenceAudioPath": "Audio/Street Lamp - ICK-61/sentence",
+        "category": "Facility"
+      }
+    },
+    {
+      "objectId": "ICK-62",
+      "objectName": "Electric Box",
+      "vocabulary": {
+        "vocabularyId": 62,
+        "japaneseWord": "配電盤",
+        "kana": "はいでんばん",
+        "romaji": "Haidenban",
+        "translation": "Electrical Panel",
+        "exampleSentence": "「配電盤を開けないでください。」\n(Haidenban o akenai de kudasai) — Please do not open the electrical panel.",
+        "audioPath": "Audio/Electric Box - ICK-62/vocab",
+        "sentenceAudioPath": "Audio/Electric Box - ICK-62/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-63",
+      "objectName": "Wires",
+      "vocabulary": {
+        "vocabularyId": 63,
+        "japaneseWord": "電線",
+        "kana": "でんせん",
+        "romaji": "Densen",
+        "translation": "Power Lines",
+        "exampleSentence": "「空に電線がたくさんあります。」\n(Sora ni densen ga takusan arimasu) — There are many electric wires in the sky.",
+        "audioPath": "Audio/Wires - ICK-63/vocab",
+        "sentenceAudioPath": "Audio/Wires - ICK-63/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-64",
+      "objectName": "Canopy",
+      "vocabulary": {
+        "vocabularyId": 64,
+        "japaneseWord": "庇",
+        "kana": "ひさし",
+        "romaji": "Hisashi",
+        "translation": "Canopy / Awning",
+        "exampleSentence": "「雨の日は庇の下で待ちます。」\n(Ame no hi wa hisashi no shita de machimasu) — On rainy days I wait under the canopy.",
+        "audioPath": "Audio/Canopy - ICK-64/vocab",
+        "sentenceAudioPath": "Audio/Canopy - ICK-64/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-65",
+      "objectName": "Metal Corner",
+      "vocabulary": {
+        "vocabularyId": 65,
+        "japaneseWord": "角金具",
+        "kana": "かどかなぐ",
+        "romaji": "Kado kanagu",
+        "translation": "Corner Bracket",
+        "exampleSentence": "「棚に角金具をつけました。」\n(Tana ni kado kanagu o tsukemashita) — I attached a corner bracket to the shelf.",
+        "audioPath": "Audio/Metal Corner - ICK-65/vocab",
+        "sentenceAudioPath": "Audio/Metal Corner - ICK-65/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-66",
+      "objectName": "Plastic Pipe",
+      "vocabulary": {
+        "vocabularyId": 66,
+        "japaneseWord": "プラスチック管",
+        "kana": "ぷらすちっくかん",
+        "romaji": "Purasuchikku kan",
+        "translation": "Plastic Pipe",
+        "exampleSentence": "「プラスチック管は軽くて、水に強いです。」\n(Purasuchikku kan wa karukute, mizu ni tsuyoi desu) — Plastic pipes are light and water resistant.",
+        "audioPath": "Audio/Plastic Pipe - ICK-66/vocab",
+        "sentenceAudioPath": "Audio/Plastic Pipe - ICK-66/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-67",
+      "objectName": "Satellite Dish",
+      "vocabulary": {
+        "vocabularyId": 67,
+        "japaneseWord": "パラボラアンテナ",
+        "kana": "ぱらぼらあんてな",
+        "romaji": "Parabora antena",
+        "translation": "Satellite Dish",
+        "exampleSentence": "「ベランダにパラボラアンテナがあります。」\n(Beranda ni parabora antena ga arimasu) — There is a satellite dish on the balcony.",
+        "audioPath": "Audio/Satellite Dish - ICK-67/vocab",
+        "sentenceAudioPath": "Audio/Satellite Dish - ICK-67/sentence",
+        "category": "Infrastructure"
+      }
+    },
+    {
+      "objectId": "ICK-68",
+      "objectName": "Tactile Pavement",
+      "vocabulary": {
+        "vocabularyId": 68,
+        "japaneseWord": "点字ブロック",
+        "kana": "てんじぶろっく",
+        "romaji": "Tenji burokku",
+        "translation": "Tactile Paving",
+        "exampleSentence": "「駅の床に点字ブロックがあります。」\n(Eki no yuka ni tenji burokku ga arimasu) — There is tactile paving on the station floor.",
+        "audioPath": "Audio/Tactile Pavement - ICK-68/vocab",
+        "sentenceAudioPath": "Audio/Tactile Pavement - ICK-68/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-69",
+      "objectName": "Minivan Street",
+      "vocabulary": {
+        "vocabularyId": 69,
+        "japaneseWord": "ミニバン",
+        "kana": "みにばん",
+        "romaji": "Miniban",
+        "translation": "Minivan",
+        "exampleSentence": "「道にミニバンが止まっています。」\n(Michi ni miniban ga tomatte imasu) — A minivan is parked on the street.",
+        "audioPath": "Audio/Minivan Street - ICK-69/vocab",
+        "sentenceAudioPath": "Audio/Minivan Street - ICK-69/sentence",
+        "category": "Transport"
+      }
+    },
+    {
+      "objectId": "ICK-70",
+      "objectName": "Scooter",
+      "vocabulary": {
+        "vocabularyId": 70,
+        "japaneseWord": "スクーター",
+        "kana": "すくーたー",
+        "romaji": "Sukuutaa",
+        "translation": "Scooter",
+        "exampleSentence": "「彼はスクーターで通勤しています。」\n(Kare wa sukuutaa de tsuukin shite imasu) — He commutes by scooter.",
+        "audioPath": "Audio/Scooter - ICK-70/vocab",
+        "sentenceAudioPath": "Audio/Scooter - ICK-70/sentence",
+        "category": "Transport"
+      }
+    },
+    {
+      "objectId": "ICK-71",
+      "objectName": "Traffic Light",
+      "vocabulary": {
+        "vocabularyId": 71,
+        "japaneseWord": "信号機",
+        "kana": "しんごうき",
+        "romaji": "Shingouki",
+        "translation": "Traffic Light",
+        "exampleSentence": "「信号機が赤になりました。」\n(Shingouki ga aka ni narimashita) — The traffic light turned red.",
+        "audioPath": "Audio/Traffic Light - ICK-71/vocab",
+        "sentenceAudioPath": "Audio/Traffic Light - ICK-71/sentence",
+        "category": "Road"
+      }
+    },
+    {
+      "objectId": "ICK-72",
+      "objectName": "House",
+      "vocabulary": {
+        "vocabularyId": 72,
+        "japaneseWord": "家",
+        "kana": "いえ",
+        "romaji": "Ie",
+        "translation": "House / Residence",
+        "exampleSentence": "「私の家は駅から近いです。」\n(Watashi no ie wa eki kara chikai desu) — My house is close to the station.",
+        "audioPath": "Audio/House - ICK-72/vocab",
+        "sentenceAudioPath": "Audio/House - ICK-72/sentence",
+        "category": "Residential"
+      }
+    }
+  ]
+}

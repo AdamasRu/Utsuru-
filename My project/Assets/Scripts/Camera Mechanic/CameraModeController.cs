@@ -95,6 +95,12 @@ namespace Utsuru.Capture
             }
         }
 
+        private void Start()
+        {
+            // Pastikan saat mulai bermain kontrol player selalu aktif, gravitasi berjalan, dan kursor terkunci
+            SetControlsLocked(false);
+        }
+
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;
