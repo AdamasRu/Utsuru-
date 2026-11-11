@@ -37,3 +37,4 @@ public class MergeBranchAHierarchy : Editor
     }
 }
 #endif
+
