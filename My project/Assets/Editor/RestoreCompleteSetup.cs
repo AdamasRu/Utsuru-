@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using StarterAssets;
@@ -10,24 +11,119 @@ using Bozo.ModularCharacters;
 
 public class RestoreCompleteSetup : Editor
 {
+    private static readonly string[] DeletedMapPropNames = new string[]
+    {
+        "AE_Flower_Pot_02 (5)",
+        "AE_Flower_Pot_05 (5)",
+        "AE_Flower_Pot_08 (5)",
+        "AE_Cone_02 (11)",
+        "AE_Flower_Pot_08 (8)",
+        "AE_Flower_Pot_09 (5)",
+        "AE_Bicycle_03 (4)",
+        "AE_Flower_Pot_06 (10)",
+        "AE_Stone_04 (6)",
+        "AE_Flower_Pot_06 (30)",
+        "AE_Flower_Pot_01 (4)",
+        "AE_Flower_Pot_06 (29)",
+        "AE_Bicycle_02 (1)"
+    };
+
+    private struct MovedMapPropData
+    {
+        public string name;
+        public Vector3 localPosition;
+
+        public MovedMapPropData(string name, Vector3 localPosition)
+        {
+            this.name = name;
+            this.localPosition = localPosition;
+        }
+    }
+
+    private static readonly MovedMapPropData[] MovedMapProps = new MovedMapPropData[]
+    {
+        new MovedMapPropData("AE_Stone_02 (4)",      new Vector3(-35.44938f, -9.237442f, 60.42f)),
+        new MovedMapPropData("AE_Flower_Pot_04 (4)", new Vector3(-35.72838f, -9.168442f, 60.145f)),
+        new MovedMapPropData("AE_Flower_Pot_04 (5)", new Vector3( -7.969f,   -9.237442f, 35.132f)),
+        new MovedMapPropData("AE_Flower_Pot_06 (31)",new Vector3( -8.78f,    -9.223442f, 50.114693f)),
+        new MovedMapPropData("AE_Flower_Pot_01 (7)", new Vector3( -8.75f,    -9.237442f, 49.47f)),
+    };
+
+    private static readonly string[] CanonicalFootstepClipPaths = new string[]
+    {
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_01.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_02.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_03.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_04.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_05.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_06.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_07.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_08.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_09.wav",
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_10.wav",
+    };
+
+    private const string CanonicalLandingClipPath =
+        "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Land.wav";
+
     [InitializeOnLoadMethod]
     private static void SyncCanonicalSpawnPointsOnLoad()
     {
-        EditorApplication.delayCall += () =>
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        EditorApplication.delayCall += SyncSceneInEditMode;
+    }
 
-            var scene = EditorSceneManager.GetActiveScene();
-            if (scene.isLoaded && scene.name.Contains("Day_Showcase"))
-            {
-                NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
-                if (spawner != null && NPCSpawner.ApplyCanonicalSpawnPoints(spawner))
-                {
-                    EditorUtility.SetDirty(spawner);
-                    EditorSceneManager.MarkSceneDirty(scene);
-                }
-            }
-        };
+    private static void OnPlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.EnteredEditMode)
+        {
+            EditorApplication.delayCall += SyncSceneInEditMode;
+        }
+    }
+
+    private static void SyncSceneInEditMode()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+
+        var scene = EditorSceneManager.GetActiveScene();
+        if (!scene.isLoaded || !scene.name.Contains("Day_Showcase")) return;
+
+        bool changed = false;
+        changed |= SyncNPCSpawnerData();
+        changed |= RepairDayNightSetup(scene, createIfMissing: false, forceDuration: false);
+        changed |= RepairFootstepsSetup(scene);
+        changed |= ApplyUserMapOptimizations(scene);
+
+        if (changed)
+        {
+            EditorSceneManager.MarkSceneDirty(scene);
+        }
+    }
+
+    [MenuItem("Tools/Utsuru/Pulihkan DayNight & Modif Map (Post-Merge)")]
+    public static void PulihkanDayNightDanMap()
+    {
+        Scene scene = EditorSceneManager.GetActiveScene();
+        if (!scene.isLoaded) return;
+
+        bool changed = false;
+        changed |= RepairDayNightSetup(scene, createIfMissing: true, forceDuration: true);
+        changed |= RepairFootstepsSetup(scene);
+        changed |= ApplyUserMapOptimizations(scene);
+
+        if (SyncNPCSpawnerData())
+        {
+            changed = true;
+        }
+
+        if (changed)
+        {
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+
+        Debug.Log("<color=green>[Utsuru] DayNightManager, PlayerFootsteps, Prop Map, dan SpawnPoints NPC berhasil dipulihkan!</color>");
     }
 
     [MenuItem("Tools/Utsuru/Perbesar Kotak Pilihan (Sesuai Ukuran Asli)")]
@@ -317,28 +413,8 @@ public class RestoreCompleteSetup : Editor
         SetPrivateField(diagMgr, "audioSource", audioSrc);
         SetPrivateField(diagMgr, "playerController", player);
 
-        // 5. Setup DayNightManager & Light_Night
-        GameObject lightDay = GameObject.Find("Light");
-        GameObject lightNight = GameObject.Find("Light_Night");
-        if (lightNight == null && nightLightPrefab != null)
-        {
-            lightNight = (GameObject)PrefabUtility.InstantiatePrefab(nightLightPrefab);
-            lightNight.name = "Light_Night";
-            lightNight.SetActive(false);
-        }
-
-        DayNightManager dayNightMgr = Object.FindAnyObjectByType<DayNightManager>();
-        if (dayNightMgr == null)
-        {
-            GameObject dnmObj = new GameObject("DayNightManager");
-            dayNightMgr = dnmObj.AddComponent<DayNightManager>();
-        }
-        SetPrivateField(dayNightMgr, "lightDay", lightDay);
-        SetPrivateField(dayNightMgr, "lightNight", lightNight);
-        if (transPanelObj != null)
-        {
-            SetPrivateField(dayNightMgr, "cutsceneUI", transPanelObj.GetComponent<CutsceneTransitionUI>());
-        }
+        // 5. Setup DayNightManager & Light_Night (pakai nama field asli DayNightManager & cegah duplikat Light_Night)
+        RepairDayNightSetup(spawnerSceneFallback(canvas.gameObject.scene, transPanelObj), createIfMissing: true, forceDuration: true);
 
         // 6. Setup NPCSpawner & Kunci Posisi + Arah Hadap Canonical SpawnPoints (Point_1..Point_11)
         NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
@@ -366,11 +442,9 @@ public class RestoreCompleteSetup : Editor
 
         InjectNPCResponses.UpdateAllDialogue();
 
-        // 8. Player Footsteps
-        if (player != null && player.GetComponent<PlayerFootsteps>() == null)
-        {
-            player.gameObject.AddComponent<PlayerFootsteps>();
-        }
+        // 8. Player Footsteps & Modifikasi Map
+        RepairFootstepsSetup(spawner.gameObject.scene);
+        ApplyUserMapOptimizations(spawner.gameObject.scene);
 
         // Tandai scene dirty dan simpan
         EditorUtility.SetDirty(canvas.gameObject);
@@ -382,10 +456,369 @@ public class RestoreCompleteSetup : Editor
         EditorUtility.DisplayDialog("Restore Berhasil!", "Seluruh Hierarchy game kamu berhasil dikembalikan utuh dengan kotak pilihan lebar seperti semula!", "Mantap!");
     }
 
+    private static Scene spawnerSceneFallback(Scene preferred, GameObject fallbackObj)
+    {
+        return preferred.isLoaded ? preferred : (fallbackObj != null ? fallbackObj.scene : EditorSceneManager.GetActiveScene());
+    }
+
+    private static bool RepairDayNightSetup(Scene scene, bool createIfMissing, bool forceDuration)
+    {
+        if (!scene.isLoaded) return false;
+        bool changed = false;
+
+        DayNightManager dayNightMgr = Object.FindAnyObjectByType<DayNightManager>();
+        if (dayNightMgr == null)
+        {
+            if (!createIfMissing) return false;
+            GameObject dnmObj = new GameObject("DayNightManager");
+            dayNightMgr = dnmObj.AddComponent<DayNightManager>();
+            changed = true;
+        }
+
+        // Cari Light_Day atau Light (termasuk jika nonaktif)
+        GameObject lightDay = FindFirstSceneObjectByName(scene, "Light_Day") ?? FindFirstSceneObjectByName(scene, "Light");
+
+        // Cari semua Light_Night (termasuk nonaktif) dan hapus duplikat jika ada lebih dari 1
+        List<GameObject> lightNights = FindAllSceneObjectsByName(scene, "Light_Night");
+        GameObject currentAssignedNight = GetPrivateField<GameObject>(dayNightMgr, "lightNightObject");
+        GameObject keptLightNight = null;
+
+        if (currentAssignedNight != null && lightNights.Contains(currentAssignedNight))
+        {
+            keptLightNight = currentAssignedNight;
+        }
+        else if (lightNights.Count > 0)
+        {
+            keptLightNight = lightNights[0];
+        }
+        else
+        {
+            GameObject nightLightPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Japanese_Street/Scenes/Day_Showcase/Night_Lighting_Prefab.prefab");
+            if (nightLightPrefab != null)
+            {
+                keptLightNight = (GameObject)PrefabUtility.InstantiatePrefab(nightLightPrefab, scene);
+                keptLightNight.name = "Light_Night";
+                keptLightNight.SetActive(false);
+                changed = true;
+            }
+        }
+
+        for (int i = 0; i < lightNights.Count; i++)
+        {
+            if (lightNights[i] != null && lightNights[i] != keptLightNight)
+            {
+                Undo.DestroyObjectImmediate(lightNights[i]);
+                changed = true;
+            }
+        }
+
+        // Cari TransitionPanel -> CutsceneTransitionUI
+        CutsceneTransitionUI cutsceneUI = null;
+        GameObject transPanel = FindFirstSceneObjectByName(scene, "TransitionPanel");
+        if (transPanel != null)
+        {
+            cutsceneUI = transPanel.GetComponent<CutsceneTransitionUI>();
+        }
+
+        // Cari Player & StarterAssetsInputs
+        FirstPersonController player = Object.FindAnyObjectByType<FirstPersonController>();
+        StarterAssetsInputs playerInputs = player != null ? player.GetComponent<StarterAssetsInputs>() : Object.FindAnyObjectByType<StarterAssetsInputs>();
+
+        // Load Skybox Day & Night asli
+        Material daySkybox = AssetDatabase.LoadAssetAtPath<Material>("Assets/Japanese_Street/Materials/Sky_Day.mat");
+        Material nightSkybox = AssetDatabase.LoadAssetAtPath<Material>("Assets/Japanese_Street/Materials/Sky_Night.mat");
+
+        bool hadBrokenRefs =
+            GetPrivateField<GameObject>(dayNightMgr, "lightDayObject") == null ||
+            GetPrivateField<GameObject>(dayNightMgr, "lightNightObject") == null ||
+            GetPrivateField<Material>(dayNightMgr, "daySkybox") == null ||
+            GetPrivateField<Material>(dayNightMgr, "nightSkybox") == null ||
+            GetPrivateField<FirstPersonController>(dayNightMgr, "playerController") == null ||
+            GetPrivateField<StarterAssetsInputs>(dayNightMgr, "playerInputs") == null;
+
+        Undo.RecordObject(dayNightMgr, "Repair DayNightManager");
+
+        if (forceDuration || hadBrokenRefs)
+        {
+            float currentDur = GetPrivateFieldFloat(dayNightMgr, "durationInMinutes");
+            if (Mathf.Abs(currentDur - 12f) > 0.01f)
+            {
+                SetPrivateField(dayNightMgr, "durationInMinutes", 12f);
+                changed = true;
+            }
+        }
+
+        if (cutsceneUI != null) changed |= SetFieldIfChanged(dayNightMgr, "cutsceneUI", cutsceneUI);
+        if (player != null) changed |= SetFieldIfChanged(dayNightMgr, "playerController", player);
+        if (playerInputs != null) changed |= SetFieldIfChanged(dayNightMgr, "playerInputs", playerInputs);
+        if (lightDay != null) changed |= SetFieldIfChanged(dayNightMgr, "lightDayObject", lightDay);
+        if (keptLightNight != null) changed |= SetFieldIfChanged(dayNightMgr, "lightNightObject", keptLightNight);
+        if (daySkybox != null) changed |= SetFieldIfChanged(dayNightMgr, "daySkybox", daySkybox);
+        if (nightSkybox != null) changed |= SetFieldIfChanged(dayNightMgr, "nightSkybox", nightSkybox);
+
+        bool isNight = dayNightMgr.currentState == TimeOfDayState.Night;
+        if (lightDay != null && lightDay.activeSelf == isNight)
+        {
+            lightDay.SetActive(!isNight);
+            changed = true;
+        }
+        if (keptLightNight != null && keptLightNight.activeSelf != isNight)
+        {
+            keptLightNight.SetActive(isNight);
+            changed = true;
+        }
+
+        if (changed)
+        {
+            EditorUtility.SetDirty(dayNightMgr);
+        }
+
+        return changed;
+    }
+
+    private static bool ApplyUserMapOptimizations(Scene scene)
+    {
+        if (!scene.isLoaded) return false;
+        GameObject propsRoot = FindFirstSceneObjectByName(scene, "Props");
+        if (propsRoot == null) return false;
+
+        bool changed = false;
+        Transform propsTr = propsRoot.transform;
+
+        for (int i = 0; i < DeletedMapPropNames.Length; i++)
+        {
+            Transform target = propsTr.Find(DeletedMapPropNames[i]);
+            if (target != null)
+            {
+                Undo.DestroyObjectImmediate(target.gameObject);
+                changed = true;
+            }
+        }
+
+        for (int i = 0; i < MovedMapProps.Length; i++)
+        {
+            MovedMapPropData data = MovedMapProps[i];
+            Transform target = propsTr.Find(data.name);
+            if (target != null && (target.localPosition - data.localPosition).sqrMagnitude > 1e-6f)
+            {
+                Undo.RecordObject(target, "Restore Map Prop Position");
+                target.localPosition = data.localPosition;
+                EditorUtility.SetDirty(target);
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
+    private static bool RepairFootstepsSetup(Scene scene)
+    {
+        if (!scene.isLoaded) return false;
+
+        bool changed = false;
+
+        DialogueManager diagMgr = Object.FindAnyObjectByType<DialogueManager>();
+        if (diagMgr != null)
+        {
+            AudioSource diagAudio = diagMgr.GetComponent<AudioSource>();
+            if (diagAudio != null && diagAudio.playOnAwake)
+            {
+                Undo.RecordObject(diagAudio, "Disable DialogueManager PlayOnAwake");
+                diagAudio.playOnAwake = false;
+                EditorUtility.SetDirty(diagAudio);
+                changed = true;
+            }
+        }
+
+        FirstPersonController player = Object.FindAnyObjectByType<FirstPersonController>();
+        if (player == null) return changed;
+
+        PlayerFootsteps footsteps = player.GetComponent<PlayerFootsteps>();
+        if (footsteps == null)
+        {
+            footsteps = Undo.AddComponent<PlayerFootsteps>(player.gameObject);
+            changed = true;
+        }
+
+        AudioClip[] canonicalClips = new AudioClip[CanonicalFootstepClipPaths.Length];
+        for (int i = 0; i < CanonicalFootstepClipPaths.Length; i++)
+        {
+            canonicalClips[i] = AssetDatabase.LoadAssetAtPath<AudioClip>(CanonicalFootstepClipPaths[i]);
+        }
+        AudioClip canonicalLanding = AssetDatabase.LoadAssetAtPath<AudioClip>(CanonicalLandingClipPath);
+
+        SerializedObject so = new SerializedObject(footsteps);
+        SerializedProperty clipsProp = so.FindProperty("footstepClips");
+        SerializedProperty landingProp = so.FindProperty("landingClip");
+        SerializedProperty walkProp = so.FindProperty("walkStepDistance");
+        SerializedProperty sprintProp = so.FindProperty("sprintStepDistance");
+        SerializedProperty volumeProp = so.FindProperty("footstepVolume");
+
+        // Hanya isi jika array kosong atau masih ada elemen null agar klip custom milik user tidak tertimpa
+        bool clipsNeedRepair = clipsProp != null && clipsProp.arraySize == 0;
+        if (!clipsNeedRepair && clipsProp != null)
+        {
+            for (int i = 0; i < clipsProp.arraySize; i++)
+            {
+                if (clipsProp.GetArrayElementAtIndex(i).objectReferenceValue == null)
+                {
+                    clipsNeedRepair = true;
+                    break;
+                }
+            }
+        }
+
+        if (clipsNeedRepair && clipsProp != null)
+        {
+            Undo.RecordObject(footsteps, "Restore PlayerFootsteps Audio");
+            clipsProp.arraySize = canonicalClips.Length;
+            for (int i = 0; i < canonicalClips.Length; i++)
+            {
+                clipsProp.GetArrayElementAtIndex(i).objectReferenceValue = canonicalClips[i];
+            }
+            changed = true;
+        }
+
+        if (canonicalLanding != null && landingProp != null && landingProp.objectReferenceValue == null)
+        {
+            Undo.RecordObject(footsteps, "Restore PlayerFootsteps Audio");
+            landingProp.objectReferenceValue = canonicalLanding;
+            changed = true;
+        }
+
+        if (walkProp != null && walkProp.floatValue <= 0.01f)
+        {
+            Undo.RecordObject(footsteps, "Restore PlayerFootsteps Audio");
+            walkProp.floatValue = 1.8f;
+            changed = true;
+        }
+
+        if (sprintProp != null && sprintProp.floatValue <= 0.01f)
+        {
+            Undo.RecordObject(footsteps, "Restore PlayerFootsteps Audio");
+            sprintProp.floatValue = 2.3f;
+            changed = true;
+        }
+
+        if (volumeProp != null && volumeProp.floatValue <= 0.01f)
+        {
+            Undo.RecordObject(footsteps, "Restore PlayerFootsteps Audio");
+            volumeProp.floatValue = 0.4f;
+            changed = true;
+        }
+
+        if (changed)
+        {
+            so.ApplyModifiedProperties();
+            EditorUtility.SetDirty(footsteps);
+        }
+
+        return changed;
+    }
+
+    private static bool SyncNPCSpawnerData()
+    {
+        NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
+        if (spawner == null) return false;
+
+        bool changed = false;
+        if (NPCSpawner.ApplyCanonicalSpawnPoints(spawner))
+        {
+            EditorUtility.SetDirty(spawner);
+            changed = true;
+        }
+        if (HasMissingDialogueQuestions(spawner))
+        {
+            InjectNPCResponses.UpdateAllDialogue(saveScene: false);
+            changed = true;
+        }
+        return changed;
+    }
+
+    private static bool HasMissingDialogueQuestions(NPCSpawner spawner)
+    {
+        if (spawner == null || spawner.spawnLocations == null || spawner.spawnLocations.Length < 11)
+            return true;
+
+        for (int i = 0; i < spawner.spawnLocations.Length; i++)
+        {
+            ContextualSpawnPoint loc = spawner.spawnLocations[i];
+            if (loc == null || loc.locationQuestions == null || loc.locationQuestions.Length == 0)
+                return true;
+
+            for (int q = 0; q < loc.locationQuestions.Length; q++)
+            {
+                NPCData data = loc.locationQuestions[q];
+                if (data == null || string.IsNullOrEmpty(data.questionJapanese))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static GameObject FindFirstSceneObjectByName(Scene scene, string targetName)
+    {
+        List<GameObject> matches = FindAllSceneObjectsByName(scene, targetName);
+        return matches.Count > 0 ? matches[0] : null;
+    }
+
+    private static List<GameObject> FindAllSceneObjectsByName(Scene scene, string targetName)
+    {
+        List<GameObject> results = new List<GameObject>();
+        if (!scene.isLoaded) return results;
+
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            CollectNamedObjectsRecursive(roots[i].transform, targetName, results);
+        }
+        return results;
+    }
+
+    private static void CollectNamedObjectsRecursive(Transform tr, string targetName, List<GameObject> results)
+    {
+        if (tr.name == targetName)
+        {
+            results.Add(tr.gameObject);
+        }
+        for (int i = 0; i < tr.childCount; i++)
+        {
+            CollectNamedObjectsRecursive(tr.GetChild(i), targetName, results);
+        }
+    }
+
     private static TMP_Text FindChildTMP(Transform parent, string childName)
     {
         Transform t = parent.Find(childName);
         return t != null ? t.GetComponent<TMP_Text>() : null;
+    }
+
+    private static T GetPrivateField<T>(object target, string fieldName) where T : class
+    {
+        if (target == null) return null;
+        var field = target.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+        return field != null ? field.GetValue(target) as T : null;
+    }
+
+    private static float GetPrivateFieldFloat(object target, string fieldName)
+    {
+        if (target == null) return 0f;
+        var field = target.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+        return field != null ? (float)field.GetValue(target) : 0f;
+    }
+
+    private static bool SetFieldIfChanged(object target, string fieldName, object value)
+    {
+        if (target == null) return false;
+        var field = target.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+        if (field == null) return false;
+
+        object current = field.GetValue(target);
+        if (Equals(current, value)) return false;
+
+        field.SetValue(target, value);
+        return true;
     }
 
     private static void SetPrivateField(object target, string fieldName, object value)

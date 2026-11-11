@@ -36,6 +36,36 @@ public class PlayerFootsteps : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f; // 2D Audio di telinga player
+
+        EnsureFootstepClipsLoaded();
+    }
+
+    private void EnsureFootstepClipsLoaded()
+    {
+#if UNITY_EDITOR
+        bool hasClips = footstepClips != null && footstepClips.Length > 0;
+        if (!hasClips)
+        {
+            var loaded = new System.Collections.Generic.List<AudioClip>();
+            for (int i = 1; i <= 10; i++)
+            {
+                string path = $"Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Footstep_{i:00}.wav";
+                AudioClip clip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+                if (clip != null) loaded.Add(clip);
+            }
+            if (loaded.Count > 0)
+            {
+                footstepClips = loaded.ToArray();
+                footstepVolume = Mathf.Max(footstepVolume, 0.4f);
+            }
+        }
+
+        if (landingClip == null)
+        {
+            landingClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
+                "Assets/Starter Assets/Runtime/ThirdPersonController/Character/Sfx/Player_Land.wav");
+        }
+#endif
     }
 
     private void OnDisable()

@@ -73,6 +73,11 @@ namespace Utsuru.Capture
                 return;
             }
 
+            if (PlayerPrefs.HasKey("Setting_FOV"))
+            {
+                normalFov = PlayerPrefs.GetFloat("Setting_FOV", normalFov);
+            }
+
             if (viewfinderRoot == null)
             {
                 viewfinderRoot = GameObject.Find("ViewfinderRoot");
@@ -124,6 +129,25 @@ namespace Utsuru.Capture
             if (playerCamera != null)
             {
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFov, t);
+            }
+        }
+
+        /// <summary>Dipakai SettingsManager saat player mengubah FOV agar tidak tertarik kembali oleh loop Update kamera.</summary>
+        public void SetNormalFov(float fov)
+        {
+            normalFov = fov;
+            if (IsCameraActive) return;
+
+            if (virtualCamera != null)
+            {
+                LensSettings lens = virtualCamera.Lens;
+                lens.FieldOfView = fov;
+                virtualCamera.Lens = lens;
+            }
+
+            if (playerCamera != null)
+            {
+                playerCamera.fieldOfView = fov;
             }
         }
 

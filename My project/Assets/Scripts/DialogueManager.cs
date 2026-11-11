@@ -60,6 +60,7 @@ public class DialogueManager : MonoBehaviour
     private bool isTyping = false;
     private bool isShowingResponse = false;
     private bool isWaitingToClose = false;
+    private int dialogueOpenedFrame = -1;
     private List<DialogueChoice> currentActiveChoices = new List<DialogueChoice>();
 
     private string currentJpQuestion = "";
@@ -73,6 +74,11 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            if (audioSource.isPlaying) audioSource.Stop();
+        }
         UpdateSettingsVisibility();
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
@@ -100,6 +106,7 @@ public class DialogueManager : MonoBehaviour
     private void Update()
     {
         if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
+        if (Time.frameCount == dialogueOpenedFrame) return;
 
         // 1. Shortcut Angka 1, 2, 3 untuk memilih jawaban secara instan
         if (!isShowingResponse && currentActiveChoices.Count > 0)
@@ -172,6 +179,7 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogue(NPCData data, string customName = "", Sprite customAvatar = null)
     {
         if (data == null) return;
+        dialogueOpenedFrame = Time.frameCount;
         currentData = data;
         isShowingResponse = false;
         isWaitingToClose = false;

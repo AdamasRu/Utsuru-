@@ -49,6 +49,17 @@ namespace Utsuru.Capture
             zoomed = active;
         }
 
+        public void SetNormalFov(float fov)
+        {
+            normalFov = fov;
+            if (!zoomed && followCamera != null)
+            {
+                LensSettings lens = followCamera.Lens;
+                lens.FieldOfView = fov;
+                followCamera.Lens = lens;
+            }
+        }
+
         private void Update()
         {
             LensSettings lens = followCamera.Lens;

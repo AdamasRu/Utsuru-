@@ -9,6 +9,11 @@ public class InjectNPCResponses : Editor
     [MenuItem("Tools/Utsuru/Update All NPC Dialogue & Responses (English NPC, Romaji Choices)")]
     public static void UpdateAllDialogue()
     {
+        UpdateAllDialogue(saveScene: true);
+    }
+
+    public static void UpdateAllDialogue(bool saveScene)
+    {
         NPCSpawner spawner = Object.FindAnyObjectByType<NPCSpawner>();
         if (spawner == null)
         {
@@ -405,7 +410,10 @@ public class InjectNPCResponses : Editor
 
         EditorUtility.SetDirty(spawner);
         EditorSceneManager.MarkSceneDirty(spawner.gameObject.scene);
-        EditorSceneManager.SaveScene(spawner.gameObject.scene);
+        if (saveScene)
+        {
+            EditorSceneManager.SaveScene(spawner.gameObject.scene);
+        }
         Debug.Log("<color=green>[Utsuru] SUKSES! Soal telah dipisah rapi ke field Question Japanese, Romaji, dan English di Inspector!</color>");
     }
 

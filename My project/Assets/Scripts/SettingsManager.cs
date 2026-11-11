@@ -242,6 +242,7 @@ public class SettingsManager : MonoBehaviour
     {
         curFov = Mathf.Round(val);
         if (fovValueText != null) fovValueText.text = curFov.ToString("0");
+        PlayerPrefs.SetFloat("Setting_FOV", curFov);
         ApplyFOV(curFov);
     }
 
@@ -450,6 +451,17 @@ public class SettingsManager : MonoBehaviour
             lens.FieldOfView = fov;
             vcam.Lens = lens;
             Debug.Log($"[SettingsManager] Cinemachine FOV diubah ke: {fov}");
+        }
+
+        if (Utsuru.Capture.CameraModeController.Instance != null)
+        {
+            Utsuru.Capture.CameraModeController.Instance.SetNormalFov(fov);
+        }
+
+        var zoomAdapters = UnityEngine.Object.FindObjectsByType<Utsuru.Capture.CinemachineZoomAdapter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < zoomAdapters.Length; i++)
+        {
+            if (zoomAdapters[i] != null) zoomAdapters[i].SetNormalFov(fov);
         }
     }
 

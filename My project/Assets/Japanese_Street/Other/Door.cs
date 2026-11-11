@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Door : MonoBehaviour
@@ -34,28 +34,14 @@ public class Door : MonoBehaviour
         }
         if (trig)
         {
-            if (open)
-            {
-                txt.text = "Close E";
-            }
-            else
-            {
-                txt.text = "Open E";
-            }
+            SetPromptText(open ? "Close E" : "Open E");
         }
     }
     private void OnTriggerEnter(Collider coll)//вход и выход в\из  триггера 
     {
         if (coll.tag == "Player")
         {
-            if (!open)
-            {
-                txt.text = "Close E ";
-            }
-            else
-            {
-                txt.text = "Open E";
-            }
+            SetPromptText(!open ? "Close E " : "Open E");
             trig = true;
         }
     }
@@ -63,8 +49,16 @@ public class Door : MonoBehaviour
     {
         if (coll.tag == "Player")
         {
-            txt.text = " ";
+            SetPromptText(" ");
             trig = false;
+        }
+    }
+
+    private void SetPromptText(string message)
+    {
+        if (txt != null)
+        {
+            txt.text = message;
         }
     }
 }

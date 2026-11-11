@@ -38,29 +38,31 @@ public class NPCSpawner : MonoBehaviour
         public string locationName;
         public Vector3 position;
         public Quaternion rotation;
+        public string questionJapanese;
 
-        public CanonicalSpawnPointData(string pointName, string locationName, Vector3 position, Quaternion rotation)
+        public CanonicalSpawnPointData(string pointName, string locationName, Vector3 position, Quaternion rotation, string questionJapanese)
         {
             this.pointName = pointName;
             this.locationName = locationName;
             this.position = position;
             this.rotation = rotation;
+            this.questionJapanese = questionJapanese;
         }
     }
 
     private static readonly CanonicalSpawnPointData[] CanonicalSpawnPoints = new CanonicalSpawnPointData[]
     {
-        new CanonicalSpawnPointData("Point_1",  "VendingMachine",  new Vector3(-4.648f,  0.05f,  24.69f),  new Quaternion(0f, -0.1784914f,  0f,  0.9839415f)),
-        new CanonicalSpawnPointData("Point_2",  "Toko",            new Vector3( 5.71f,   0.05f,  13.09f),  new Quaternion(0f,  0.69232297f, 0f, -0.72158784f)),
-        new CanonicalSpawnPointData("Point_3",  "Sampah",          new Vector3(-6.029f,  0.05f,  -0.3f),    new Quaternion(0f,  0f,          0f,  1f)),
-        new CanonicalSpawnPointData("Point_4",  "Bunga",           new Vector3(-3.163f,  0.05f,  34.684f), new Quaternion(0f, -0.901942f,   0f,  0.4318573f)),
-        new CanonicalSpawnPointData("Point_5",  "Mobil",           new Vector3( 1.402f,  0.05f, -37.65f),  new Quaternion(0f,  0f,          0f,  1f)),
-        new CanonicalSpawnPointData("Point_6",  "Zebracross",      new Vector3( 3.12f,   0.05f, -16.57f),  new Quaternion(0f, -0.68627435f, 0f,  0.72734284f)),
-        new CanonicalSpawnPointData("Point_7",  "VendingMachine2", new Vector3(17.664f,  0.05f,  -9.66f),  new Quaternion(0f, -0.12609576f, 0f,  0.9920181f)),
-        new CanonicalSpawnPointData("Point_8",  "TokoTutup",       new Vector3(63.804f,  0.126f, -14.448f), new Quaternion(0f,  0.40020856f, 0f,  0.9164241f)),
-        new CanonicalSpawnPointData("Point_9",  "PipadanGas",      new Vector3(-11.46f,  0.05f, -10.49f),  new Quaternion(0f,  0f,          0f,  1f)),
-        new CanonicalSpawnPointData("Point_10", "Sampah2",         new Vector3(-37.16f,  0.05f, -16.73f),  new Quaternion(0f,  0.7279224f,  0f,  0.68565965f)),
-        new CanonicalSpawnPointData("Point_11", "LampuMerah",      new Vector3(-2.706f,  0.05f,  47.562f), new Quaternion(0f,  0.7020071f,  0f,  0.71216995f)),
+        new CanonicalSpawnPointData("Point_1",  "VendingMachine",  new Vector3(-4.648f,  0.05f,  24.69f),  new Quaternion(0f, -0.1784914f,  0f,  0.9839415f),  "「自販機にお札が入らないな…小銭持ってる？」"),
+        new CanonicalSpawnPointData("Point_2",  "Toko",            new Vector3( 5.71f,   0.05f,  13.09f),  new Quaternion(0f,  0.69232297f, 0f, -0.72158784f), "「いらっしゃい！何を探しているのかい？」"),
+        new CanonicalSpawnPointData("Point_3",  "Sampah",          new Vector3(-6.029f,  0.05f,  -0.3f),    new Quaternion(0f,  0f,          0f,  1f),          "「ペットボトルのキャップは外して捨てるんだっけ？」"),
+        new CanonicalSpawnPointData("Point_4",  "Bunga",           new Vector3(-3.163f,  0.05f,  34.684f), new Quaternion(0f, -0.901942f,   0f,  0.4318573f),  "「このお花、綺麗に咲いたでしょう？」"),
+        new CanonicalSpawnPointData("Point_5",  "Mobil",           new Vector3( 1.402f,  0.05f, -37.65f),  new Quaternion(0f,  0f,          0f,  1f),          "「ここに少し車を止めても平気かな？」"),
+        new CanonicalSpawnPointData("Point_6",  "Zebracross",      new Vector3( 3.12f,   0.05f, -16.57f),  new Quaternion(0f, -0.68627435f, 0f,  0.72734284f), "「いい天気ですね。どちらへお出かけですか？」"),
+        new CanonicalSpawnPointData("Point_7",  "VendingMachine2", new Vector3(17.664f,  0.05f,  -9.66f),  new Quaternion(0f, -0.12609576f, 0f,  0.9920181f),  "「喉が渇いたな。どっちがいいと思う？」"),
+        new CanonicalSpawnPointData("Point_8",  "TokoTutup",       new Vector3(63.804f,  0.126f, -14.448f), new Quaternion(0f,  0.40020856f, 0f,  0.9164241f),  "「シャッターが閉まってる…今日休みかな？」"),
+        new CanonicalSpawnPointData("Point_9",  "PipadanGas",      new Vector3(-11.46f,  0.05f, -10.49f),  new Quaternion(0f,  0f,          0f,  1f),          "「壁にガスメーターがたくさん並んでいて面白いね。」"),
+        new CanonicalSpawnPointData("Point_10", "Sampah2",         new Vector3(-37.16f,  0.05f, -16.73f),  new Quaternion(0f,  0.7279224f,  0f,  0.68565965f), "「青いゴミ箱があるね。今日は資源ごみの日？」"),
+        new CanonicalSpawnPointData("Point_11", "LampuMerah",      new Vector3(-2.706f,  0.05f,  47.562f), new Quaternion(0f,  0.7020071f,  0f,  0.71216995f), "「車は通ってないけど、青になるまで待とうね。」"),
     };
 
     [Header("Preset Karakter BoZo (11 Karakter)")]
@@ -197,6 +199,51 @@ public class NPCSpawner : MonoBehaviour
             }
         }
 
+        changed |= EnsureCanonicalQuestionJapanese(spawner);
+        return changed;
+    }
+
+    public static bool EnsureCanonicalQuestionJapanese(NPCSpawner spawner)
+    {
+        if (spawner == null || spawner.spawnLocations == null) return false;
+        bool changed = false;
+
+        for (int i = 0; i < spawner.spawnLocations.Length; i++)
+        {
+            ContextualSpawnPoint loc = spawner.spawnLocations[i];
+            if (loc == null || loc.locationQuestions == null || loc.locationQuestions.Length == 0) continue;
+
+            int canonicalIdx = -1;
+            if (!string.IsNullOrEmpty(loc.locationName))
+            {
+                string trimmed = loc.locationName.Trim();
+                for (int k = 0; k < CanonicalSpawnPoints.Length; k++)
+                {
+                    if (string.Equals(trimmed, CanonicalSpawnPoints[k].locationName, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        canonicalIdx = k;
+                        break;
+                    }
+                }
+            }
+            if (canonicalIdx < 0 && i < CanonicalSpawnPoints.Length)
+            {
+                canonicalIdx = i;
+            }
+            if (canonicalIdx < 0) continue;
+
+            string canonicalJp = CanonicalSpawnPoints[canonicalIdx].questionJapanese;
+            for (int q = 0; q < loc.locationQuestions.Length; q++)
+            {
+                NPCData data = loc.locationQuestions[q];
+                if (data != null && string.IsNullOrEmpty(data.questionJapanese))
+                {
+                    data.questionJapanese = canonicalJp;
+                    changed = true;
+                }
+            }
+        }
+
         return changed;
     }
 
@@ -205,6 +252,10 @@ public class NPCSpawner : MonoBehaviour
         if (lockCanonicalSpawnPoints)
         {
             ApplyCanonicalSpawnPoints(this);
+        }
+        else
+        {
+            EnsureCanonicalQuestionJapanese(this);
         }
 
         // 1. Bersihkan NPC lama jika ada
