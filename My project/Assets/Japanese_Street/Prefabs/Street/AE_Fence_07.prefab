@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2653242473939060055}
   - component: {fileID: 5244924310793299324}
   - component: {fileID: 571300903480386034}
-  - component: {fileID: 537603748829713212}
+  - component: {fileID: 2979408315886459820}
   m_Layer: 0
   m_Name: AE_Fence_07
   m_TagString: Untagged
@@ -155,7 +155,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.1898925, y: 1.532663, z: 0.36603928}
   m_Center: {x: 0.90505373, y: 0.76606804, z: 2.0068722}
---- !u!114 &537603748829713212
+--- !u!114 &2979408315886459820
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

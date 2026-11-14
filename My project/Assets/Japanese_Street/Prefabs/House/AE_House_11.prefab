@@ -105,7 +105,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7115174699664718893}
   - component: {fileID: 7115174699681867917}
-  - component: {fileID: 1810253305309294715}
+  - component: {fileID: 6515615908097965981}
+  - component: {fileID: 3891177568617386936}
   m_Layer: 0
   m_Name: AE_House_11
   m_TagString: Untagged
@@ -153,7 +154,29 @@ LODGroup:
     renderers:
     - renderer: {fileID: 7115174699666620111}
   m_Enabled: 1
---- !u!114 &1810253305309294715
+--- !u!64 &6515615908097965981
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7115174699664613389}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
+--- !u!114 &3891177568617386936
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

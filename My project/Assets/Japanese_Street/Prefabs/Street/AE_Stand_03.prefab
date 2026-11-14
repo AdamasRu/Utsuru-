@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 443332835091627021}
   - component: {fileID: 6603225960340715905}
   - component: {fileID: 3327394641087359356}
-  - component: {fileID: 5710049544668920263}
+  - component: {fileID: 5751756583263904237}
   m_Layer: 0
   m_Name: AE_Stand_03
   m_TagString: Untagged
@@ -133,7 +133,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 443332835091627021}
   m_Enabled: 1
---- !u!114 &5710049544668920263
+--- !u!114 &5751756583263904237
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

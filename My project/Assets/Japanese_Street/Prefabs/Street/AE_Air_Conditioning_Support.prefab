@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3625206736181902657}
   - component: {fileID: 4612915747621624179}
   - component: {fileID: 3395467336560307425}
-  - component: {fileID: 7190295344952586325}
+  - component: {fileID: 4378497996426467705}
   m_Layer: 0
   m_Name: AE_Air_Conditioning_Support
   m_TagString: Untagged
@@ -133,7 +133,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 3625206736181902657}
   m_Enabled: 1
---- !u!114 &7190295344952586325
+--- !u!114 &4378497996426467705
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

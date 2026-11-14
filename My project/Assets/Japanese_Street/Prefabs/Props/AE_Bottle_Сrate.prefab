@@ -190,7 +190,8 @@ GameObject:
   m_Component:
   - component: {fileID: 478312307976869351}
   - component: {fileID: 478312307992445255}
-  - component: {fileID: 5595297368361032910}
+  - component: {fileID: 9100077652041259070}
+  - component: {fileID: 8262389272276220180}
   m_Layer: 0
   m_Name: "AE_Bottle_\u0421rate"
   m_TagString: Untagged
@@ -238,7 +239,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 478312307975100165}
   m_Enabled: 1
---- !u!114 &5595297368361032910
+--- !u!114 &9100077652041259070
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -251,3 +252,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
   objectid: ICK-30
+--- !u!64 &8262389272276220180
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478312307977292231}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
