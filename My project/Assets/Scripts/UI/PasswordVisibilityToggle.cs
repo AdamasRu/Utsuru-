@@ -34,6 +34,11 @@ namespace Utsuru.UI
 
         private void Awake()
         {
+            if (passwordInputField == null)
+            {
+                passwordInputField = GetComponentInParent<TMP_InputField>(true);
+            }
+
             if (toggleButton == null)
             {
                 toggleButton = GetComponent<Button>();
@@ -127,6 +132,11 @@ namespace Utsuru.UI
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (passwordInputField == null)
+            {
+                passwordInputField = GetComponentInParent<TMP_InputField>(true);
+            }
+
             if (toggleButton == null)
             {
                 toggleButton = GetComponent<Button>();
@@ -149,7 +159,7 @@ namespace Utsuru.UI
 
             if (passwordInputField == null)
             {
-                passwordInputField = GetComponentInParent<TMP_InputField>();
+                passwordInputField = GetComponentInParent<TMP_InputField>(true);
             }
         }
 #endif

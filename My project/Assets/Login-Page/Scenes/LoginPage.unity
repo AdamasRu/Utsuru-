@@ -1283,6 +1283,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133550557}
   m_CullTransparentMesh: 1
+--- !u!1 &147328041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 147328042}
+  - component: {fileID: 147328044}
+  - component: {fileID: 147328043}
+  m_Layer: 5
+  m_Name: IncorrectEmailPassword-Box
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &147328042
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147328041}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 176185641}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 105, y: 100}
+  m_SizeDelta: {x: 231, y: 24}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &147328043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147328041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: c8811778e3ed1504f8493aefce8cc3ae, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &147328044
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147328041}
+  m_CullTransparentMesh: 1
 --- !u!1 &147897158
 GameObject:
   m_ObjectHideFlags: 0
@@ -1485,7 +1560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &176185641
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1515,6 +1590,7 @@ RectTransform:
   - {fileID: 1311698116}
   - {fileID: 525998732}
   - {fileID: 354408868}
+  - {fileID: 147328042}
   m_Father: {fileID: 321344173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2424,6 +2500,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 225523214}
   m_CullTransparentMesh: 1
+--- !u!1 &303467198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 303467200}
+  - component: {fileID: 303467199}
+  m_Layer: 0
+  m_Name: SessionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &303467199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303467198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eac786ca3bbc3846b66a985773e2dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Utsuru.Authentication.SessionManager
+  currentLoginMode: 2
+  authUserId: 
+  localProfileId: a64d8ad8-6aec-4d78-b36e-b397075a2166
+  playerEmail: 
+  playerUsername: GuestPlayer
+--- !u!4 &303467200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303467198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &321259123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2681,6 +2806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e217f83188a635342b9b668279b3ba5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Utsuru.UI.AuthenticationUIManager
+  authManager: {fileID: 0}
   loginPanel: {fileID: 176185640}
   signUpPanel: {fileID: 555837365}
   emailSentPanel: {fileID: 587311348}
@@ -2691,10 +2817,11 @@ MonoBehaviour:
   playAsGuestButton: {fileID: 505357184}
   signUpNavigationButton: {fileID: 1100992889}
   forgotPasswordNavigationButton: {fileID: 1176468274}
-  loginUsernameInput: {fileID: 1958484435}
+  loginEmailInput: {fileID: 1958484435}
   loginPasswordInput: {fileID: 1885258839}
   rememberMeToggle: {fileID: 356489601}
   rememberMeTextButton: {fileID: 1292682323}
+  incorrectCredentialsAlertBox: {fileID: 147328041}
   signUpSubmitButton: {fileID: 1563615637}
   signUpBackToLoginButton: {fileID: 85769181}
   signUpUsernameInput: {fileID: 206541255}
@@ -3271,7 +3398,7 @@ GameObject:
   - component: {fileID: 420897179}
   - component: {fileID: 420897178}
   m_Layer: 5
-  m_Name: Enter-username
+  m_Name: Enter-email
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3316,7 +3443,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter Username
+  m_text: Enter Email
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57003ef6ebf18b94c9dd2b50f19520e1, type: 2}
   m_sharedMaterial: {fileID: 3251580111182567490, guid: 57003ef6ebf18b94c9dd2b50f19520e1, type: 2}
@@ -10646,7 +10773,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '    Enter Username'
+  m_text: '    Enter Email'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57003ef6ebf18b94c9dd2b50f19520e1, type: 2}
   m_sharedMaterial: {fileID: 3251580111182567490, guid: 57003ef6ebf18b94c9dd2b50f19520e1, type: 2}
@@ -14776,7 +14903,7 @@ GameObject:
   - component: {fileID: 1958484436}
   - component: {fileID: 1958484435}
   m_Layer: 5
-  m_Name: Username-Input
+  m_Name: Email-Input
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15426,3 +15553,4 @@ SceneRoots:
   - {fileID: 203844589}
   - {fileID: 321344173}
   - {fileID: 816798307}
+  - {fileID: 303467200}

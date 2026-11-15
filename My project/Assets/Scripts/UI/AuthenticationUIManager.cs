@@ -1,8 +1,12 @@
+using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using TMPro;
+using Utsuru.Authentication;
 
 namespace Utsuru.UI
 {
@@ -14,6 +18,10 @@ namespace Utsuru.UI
     /// </summary>
     public class AuthenticationUIManager : MonoBehaviour
     {
+        [Header("Authentication Backend")]
+        [Tooltip("Core manager handling Supabase Authentication REST API calls.")]
+        [SerializeField] private AuthManager authManager;
+
         [Header("Authentication Panels")]
         [Tooltip("The Login panel GameObject.")]
         [SerializeField] private GameObject loginPanel;
@@ -38,10 +46,13 @@ namespace Utsuru.UI
         [SerializeField] private Button playAsGuestButton;
         [SerializeField] private Button signUpNavigationButton;
         [SerializeField] private Button forgotPasswordNavigationButton;
-        [SerializeField] private TMP_InputField loginUsernameInput;
+        [FormerlySerializedAs("loginUsernameInput")]
+        [SerializeField] private TMP_InputField loginEmailInput;
         [SerializeField] private TMP_InputField loginPasswordInput;
         [SerializeField] private Toggle rememberMeToggle;
         [SerializeField] private Button rememberMeTextButton;
+        [Tooltip("UI Alert box displayed when email or password is incorrect.")]
+        [SerializeField] private GameObject incorrectCredentialsAlertBox;
 
         [Header("Sign Up Panel Controls")]
         [SerializeField] private Button signUpSubmitButton;
@@ -72,12 +83,81 @@ namespace Utsuru.UI
         [SerializeField] private CanvasGroup toastCanvasGroup;
 
         private Coroutine toastCoroutine;
+        private TMP_Text loginButtonText;
+        private string originalLoginButtonText = "Log In";
+        private TMP_Text signUpSubmitButtonText;
+        private string originalSignUpSubmitText = "Sign Up";
+        private TMP_Text resendVerificationButtonText;
+        private string originalResendVerificationText = "Resend Verification Email";
+        private TMP_Text forgotPasswordSubmitButtonText;
+        private string originalForgotPasswordSubmitText = "Continue";
+        private TMP_Text resetPasswordSubmitButtonText;
+        private string originalResetPasswordSubmitText = "Continue";
+        private float resendCooldownRemaining = 0f;
+        private Coroutine resendCooldownCoroutine;
 
         private void Awake()
         {
+            // Phase A4: Check if a remembered account exists and bypass login UI immediately
+            if (StartupManager.CheckAndPerformStartupBypass(gameObject))
+            {
+                return;
+            }
+
             AutoAssignReferences();
+            CacheButtonTexts();
             SetupButtonListeners();
             EnsureToastUI();
+            HideIncorrectCredentialsAlert();
+            HideToast();
+        }
+
+        private void CacheButtonTexts()
+        {
+            if (loginButton != null)
+            {
+                loginButtonText = loginButton.GetComponentInChildren<TMP_Text>();
+                if (loginButtonText != null)
+                {
+                    originalLoginButtonText = loginButtonText.text;
+                }
+            }
+
+            if (signUpSubmitButton != null)
+            {
+                signUpSubmitButtonText = signUpSubmitButton.GetComponentInChildren<TMP_Text>();
+                if (signUpSubmitButtonText != null)
+                {
+                    originalSignUpSubmitText = signUpSubmitButtonText.text;
+                }
+            }
+
+            if (resendVerificationEmailButton != null)
+            {
+                resendVerificationButtonText = resendVerificationEmailButton.GetComponentInChildren<TMP_Text>();
+                if (resendVerificationButtonText != null)
+                {
+                    originalResendVerificationText = resendVerificationButtonText.text;
+                }
+            }
+
+            if (forgotPasswordSubmitButton != null)
+            {
+                forgotPasswordSubmitButtonText = forgotPasswordSubmitButton.GetComponentInChildren<TMP_Text>();
+                if (forgotPasswordSubmitButtonText != null)
+                {
+                    originalForgotPasswordSubmitText = forgotPasswordSubmitButtonText.text;
+                }
+            }
+
+            if (resetPasswordSubmitButton != null)
+            {
+                resetPasswordSubmitButtonText = resetPasswordSubmitButton.GetComponentInChildren<TMP_Text>();
+                if (resetPasswordSubmitButtonText != null)
+                {
+                    originalResetPasswordSubmitText = resetPasswordSubmitButtonText.text;
+                }
+            }
         }
 
         private void Start()
@@ -104,6 +184,8 @@ namespace Utsuru.UI
         public void ShowLoginPanel()
         {
             ShowPanel(loginPanel);
+            HideIncorrectCredentialsAlert();
+            HideToast();
         }
 
         public void ShowSignUpPanel()
@@ -119,11 +201,15 @@ namespace Utsuru.UI
         public void ShowForgotPasswordPanel()
         {
             ShowPanel(forgotPasswordPanel);
+            HideIncorrectCredentialsAlert();
+            HideToast();
         }
 
         public void ShowResetPasswordPanel()
         {
             ShowPanel(resetPasswordPanel);
+            HideIncorrectCredentialsAlert();
+            HideToast();
         }
 
         #endregion
@@ -133,102 +219,219 @@ namespace Utsuru.UI
         private void SetupButtonListeners()
         {
             // Login Panel
-            if (loginButton != null)
+            SafeAddListener(loginButton, OnLoginButtonClicked);
+            SafeAddListener(playAsGuestButton, OnPlayAsGuestButtonClicked);
+            SafeAddListener(signUpNavigationButton, ShowSignUpPanel);
+            SafeAddListener(forgotPasswordNavigationButton, ShowForgotPasswordPanel);
+            SafeAddListener(rememberMeTextButton, ToggleRememberMe);
+
+            if (loginEmailInput != null)
             {
-                loginButton.onClick.RemoveListener(OnLoginButtonClicked);
-                loginButton.onClick.AddListener(OnLoginButtonClicked);
+                loginEmailInput.onValueChanged.RemoveListener(OnLoginInputChanged);
+                loginEmailInput.onValueChanged.AddListener(OnLoginInputChanged);
             }
 
-            if (playAsGuestButton != null)
+            if (loginPasswordInput != null)
             {
-                playAsGuestButton.onClick.RemoveListener(OnPlayAsGuestButtonClicked);
-                playAsGuestButton.onClick.AddListener(OnPlayAsGuestButtonClicked);
-            }
-
-            if (signUpNavigationButton != null)
-            {
-                signUpNavigationButton.onClick.RemoveListener(ShowSignUpPanel);
-                signUpNavigationButton.onClick.AddListener(ShowSignUpPanel);
-            }
-
-            if (forgotPasswordNavigationButton != null)
-            {
-                forgotPasswordNavigationButton.onClick.RemoveListener(ShowForgotPasswordPanel);
-                forgotPasswordNavigationButton.onClick.AddListener(ShowForgotPasswordPanel);
-            }
-
-            if (rememberMeTextButton != null)
-            {
-                rememberMeTextButton.onClick.RemoveListener(ToggleRememberMe);
-                rememberMeTextButton.onClick.AddListener(ToggleRememberMe);
+                loginPasswordInput.onValueChanged.RemoveListener(OnLoginInputChanged);
+                loginPasswordInput.onValueChanged.AddListener(OnLoginInputChanged);
             }
 
             // Sign Up Panel
-            if (signUpBackToLoginButton != null)
-            {
-                signUpBackToLoginButton.onClick.RemoveListener(ShowLoginPanel);
-                signUpBackToLoginButton.onClick.AddListener(ShowLoginPanel);
-            }
-
-            if (signUpSubmitButton != null)
-            {
-                signUpSubmitButton.onClick.RemoveListener(OnSignUpSubmitClicked);
-                signUpSubmitButton.onClick.AddListener(OnSignUpSubmitClicked);
-            }
+            SafeAddListener(signUpBackToLoginButton, ShowLoginPanel);
+            SafeAddListener(signUpSubmitButton, OnSignUpSubmitClicked);
 
             // Email Sent Panel
-            if (emailSentBackToLoginButton != null)
-            {
-                emailSentBackToLoginButton.onClick.RemoveListener(ShowLoginPanel);
-                emailSentBackToLoginButton.onClick.AddListener(ShowLoginPanel);
-            }
-
-            if (resendVerificationEmailButton != null)
-            {
-                resendVerificationEmailButton.onClick.RemoveListener(OnResendVerificationClicked);
-                resendVerificationEmailButton.onClick.AddListener(OnResendVerificationClicked);
-            }
+            SafeAddListener(emailSentBackToLoginButton, ShowLoginPanel);
+            SafeAddListener(resendVerificationEmailButton, OnResendVerificationClicked);
 
             // Forgot Password Panel
-            if (forgotPasswordBackButton != null)
-            {
-                forgotPasswordBackButton.onClick.RemoveListener(ShowLoginPanel);
-                forgotPasswordBackButton.onClick.AddListener(ShowLoginPanel);
-            }
-
-            if (forgotPasswordSubmitButton != null)
-            {
-                forgotPasswordSubmitButton.onClick.RemoveListener(OnForgotPasswordSubmitClicked);
-                forgotPasswordSubmitButton.onClick.AddListener(OnForgotPasswordSubmitClicked);
-            }
+            SafeAddListener(forgotPasswordBackButton, ShowLoginPanel);
+            SafeAddListener(forgotPasswordSubmitButton, OnForgotPasswordSubmitClicked);
 
             // Reset Password Panel
-            if (resetPasswordBackButton != null)
+            SafeAddListener(resetPasswordBackButton, ShowLoginPanel);
+            SafeAddListener(resetPasswordSubmitButton, OnResetPasswordSubmitClicked);
+        }
+
+        private void SafeAddListener(Button button, UnityEngine.Events.UnityAction action)
+        {
+            if (button == null || action == null) return;
+
+            string targetMethodName = action.Method.Name;
+            for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
             {
-                resetPasswordBackButton.onClick.RemoveListener(ShowLoginPanel);
-                resetPasswordBackButton.onClick.AddListener(ShowLoginPanel);
+                if (button.onClick.GetPersistentTarget(i) == (UnityEngine.Object)this &&
+                    button.onClick.GetPersistentMethodName(i) == targetMethodName)
+                {
+                    return; // Already registered in Inspector! Do not duplicate.
+                }
             }
 
-            if (resetPasswordSubmitButton != null)
-            {
-                resetPasswordSubmitButton.onClick.RemoveListener(OnResetPasswordSubmitClicked);
-                resetPasswordSubmitButton.onClick.AddListener(OnResetPasswordSubmitClicked);
-            }
+            button.onClick.RemoveListener(action);
+            button.onClick.AddListener(action);
         }
 
         #endregion
 
         #region Panel Actions & Validation
 
-        public void OnLoginButtonClicked()
+        private void SetLoginLoadingState(bool isLoading)
         {
-            // Prototype only: authentication backend is not connected
-            ShowTemporaryMessage("Authentication backend is not connected yet. (UI Prototype)");
+            if (loginButton != null)
+            {
+                loginButton.interactable = !isLoading;
+            }
+
+            if (loginButtonText != null)
+            {
+                loginButtonText.text = isLoading ? "Logging In..." : originalLoginButtonText;
+            }
+        }
+
+        public async void OnLoginButtonClicked()
+        {
+            string email = loginEmailInput != null ? loginEmailInput.text.Trim() : string.Empty;
+            string password = loginPasswordInput != null ? loginPasswordInput.text : string.Empty;
+
+            // 1. Client-side credential validation:
+            // If email is empty, invalid format, or password empty, immediately show IncorrectEmailPassword-Box
+            // and do NOT show the black toast box at the bottom.
+            if (string.IsNullOrEmpty(email) || !IsValidEmail(email) || string.IsNullOrEmpty(password))
+            {
+                ShowIncorrectCredentialsAlert();
+                return;
+            }
+
+            // 2. Prevent duplicate submissions and update UI loading state
+            SetLoginLoadingState(true);
+            HideIncorrectCredentialsAlert();
+            HideToast();
+
+            try
+            {
+                var auth = EnsureAuthManager();
+                var result = await auth.LoginAsync(email, password);
+
+                if (result.IsSuccess)
+                {
+                    // Phase A4: Connect in-memory session to local persistent storage
+                    bool rememberMe = rememberMeToggle != null && rememberMeToggle.isOn;
+                    SessionManager.EnsureInstance().SaveRegisteredSession(result.Session, rememberMe);
+
+                    // Clear password upon successful login
+                    if (loginPasswordInput != null)
+                    {
+                        loginPasswordInput.text = string.Empty;
+                    }
+                    HideIncorrectCredentialsAlert();
+                    HideToast();
+
+                    // Navigate to HomeScreen scene
+                    Debug.Log("[AuthenticationUIManager] Login successful. Navigating to HomeScreen scene...");
+                    SceneManager.LoadScene("HomeScreen");
+                }
+                else
+                {
+                    // If email is not confirmed, set up verification UI so the player can resend if needed
+                    if (result.ErrorCode == "email_not_confirmed")
+                    {
+                        HideIncorrectCredentialsAlert();
+                        if (verificationEmailUI != null)
+                        {
+                            verificationEmailUI.SetEmail(email);
+                        }
+                        ShowTemporaryMessage("Please verify your email address before logging in.");
+                    }
+                    else if (IsCredentialError(result.ErrorCode, result.StatusCode))
+                    {
+                        // Email is wrong, unregistered, or password is incorrect:
+                        // Show IncorrectEmailPassword-Box and eliminate the black toast box at the bottom.
+                        ShowIncorrectCredentialsAlert();
+                    }
+                    else
+                    {
+                        // Network error, rate limited, server error, etc.
+                        HideIncorrectCredentialsAlert();
+                        ShowTemporaryMessage(result.ErrorMessage);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                HideIncorrectCredentialsAlert();
+                ShowTemporaryMessage($"Login error: {ex.Message}");
+            }
+            finally
+            {
+                SetLoginLoadingState(false);
+            }
+        }
+
+        private bool IsCredentialError(string errorCode, int statusCode)
+        {
+            if (errorCode == "invalid_credentials" ||
+                errorCode == "invalid_grant" ||
+                errorCode == "invalid_email_format" ||
+                errorCode == "empty_email" ||
+                errorCode == "empty_password" ||
+                errorCode == "user_not_found")
+            {
+                return true;
+            }
+
+            if (statusCode == 400 && errorCode != "email_not_confirmed")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void ShowIncorrectCredentialsAlert()
+        {
+            HideToast();
+            if (incorrectCredentialsAlertBox != null)
+            {
+                incorrectCredentialsAlertBox.SetActive(true);
+            }
+        }
+
+        public void HideIncorrectCredentialsAlert()
+        {
+            if (incorrectCredentialsAlertBox != null)
+            {
+                incorrectCredentialsAlertBox.SetActive(false);
+            }
+        }
+
+        public void HideToast()
+        {
+            if (toastCoroutine != null)
+            {
+                StopCoroutine(toastCoroutine);
+                toastCoroutine = null;
+            }
+            if (toastRoot != null)
+            {
+                toastRoot.SetActive(false);
+            }
         }
 
         public void OnPlayAsGuestButtonClicked()
         {
-            ShowTemporaryMessage("Guest login is not connected yet. (UI Prototype)");
+            Debug.Log("[AuthenticationUIManager] Starting game in Guest mode...");
+
+            if (playAsGuestButton != null)
+            {
+                playAsGuestButton.interactable = false;
+            }
+
+            // Set up guest session in SessionManager
+            SessionManager.EnsureInstance().SetGuestSession("Guest");
+
+            // Transition directly to HomeScreen
+            SceneManager.LoadScene("HomeScreen");
         }
 
         public void ToggleRememberMe()
@@ -239,13 +442,18 @@ namespace Utsuru.UI
             }
         }
 
-        public void OnSignUpSubmitClicked()
+        private void OnLoginInputChanged(string _)
+        {
+            HideIncorrectCredentialsAlert();
+        }
+
+        public async void OnSignUpSubmitClicked()
         {
             string email = signUpEmailInput != null ? signUpEmailInput.text.Trim() : string.Empty;
             string username = signUpUsernameInput != null ? signUpUsernameInput.text.Trim() : string.Empty;
             string password = signUpPasswordInput != null ? signUpPasswordInput.text : string.Empty;
 
-            // Validate inputs
+            // Validate inputs locally first before dispatching network request
             if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password))
             {
                 ShowTemporaryMessage("Please fill in all required fields.");
@@ -255,6 +463,12 @@ namespace Utsuru.UI
             if (string.IsNullOrEmpty(username))
             {
                 ShowTemporaryMessage("Please enter your username.");
+                return;
+            }
+
+            if (username.Length < 3)
+            {
+                ShowTemporaryMessage("Username must be at least 3 characters long.");
                 return;
             }
 
@@ -270,30 +484,278 @@ namespace Utsuru.UI
                 return;
             }
 
-            // Pass email to dynamic verification display
-            if (verificationEmailUI != null)
+            if (password.Length < 6)
             {
-                verificationEmailUI.SetEmail(email);
+                ShowTemporaryMessage("Password must be at least 6 characters long.");
+                return;
             }
 
-            // Open EmailSentPanel for UI demonstration
-            ShowEmailSentPanel();
+            // Prevent repeated submissions while request is in-flight
+            SetSignUpLoadingState(true);
+
+            try
+            {
+                var auth = EnsureAuthManager();
+                var result = await auth.SignUpAsync(email, password, username);
+
+                if (result.IsSuccess)
+                {
+                    // Pass registered email to dynamic verification display
+                    if (verificationEmailUI != null)
+                    {
+                        verificationEmailUI.SetEmail(email);
+                    }
+
+                    // Securely clear password input field
+                    if (signUpPasswordInput != null)
+                    {
+                        signUpPasswordInput.text = string.Empty;
+                    }
+
+                    // Open EmailSentPanel
+                    ShowEmailSentPanel();
+                    ShowTemporaryMessage("Verification email sent! Check your inbox.");
+                }
+                else
+                {
+                    // Remain on SignUpPanel and display error message
+                    ShowTemporaryMessage(result.ErrorMessage);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ShowTemporaryMessage($"Registration error: {ex.Message}");
+            }
+            finally
+            {
+                SetSignUpLoadingState(false);
+            }
         }
 
-        public void OnResendVerificationClicked()
+        public async void OnResendVerificationClicked()
         {
-            // Backend email delivery is not implemented
-            ShowTemporaryMessage("Backend email delivery is not implemented yet. (UI Preview)");
+            if (resendCooldownRemaining > 0f)
+            {
+                ShowTemporaryMessage($"Please wait {Mathf.CeilToInt(resendCooldownRemaining)}s before resending.");
+                return;
+            }
+
+            string email = verificationEmailUI != null ? verificationEmailUI.GetEnteredSignUpEmail() : string.Empty;
+            if (string.IsNullOrEmpty(email) && signUpEmailInput != null)
+            {
+                email = signUpEmailInput.text.Trim();
+            }
+
+            if (string.IsNullOrEmpty(email) || !IsValidEmail(email))
+            {
+                ShowTemporaryMessage("No valid email address found to resend verification.");
+                return;
+            }
+
+            SetResendLoadingState(true);
+
+            try
+            {
+                var auth = EnsureAuthManager();
+                var result = await auth.ResendVerificationEmailAsync(email);
+
+                if (result.IsSuccess)
+                {
+                    ShowTemporaryMessage("Verification email resent! Check your inbox.");
+                    StartResendCooldown(60f);
+                }
+                else
+                {
+                    ShowTemporaryMessage(result.ErrorMessage);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ShowTemporaryMessage($"Resend error: {ex.Message}");
+            }
+            finally
+            {
+                SetResendLoadingState(false);
+            }
         }
 
-        public void OnForgotPasswordSubmitClicked()
+        private AuthManager EnsureAuthManager()
         {
-            // For UI navigation testing only: open ResetPasswordPanel without claiming email sent
-            ShowResetPasswordPanel();
+            if (authManager == null)
+            {
+                authManager = AuthManager.Instance;
+                if (authManager == null)
+                {
+                    authManager = FindFirstObjectByType<AuthManager>();
+                    if (authManager == null)
+                    {
+                        authManager = gameObject.AddComponent<AuthManager>();
+                    }
+                }
+            }
+            return authManager;
         }
 
-        public void OnResetPasswordSubmitClicked()
+        private void SetSignUpLoadingState(bool isLoading)
         {
+            if (signUpSubmitButton != null)
+            {
+                signUpSubmitButton.interactable = !isLoading;
+            }
+
+            if (signUpSubmitButtonText != null)
+            {
+                signUpSubmitButtonText.text = isLoading ? "Signing Up..." : originalSignUpSubmitText;
+            }
+        }
+
+        private void SetResendLoadingState(bool isLoading)
+        {
+            if (resendVerificationEmailButton != null)
+            {
+                resendVerificationEmailButton.interactable = !isLoading && resendCooldownRemaining <= 0f;
+            }
+
+            if (resendVerificationButtonText != null)
+            {
+                if (isLoading)
+                {
+                    resendVerificationButtonText.text = "Sending...";
+                }
+                else if (resendCooldownRemaining <= 0f)
+                {
+                    resendVerificationButtonText.text = originalResendVerificationText;
+                }
+            }
+        }
+
+        private void StartResendCooldown(float durationSeconds)
+        {
+            if (resendCooldownCoroutine != null)
+            {
+                StopCoroutine(resendCooldownCoroutine);
+            }
+            resendCooldownCoroutine = StartCoroutine(ResendCooldownRoutine(durationSeconds));
+        }
+
+        private IEnumerator ResendCooldownRoutine(float durationSeconds)
+        {
+            resendCooldownRemaining = durationSeconds;
+            if (resendVerificationEmailButton != null)
+            {
+                resendVerificationEmailButton.interactable = false;
+            }
+
+            while (resendCooldownRemaining > 0f)
+            {
+                if (resendVerificationButtonText != null)
+                {
+                    resendVerificationButtonText.text = $"Resend in {Mathf.CeilToInt(resendCooldownRemaining)}s";
+                }
+                yield return new WaitForSecondsRealtime(1f);
+                resendCooldownRemaining -= 1f;
+            }
+
+            resendCooldownRemaining = 0f;
+            if (resendVerificationEmailButton != null)
+            {
+                resendVerificationEmailButton.interactable = true;
+            }
+            if (resendVerificationButtonText != null)
+            {
+                resendVerificationButtonText.text = originalResendVerificationText;
+            }
+            resendCooldownCoroutine = null;
+        }
+
+        private void SetForgotPasswordLoadingState(bool isLoading)
+        {
+            if (forgotPasswordSubmitButton != null)
+            {
+                forgotPasswordSubmitButton.interactable = !isLoading;
+            }
+
+            if (forgotPasswordSubmitButtonText != null)
+            {
+                forgotPasswordSubmitButtonText.text = isLoading ? "Sending..." : originalForgotPasswordSubmitText;
+            }
+        }
+
+        private void SetResetPasswordLoadingState(bool isLoading)
+        {
+            if (resetPasswordSubmitButton != null)
+            {
+                resetPasswordSubmitButton.interactable = !isLoading;
+            }
+
+            if (resetPasswordSubmitButtonText != null)
+            {
+                resetPasswordSubmitButtonText.text = isLoading ? "Updating..." : originalResetPasswordSubmitText;
+            }
+        }
+
+        public async void OnForgotPasswordSubmitClicked()
+        {
+            string email = forgotPasswordEmailInput != null ? forgotPasswordEmailInput.text.Trim() : string.Empty;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                ShowTemporaryMessage("Please enter your email address.");
+                return;
+            }
+
+            if (!IsValidEmail(email))
+            {
+                ShowTemporaryMessage("Please enter a valid email address.");
+                return;
+            }
+
+            SetForgotPasswordLoadingState(true);
+
+            try
+            {
+                var auth = EnsureAuthManager();
+                var result = await auth.SendPasswordResetEmailAsync(email);
+
+                if (result.IsSuccess)
+                {
+                    ShowTemporaryMessage("Reset code sent! Please check your email inbox.");
+                    ShowResetPasswordPanel();
+                }
+                else
+                {
+                    ShowTemporaryMessage(result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowTemporaryMessage($"Recovery error: {ex.Message}");
+            }
+            finally
+            {
+                SetForgotPasswordLoadingState(false);
+            }
+        }
+
+        public async void OnResetPasswordSubmitClicked()
+        {
+            string email = EnsureAuthManager().LastRecoveryEmail;
+            if (string.IsNullOrEmpty(email) && forgotPasswordEmailInput != null)
+            {
+                email = forgotPasswordEmailInput.text.Trim();
+            }
+            if (string.IsNullOrEmpty(email) && loginEmailInput != null)
+            {
+                email = loginEmailInput.text.Trim();
+            }
+
+            if (string.IsNullOrEmpty(email) || !IsValidEmail(email))
+            {
+                ShowTemporaryMessage("Please enter your email in the Forgot Password screen first.");
+                ShowForgotPasswordPanel();
+                return;
+            }
+
             string resetCode = resetPasswordCodeInput != null ? resetPasswordCodeInput.text.Trim() : string.Empty;
             string newPassword = resetPasswordNewInput != null ? resetPasswordNewInput.text : string.Empty;
             string confirmPassword = resetPasswordConfirmInput != null ? resetPasswordConfirmInput.text : string.Empty;
@@ -310,6 +772,12 @@ namespace Utsuru.UI
                 return;
             }
 
+            if (newPassword.Length < 6)
+            {
+                ShowTemporaryMessage("Password must be at least 6 characters long.");
+                return;
+            }
+
             if (string.IsNullOrEmpty(confirmPassword))
             {
                 ShowTemporaryMessage("Please confirm your new password.");
@@ -322,8 +790,46 @@ namespace Utsuru.UI
                 return;
             }
 
-            // Validated locally: show prototype message, do not modify actual password
-            ShowTemporaryMessage("Password reset validated locally. Backend is not connected.");
+            SetResetPasswordLoadingState(true);
+
+            try
+            {
+                var auth = EnsureAuthManager();
+                var result = await auth.ResetPasswordWithCodeAsync(email, resetCode, newPassword);
+
+                if (result.IsSuccess)
+                {
+                    // Clear fields
+                    if (resetPasswordCodeInput != null) resetPasswordCodeInput.text = string.Empty;
+                    if (resetPasswordNewInput != null) resetPasswordNewInput.text = string.Empty;
+                    if (resetPasswordConfirmInput != null) resetPasswordConfirmInput.text = string.Empty;
+
+                    // Pre-fill email in LoginPanel for convenience
+                    if (loginEmailInput != null)
+                    {
+                        loginEmailInput.text = email;
+                    }
+                    if (loginPasswordInput != null)
+                    {
+                        loginPasswordInput.text = string.Empty;
+                    }
+
+                    ShowLoginPanel();
+                    ShowTemporaryMessage("Password reset successfully! Please log in with your new password.");
+                }
+                else
+                {
+                    ShowTemporaryMessage(result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowTemporaryMessage($"Reset error: {ex.Message}");
+            }
+            finally
+            {
+                SetResetPasswordLoadingState(false);
+            }
         }
 
         private bool IsValidEmail(string email)
@@ -498,6 +1004,14 @@ namespace Utsuru.UI
                 if (t != null) resetPasswordPanel = t.gameObject;
             }
 
+            // Auth Manager
+            if (authManager == null)
+            {
+                authManager = GetComponent<AuthManager>();
+                if (authManager == null) authManager = GetComponentInParent<AuthManager>();
+                if (authManager == null) authManager = GetComponentInChildren<AuthManager>(true);
+            }
+
             // Verification Email UI
             if (verificationEmailUI == null)
             {
@@ -527,10 +1041,10 @@ namespace Utsuru.UI
                     var t = loginPanel.transform.Find("Forgot Password");
                     if (t != null) forgotPasswordNavigationButton = t.GetComponent<Button>();
                 }
-                if (loginUsernameInput == null)
+                if (loginEmailInput == null)
                 {
-                    var t = loginPanel.transform.Find("Username-Input");
-                    if (t != null) loginUsernameInput = t.GetComponent<TMP_InputField>();
+                    var t = loginPanel.transform.Find("Email-Input") ?? loginPanel.transform.Find("Username-Input");
+                    if (t != null) loginEmailInput = t.GetComponent<TMP_InputField>();
                 }
                 if (loginPasswordInput == null)
                 {
@@ -546,6 +1060,11 @@ namespace Utsuru.UI
                 {
                     var t = loginPanel.transform.Find("Remember-me");
                     if (t != null) rememberMeTextButton = t.GetComponent<Button>();
+                }
+                if (incorrectCredentialsAlertBox == null)
+                {
+                    var t = loginPanel.transform.Find("IncorrectEmailPassword-Box");
+                    if (t != null) incorrectCredentialsAlertBox = t.gameObject;
                 }
             }
 
