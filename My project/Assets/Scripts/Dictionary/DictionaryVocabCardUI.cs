@@ -57,12 +57,24 @@ namespace Utsuru.DictionaryUI
                 if (lockedGroup != null) lockedGroup.SetActive(false);
 
                 var vocab = info.vocabulary;
-                if (kanjiLabel != null) kanjiLabel.text = vocab != null ? vocab.DisplayJapanese : info.objectName;
+                string translation = vocab != null ? vocab.translation : "-";
+                string objName = info.objectName;
+                if (Utsuru.Localization.LocalizationManager.Instance != null)
+                {
+                    translation = Utsuru.Localization.LocalizationManager.Instance.GetVocabTranslation(info.objectId, translation);
+                    objName = Utsuru.Localization.LocalizationManager.Instance.GetObjectName(info.objectId, objName);
+                }
+
+                if (kanjiLabel != null) kanjiLabel.text = vocab != null ? vocab.DisplayJapanese : objName;
                 if (romajiLabel != null) romajiLabel.text = vocab != null ? vocab.romaji : "-";
-                if (meaningLabel != null) meaningLabel.text = vocab != null ? vocab.translation : "-";
+                if (meaningLabel != null) meaningLabel.text = translation;
                 if (categoryBadge != null)
                 {
-                    categoryBadge.text = vocab != null && !string.IsNullOrEmpty(vocab.category) ? vocab.category : "Umum";
+                    categoryBadge.text = vocab != null && !string.IsNullOrEmpty(vocab.category) 
+                        ? (Utsuru.Localization.LocalizationManager.Instance != null 
+                            ? Utsuru.Localization.LocalizationManager.Instance.GetCategoryText(vocab.category) 
+                            : vocab.category) 
+                        : "Umum";
                 }
             }
             else
@@ -72,7 +84,9 @@ namespace Utsuru.DictionaryUI
 
                 if (lockedHintLabel != null)
                 {
-                    lockedHintLabel.text = "🔒 Belum Ditemukan\n(Potret objek di kota)";
+                    lockedHintLabel.text = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("LOCKED_HINT", "🔒 Belum Ditemukan\n(Potret objek di kota)") 
+                        : "🔒 Belum Ditemukan\n(Potret objek di kota)";
                 }
             }
         }

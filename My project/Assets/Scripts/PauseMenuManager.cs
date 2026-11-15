@@ -52,6 +52,37 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+        UpdateButtonsText();
+    }
+
+    private void OnDisable()
+    {
+        Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+    {
+        UpdateButtonsText();
+    }
+
+    public void UpdateButtonsText()
+    {
+        if (Utsuru.Localization.LocalizationManager.Instance == null) return;
+        if (settingsButton != null)
+        {
+            var t = settingsButton.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (t != null) t.text = Utsuru.Localization.LocalizationManager.Instance.GetText("BTN_SETTINGS", "Settings");
+        }
+        if (backToMenuButton != null)
+        {
+            var t = backToMenuButton.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (t != null) t.text = Utsuru.Localization.LocalizationManager.Instance.GetText("BTN_BACK_TO_MENU", "Back To Menu");
+        }
+    }
+
     private void Start()
     {
         if (playerController == null)

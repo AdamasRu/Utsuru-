@@ -90,6 +90,32 @@ namespace Utsuru.DictionaryUI
                 rightPageClickArea.onClick.AddListener(NextSpread);
         }
 
+        private void OnEnable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+        }
+
+        private void OnDisable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            if (emptyStateText != null && Utsuru.Localization.LocalizationManager.Instance != null)
+            {
+                emptyStateText.text = Utsuru.Localization.LocalizationManager.Instance.GetText("EMPTY_ALBUM_NOTICE", emptyStateText.text);
+            }
+            if (placeholderRoot != null && placeholderRoot.activeSelf)
+            {
+                ShowPlaceholderMode(currentMode);
+            }
+            else
+            {
+                Refresh();
+            }
+        }
+
         private void OnDestroy()
         {
             ClearTextureCache();
@@ -296,12 +322,19 @@ namespace Utsuru.DictionaryUI
                 emptyStateNotice.SetActive(isEmpty);
                 if (isEmpty && emptyStateText != null)
                 {
+                    bool isInd = Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian;
                     if (currentMode == DictionaryBookMode.Like)
-                        emptyStateText.text = "No liked photos yet.\nTap the heart icon on any photo in your Album to add it here!";
+                        emptyStateText.text = isInd 
+                            ? "Belum ada foto yang disukai.\nKetuk ikon hati pada foto di Album untuk menambahkannya ke sini!" 
+                            : "No liked photos yet.\nTap the heart icon on any photo in your Album to add it here!";
                     else if (currentMode == DictionaryBookMode.Favorite)
-                        emptyStateText.text = "No favorite photos yet.\nTap the star icon on any photo in your Album to add it here!";
+                        emptyStateText.text = isInd 
+                            ? "Belum ada foto favorit.\nKetuk ikon bintang pada foto di Album untuk menambahkannya ke sini!" 
+                            : "No favorite photos yet.\nTap the star icon on any photo in your Album to add it here!";
                     else
-                        emptyStateText.text = "No photos captured yet.\nExplore the town and snap photos of objects to fill your dictionary!";
+                        emptyStateText.text = isInd 
+                            ? "Belum ada foto yang diambil.\nJelajahi kota dan potret objek untuk mengisi kamusmu!" 
+                            : "No photos captured yet.\nExplore the town and snap photos of objects to fill your dictionary!";
                 }
             }
 
@@ -411,7 +444,10 @@ namespace Utsuru.DictionaryUI
 
             if (placeholderTitleText != null)
             {
-                if (mode == DictionaryBookMode.Quiz) placeholderTitleText.text = "QUIZ CHALLENGE";
+                if (mode == DictionaryBookMode.Quiz) 
+                    placeholderTitleText.text = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("QUIZ_TITLE", "QUIZ CHALLENGE") 
+                        : "QUIZ CHALLENGE";
                 else if (mode == DictionaryBookMode.Hiragana) placeholderTitleText.text = "HIRAGANA & KATAKANA";
                 else if (mode == DictionaryBookMode.Module) placeholderTitleText.text = "LEARNING MODULES";
             }
@@ -419,7 +455,9 @@ namespace Utsuru.DictionaryUI
             if (placeholderDescText != null)
             {
                 if (mode == DictionaryBookMode.Quiz) 
-                    placeholderDescText.text = "Test your vocabulary retention with quick quizzes!\n(Feature coming soon in future update)";
+                    placeholderDescText.text = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("QUIZ_DESC", "Feature under construction.\nComing soon in next update!") 
+                        : "Feature under construction.\nComing soon in next update!";
                 else if (mode == DictionaryBookMode.Hiragana) 
                     placeholderDescText.text = "A complete interactive Japanese character chart.\n(Feature coming soon in future update)";
                 else if (mode == DictionaryBookMode.Module) 

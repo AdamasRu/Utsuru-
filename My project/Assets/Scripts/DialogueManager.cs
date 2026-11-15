@@ -260,7 +260,13 @@ public class DialogueManager : MonoBehaviour
         // Pasang JLPT Tag
         if (jlptTagText != null)
         {
-            jlptTagText.text = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
+            string jlptStr = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
+            if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
+            {
+                jlptStr = jlptStr.Replace("Formality:", "Formalitas:")
+                                 .Replace("Casual & Friendly", "Santai & Akrab");
+            }
+            jlptTagText.text = jlptStr;
             jlptTagText.gameObject.SetActive(true);
         }
 
@@ -288,7 +294,10 @@ public class DialogueManager : MonoBehaviour
         if (choosePromptText != null)
         {
             int numChoices = (data.choices != null) ? data.choices.Length : 2;
-            choosePromptText.text = $"CHOOSE YOUR KAIWA RESPONSE [1 to {numChoices}]:";
+            string promptFmt = Utsuru.Localization.LocalizationManager.Instance != null 
+                ? Utsuru.Localization.LocalizationManager.Instance.GetText("CHOOSE_RESPONSE_PROMPT", "CHOOSE YOUR KAIWA RESPONSE [1 to {0}]:")
+                : "CHOOSE YOUR KAIWA RESPONSE [1 to {0}]:";
+            choosePromptText.text = string.Format(promptFmt, numChoices);
             choosePromptText.gameObject.SetActive(true);
         }
         if (choicesContainer != null) choicesContainer.gameObject.SetActive(true);
@@ -323,6 +332,11 @@ public class DialogueManager : MonoBehaviour
                 rmText = data.questionRomaji;
                 enText = data.questionEnglish;
             }
+        }
+
+        if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
+        {
+            enText = Utsuru.Localization.LocalizationManager.Instance.GetDialogueTranslation(jpText, enText);
         }
 
         currentJpQuestion = jpText;
@@ -558,7 +572,10 @@ public class DialogueManager : MonoBehaviour
                 scoreBadgePill.SetActive(true);
                 if (scoreBadgeText != null)
                 {
-                    scoreBadgeText.text = $"+{reward} Points";
+                    string badgeFmt = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("SCORE_POINTS_BADGE", "+{0} Points")
+                        : "+{0} Points";
+                    scoreBadgeText.text = string.Format(badgeFmt, reward);
                 }
             }
         }
@@ -589,6 +606,11 @@ public class DialogueManager : MonoBehaviour
             jpResponse = rawResponse;
             rmResponse = choice.npcResponseRomaji;
             enResponse = choice.npcResponseEnglish;
+        }
+
+        if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
+        {
+            enResponse = Utsuru.Localization.LocalizationManager.Instance.GetDialogueTranslation(jpResponse, enResponse);
         }
 
         currentJpResponse = jpResponse;

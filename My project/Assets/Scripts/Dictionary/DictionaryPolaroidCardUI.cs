@@ -162,6 +162,14 @@ namespace Utsuru.DictionaryUI
             if (info != null && info.vocabulary != null)
             {
                 var v = info.vocabulary;
+                string translation = v.translation;
+                string example = v.exampleSentence;
+                if (Utsuru.Localization.LocalizationManager.Instance != null)
+                {
+                    translation = Utsuru.Localization.LocalizationManager.Instance.GetVocabTranslation(info.objectId, translation);
+                    example = Utsuru.Localization.LocalizationManager.Instance.GetExampleSentence(info.objectId, example);
+                }
+
                 if (kanjiLabel != null)
                 {
                     string kanaText = string.IsNullOrEmpty(v.kana) ? "" : $" <size=75%>({v.kana})</size>";
@@ -171,8 +179,8 @@ namespace Utsuru.DictionaryUI
                 if (meaningLabel != null)
                 {
                     string romajiText = string.IsNullOrEmpty(v.romaji) ? "" : v.romaji;
-                    string englishText = string.IsNullOrEmpty(v.translation) ? (info.objectName ?? "") : v.translation;
-                    meaningLabel.text = $"{romajiText} <color=#94A3B8>•</color> {englishText}";
+                    string transText = string.IsNullOrEmpty(translation) ? (info.objectName ?? "") : translation;
+                    meaningLabel.text = $"{romajiText} <color=#94A3B8>•</color> {transText}";
                 }
 
                 // Sisi Belakang (Contoh Kalimat)
@@ -180,17 +188,25 @@ namespace Utsuru.DictionaryUI
                     backKanjiLabel.text = $"<b>{v.japaneseWord}</b>";
 
                 if (backSentenceJapanese != null)
-                    backSentenceJapanese.text = string.IsNullOrEmpty(v.exampleSentence) ? "「例文準備中」" : v.exampleSentence;
+                    backSentenceJapanese.text = string.IsNullOrEmpty(example) ? "「例文準備中」" : example;
 
                 if (backSentenceEnglish != null)
                 {
-                    string english = string.IsNullOrEmpty(v.translation) ? "" : $"Meaning: {v.translation}";
-                    backSentenceEnglish.text = english;
+                    string prefix = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("PHOTO_MEANING_LABEL", "Meaning: {0}") 
+                        : "Meaning: {0}";
+                    string transDesc = string.IsNullOrEmpty(translation) ? "" : string.Format(prefix, translation);
+                    backSentenceEnglish.text = transDesc;
                 }
             }
             else
             {
-                if (kanjiLabel != null) kanjiLabel.text = record != null ? record.objectName : "—";
+                string objName = record != null ? record.objectName : "—";
+                if (record != null && Utsuru.Localization.LocalizationManager.Instance != null)
+                {
+                    objName = Utsuru.Localization.LocalizationManager.Instance.GetObjectName(record.objectId, objName);
+                }
+                if (kanjiLabel != null) kanjiLabel.text = objName;
                 if (meaningLabel != null) meaningLabel.text = "Photo";
             }
 

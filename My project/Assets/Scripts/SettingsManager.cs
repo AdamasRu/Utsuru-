@@ -7,6 +7,7 @@ using TMPro;
 using StarterAssets;
 using Unity.Cinemachine;
 using UnityEngine.Rendering.Universal;
+using Utsuru.Localization;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -33,6 +34,9 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private Button applyBtn;
     [SerializeField] private Button backBtn;
     [SerializeField] private Button backToTitleBtn;
+
+    [Header("Language Switch (Figma UTSURU)")]
+    [SerializeField] private LanguageToggleUI languageToggleUI;
 
     [Header("Gameplay Controls")]
     [SerializeField] private Button charSetPrevBtn;
@@ -126,6 +130,25 @@ public class SettingsManager : MonoBehaviour
     private readonly Color toggleOnColor = new Color32(106, 67, 47, 255);     // #6A432F
     private readonly Color toggleOffColor = new Color32(213, 199, 188, 255); // Soft grayish-cream dot
 
+    private int currentTabIndex = 0;
+
+    private void OnEnable()
+    {
+        LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged(GameLanguage lang)
+    {
+        UpdateTabVisuals(currentTabIndex);
+        UpdateActionButtonsText();
+        UpdateAllUIElements();
+    }
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -144,6 +167,9 @@ public class SettingsManager : MonoBehaviour
 
         ApplyControlsSettings();
         ApplyFOV(curFov);
+
+        UpdateActionButtonsText();
+        UpdateTabVisuals(currentTabIndex);
     }
 
     private void SetupListeners()
@@ -203,10 +229,78 @@ public class SettingsManager : MonoBehaviour
 
     private void UpdateTabVisuals(int activeTab)
     {
+        currentTabIndex = activeTab;
+
+        if (LocalizationManager.Instance != null)
+        {
+            if (tabGameplayText != null) tabGameplayText.text = LocalizationManager.Instance.GetText("TAB_GAMEPLAY", "Gameplay");
+            if (tabControlsText != null) tabControlsText.text = LocalizationManager.Instance.GetText("TAB_CONTROLS", "Controls");
+            if (tabGraphicsText != null) tabGraphicsText.text = LocalizationManager.Instance.GetText("TAB_GRAPHICS", "Graphics");
+            if (tabAudioText != null) tabAudioText.text = LocalizationManager.Instance.GetText("TAB_AUDIO", "Audio");
+        }
+
         SetTabText(tabGameplayText, activeTab == 0);
         SetTabText(tabControlsText, activeTab == 1);
         SetTabText(tabGraphicsText, activeTab == 2);
         SetTabText(tabAudioText, activeTab == 3);
+    }
+
+    private void UpdateActionButtonsText()
+    {
+        if (LocalizationManager.Instance == null) return;
+        if (applyBtn != null)
+        {
+            var t = applyBtn.GetComponentInChildren<TMP_Text>(true);
+            if (t != null) t.text = LocalizationManager.Instance.GetText("BTN_APPLY", "Apply");
+        }
+        if (backBtn != null)
+        {
+            var t = backBtn.GetComponentInChildren<TMP_Text>(true);
+            if (t != null) t.text = LocalizationManager.Instance.GetText("BTN_BACK", "Back");
+        }
+        if (backToTitleBtn != null)
+        {
+            var t = backToTitleBtn.GetComponentInChildren<TMP_Text>(true);
+            if (t != null) t.text = LocalizationManager.Instance.GetText("BTN_BACK_TITLE", "← Back to Title");
+        }
+    }
+
+    private string GetDisplayModeText(int index)
+    {
+        if (LocalizationManager.Instance != null)
+        {
+            switch (index)
+            {
+                case 0: return LocalizationManager.Instance.GetText("DISPLAY_FULLSCREEN", "Full Screen");
+                case 1: return LocalizationManager.Instance.GetText("DISPLAY_WINDOWED", "Windowed");
+                case 2: return LocalizationManager.Instance.GetText("DISPLAY_BORDERLESS", "Borderless");
+            }
+        }
+        return displayModeOptions[index];
+    }
+
+    private string GetQualityText(int index)
+    {
+        if (LocalizationManager.Instance != null)
+        {
+            switch (index)
+            {
+                case 0: return LocalizationManager.Instance.GetText("QUALITY_LOW", "Low");
+                case 1: return LocalizationManager.Instance.GetText("QUALITY_MEDIUM", "Medium");
+                case 2: return LocalizationManager.Instance.GetText("QUALITY_HIGH", "High");
+                case 3: return LocalizationManager.Instance.GetText("QUALITY_EPIC", "Epic");
+            }
+        }
+        return qualityOptions[index];
+    }
+
+    private string GetFpsLimitText(int index)
+    {
+        if (index == 4 && LocalizationManager.Instance != null)
+        {
+            return LocalizationManager.Instance.GetText("FPS_UNLIMITED", "Unlimited");
+        }
+        return fpsLimitOptions[index];
     }
 
     private void SetTabText(TMP_Text text, bool isActive)
@@ -280,7 +374,7 @@ public class SettingsManager : MonoBehaviour
     private void CycleDisplayMode(int dir)
     {
         curDisplayModeIndex = (curDisplayModeIndex + dir + displayModeOptions.Length) % displayModeOptions.Length;
-        if (displayModeValueText != null) displayModeValueText.text = displayModeOptions[curDisplayModeIndex];
+        if (displayModeValueText != null) displayModeValueText.text = GetDisplayModeText(curDisplayModeIndex);
         PlayerPrefs.SetInt("Setting_DisplayMode", curDisplayModeIndex);
     }
 
@@ -294,7 +388,7 @@ public class SettingsManager : MonoBehaviour
     private void CycleQuality(int dir)
     {
         curQualityIndex = (curQualityIndex + dir + qualityOptions.Length) % qualityOptions.Length;
-        if (qualityValueText != null) qualityValueText.text = qualityOptions[curQualityIndex];
+        if (qualityValueText != null) qualityValueText.text = GetQualityText(curQualityIndex);
         PlayerPrefs.SetInt("Setting_Quality", curQualityIndex);
         ApplyGraphicsQuality();
     }
@@ -302,7 +396,7 @@ public class SettingsManager : MonoBehaviour
     private void CycleFpsLimit(int dir)
     {
         curFpsLimitIndex = (curFpsLimitIndex + dir + fpsLimitOptions.Length) % fpsLimitOptions.Length;
-        if (fpsLimitValueText != null) fpsLimitValueText.text = fpsLimitOptions[curFpsLimitIndex];
+        if (fpsLimitValueText != null) fpsLimitValueText.text = GetFpsLimitText(curFpsLimitIndex);
         PlayerPrefs.SetInt("Setting_FPSLimit", curFpsLimitIndex);
         Application.targetFrameRate = fpsLimitValues[curFpsLimitIndex];
     }
@@ -586,10 +680,10 @@ public class SettingsManager : MonoBehaviour
         UpdateToggleDot(invertXDotImg, curInvertX);
         UpdateToggleDot(invertYDotImg, curInvertY);
 
-        if (displayModeValueText != null) displayModeValueText.text = displayModeOptions[curDisplayModeIndex];
+        if (displayModeValueText != null) displayModeValueText.text = GetDisplayModeText(curDisplayModeIndex);
         if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
-        if (qualityValueText != null) qualityValueText.text = qualityOptions[curQualityIndex];
-        if (fpsLimitValueText != null) fpsLimitValueText.text = fpsLimitOptions[curFpsLimitIndex];
+        if (qualityValueText != null) qualityValueText.text = GetQualityText(curQualityIndex);
+        if (fpsLimitValueText != null) fpsLimitValueText.text = GetFpsLimitText(curFpsLimitIndex);
         if (aaValueText != null) aaValueText.text = aaOptions[curAaIndex];
         UpdateToggleDot(vsyncDotImg, curVsync);
 

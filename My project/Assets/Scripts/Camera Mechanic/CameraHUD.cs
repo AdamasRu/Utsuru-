@@ -61,7 +61,15 @@ namespace Utsuru.Capture
             if (hintLabel == null) return;
 
             hintLabel.gameObject.SetActive(target != null);
-            if (target != null && detector.CurrentInfo != null) hintLabel.text = detector.CurrentInfo.objectName;
+            if (target != null && detector.CurrentInfo != null)
+            {
+                string objName = detector.CurrentInfo.objectName;
+                if (Utsuru.Localization.LocalizationManager.Instance != null)
+                {
+                    objName = Utsuru.Localization.LocalizationManager.Instance.GetObjectName(detector.CurrentInfo.objectId, objName);
+                }
+                hintLabel.text = objName;
+            }
         }
 
         private void UpdatePoints(int total)
