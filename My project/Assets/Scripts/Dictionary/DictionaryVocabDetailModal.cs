@@ -53,14 +53,34 @@ namespace Utsuru.DictionaryUI
             }
 
             var vocab = info.vocabulary;
+            string translation = vocab.translation;
+            string example = vocab.exampleSentence;
+            if (Utsuru.Localization.LocalizationManager.Instance != null)
+            {
+                translation = Utsuru.Localization.LocalizationManager.Instance.GetVocabTranslation(info.objectId, translation);
+                example = Utsuru.Localization.LocalizationManager.Instance.GetExampleSentence(info.objectId, example);
+            }
+
             if (kanjiLabel != null) kanjiLabel.text = vocab.DisplayJapanese;
             if (romajiLabel != null) romajiLabel.text = vocab.romaji;
-            if (meaningLabel != null) meaningLabel.text = vocab.translation;
-            if (categoryLabel != null) categoryLabel.text = !string.IsNullOrEmpty(vocab.category) ? $"Kategori: {vocab.category}" : "";
+            if (meaningLabel != null) meaningLabel.text = translation;
+            if (categoryLabel != null)
+            {
+                string catFmt = Utsuru.Localization.LocalizationManager.Instance != null 
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("MODAL_CATEGORY_LABEL", "Kategori: {0}") 
+                    : "Kategori: {0}";
+                string catVal = Utsuru.Localization.LocalizationManager.Instance != null 
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetCategoryText(vocab.category) 
+                    : vocab.category;
+                categoryLabel.text = !string.IsNullOrEmpty(vocab.category) ? string.Format(catFmt, catVal) : "";
+            }
 
             if (exampleLabel != null)
             {
-                exampleLabel.text = !string.IsNullOrEmpty(vocab.exampleSentence) ? vocab.exampleSentence : "Belum ada contoh kalimat.";
+                string noEx = Utsuru.Localization.LocalizationManager.Instance != null 
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("NO_EXAMPLE_SENTENCE", "Belum ada contoh kalimat.") 
+                    : "Belum ada contoh kalimat.";
+                exampleLabel.text = !string.IsNullOrEmpty(example) ? example : noEx;
                 exampleLabel.gameObject.SetActive(false);
             }
             if (exampleToggle != null) exampleToggle.SetIsOnWithoutNotify(false);

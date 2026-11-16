@@ -63,13 +63,22 @@ namespace Utsuru.DictionaryUI
                 return;
             }
 
-            if (objectNameLabel != null) objectNameLabel.text = currentRecord.objectName;
+            string objName = currentRecord.objectName;
+            if (Utsuru.Localization.LocalizationManager.Instance != null)
+            {
+                objName = Utsuru.Localization.LocalizationManager.Instance.GetObjectName(currentRecord.objectId, objName);
+            }
+            if (objectNameLabel != null) objectNameLabel.text = objName;
+
+            string dateFmt = Utsuru.Localization.LocalizationManager.Instance != null 
+                ? Utsuru.Localization.LocalizationManager.Instance.GetText("PHOTO_DATE_TAKEN", "Diambil: {0}") 
+                : "Diambil: {0}";
             if (dateTakenLabel != null)
             {
                 if (DateTime.TryParse(currentRecord.dateTaken, out DateTime dt))
-                    dateTakenLabel.text = $"Diambil: {dt:dd/MM/yyyy HH:mm}";
+                    dateTakenLabel.text = string.Format(dateFmt, dt.ToString("dd/MM/yyyy HH:mm"));
                 else
-                    dateTakenLabel.text = $"Diambil: {currentRecord.dateTaken}";
+                    dateTakenLabel.text = string.Format(dateFmt, currentRecord.dateTaken);
             }
 
             // Tampilkan foto
@@ -84,11 +93,19 @@ namespace Utsuru.DictionaryUI
             {
                 if (dictionary.Database != null && dictionary.Database.TryGetObject(currentRecord.objectId, out ObjectInfo info) && info.vocabulary != null)
                 {
-                    vocabLabel.text = $"{info.vocabulary.DisplayJapanese} ({info.vocabulary.romaji})\nArti: {info.vocabulary.translation}";
+                    string translation = info.vocabulary.translation;
+                    if (Utsuru.Localization.LocalizationManager.Instance != null)
+                    {
+                        translation = Utsuru.Localization.LocalizationManager.Instance.GetVocabTranslation(info.objectId, translation);
+                    }
+                    string meaningPrefix = Utsuru.Localization.LocalizationManager.Instance != null 
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("PHOTO_MEANING_LABEL", "Arti: {0}") 
+                        : "Arti: {0}";
+                    vocabLabel.text = $"{info.vocabulary.DisplayJapanese} ({info.vocabulary.romaji})\n{string.Format(meaningPrefix, translation)}";
                 }
                 else
                 {
-                    vocabLabel.text = currentRecord.objectName;
+                    vocabLabel.text = objName;
                 }
             }
 

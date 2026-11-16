@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utsuru.Localization;
 
 namespace Utsuru.Capture
 {
@@ -138,7 +139,9 @@ namespace Utsuru.Capture
 
             if (categoryLabel != null)
             {
-                categoryLabel.text = FormatCategory(vocab != null ? vocab.category : "");
+                categoryLabel.text = LocalizationManager.Instance != null 
+                    ? LocalizationManager.Instance.GetCategoryText(vocab != null ? vocab.category : "")
+                    : FormatCategory(vocab != null ? vocab.category : "");
             }
 
             if (kanjiLabel != null)
@@ -152,18 +155,30 @@ namespace Utsuru.Capture
                 else kanjiLabel.text = "-";
             }
 
+            string transText = vocab != null ? vocab.translation : "";
+            if (LocalizationManager.Instance != null && result.Info != null)
+            {
+                transText = LocalizationManager.Instance.GetVocabTranslation(result.Info.objectId, transText);
+            }
+
             if (romajiLabel != null)
             {
                 if (vocab != null)
                 {
-                    romajiLabel.text = $"<color=#2563EB><b>{vocab.romaji}</b></color> <color=#94A3B8>•</color> <color=#475569>{vocab.translation}</color>";
+                    romajiLabel.text = $"<color=#2563EB><b>{vocab.romaji}</b></color> <color=#94A3B8>•</color> <color=#475569>{transText}</color>";
                 }
                 else romajiLabel.text = "-";
             }
 
-            if (vocab != null && !string.IsNullOrEmpty(vocab.exampleSentence))
+            string exampleSentence = vocab != null ? vocab.exampleSentence : "";
+            if (LocalizationManager.Instance != null && result.Info != null)
             {
-                string[] lines = vocab.exampleSentence.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                exampleSentence = LocalizationManager.Instance.GetExampleSentence(result.Info.objectId, exampleSentence);
+            }
+
+            if (!string.IsNullOrEmpty(exampleSentence))
+            {
+                string[] lines = exampleSentence.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 if (exampleJapaneseLabel != null)
                 {
                     exampleJapaneseLabel.text = lines.Length > 0 ? lines[0] : "";
@@ -174,7 +189,7 @@ namespace Utsuru.Capture
                 }
                 if (exampleLabel != null)
                 {
-                    exampleLabel.text = vocab.exampleSentence;
+                    exampleLabel.text = exampleSentence;
                 }
             }
 
@@ -196,7 +211,8 @@ namespace Utsuru.Capture
                 }
                 if (pointBadgeLabel != null)
                 {
-                    pointBadgeLabel.text = "+15 Points";
+                    string badgeFmt = LocalizationManager.Instance != null ? LocalizationManager.Instance.GetText("POINT_REWARD_BADGE", "+15 Points") : "+15 Points";
+                    pointBadgeLabel.text = string.Format(badgeFmt, 15);
                 }
             }
             else
@@ -317,7 +333,8 @@ namespace Utsuru.Capture
 
             if (clip == null || audioSource == null)
             {
-                if (hud != null) hud.ShowMessage(audioErrorMessage);
+                string errMsg = LocalizationManager.Instance != null ? LocalizationManager.Instance.GetText("MSG_AUDIO_ERROR", audioErrorMessage) : audioErrorMessage;
+                if (hud != null) hud.ShowMessage(errMsg);
                 return;
             }
             audioSource.PlayOneShot(clip);
@@ -339,7 +356,8 @@ namespace Utsuru.Capture
             // Mode tes: tidak ada yang ditulis ke disk maupun Dictionary.
             if (testMode)
             {
-                if (hud != null) hud.ShowMessage("Mode tes: tidak ada yang disimpan.");
+                string msg = LocalizationManager.Instance != null ? LocalizationManager.Instance.GetText("MSG_TEST_MODE", "Mode tes: tidak ada yang disimpan.") : "Mode tes: tidak ada yang disimpan.";
+                if (hud != null) hud.ShowMessage(msg);
                 Close();
                 return;
             }
@@ -354,7 +372,8 @@ namespace Utsuru.Capture
             dictionary.AddPhoto(record);
             OnPhotoSaved?.Invoke(record);
 
-            if (hud != null) hud.ShowMessage(savedMessage);
+            string successMsg = LocalizationManager.Instance != null ? LocalizationManager.Instance.GetText("MSG_SAVED", savedMessage) : savedMessage;
+            if (hud != null) hud.ShowMessage(successMsg);
             Close();
         }
 

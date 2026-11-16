@@ -1,0 +1,436 @@
+{
+  "items": [
+    {
+      "objectId": "ICK-01",
+      "objectName": "Sepeda",
+      "translation": "Sepeda",
+      "exampleSentence": "「毎朝、自転車で学校に行きます。」\n(Maiasa, jitensha de gakkou ni ikimasu) — Setiap pagi, saya pergi ke sekolah naik sepeda."
+    },
+    {
+      "objectId": "ICK-02",
+      "objectName": "Mesin Penjual Otomatis",
+      "translation": "Mesin Penjual Otomatis",
+      "exampleSentence": "「駅の前に自動販売機があります。」\n(Eki no mae ni jidouhanbaiki ga arimasu) — Ada mesin penjual otomatis di depan stasiun."
+    },
+    {
+      "objectId": "ICK-03",
+      "objectName": "Poster 1",
+      "translation": "Poster",
+      "exampleSentence": "「壁に赤と青のポスターがあります。」\n(Kabe ni aka to ao no posutaa ga arimasu) — Ada poster merah dan biru di dinding."
+    },
+    {
+      "objectId": "ICK-04",
+      "objectName": "Poster 2",
+      "translation": "Poster Minuman",
+      "exampleSentence": "「ポスターにお酒の写真があります。」\n(Posutaa ni osake no shashin ga arimasu) — Ada foto sake pada poster."
+    },
+    {
+      "objectId": "ICK-05",
+      "objectName": "Poster 3",
+      "translation": "Poster Acara",
+      "exampleSentence": "「このポスターは宝探しのイベントです。」\n(Kono posutaa wa takarasagashi no ibento desu) — Poster ini untuk acara berburu harta karun."
+    },
+    {
+      "objectId": "ICK-06",
+      "objectName": "Poster 4",
+      "translation": "Poster Bianglala",
+      "exampleSentence": "「ポスターに観覧車の絵があります。」\n(Posutaa ni kanransha no e ga arimasu) — Ada gambar bianglala pada poster."
+    },
+    {
+      "objectId": "ICK-07",
+      "objectName": "Papan 1",
+      "translation": "Papan Nama",
+      "exampleSentence": "「看板に「東京の柱」と書いてあります。」\n(Kanban ni “Toukyou no hashira” to kaite arimasu) — Tertulis \"Tiang Tokyo\" pada papan nama."
+    },
+    {
+      "objectId": "ICK-08",
+      "objectName": "Papan 2",
+      "translation": "Papan Pengumuman",
+      "exampleSentence": "「看板に「車を入れないでください」と書いてあります。」\n(Kanban ni “Kuruma o irenaide kudasai” to kaite arimasu) — Tertulis \"Dilarang memasukkan mobil\" pada papan tanda."
+    },
+    {
+      "objectId": "ICK-09",
+      "objectName": "Papan 4",
+      "translation": "Papan Peringatan",
+      "exampleSentence": "「この看板は黄色と黒です。」\n(Kono kanban wa kiiro to kuro desu) — Papan tanda ini berwarna kuning dan hitam."
+    },
+    {
+      "objectId": "ICK-10",
+      "objectName": "Penurunan Trotoar",
+      "translation": "Penurunan Trotoar",
+      "exampleSentence": "「歩道の切り下げを通って車道に出ます。」\n(Hodou no kirisage o tootte shadou ni demasu) — Keluar ke jalan raya melalui penurunan trotoar."
+    },
+    {
+      "objectId": "ICK-11",
+      "objectName": "Papan 7",
+      "translation": "Papan Nama Jalan",
+      "exampleSentence": "「看板に「扇橋二丁目」と書いてあります。」\n(Kanban ni “Ougibashi nichoume” to kaite arimasu) — Tertulis \"Ougibashi 2-chome\" pada papan nama."
+    },
+    {
+      "objectId": "ICK-12",
+      "objectName": "Papan 8",
+      "translation": "Papan Klinik",
+      "exampleSentence": "「看板に「皮フ科」と書いてあります。」\n(Kanban ni “Hifuka” to kaite arimasu) — Tertulis \"Klinik Kulit\" pada papan."
+    },
+    {
+      "objectId": "ICK-13",
+      "objectName": "Papan 9",
+      "translation": "Plakat Alamat",
+      "exampleSentence": "「看板に「11-13」と書いてあります。」\n(Kanban ni “juuichi no juusan” to kaite arimasu) — Tertulis \"11-13\" pada plakat."
+    },
+    {
+      "objectId": "ICK-14",
+      "objectName": "Papan 10",
+      "translation": "Papan Nama Jalan",
+      "exampleSentence": "「看板に「小松通り」と書いてあります。」\n(Kanban ni “Komatsu-doori” to kaite arimasu) — Tertulis \"Jalan Komatsu\" pada papan nama."
+    },
+    {
+      "objectId": "ICK-15",
+      "objectName": "Papan 11",
+      "translation": "Plakat Kantor",
+      "exampleSentence": "「看板に「東京西支店 12-6」と書いてあります。」\n(Kanban ni “Toukyou nishi shiten juuni no roku” to kaite arimasu) — Tertulis \"Kantor Cabang Tokyo Barat 12-6\" pada plakat."
+    },
+    {
+      "objectId": "ICK-16",
+      "objectName": "Papan 12",
+      "translation": "Plakat Alamat",
+      "exampleSentence": "「看板に「小松通り 21-5」と書いてあります。」\n(Kanban ni “Komatsu-doori nijuuichi no go” to kaite arimasu) — Tertulis \"Jalan Komatsu 21-5\" pada plakat."
+    },
+    {
+      "objectId": "ICK-17",
+      "objectName": "Papan 13",
+      "translation": "Plakat Alamat",
+      "exampleSentence": "「看板に「小松通り 23-15」と書いてあります。」\n(Kanban ni “Komatsu-doori nijuusan no juugo” to kaite arimasu) — Tertulis \"Jalan Komatsu 23-15\" pada plakat."
+    },
+    {
+      "objectId": "ICK-18",
+      "objectName": "Papan 14",
+      "translation": "Plakat Nomor Rumah",
+      "exampleSentence": "「看板に「10-7」と書いてあります。」\n(Kanban ni “juu no nana” to kaite arimasu) — Tertulis \"10-7\" pada plakat."
+    },
+    {
+      "objectId": "ICK-19",
+      "objectName": "Batu 1",
+      "translation": "Batu",
+      "exampleSentence": "「道ばたに石があります。」\n(Michibata ni ishi ga arimasu) — Ada batu di pinggir jalan."
+    },
+    {
+      "objectId": "ICK-20",
+      "objectName": "Batu 2",
+      "translation": "Batu",
+      "exampleSentence": "「道ばたに石があります。」\n(Michibata ni ishi ga arimasu) — Ada batu di pinggir jalan."
+    },
+    {
+      "objectId": "ICK-21",
+      "objectName": "Sistem Ventilasi",
+      "translation": "Sistem Ventilasi",
+      "exampleSentence": "「この部屋には換気設備があります。」\n(Kono heya ni wa kanki setsubi ga arimasu) — Kamar ini memiliki sistem ventilasi."
+    },
+    {
+      "objectId": "ICK-22",
+      "objectName": "Tempat Sampah",
+      "translation": "Tempat Sampah",
+      "exampleSentence": "「ごみはごみ箱に捨ててください。」\n(Gomi wa gomibako ni sutete kudasai) — Tolong buang sampah ke tempat sampah."
+    },
+    {
+      "objectId": "ICK-23",
+      "objectName": "Rangka AC",
+      "translation": "Rangka Penyangga AC",
+      "exampleSentence": "「エアコンの室外機を架台に置きます。」\n(Eakon no shitsugaiki o kadai ni okimasu) — Rangka penyangga AC terbuat dari besi."
+    },
+    {
+      "objectId": "ICK-24",
+      "objectName": "Pot Bunga",
+      "translation": "Pot Bunga",
+      "exampleSentence": "「玄関に植木鉢が並んでいます。」\n(Genkan ni uekibachi ga narande imasu) — Ada bunga merah mekar di pot bunga."
+    },
+    {
+      "objectId": "ICK-25",
+      "objectName": "Rak Pajangan",
+      "translation": "Rak / Dudukan",
+      "exampleSentence": "「荷物を台の上に置いてください。」\n(Nimotsu o dai no ue ni oite kudasai) — Ada pot tanaman di atas rak."
+    },
+    {
+      "objectId": "ICK-26",
+      "objectName": "Tiang Listrik",
+      "translation": "Tiang Listrik",
+      "exampleSentence": "「電柱に電線がつながっています。」\n(Denchuu ni densen ga tsunagatte imasu) — Ada kabel listrik di tiang listrik."
+    },
+    {
+      "objectId": "ICK-27",
+      "objectName": "Meteran Air",
+      "translation": "Meteran Air",
+      "exampleSentence": "「水道メーターで使用量を確認します。」\n(Suidou meetaa de shiyouryou o kakunin shimasu) — Petugas memeriksa meteran air setiap bulan."
+    },
+    {
+      "objectId": "ICK-28",
+      "objectName": "Meteran Listrik",
+      "translation": "Meteran Listrik",
+      "exampleSentence": "「電気メーターの数字を見てください。」\n(Denki meetaa no suuji o mite kudasai) — Ada meteran listrik di dinding rumah."
+    },
+    {
+      "objectId": "ICK-29",
+      "objectName": "Penyangga Silang",
+      "translation": "Penyangga Diagonal",
+      "exampleSentence": "「壁の中に筋交いが入っています。」\n(Kabe no naka ni sujikai ga haitte imasu) — Pasang penyangga diagonal agar bangunan lebih kokoh."
+    },
+    {
+      "objectId": "ICK-30",
+      "objectName": "Peti Botol",
+      "translation": "Peti Botol",
+      "exampleSentence": "「空き瓶を瓶ケースに入れます。」\n(Akibin o bin keesu ni iremasu) — Peti botol diletakkan bertumpuk di depan toko."
+    },
+    {
+      "objectId": "ICK-31",
+      "objectName": "Penutup Got",
+      "translation": "Penutup Lubang Got",
+      "exampleSentence": "「マンホールの蓋の上は滑りやすいです。」\n(Manhooru no futa no ue wa suberiyasui desu) — Hati-hati jangan sampai terpeleset di atas penutup got."
+    },
+    {
+      "objectId": "ICK-32",
+      "objectName": "Pagar",
+      "translation": "Pagar",
+      "exampleSentence": "「公園のまわりに柵があります。」\n(Kouen no mawari ni saku ga arimasu) — Pagar putih terpasang mengelilingi rumah."
+    },
+    {
+      "objectId": "ICK-33",
+      "objectName": "Batu 3",
+      "translation": "Batu",
+      "exampleSentence": "「道ばたに大きな石があります。」\n(Michibata ni ookina ishi ga arimasu) — Ada batu di pinggir jalan."
+    },
+    {
+      "objectId": "ICK-34",
+      "objectName": "Batu 4",
+      "translation": "Batu",
+      "exampleSentence": "「庭に小さな石を並べました。」\n(Niwa ni chiisana ishi o narabemashita) — Ada batu di pinggir jalan."
+    },
+    {
+      "objectId": "ICK-35",
+      "objectName": "Tanah",
+      "translation": "Permukaan Tanah",
+      "exampleSentence": "「雨のあとで、地面がぬれています。」\n(Ame no ato de, jimen ga nurete imasu) — Tanah basah karena hujan kemarin."
+    },
+    {
+      "objectId": "ICK-36",
+      "objectName": "Batu Tepi Trotoar",
+      "translation": "Batu Tepi Trotoar (Kerb)",
+      "exampleSentence": "「道路と歩道の間に縁石があります。」\n(Douro to hodou no aida ni enseki ga arimasu) — Berdiri di atas batu tepi trotoar saat menunggu lampu hijau."
+    },
+    {
+      "objectId": "ICK-37",
+      "objectName": "Penurunan Tepi Trotoar",
+      "translation": "Penurunan Batu Trotoar",
+      "exampleSentence": "「縁石切り下げから自転車が通ります。」\n(Enseki kirisage kara jitensha ga toorimasu) — Sepeda melintas melalui penurunan batu trotoar."
+    },
+    {
+      "objectId": "ICK-38",
+      "objectName": "Kerucut Lalu Lintas",
+      "translation": "Kerucut Lalu Lintas",
+      "exampleSentence": "「工事中の道にカラーコーンが置いてあります。」\n(Koujichuu no michi ni karaa koon ga oite arimasu) — Ada kerucut lalu lintas merah di lokasi konstruksi."
+    },
+    {
+      "objectId": "ICK-39",
+      "objectName": "Pagar Pengaman Jalan",
+      "translation": "Pagar Pengaman",
+      "exampleSentence": "「道路の端に防護柵があります。」\n(Douro no hashi ni bougosaku ga arimasu) — Pagar pengaman melindungi pejalan kaki dari kendaraan."
+    },
+    {
+      "objectId": "ICK-40",
+      "objectName": "Jalan",
+      "translation": "Jalan Raya",
+      "exampleSentence": "「この道路は車が多いです。」\n(Kono douro wa kuruma ga ooi desu) — Banyak mobil melintas di jalan ini."
+    },
+    {
+      "objectId": "ICK-41",
+      "objectName": "Papan Toko",
+      "translation": "Papan Nama Toko",
+      "exampleSentence": "「店の前に大きな看板があります。」\n(Mise no mae ni ookina kanban ga arimasu) — Papan nama toko terlihat jelas dari kejauhan."
+    },
+    {
+      "objectId": "ICK-42",
+      "objectName": "Marka Jalan (Berlian)",
+      "translation": "Marka Jalan Belah Ketupat ◊",
+      "exampleSentence": "「横断歩道の手前にひし形の路面標示があります。」\n(Oudan hodou no temae ni hishigata no romen hyouji ga arimasu) — Marka belah ketupat menandakan ada penyeberangan pejalan kaki di depan."
+    },
+    {
+      "objectId": "ICK-43",
+      "objectName": "Marka Jalan 2 (Sepeda)",
+      "translation": "Marka Jalur Sepeda",
+      "exampleSentence": "「道に自転車のマークがかいてあります。」\n(Michi ni jitensha no maaku ga kaite arimasu) — Pesepeda harus melintas di jalur sepeda."
+    },
+    {
+      "objectId": "ICK-44",
+      "objectName": "Marka Jalan (Panah)",
+      "translation": "Marka Jalan Panah >",
+      "exampleSentence": "「路面に矢印がかいてあります。」\n(Romen ni yajirushi ga kaite arimasu) — Ikuti arah yang ditunjukkan oleh marka panah."
+    },
+    {
+      "objectId": "ICK-45",
+      "objectName": "Marka Jalan (Rusak)",
+      "translation": "Permukaan Jalan Rusak",
+      "exampleSentence": "「路面が破損していて、危ないです。」\n(Romen ga hason shite ite, abunai desu) — Hati-hati berkendara karena permukaan jalan rusak."
+    },
+    {
+      "objectId": "ICK-46",
+      "objectName": "Marka Jalan (Garis)",
+      "translation": "Marka Permukaan Jalan",
+      "exampleSentence": "「路面標示は白や黄色の線でかかれています。」\n(Romen hyouji wa shiro ya kiiro no sen de kakarete imasu) — Garis marka putih tergambar rapi di permukaan jalan."
+    },
+    {
+      "objectId": "ICK-47",
+      "objectName": "Rambu Lalu Lintas (X)",
+      "translation": "Rambu Dilarang Masuk (X)",
+      "exampleSentence": "「道路標識を見て運転します。」\n(Douro hyoushiki o mite unten shimasu) — Rambu ini melarang kendaraan melintas masuk."
+    },
+    {
+      "objectId": "ICK-48",
+      "objectName": "Rambu Lalu Lintas (-)",
+      "translation": "Rambu Jalan Ditutup (-)",
+      "exampleSentence": "「交差点の手前に道路標識があります。」\n(Kousaten no temae ni douro hyoushiki ga arimasu) — Jalan di depan ditutup sementara waktu."
+    },
+    {
+      "objectId": "ICK-49",
+      "objectName": "Tiang Rambu (X)",
+      "translation": "Tiang Rambu",
+      "exampleSentence": "「標識柱が歩道に立っています。」\n(Hyoushikichuu ga hodou ni tatte imasu) — Rambu lalu lintas terpasang kokoh pada tiang."
+    },
+    {
+      "objectId": "ICK-50",
+      "objectName": "Tiang Rambu (Arah)",
+      "translation": "Tiang Rambu Petunjuk Arah",
+      "exampleSentence": "「この標識は、直進か左折しかできないという意味です。」\n(Kono hyoushiki wa, chokushin ka sasetsu shika dekinai to iu imi desu) — Rambu ini menandakan hanya boleh berjalan lurus atau belok kiri."
+    },
+    {
+      "objectId": "ICK-51",
+      "objectName": "Tiang Rambu (Penyeberang)",
+      "translation": "Tiang Rambu Penyeberangan",
+      "exampleSentence": "「横断歩道の標識柱が立っています。」\n(Oudan hodou no hyoushikichuu ga tatte imasu) — Tiang rambu penyeberangan pejalan kaki berdiri di dekat trotoar."
+    },
+    {
+      "objectId": "ICK-52",
+      "objectName": "Penyeberangan Jalan",
+      "translation": "Penyeberangan Pejalan Kaki (Zebra Cross)",
+      "exampleSentence": "「横断歩道を渡るとき、右と左を見ます。」\n(Oudan hodou o wataru toki, migi to hidari o mimasu) — Tengok kanan dan kiri sebelum menyeberang di zebra cross."
+    },
+    {
+      "objectId": "ICK-53",
+      "objectName": "Trotoar",
+      "translation": "Trotoar Pejalan Kaki",
+      "exampleSentence": "「歩道を歩いてください。」\n(Hodou o aruite kudasai) — Silakan berjalan di trotoar pejalan kaki."
+    },
+    {
+      "objectId": "ICK-54",
+      "objectName": "AC",
+      "translation": "Pendingin Ruangan (AC)",
+      "exampleSentence": "「部屋のエアコンをつけます。」\n(Heya no eakon o tsukemasu) — Saya menyalakan AC di dalam kamar."
+    },
+    {
+      "objectId": "ICK-55",
+      "objectName": "Meteran Gas",
+      "translation": "Meteran Gas",
+      "exampleSentence": "「ガスメーターは家の外にあります。」\n(Gasu meetaa wa ie no soto ni arimasu) — Meteran gas berada di luar rumah."
+    },
+    {
+      "objectId": "ICK-56",
+      "objectName": "Rumput",
+      "translation": "Rumput / Ilalang",
+      "exampleSentence": "「庭の草を取りました。」\n(Niwa no kusa o torimashita) — Saya mencabut rumput liar di halaman rumah."
+    },
+    {
+      "objectId": "ICK-57",
+      "objectName": "Pipa",
+      "translation": "Pipa Saluran Air",
+      "exampleSentence": "「壁の裏に配管が通っています。」\n(Kabe no ura ni haikan ga tootte imasu) — Pipa saluran air terpasang di balik dinding."
+    },
+    {
+      "objectId": "ICK-58",
+      "objectName": "Pipa Siku",
+      "translation": "Sambungan Siku Pipa",
+      "exampleSentence": "「配管の角にエルボをつけます。」\n(Haikan no kado ni erubo o tsukemasu) — Saya memasang sambungan siku di sudut pipa."
+    },
+    {
+      "objectId": "ICK-59",
+      "objectName": "Kotak Surat",
+      "translation": "Kotak Surat",
+      "exampleSentence": "「郵便受けに手紙が入っています。」\n(Yuubin uke ni tegami ga haitte imasu) — Ada surat di dalam kotak surat."
+    },
+    {
+      "objectId": "ICK-60",
+      "objectName": "Stiker",
+      "translation": "Stiker / Dikal",
+      "exampleSentence": "「ドアにステッカーが貼ってあります。」\n(Doa ni sutekkaa ga hatte arimasu) — Ada stiker tertempel rapi di pintu."
+    },
+    {
+      "objectId": "ICK-61",
+      "objectName": "Lampu Jalan",
+      "translation": "Lampu Penerangan Jalan",
+      "exampleSentence": "「夜、街灯がつきます。」\n(Yoru, gaitou ga tsukimasu) — Lampu jalan menyala terang saat malam hari."
+    },
+    {
+      "objectId": "ICK-62",
+      "objectName": "Panel Listrik",
+      "translation": "Kotak Panel Listrik",
+      "exampleSentence": "「配電盤を開けないでください。」\n(Haidenban o akenai de kudasai) — Harap jangan membuka kotak panel listrik."
+    },
+    {
+      "objectId": "ICK-63",
+      "objectName": "Kabel Listrik",
+      "translation": "Kabel Listrik",
+      "exampleSentence": "「空に電線がたくさんあります。」\n(Sora ni densen ga takusan arimasu) — Banyak kabel listrik membentang di atas jalan."
+    },
+    {
+      "objectId": "ICK-64",
+      "objectName": "Kanopi",
+      "translation": "Kanopi / Atap Peneduh",
+      "exampleSentence": "「雨の日は庇の下で待ちます。」\n(Ame no hi wa hisashi no shita de machimasu) — Saat hujan turun, saya berteduh di bawah kanopi."
+    },
+    {
+      "objectId": "ICK-65",
+      "objectName": "Siku Besi",
+      "translation": "Siku Logam / Braket",
+      "exampleSentence": "「棚に角金具をつけました。」\n(Tana ni kado kanagu o tsukemashita) — Saya memasang siku logam penguat pada rak."
+    },
+    {
+      "objectId": "ICK-66",
+      "objectName": "Pipa Plastik",
+      "translation": "Pipa Plastik (PVC)",
+      "exampleSentence": "「プラスチック管は軽くて、水に強いです。」\n(Purasuchikku kan wa karukute, mizu ni tsuyoi desu) — Pipa plastik berbobot ringan dan tahan terhadap air."
+    },
+    {
+      "objectId": "ICK-67",
+      "objectName": "Antena Parabola",
+      "translation": "Antena Parabola",
+      "exampleSentence": "「ベランダにパラボラアンテナがあります。」\n(Beranda ni parabora antena ga arimasu) — Ada antena parabola terpasang di balkon."
+    },
+    {
+      "objectId": "ICK-68",
+      "objectName": "Ubin Pemandu",
+      "translation": "Ubin Pemandu (Guiding Block)",
+      "exampleSentence": "「駅の床に点字ブロックがあります。」\n(Eki no yuka ni tenji burokku ga arimasu) — Ada ubin pemandu bagi tunanetra di lantai stasiun."
+    },
+    {
+      "objectId": "ICK-69",
+      "objectName": "Minivan",
+      "translation": "Mobil Minivan",
+      "exampleSentence": "「道にミニバンが止まっています。」\n(Michi ni miniban ga tomatte imasu) — Sebuah mobil minivan terparkir di pinggir jalan."
+    },
+    {
+      "objectId": "ICK-70",
+      "objectName": "Skuter",
+      "translation": "Skuter / Motor Matik",
+      "exampleSentence": "「彼はスクーターで通勤しています。」\n(Kare wa sukuutaa de tsuukin shite imasu) — Dia berangkat kerja mengendarai skuter."
+    },
+    {
+      "objectId": "ICK-71",
+      "objectName": "Lampu Lalu Lintas",
+      "translation": "Lampu Lalu Lintas",
+      "exampleSentence": "「信号機が赤になりました。」\n(Shingouki ga aka ni narimashita) — Lampu lalu lintas menyala merah."
+    },
+    {
+      "objectId": "ICK-72",
+      "objectName": "Rumah",
+      "translation": "Rumah / Hunian",
+      "exampleSentence": "「私の家は駅から近いです。」\n(Watashi no ie wa eki kara chikai desu) — Rumah saya terletak dekat dari stasiun."
+    }
+  ]
+}
