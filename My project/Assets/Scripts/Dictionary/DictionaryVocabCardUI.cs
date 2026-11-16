@@ -37,6 +37,21 @@ namespace Utsuru.DictionaryUI
             if (cardButton != null) cardButton.onClick.AddListener(HandleClick);
         }
 
+        private void OnEnable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+        }
+
+        private void OnDisable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            if (currentInfo != null) Bind(currentInfo, isDiscovered, onClickCallback);
+        }
+
         public void Bind(ObjectInfo info, bool discovered, Action<ObjectInfo> onClick)
         {
             currentInfo = info;

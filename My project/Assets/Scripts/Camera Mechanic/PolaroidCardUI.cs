@@ -118,11 +118,21 @@ namespace Utsuru.Capture
         {
             if (captureSystem == null) captureSystem = FindFirstObjectByType<CameraCaptureSystem>();
             if (captureSystem != null) captureSystem.OnPhotoCaptured += Show;
+            LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
         }
 
         private void OnDisable()
         {
             if (captureSystem != null) captureSystem.OnPhotoCaptured -= Show;
+            LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(GameLanguage lang)
+        {
+            if (panelRoot != null && panelRoot.activeSelf && current != null)
+            {
+                Show(current);
+            }
         }
 
         public void Show(PhotoCaptureResult result)

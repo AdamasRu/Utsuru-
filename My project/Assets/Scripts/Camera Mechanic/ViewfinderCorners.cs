@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utsuru.Localization;
 
 namespace Utsuru.Capture
 {
@@ -36,6 +37,10 @@ namespace Utsuru.Capture
         private InteractableDetector detector;
         private bool overlayBuilt;
 
+        // References untuk OSD teks agar dapat diperbarui saat bahasa diganti
+        private TextMeshProUGUI osdTopText;
+        private TextMeshProUGUI osdBottomText;
+
         private void Awake()
         {
             EnsureBuilt();
@@ -51,11 +56,15 @@ namespace Utsuru.Capture
                 detector.OnTargetChanged += HandleTargetChanged;
                 HandleTargetChanged(detector.CurrentTarget);
             }
+
+            LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+            RefreshOSDText();
         }
 
         private void OnDisable()
         {
             if (detector != null) detector.OnTargetChanged -= HandleTargetChanged;
+            LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
         }
 
         private void HandleTargetChanged(InteractableObject target)
@@ -64,6 +73,27 @@ namespace Utsuru.Capture
             for (int i = 0; i < focusBracketImages.Count; i++)
             {
                 if (focusBracketImages[i] != null) focusBracketImages[i].color = targetColor;
+            }
+        }
+
+        private void HandleLanguageChanged(GameLanguage lang)
+        {
+            RefreshOSDText();
+        }
+
+        private void RefreshOSDText()
+        {
+            if (osdTopText != null)
+            {
+                osdTopText.text = LocalizationManager.Instance != null
+                    ? LocalizationManager.Instance.GetText("CAMERA_STATUS_ACTIVE", "● <b>CAMERA ACTIVE</b> [F/2.8  1/250]")
+                    : "● <b>CAMERA ACTIVE</b> [F/2.8  1/250]";
+            }
+            if (osdBottomText != null)
+            {
+                osdBottomText.text = LocalizationManager.Instance != null
+                    ? LocalizationManager.Instance.GetText("CAMERA_CONTROLS_HINT", "<color=#FFFF88>[C]</color> Exit Camera    <color=#FFFF88>[LEFT CLICK]</color> Take Photo")
+                    : "<color=#FFFF88>[C]</color> Exit Camera    <color=#FFFF88>[LEFT CLICK]</color> Take Photo";
             }
         }
 
@@ -206,11 +236,10 @@ namespace Utsuru.Capture
             rectTop.anchoredPosition = new Vector2(margin + 10f, -margin - 12f);
             rectTop.sizeDelta = new Vector2(300f, 35f);
 
-            var tmpTop = osdTop.GetComponent<TextMeshProUGUI>();
-            tmpTop.text = "● <b>KAMERA AKTIF</b> [F/2.8  1/250]";
-            tmpTop.fontSize = 17;
-            tmpTop.color = new Color(1f, 1f, 1f, 0.9f);
-            tmpTop.raycastTarget = false;
+            osdTopText = osdTop.GetComponent<TextMeshProUGUI>();
+            osdTopText.fontSize = 17;
+            osdTopText.color = new Color(1f, 1f, 1f, 0.9f);
+            osdTopText.raycastTarget = false;
 
             // Teks Petunjuk Bawah Tengah: [C] Tutup  |  [Klik Kiri] Jepret
             var osdBottom = new GameObject("OSD_ControlsHint", typeof(RectTransform), typeof(TextMeshProUGUI));
@@ -223,12 +252,14 @@ namespace Utsuru.Capture
             rectBottom.anchoredPosition = new Vector2(0f, margin + 12f);
             rectBottom.sizeDelta = new Vector2(600f, 35f);
 
-            var tmpBottom = osdBottom.GetComponent<TextMeshProUGUI>();
-            tmpBottom.text = "<color=#FFFF88>[C]</color> Keluar Kamera    <color=#FFFF88>[KLIK KIRI]</color> Ambil Foto";
-            tmpBottom.fontSize = 16;
-            tmpBottom.alignment = TextAlignmentOptions.Center;
-            tmpBottom.color = new Color(1f, 1f, 1f, 0.85f);
-            tmpBottom.raycastTarget = false;
+            osdBottomText = osdBottom.GetComponent<TextMeshProUGUI>();
+            osdBottomText.fontSize = 16;
+            osdBottomText.alignment = TextAlignmentOptions.Center;
+            osdBottomText.color = new Color(1f, 1f, 1f, 0.85f);
+            osdBottomText.raycastTarget = false;
+
+            // Set teks awal via localization
+            RefreshOSDText();
         }
 
         private Image CreateBar(Transform parent, string barName, int ax, int ay, Vector2 size, Vector2 position, Color barColor)

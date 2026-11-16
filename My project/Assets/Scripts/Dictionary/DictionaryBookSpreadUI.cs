@@ -93,6 +93,10 @@ namespace Utsuru.DictionaryUI
         private void OnEnable()
         {
             Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+            if (placeholderRoot != null && placeholderRoot.activeSelf)
+            {
+                ShowPlaceholderMode(currentMode);
+            }
         }
 
         private void OnDisable()
@@ -448,8 +452,14 @@ namespace Utsuru.DictionaryUI
                     placeholderTitleText.text = Utsuru.Localization.LocalizationManager.Instance != null 
                         ? Utsuru.Localization.LocalizationManager.Instance.GetText("QUIZ_TITLE", "QUIZ CHALLENGE") 
                         : "QUIZ CHALLENGE";
-                else if (mode == DictionaryBookMode.Hiragana) placeholderTitleText.text = "HIRAGANA & KATAKANA";
-                else if (mode == DictionaryBookMode.Module) placeholderTitleText.text = "LEARNING MODULES";
+                else if (mode == DictionaryBookMode.Hiragana)
+                    placeholderTitleText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("HIRAGANA_TITLE", "HIRAGANA & KATAKANA")
+                        : "HIRAGANA & KATAKANA";
+                else if (mode == DictionaryBookMode.Module)
+                    placeholderTitleText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("MODULE_TITLE", "LEARNING MODULES")
+                        : "LEARNING MODULES";
             }
 
             if (placeholderDescText != null)
@@ -459,9 +469,13 @@ namespace Utsuru.DictionaryUI
                         ? Utsuru.Localization.LocalizationManager.Instance.GetText("QUIZ_DESC", "Feature under construction.\nComing soon in next update!") 
                         : "Feature under construction.\nComing soon in next update!";
                 else if (mode == DictionaryBookMode.Hiragana) 
-                    placeholderDescText.text = "A complete interactive Japanese character chart.\n(Feature coming soon in future update)";
+                    placeholderDescText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("HIRAGANA_DESC", "A complete interactive Japanese character chart.\n(Feature coming soon in future update)")
+                        : "A complete interactive Japanese character chart.\n(Feature coming soon in future update)";
                 else if (mode == DictionaryBookMode.Module) 
-                    placeholderDescText.text = "Guided learning chapters and grammar points.\n(Feature coming soon in future update)";
+                    placeholderDescText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("MODULE_DESC", "Guided learning chapters and grammar points.\n(Feature coming soon in future update)")
+                        : "Guided learning chapters and grammar points.\n(Feature coming soon in future update)";
             }
 
             if (leftPageNumberText != null) leftPageNumberText.text = "—";

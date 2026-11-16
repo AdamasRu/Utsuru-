@@ -73,23 +73,37 @@ namespace Utsuru.DictionaryUI
             if (deleteAlbumButton != null) deleteAlbumButton.onClick.AddListener(PromptDeleteAlbum);
 
             if (favoriteFilterButton != null) favoriteFilterButton.onClick.AddListener(ToggleFavoriteFilter);
-            if (sortDropdown != null)
+            SetupSortDropdown();
+        }
+
+        private void SetupSortDropdown()
+        {
+            if (sortDropdown == null) return;
+            sortDropdown.ClearOptions();
+            var loc = Utsuru.Localization.LocalizationManager.Instance;
+            var options = new List<string>
             {
-                sortDropdown.ClearOptions();
-                sortDropdown.AddOptions(new List<string> { "Terbaru (Stack)", "Terlama", "Favorit Teratas", "Abjad Jepang (A-I-U)" });
-                sortDropdown.onValueChanged.AddListener(OnSortChanged);
-            }
+                loc != null ? loc.GetText("SORT_NEWEST", "Newest (Stack)") : "Newest (Stack)",
+                loc != null ? loc.GetText("SORT_OLDEST", "Oldest") : "Oldest",
+                loc != null ? loc.GetText("SORT_FAVORITE", "Favorite First") : "Favorite First",
+                loc != null ? loc.GetText("SORT_ALPHABET", "Japanese Alphabet (A-I-U)") : "Japanese Alphabet (A-I-U)"
+            };
+            sortDropdown.AddOptions(options);
+            sortDropdown.onValueChanged.RemoveListener(OnSortChanged);
+            sortDropdown.onValueChanged.AddListener(OnSortChanged);
         }
 
         private void OnEnable()
         {
             if (dictionary != null) dictionary.OnDictionaryChanged += RefreshUI;
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
             RefreshUI();
         }
 
         private void OnDisable()
         {
             if (dictionary != null) dictionary.OnDictionaryChanged -= RefreshUI;
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
         }
 
         public void RefreshUI()
@@ -99,6 +113,15 @@ namespace Utsuru.DictionaryUI
 
             RefreshAlbumDropdown();
             RefreshPhotoList();
+            RenderCurrentPage();
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            int currentSort = sortDropdown != null ? sortDropdown.value : 0;
+            SetupSortDropdown();
+            if (sortDropdown != null) sortDropdown.SetValueWithoutNotify(currentSort);
+
             RenderCurrentPage();
         }
 
@@ -212,7 +235,10 @@ namespace Utsuru.DictionaryUI
 
             if (pageIndicatorLabel != null)
             {
-                pageIndicatorLabel.text = $"Halaman {currentPage + 1} / {totalPages}";
+                string fmt = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("PAGE_INDICATOR", "Page {0} / {1}")
+                    : "Page {0} / {1}";
+                pageIndicatorLabel.text = string.Format(fmt, currentPage + 1, totalPages);
             }
 
             if (prevPageButton != null) prevPageButton.interactable = currentPage > 0;
@@ -288,7 +314,12 @@ namespace Utsuru.DictionaryUI
         private void PromptCreateAlbum()
         {
             if (dialog == null) return;
-            dialog.ShowInput("Buat Album Baru", "Album Baru", "Buat", (name) =>
+            var loc = Utsuru.Localization.LocalizationManager.Instance;
+            string title = loc != null ? loc.GetText("DIALOG_NEW_ALBUM_TITLE", "Create New Album") : "Create New Album";
+            string defName = loc != null ? loc.GetText("DIALOG_NEW_ALBUM_DEFAULT", "New Album") : "New Album";
+            string confirmText = loc != null ? loc.GetText("DIALOG_NEW_ALBUM_CONFIRM", "Create") : "Create";
+
+            dialog.ShowInput(title, defName, confirmText, (name) =>
             {
                 if (!string.IsNullOrWhiteSpace(name))
                 {
@@ -305,7 +336,11 @@ namespace Utsuru.DictionaryUI
             var currentAlbum = dictionary.Albums.FirstOrDefault(a => a.albumId == dictionary.ActiveAlbumId);
             if (currentAlbum == null) return;
 
-            dialog.ShowInput("Ganti Nama Album", currentAlbum.albumName, "Simpan", (newName) =>
+            var loc = Utsuru.Localization.LocalizationManager.Instance;
+            string title = loc != null ? loc.GetText("DIALOG_RENAME_ALBUM_TITLE", "Rename Album") : "Rename Album";
+            string confirmText = loc != null ? loc.GetText("DIALOG_RENAME_ALBUM_CONFIRM", "Save") : "Save";
+
+            dialog.ShowInput(title, currentAlbum.albumName, confirmText, (newName) =>
             {
                 if (!string.IsNullOrWhiteSpace(newName))
                 {
@@ -318,16 +353,24 @@ namespace Utsuru.DictionaryUI
         private void PromptDeleteAlbum()
         {
             if (dialog == null) return;
+            var loc = Utsuru.Localization.LocalizationManager.Instance;
             if (dictionary.Albums.Count <= 1)
             {
-                dialog.ShowConfirm("Perhatian", "Tidak bisa menghapus album terakhir. Minimal harus ada 1 album di Dictionary.", "Tutup", null);
+                string warnTitle = loc != null ? loc.GetText("DIALOG_DELETE_ALBUM_WARN_TITLE", "Notice") : "Notice";
+                string warnMsg = loc != null ? loc.GetText("DIALOG_DELETE_ALBUM_WARN_MSG", "Cannot delete the last album. There must be at least 1 album in Dictionary.") : "Cannot delete the last album. There must be at least 1 album in Dictionary.";
+                string closeBtn = loc != null ? loc.GetText("BTN_CLOSE", "Close") : "Close";
+                dialog.ShowConfirm(warnTitle, warnMsg, closeBtn, null);
                 return;
             }
 
             var currentAlbum = dictionary.Albums.FirstOrDefault(a => a.albumId == dictionary.ActiveAlbumId);
             if (currentAlbum == null) return;
 
-            dialog.ShowConfirm("Hapus Album", $"Apakah kamu yakin ingin menghapus album '{currentAlbum.albumName}'?\nSemua foto di dalamnya juga akan terhapus.", "Hapus", () =>
+            string delTitle = loc != null ? loc.GetText("DIALOG_DELETE_ALBUM_TITLE", "Delete Album") : "Delete Album";
+            string delMsgFmt = loc != null ? loc.GetText("DIALOG_DELETE_ALBUM_MSG", "Are you sure you want to delete album '{0}'?\nAll photos in it will also be deleted.") : "Are you sure you want to delete album '{0}'?\nAll photos in it will also be deleted.";
+            string delConfirm = loc != null ? loc.GetText("DIALOG_DELETE_CONFIRM", "Delete") : "Delete";
+
+            dialog.ShowConfirm(delTitle, string.Format(delMsgFmt, currentAlbum.albumName), delConfirm, () =>
             {
                 dictionary.DeleteAlbum(currentAlbum.albumId);
                 RefreshUI();

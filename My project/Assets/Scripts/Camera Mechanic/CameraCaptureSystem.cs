@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Utsuru.Localization;
 
 namespace Utsuru.Capture
 {
@@ -116,7 +117,13 @@ namespace Utsuru.Capture
 
             if (!isNew && !allowReviewCaptured)
             {
-                if (hud != null) hud.ShowMessage(alreadyPhotoMessage);
+                if (hud != null)
+                {
+                    string msg = LocalizationManager.Instance != null
+                        ? LocalizationManager.Instance.GetText("MSG_ALREADY_PHOTO", alreadyPhotoMessage)
+                        : alreadyPhotoMessage;
+                    hud.ShowMessage(msg);
+                }
                 return;
             }
 
@@ -140,9 +147,19 @@ namespace Utsuru.Capture
             {
                 hud.PlayFlash();
                 if (isNew)
-                    hud.ShowMessage(string.Format(newWordMessageFormat, info.vocabulary.japaneseWord, earned));
+                {
+                    string fmt = LocalizationManager.Instance != null
+                        ? LocalizationManager.Instance.GetText("MSG_NEW_WORD", newWordMessageFormat)
+                        : newWordMessageFormat;
+                    hud.ShowMessage(string.Format(fmt, info.vocabulary.japaneseWord, earned));
+                }
                 else
-                    hud.ShowMessage(alreadyPhotoMessage);
+                {
+                    string msg = LocalizationManager.Instance != null
+                        ? LocalizationManager.Instance.GetText("MSG_ALREADY_PHOTO", alreadyPhotoMessage)
+                        : alreadyPhotoMessage;
+                    hud.ShowMessage(msg);
+                }
             }
 
             OnPhotoCaptured?.Invoke(new PhotoCaptureResult

@@ -55,12 +55,14 @@ namespace Utsuru.DictionaryUI
         private void OnEnable()
         {
             if (dictionary != null) dictionary.OnDictionaryChanged += RefreshUI;
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
             RefreshUI();
         }
 
         private void OnDisable()
         {
             if (dictionary != null) dictionary.OnDictionaryChanged -= RefreshUI;
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
         }
 
         public void RefreshUI()
@@ -70,6 +72,12 @@ namespace Utsuru.DictionaryUI
 
             LoadCatalog();
             FilterList();
+            UpdateProgress();
+            RenderCurrentPage();
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
             UpdateProgress();
             RenderCurrentPage();
         }
@@ -138,7 +146,10 @@ namespace Utsuru.DictionaryUI
             }
 
             int percent = total > 0 ? Mathf.RoundToInt((float)discovered / total * 100f) : 0;
-            progressLabel.text = $"Kosakata Ditemukan: {discovered} / {total} ({percent}%)";
+            string fmt = Utsuru.Localization.LocalizationManager.Instance != null
+                ? Utsuru.Localization.LocalizationManager.Instance.GetText("VOCAB_PROGRESS", "Vocabulary Found: {0} / {1} ({2}%)")
+                : "Vocabulary Found: {0} / {1} ({2}%)";
+            progressLabel.text = string.Format(fmt, discovered, total, percent);
         }
 
         private void RenderCurrentPage()
@@ -151,7 +162,10 @@ namespace Utsuru.DictionaryUI
 
             if (pageIndicatorLabel != null)
             {
-                pageIndicatorLabel.text = $"Halaman {currentPage + 1} / {totalPages}";
+                string fmt = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("PAGE_INDICATOR", "Page {0} / {1}")
+                    : "Page {0} / {1}";
+                pageIndicatorLabel.text = string.Format(fmt, currentPage + 1, totalPages);
             }
 
             if (prevPageButton != null) prevPageButton.interactable = currentPage > 0;
@@ -184,9 +198,19 @@ namespace Utsuru.DictionaryUI
                 emptyStateObject.SetActive(total == 0);
                 if (emptyStateLabel != null)
                 {
-                    emptyStateLabel.text = string.IsNullOrEmpty(searchKeyword)
-                        ? "Belum ada katalog kosakata yang terdaftar."
-                        : $"Tidak ditemukan kosakata dengan kata kunci \"{searchKeyword}\".";
+                    if (string.IsNullOrEmpty(searchKeyword))
+                    {
+                        emptyStateLabel.text = Utsuru.Localization.LocalizationManager.Instance != null
+                            ? Utsuru.Localization.LocalizationManager.Instance.GetText("VOCAB_EMPTY_DEFAULT", "No vocabulary catalog registered yet.")
+                            : "No vocabulary catalog registered yet.";
+                    }
+                    else
+                    {
+                        string searchFmt = Utsuru.Localization.LocalizationManager.Instance != null
+                            ? Utsuru.Localization.LocalizationManager.Instance.GetText("VOCAB_EMPTY_SEARCH", "No vocabulary found with keyword \"{0}\".")
+                            : "No vocabulary found with keyword \"{0}\".";
+                        emptyStateLabel.text = string.Format(searchFmt, searchKeyword);
+                    }
                 }
             }
         }

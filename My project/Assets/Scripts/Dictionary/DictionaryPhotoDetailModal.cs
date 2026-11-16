@@ -51,6 +51,22 @@ namespace Utsuru.DictionaryUI
             Hide();
         }
 
+        private void OnEnable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+        }
+
+        private void OnDisable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            if (modalRoot != null && modalRoot.activeSelf && currentRecord != null && dictionary != null)
+                Open(currentRecord, dictionary, onDataChanged);
+        }
+
         public void Open(PhotoRecord record, DictionaryManager dict, Action onModifiedCallback)
         {
             currentRecord = record;
@@ -119,7 +135,18 @@ namespace Utsuru.DictionaryUI
         {
             if (favoriteButtonText != null && currentRecord != null)
             {
-                favoriteButtonText.text = currentRecord.isFavorite ? "★ Favorit" : "☆ Tambah Favorit";
+                if (currentRecord.isFavorite)
+                {
+                    favoriteButtonText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("FAVORITE_REMOVE", "★ Favorite")
+                        : "★ Favorite";
+                }
+                else
+                {
+                    favoriteButtonText.text = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("FAVORITE_ADD", "☆ Add Favorite")
+                        : "☆ Add Favorite";
+                }
                 favoriteButtonText.color = currentRecord.isFavorite ? new Color(1f, 0.85f, 0.1f) : Color.white;
             }
         }
@@ -173,10 +200,20 @@ namespace Utsuru.DictionaryUI
         {
             if (confirmDialog != null)
             {
+                string title = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("DIALOG_DELETE_TITLE", "Delete Photo")
+                    : "Delete Photo";
+                string msgFmt = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("DIALOG_DELETE_MSG", "Are you sure you want to delete '{0}'?")
+                    : "Are you sure you want to delete '{0}'?";
+                string confirmBtn = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("DIALOG_DELETE_CONFIRM", "Delete")
+                    : "Delete";
+
                 confirmDialog.ShowConfirm(
-                    "Hapus Foto",
-                    $"Apakah kamu yakin ingin menghapus foto '{currentRecord.objectName}'?",
-                    "Hapus",
+                    title,
+                    string.Format(msgFmt, currentRecord.objectName),
+                    confirmBtn,
                     () =>
                     {
                         if (dictionary != null && currentRecord != null)

@@ -103,6 +103,67 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+    {
+        if (dialoguePanel != null && dialoguePanel.activeSelf && currentData != null)
+        {
+            // Update JLPT tag jika masih menggunakan default
+            if (jlptTagText != null)
+            {
+                string defaultTag = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("JLPT_DEFAULT_TAG", "Formality: Casual & Friendly • JLPT N5")
+                    : "Formality: Casual & Friendly • JLPT N5";
+                string jlptStr = !string.IsNullOrEmpty(currentData.jlptTag) ? currentData.jlptTag : defaultTag;
+                jlptTagText.text = jlptStr;
+            }
+
+            // Update terjemahan soal atau respon aktif
+            if (!isShowingResponse)
+            {
+                string rawEn = !string.IsNullOrEmpty(currentData.questionEnglish) ? currentData.questionEnglish : "";
+                if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
+                {
+                    currentEnQuestion = Utsuru.Localization.LocalizationManager.Instance.GetDialogueTranslation(currentJpQuestion, rawEn);
+                }
+                else
+                {
+                    currentEnQuestion = rawEn;
+                }
+
+                if (textEnglish != null)
+                    textEnglish.text = currentEnQuestion;
+
+                if (choosePromptText != null && currentData.choices != null)
+                {
+                    string promptFmt = Utsuru.Localization.LocalizationManager.Instance != null
+                        ? Utsuru.Localization.LocalizationManager.Instance.GetText("CHOOSE_RESPONSE_PROMPT", "CHOOSE YOUR KAIWA RESPONSE [1 to {0}]:")
+                        : "CHOOSE YOUR KAIWA RESPONSE [1 to {0}]:";
+                    choosePromptText.text = string.Format(promptFmt, currentData.choices.Length);
+                }
+            }
+            else
+            {
+                if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
+                {
+                    currentEnResponse = Utsuru.Localization.LocalizationManager.Instance.GetDialogueTranslation(currentJpResponse, currentEnResponse);
+                }
+
+                if (textEnglish != null)
+                    textEnglish.text = currentEnResponse;
+            }
+        }
+    }
+
     private void Update()
     {
         if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
@@ -260,12 +321,10 @@ public class DialogueManager : MonoBehaviour
         // Pasang JLPT Tag
         if (jlptTagText != null)
         {
-            string jlptStr = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
-            if (Utsuru.Localization.LocalizationManager.Instance != null && Utsuru.Localization.LocalizationManager.Instance.IsIndonesian)
-            {
-                jlptStr = jlptStr.Replace("Formality:", "Formalitas:")
-                                 .Replace("Casual & Friendly", "Santai & Akrab");
-            }
+            string defaultTag = Utsuru.Localization.LocalizationManager.Instance != null
+                ? Utsuru.Localization.LocalizationManager.Instance.GetText("JLPT_DEFAULT_TAG", "Formality: Casual & Friendly • JLPT N5")
+                : "Formality: Casual & Friendly • JLPT N5";
+            string jlptStr = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : defaultTag;
             jlptTagText.text = jlptStr;
             jlptTagText.gameObject.SetActive(true);
         }

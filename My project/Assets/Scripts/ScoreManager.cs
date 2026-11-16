@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Utsuru.Localization;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -16,6 +17,21 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreUI();
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged(GameLanguage lang)
+    {
+        UpdateScoreUI();
+    }
+
     public void AddScore(int amount)
     {
         currentScore += amount;
@@ -25,6 +41,11 @@ public class ScoreManager : MonoBehaviour
     private void UpdateScoreUI()
     {
         if (scoreText != null)
-            scoreText.text = "Skor: " + currentScore;
+        {
+            string fmt = LocalizationManager.Instance != null
+                ? LocalizationManager.Instance.GetText("SCORE_HUD", "Score: {0}")
+                : "Score: {0}";
+            scoreText.text = string.Format(fmt, currentScore);
+        }
     }
 }

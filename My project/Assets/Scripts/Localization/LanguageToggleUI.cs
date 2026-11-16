@@ -51,6 +51,11 @@ namespace Utsuru.Localization
             if (engButton != null) engButton.onClick.AddListener(SelectEnglish);
         }
 
+        private void Start()
+        {
+            UpdateVisualsInstant();
+        }
+
         private void OnEnable()
         {
             LocalizationManager.OnLanguageChanged += HandleLanguageChanged;

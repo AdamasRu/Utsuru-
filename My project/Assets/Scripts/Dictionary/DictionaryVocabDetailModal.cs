@@ -43,6 +43,22 @@ namespace Utsuru.DictionaryUI
             Hide();
         }
 
+        private void OnEnable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+        }
+
+        private void OnDisable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            if (modalRoot != null && modalRoot.activeSelf && currentInfo != null)
+                Open(currentInfo);
+        }
+
         public void Open(ObjectInfo info)
         {
             currentInfo = info;

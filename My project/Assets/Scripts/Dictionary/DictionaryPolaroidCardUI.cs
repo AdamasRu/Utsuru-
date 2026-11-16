@@ -44,9 +44,12 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private TextMeshProUGUI backKanjiLabel;
         [SerializeField] private TextMeshProUGUI backSentenceJapanese;
         [SerializeField] private TextMeshProUGUI backSentenceEnglish;
+        [SerializeField] private TextMeshProUGUI backFlipHintLabel;
 
         private PhotoRecord currentRecord;
+        private Texture2D currentTexture;
         private ObjectInfo currentInfo;
+        private int currentSlotIndex;
         private Action<PhotoRecord, bool> onLikeChanged;
         private Action<PhotoRecord, bool> onFavoriteChanged;
 
@@ -102,6 +105,56 @@ namespace Utsuru.DictionaryUI
 
             ResetFlip(instant: true);
             ResetVisualState();
+
+            FindBackFlipHintIfNeeded();
+            UpdateFlipHintText();
+        }
+
+        private void OnEnable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged += HandleLanguageChanged;
+            UpdateFlipHintText();
+        }
+
+        private void OnDisable()
+        {
+            Utsuru.Localization.LocalizationManager.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleLanguageChanged(Utsuru.Localization.GameLanguage lang)
+        {
+            UpdateFlipHintText();
+            if (currentRecord != null)
+            {
+                Bind(currentRecord, currentTexture, currentInfo, currentSlotIndex, onLikeChanged, onFavoriteChanged);
+            }
+        }
+
+        private void FindBackFlipHintIfNeeded()
+        {
+            if (backFlipHintLabel == null && backFace != null)
+            {
+                var hints = backFace.GetComponentsInChildren<TextMeshProUGUI>(true);
+                foreach (var h in hints)
+                {
+                    if (h.gameObject.name == "BackFlipHint" || h.text.ToLowerInvariant().Contains("flip card") || h.text.ToLowerInvariant().Contains("balik kartu"))
+                    {
+                        backFlipHintLabel = h;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void UpdateFlipHintText()
+        {
+            FindBackFlipHintIfNeeded();
+            if (backFlipHintLabel != null)
+            {
+                backFlipHintLabel.text = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("TAP_TO_FLIP", "tap to flip card")
+                    : "tap to flip card";
+            }
         }
 
         /// <summary>
@@ -138,9 +191,13 @@ namespace Utsuru.DictionaryUI
             Action<PhotoRecord, bool> onFavoriteCallback)
         {
             currentRecord = record;
+            currentTexture = texture;
             currentInfo = info;
+            currentSlotIndex = slotIndex;
             onLikeChanged = onLikeCallback;
             onFavoriteChanged = onFavoriteCallback;
+
+            UpdateFlipHintText();
 
             gameObject.SetActive(true);
             ResetFlip(instant: true);
@@ -207,7 +264,9 @@ namespace Utsuru.DictionaryUI
                     objName = Utsuru.Localization.LocalizationManager.Instance.GetObjectName(record.objectId, objName);
                 }
                 if (kanjiLabel != null) kanjiLabel.text = objName;
-                if (meaningLabel != null) meaningLabel.text = "Photo";
+                if (meaningLabel != null) meaningLabel.text = Utsuru.Localization.LocalizationManager.Instance != null
+                    ? Utsuru.Localization.LocalizationManager.Instance.GetText("LABEL_PHOTO", "Photo")
+                    : "Photo";
             }
 
             // 4. Update status tombol Like & Favorite
