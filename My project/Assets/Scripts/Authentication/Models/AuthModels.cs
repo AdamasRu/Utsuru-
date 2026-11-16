@@ -32,6 +32,40 @@ namespace Utsuru.Authentication.Models
     }
 
     /// <summary>
+    /// Response payload from Supabase Auth POST /auth/v1/signup.
+    /// Handles both unconfirmed flow (returns SupabaseUser properties) and
+    /// auto-confirmed flow (returns session tokens and nested user).
+    /// </summary>
+    [JsonObject]
+    public class SignUpResponse : SupabaseUser
+    {
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("expires_in")]
+        public int ExpiresIn { get; set; }
+
+        [JsonProperty("refresh_token")]
+        public string RefreshToken { get; set; }
+
+        [JsonProperty("user")]
+        public SupabaseUser NestedUser { get; set; }
+
+        /// <summary>
+        /// Resolved user object regardless of whether Supabase returned root user or nested user.
+        /// </summary>
+        public SupabaseUser ResolvedUser => NestedUser ?? this;
+
+        /// <summary>
+        /// True if email confirmation is required (no access token was issued).
+        /// </summary>
+        public bool IsConfirmationRequired => string.IsNullOrEmpty(AccessToken);
+    }
+
+    /// <summary>
     /// Payload sent to Supabase Auth POST /auth/v1/resend.
     /// </summary>
     [JsonObject]
@@ -273,6 +307,7 @@ namespace Utsuru.Authentication.Models
         public SupabaseUser User { get; }
         public AuthSession Session { get; }
         public bool IsEmailConfirmationRequired { get; }
+        public bool EmailConfirmationRequired => IsEmailConfirmationRequired;
 
         public AuthResult(
             bool isSuccess,

@@ -454,21 +454,9 @@ namespace Utsuru.UI
             string password = signUpPasswordInput != null ? signUpPasswordInput.text : string.Empty;
 
             // Validate inputs locally first before dispatching network request
-            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(password))
             {
-                ShowTemporaryMessage("Please fill in all required fields.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(username))
-            {
-                ShowTemporaryMessage("Please enter your username.");
-                return;
-            }
-
-            if (username.Length < 3)
-            {
-                ShowTemporaryMessage("Username must be at least 3 characters long.");
+                ShowTemporaryMessage("Please enter your email and password.");
                 return;
             }
 
@@ -500,21 +488,34 @@ namespace Utsuru.UI
 
                 if (result.IsSuccess)
                 {
-                    // Pass registered email to dynamic verification display
-                    if (verificationEmailUI != null)
-                    {
-                        verificationEmailUI.SetEmail(email);
-                    }
-
                     // Securely clear password input field
                     if (signUpPasswordInput != null)
                     {
                         signUpPasswordInput.text = string.Empty;
                     }
 
-                    // Open EmailSentPanel
-                    ShowEmailSentPanel();
-                    ShowTemporaryMessage("Verification email sent! Check your inbox.");
+                    if (result.IsEmailConfirmationRequired)
+                    {
+                        // Pass registered email to dynamic verification display
+                        if (verificationEmailUI != null)
+                        {
+                            verificationEmailUI.SetEmail(email);
+                        }
+
+                        // Open EmailSentPanel
+                        ShowEmailSentPanel();
+                        ShowTemporaryMessage("Verification email sent! Check your inbox.");
+                    }
+                    else
+                    {
+                        // Email confirmation is OFF in Supabase - transition smoothly to login panel
+                        ShowLoginPanel();
+                        if (loginEmailInput != null)
+                        {
+                            loginEmailInput.text = email;
+                        }
+                        ShowTemporaryMessage("Account created successfully! Please log in.");
+                    }
                 }
                 else
                 {

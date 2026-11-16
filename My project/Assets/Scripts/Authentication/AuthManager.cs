@@ -252,25 +252,13 @@ namespace Utsuru.Authentication
 
         /// <summary>
         /// Registers a new user account with Supabase Auth (POST /auth/v1/signup).
-        /// Stores the chosen username in Auth user_metadata.
-        /// Does NOT create a session or log the player in, because email confirmation is required.
+        /// Username is optional; if omitted, defaults to the email prefix.
         /// </summary>
-        public async Task<AuthResult> SignUpAsync(string email, string password, string username, CancellationToken cancellationToken = default)
+        public async Task<AuthResult> SignUpAsync(string email, string password, string username = null, CancellationToken cancellationToken = default)
         {
             EnsureInitialized();
 
             // 1. Local validation
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return AuthResult.Failure(400, "Please enter your username.", "empty_username");
-            }
-
-            string cleanUsername = username.Trim();
-            if (cleanUsername.Length < 3)
-            {
-                return AuthResult.Failure(400, "Username must be at least 3 characters long.", "username_too_short");
-            }
-
             if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email.Trim()))
             {
                 return AuthResult.Failure(400, "Please enter a valid email address.", "invalid_email");
@@ -286,6 +274,16 @@ namespace Utsuru.Authentication
             if (password.Length < 6)
             {
                 return AuthResult.Failure(400, "Password must be at least 6 characters long.", "password_too_short");
+            }
+
+            // If username is provided, validate length; otherwise derive from email prefix
+            string cleanUsername = !string.IsNullOrWhiteSpace(username)
+                ? username.Trim()
+                : (cleanEmail.Contains("@") ? cleanEmail.Split('@')[0] : "Player");
+
+            if (!string.IsNullOrWhiteSpace(username) && cleanUsername.Length < 3)
+            {
+                return AuthResult.Failure(400, "Username must be at least 3 characters long.", "username_too_short");
             }
 
             if (restClient == null || projectConfig == null)
@@ -321,14 +319,15 @@ namespace Utsuru.Authentication
                 }
             };
 
-            LogDebug($"Submitting registration request for user: '{cleanUsername}'...");
+            LogDebug($"Submitting registration request for user: '{cleanUsername}' ({cleanEmail})...");
 
             // 4. Dispatch request
-            var response = await restClient.SendPostAsync<SignUpRequest, SupabaseUser>(endpoint, requestPayload, cancellationToken);
+            var response = await restClient.SendPostAsync<SignUpRequest, SignUpResponse>(endpoint, requestPayload, cancellationToken);
 
             if (response.IsSuccess)
             {
-                var user = response.Data;
+                var signUpData = response.Data;
+                var user = signUpData?.ResolvedUser;
 
                 // Check for Supabase email enumeration protection:
                 // When email confirmation is enabled and user already exists, Supabase may return 200 with empty identities list.
@@ -341,8 +340,18 @@ namespace Utsuru.Authentication
                 // Cache registered email for verification display and resend flow
                 lastRegisteredEmail = cleanEmail;
 
-                LogDebug("Registration successful. Email confirmation is required.");
-                return AuthResult.Success(user, emailConfirmationRequired: true);
+                bool confirmationRequired = signUpData == null || signUpData.IsConfirmationRequired;
+
+                if (confirmationRequired)
+                {
+                    LogDebug("Registration successful. Email confirmation is required.");
+                    return AuthResult.Success(user, emailConfirmationRequired: true);
+                }
+                else
+                {
+                    LogDebug("Registration successful. Account active immediately (no confirmation required).");
+                    return AuthResult.Success(user, emailConfirmationRequired: false);
+                }
             }
 
             // 5. Handle errors
