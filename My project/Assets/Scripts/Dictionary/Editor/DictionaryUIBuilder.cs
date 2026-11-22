@@ -19,13 +19,13 @@ namespace Utsuru.DictionaryUI.Editor
             var bgDictSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/BG_dictionary.png");
             var bookPurpleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Purple.png");
 
-            var bmAlbumSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Album.png");
-            var bmLikeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Like.png");
-            var bmFavoriteSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Favorite.png");
-            var bmQuizSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Quiz.png");
-            var bmHiraganaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Hiragana.png");
-            var bmModuleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Module.png");
-            var bmExitSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/BM_Exit.png");
+            var bmAlbumSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_home.png");
+            var bmLikeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_like.png");
+            var bmFavoriteSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_favorite.png");
+            var bmQuizSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_quiz.png");
+            var bmHiraganaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_hiragana.png");
+            var bmModuleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_module.png");
+            var bmExitSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_exit.png");
 
             var polaroidBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Polaroid.png");
             var tapeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Tape_Washi.png");
@@ -234,11 +234,11 @@ namespace Utsuru.DictionaryUI.Editor
             leftNumRt.anchorMin = new Vector2(0f, 0f);
             leftNumRt.anchorMax = new Vector2(0f, 0f);
             leftNumRt.pivot = new Vector2(0f, 0f);
-            leftNumRt.sizeDelta = new Vector2(80f, 30f);
+            leftNumRt.sizeDelta = new Vector2(100f, 40f);
             leftNumRt.anchoredPosition = new Vector2(30f, 15f);
             var leftNumTmp = leftNumGo.AddComponent<TextMeshProUGUI>();
             leftNumTmp.font = nunitoFont;
-            leftNumTmp.fontSize = 18;
+            leftNumTmp.fontSize = 26;
             leftNumTmp.fontStyle = FontStyles.Bold;
             leftNumTmp.color = new Color(0.48f, 0.42f, 0.52f, 0.8f);
             leftNumTmp.text = "1";
@@ -249,11 +249,11 @@ namespace Utsuru.DictionaryUI.Editor
             rightNumRt.anchorMin = new Vector2(1f, 0f);
             rightNumRt.anchorMax = new Vector2(1f, 0f);
             rightNumRt.pivot = new Vector2(1f, 0f);
-            rightNumRt.sizeDelta = new Vector2(80f, 30f);
+            rightNumRt.sizeDelta = new Vector2(100f, 40f);
             rightNumRt.anchoredPosition = new Vector2(-30f, 15f);
             var rightNumTmp = rightNumGo.AddComponent<TextMeshProUGUI>();
             rightNumTmp.font = nunitoFont;
-            rightNumTmp.fontSize = 18;
+            rightNumTmp.fontSize = 26;
             rightNumTmp.fontStyle = FontStyles.Bold;
             rightNumTmp.alignment = TextAlignmentOptions.Right;
             rightNumTmp.color = new Color(0.48f, 0.42f, 0.52f, 0.8f);
@@ -283,13 +283,14 @@ namespace Utsuru.DictionaryUI.Editor
             emptyRt.anchorMin = new Vector2(0.5f, 0.5f);
             emptyRt.anchorMax = new Vector2(0.5f, 0.5f);
             emptyRt.pivot = new Vector2(0.5f, 0.5f);
-            emptyRt.sizeDelta = new Vector2(700f, 200f);
+            emptyRt.sizeDelta = new Vector2(750f, 220f);
             emptyRt.anchoredPosition = new Vector2(0f, 0f);
             var emptyTmp = emptyGo.AddComponent<TextMeshProUGUI>();
             emptyTmp.font = nunitoFont;
-            emptyTmp.fontSize = 20;
+            emptyTmp.fontSize = 26;
             emptyTmp.alignment = TextAlignmentOptions.Center;
             emptyTmp.color = new Color(0.45f, 0.4f, 0.5f, 0.9f);
+            emptyTmp.textWrappingMode = TextWrappingModes.Normal;
             emptyTmp.text = "No photos captured yet.\nExplore the town and snap photos of objects to fill your dictionary!";
             emptyGo.SetActive(false);
 
@@ -311,7 +312,7 @@ namespace Utsuru.DictionaryUI.Editor
             placeTitleRt.anchoredPosition = new Vector2(0f, -40f);
             var placeTitleTmp = placeTitleGo.AddComponent<TextMeshProUGUI>();
             placeTitleTmp.font = zenFont;
-            placeTitleTmp.fontSize = 34;
+            placeTitleTmp.fontSize = 38;
             placeTitleTmp.fontStyle = FontStyles.Bold;
             placeTitleTmp.alignment = TextAlignmentOptions.Center;
             placeTitleTmp.color = new Color(0.24f, 0.2f, 0.28f);
@@ -326,9 +327,10 @@ namespace Utsuru.DictionaryUI.Editor
             placeDescRt.anchoredPosition = new Vector2(0f, -120f);
             var placeDescTmp = placeDescGo.AddComponent<TextMeshProUGUI>();
             placeDescTmp.font = nunitoFont;
-            placeDescTmp.fontSize = 19;
+            placeDescTmp.fontSize = 26;
             placeDescTmp.alignment = TextAlignmentOptions.Center;
             placeDescTmp.color = new Color(0.4f, 0.35f, 0.45f);
+            placeDescTmp.textWrappingMode = TextWrappingModes.Normal;
             placeDescTmp.text = "Feature under construction.\nComing soon in next update!";
 
             placeGo.SetActive(false);
@@ -384,6 +386,12 @@ namespace Utsuru.DictionaryUI.Editor
                     UnityEditor.Events.UnityEventTools.AddPersistentListener(hudBtn.onClick, controller.Toggle);
                 }
             }
+
+            // Bangun juga Tab Hiragana dan Tab Module secara otomatis
+            DictionaryLearnUIBuilder.BuildLearnUI();
+
+            // Bangun Tab Quiz Challenge secara otomatis
+            DictionaryQuizUIBuilder.BuildQuizUI();
 
             // Awalnya tutup viewRoot
             viewGo.SetActive(false);
@@ -506,11 +514,11 @@ namespace Utsuru.DictionaryUI.Editor
             kanjiRt.anchorMin = new Vector2(0.5f, 1f);
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
             kanjiRt.pivot = new Vector2(0f, 1f);
-            kanjiRt.sizeDelta = new Vector2(240f, 28f);
-            kanjiRt.anchoredPosition = new Vector2(-120f, -214f);
+            kanjiRt.sizeDelta = new Vector2(240f, 44f);
+            kanjiRt.anchoredPosition = new Vector2(-120f, -208f);
             var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
             kanjiTmp.font = zenFont;
-            kanjiTmp.fontSize = 20;
+            kanjiTmp.fontSize = 34; // HIGHLIGHT
             kanjiTmp.fontStyle = FontStyles.Bold;
             kanjiTmp.color = new Color(0.15f, 0.12f, 0.12f);
             kanjiTmp.text = "<b>道</b> <size=75%>(みち)</size>";
@@ -522,13 +530,14 @@ namespace Utsuru.DictionaryUI.Editor
             meanRt.anchorMin = new Vector2(0.5f, 1f);
             meanRt.anchorMax = new Vector2(0.5f, 1f);
             meanRt.pivot = new Vector2(0f, 1f);
-            meanRt.sizeDelta = new Vector2(240f, 22f);
-            meanRt.anchoredPosition = new Vector2(-120f, -244f);
+            meanRt.sizeDelta = new Vector2(240f, 55f);
+            meanRt.anchoredPosition = new Vector2(-120f, -252f);
             var meanTmp = meanGo.AddComponent<TextMeshProUGUI>();
             meanTmp.font = nunitoFont;
-            meanTmp.fontSize = 13;
+            meanTmp.fontSize = 24; // STANDAR MINIMAL TAB MODUL
             meanTmp.fontStyle = FontStyles.Bold;
             meanTmp.color = new Color(0.15f, 0.42f, 0.92f); // Vibrant blue
+            meanTmp.textWrappingMode = TextWrappingModes.Normal;
             meanTmp.text = "michi • Street / Road";
             meanTmp.raycastTarget = false;
 
@@ -539,7 +548,7 @@ namespace Utsuru.DictionaryUI.Editor
             likeRt.anchorMax = new Vector2(1f, 0f);
             likeRt.pivot = new Vector2(0.5f, 0.5f);
             likeRt.sizeDelta = new Vector2(30f, 30f);
-            likeRt.anchoredPosition = new Vector2(-84f, 60f);
+            likeRt.anchoredPosition = new Vector2(-76f, 32f);
             var likeBtn = likeGo.AddComponent<Button>();
             var likeImg = likeGo.AddComponent<Image>();
             likeImg.sprite = likeOff;
@@ -554,7 +563,7 @@ namespace Utsuru.DictionaryUI.Editor
             favRt.anchorMax = new Vector2(1f, 0f);
             favRt.pivot = new Vector2(0.5f, 0.5f);
             favRt.sizeDelta = new Vector2(32f, 32f);
-            favRt.anchoredPosition = new Vector2(-47f, 60f);
+            favRt.anchoredPosition = new Vector2(-38f, 32f);
             var favBtn = favGo.AddComponent<Button>();
             var favImg = favGo.AddComponent<Image>();
             favImg.sprite = favOff;
@@ -580,17 +589,17 @@ namespace Utsuru.DictionaryUI.Editor
             var backClickBtn = backClickGo.AddComponent<Button>();
             backClickBtn.transition = Selectable.Transition.None;
 
-            // Judul Kata Belakang
+            // Judul Kata Belakang (HIGHLIGHT: 36)
             GameObject backTitleGo = CreateUIObject("BackKanjiLabel", backGo.transform);
             RectTransform backTitleRt = backTitleGo.GetComponent<RectTransform>();
             backTitleRt.anchorMin = new Vector2(0.5f, 1f);
             backTitleRt.anchorMax = new Vector2(0.5f, 1f);
             backTitleRt.pivot = new Vector2(0.5f, 1f);
-            backTitleRt.sizeDelta = new Vector2(240f, 35f);
-            backTitleRt.anchoredPosition = new Vector2(0f, -30f);
+            backTitleRt.sizeDelta = new Vector2(260f, 46f);
+            backTitleRt.anchoredPosition = new Vector2(0f, -20f);
             var backTitleTmp = backTitleGo.AddComponent<TextMeshProUGUI>();
             backTitleTmp.font = zenFont;
-            backTitleTmp.fontSize = 22;
+            backTitleTmp.fontSize = 36;
             backTitleTmp.fontStyle = FontStyles.Bold;
             backTitleTmp.alignment = TextAlignmentOptions.Center;
             backTitleTmp.color = new Color(0.2f, 0.16f, 0.18f);
@@ -603,21 +612,22 @@ namespace Utsuru.DictionaryUI.Editor
             sentBoxRt.anchorMin = new Vector2(0.5f, 0.5f);
             sentBoxRt.anchorMax = new Vector2(0.5f, 0.5f);
             sentBoxRt.pivot = new Vector2(0.5f, 0.5f);
-            sentBoxRt.sizeDelta = new Vector2(250f, 150f);
-            sentBoxRt.anchoredPosition = new Vector2(0f, 10f);
+            sentBoxRt.sizeDelta = new Vector2(260f, 190f);
+            sentBoxRt.anchoredPosition = new Vector2(0f, 8f);
 
             GameObject sentJpGo = CreateUIObject("SentenceJapanese", sentBoxGo.transform);
             RectTransform sentJpRt = sentJpGo.GetComponent<RectTransform>();
             sentJpRt.anchorMin = new Vector2(0.5f, 1f);
             sentJpRt.anchorMax = new Vector2(0.5f, 1f);
             sentJpRt.pivot = new Vector2(0.5f, 1f);
-            sentJpRt.sizeDelta = new Vector2(240f, 60f);
+            sentJpRt.sizeDelta = new Vector2(250f, 75f);
             sentJpRt.anchoredPosition = new Vector2(0f, 0f);
             var sentJpTmp = sentJpGo.AddComponent<TextMeshProUGUI>();
             sentJpTmp.font = zenFont;
-            sentJpTmp.fontSize = 15;
+            sentJpTmp.fontSize = 28; // HIGHLIGHT KALIMAT JEPANG
             sentJpTmp.alignment = TextAlignmentOptions.Center;
             sentJpTmp.color = new Color(0.12f, 0.16f, 0.22f);
+            sentJpTmp.textWrappingMode = TextWrappingModes.Normal;
             sentJpTmp.text = "「この道をまっすぐ行きます。」";
             sentJpTmp.raycastTarget = false;
 
@@ -626,13 +636,14 @@ namespace Utsuru.DictionaryUI.Editor
             sentEngRt.anchorMin = new Vector2(0.5f, 0f);
             sentEngRt.anchorMax = new Vector2(0.5f, 0f);
             sentEngRt.pivot = new Vector2(0.5f, 0f);
-            sentEngRt.sizeDelta = new Vector2(240f, 75f);
+            sentEngRt.sizeDelta = new Vector2(250f, 85f);
             sentEngRt.anchoredPosition = new Vector2(0f, 5f);
             var sentEngTmp = sentEngGo.AddComponent<TextMeshProUGUI>();
             sentEngTmp.font = nunitoFont;
-            sentEngTmp.fontSize = 12;
+            sentEngTmp.fontSize = 24; // STANDAR MINIMAL TAB MODUL
             sentEngTmp.alignment = TextAlignmentOptions.Center;
             sentEngTmp.color = new Color(0.35f, 0.4f, 0.48f);
+            sentEngTmp.textWrappingMode = TextWrappingModes.Normal;
             sentEngTmp.text = "<i>(Kono michi o massugu ikimasu)</i>\nGo straight along this street.";
             sentEngTmp.raycastTarget = false;
 
@@ -642,11 +653,11 @@ namespace Utsuru.DictionaryUI.Editor
             hintRt.anchorMin = new Vector2(0.5f, 0f);
             hintRt.anchorMax = new Vector2(0.5f, 0f);
             hintRt.pivot = new Vector2(0.5f, 0f);
-            hintRt.sizeDelta = new Vector2(200f, 20f);
-            hintRt.anchoredPosition = new Vector2(0f, 15f);
+            hintRt.sizeDelta = new Vector2(250f, 32f);
+            hintRt.anchoredPosition = new Vector2(0f, 12f);
             var hintTmp = hintGo.AddComponent<TextMeshProUGUI>();
             hintTmp.font = nunitoFont;
-            hintTmp.fontSize = 11;
+            hintTmp.fontSize = 24; // STANDAR MINIMAL TAB MODUL
             hintTmp.alignment = TextAlignmentOptions.Center;
             hintTmp.color = new Color(0.6f, 0.65f, 0.72f);
             hintTmp.text = "tap to flip card";

@@ -44,7 +44,7 @@ namespace Utsuru.DictionaryUI
             }
 
             if (rootObject != null) rootObject.SetActive(true);
-            if (titleLabel != null) titleLabel.text = string.IsNullOrEmpty(record.objectName) ? "Foto" : record.objectName;
+            if (titleLabel != null) titleLabel.text = string.IsNullOrEmpty(record.objectName) ? "Photo" : record.objectName;
 
             UpdateFavoriteVisual(record.isFavorite);
 
