@@ -97,7 +97,60 @@ namespace Utsuru.Authentication
             playerEmail = profile.email;
             playerUsername = profile.username;
 
+            if (LocalAccountManager.EnsureInstance() != null && !string.IsNullOrEmpty(profile.username))
+            {
+                LocalAccountManager.Instance.SetActiveAccount(profile.username);
+            }
+
             Debug.Log($"[SessionManager] Initialized local session (Mode: {currentLoginMode}, User: {playerUsername}, ProfileId: {localProfileId})");
+        }
+
+        /// <summary>
+        /// Initializes the player context from a LocalAccountRecord (100% offline local CRUD).
+        /// </summary>
+        public void InitializeFromLocalAccount(LocalAccountRecord account, bool rememberMe)
+        {
+            if (account == null)
+            {
+                Debug.LogWarning("[SessionManager] Cannot initialize from null local account.");
+                return;
+            }
+
+            currentLoginMode = AccountLoginMode.Registered;
+            authUserId = account.accountId;
+            playerEmail = account.email;
+            playerUsername = account.username;
+            localProfileId = account.accountId;
+
+            LocalProfileData profile = new LocalProfileData
+            {
+                login_mode = "Registered",
+                is_logged_in = rememberMe,
+                auth_user_id = account.accountId,
+                local_profile_id = account.accountId,
+                email = account.email,
+                username = account.username,
+                last_login_timestamp = DateTime.UtcNow.ToString("o")
+            };
+
+            CurrentProfile = profile;
+
+            if (rememberMe)
+            {
+                LocalAccountStorage.SaveProfile(profile);
+            }
+            else
+            {
+                LocalAccountStorage.ClearRememberedAccount();
+                SecureCredentialStorage.ClearCredentials();
+            }
+
+            if (LocalAccountManager.EnsureInstance() != null)
+            {
+                LocalAccountManager.Instance.SetActiveAccount(account.username);
+            }
+
+            Debug.Log($"[SessionManager] Local account session initialized for '{account.username}' (RememberMe: {rememberMe})");
         }
 
         /// <summary>
@@ -238,10 +291,14 @@ namespace Utsuru.Authentication
             playerEmail = null;
             playerUsername = null;
 
-            // 4. Synchronize with AuthManager if active
+            // 4. Synchronize with AuthManager and LocalAccountManager
             if (AuthManager.Instance != null)
             {
                 AuthManager.Instance.ClearSession();
+            }
+            if (LocalAccountManager.Instance != null)
+            {
+                LocalAccountManager.Instance.Logout();
             }
 
             Debug.Log("[SessionManager] Logout complete. User returned to logged-out state.");

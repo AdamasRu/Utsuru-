@@ -95,6 +95,7 @@ namespace Utsuru.UI
         private string originalResetPasswordSubmitText = "Continue";
         private float resendCooldownRemaining = 0f;
         private Coroutine resendCooldownCoroutine;
+        private string recoveryTargetAccount = string.Empty;
 
         private void Awake()
         {
@@ -289,37 +290,32 @@ namespace Utsuru.UI
             }
         }
 
-        public async void OnLoginButtonClicked()
+        public void OnLoginButtonClicked()
         {
-            string email = loginEmailInput != null ? loginEmailInput.text.Trim() : string.Empty;
+            string emailOrUser = loginEmailInput != null ? loginEmailInput.text.Trim() : string.Empty;
             string password = loginPasswordInput != null ? loginPasswordInput.text : string.Empty;
 
             // 1. Client-side credential validation:
-            // If email is empty, invalid format, or password empty, immediately show IncorrectEmailPassword-Box
-            // and do NOT show the black toast box at the bottom.
-            if (string.IsNullOrEmpty(email) || !IsValidEmail(email) || string.IsNullOrEmpty(password))
+            // If empty, immediately show IncorrectEmailPassword-Box
+            if (string.IsNullOrEmpty(emailOrUser) || string.IsNullOrEmpty(password))
             {
                 ShowIncorrectCredentialsAlert();
                 return;
             }
 
-            // 2. Prevent duplicate submissions and update UI loading state
+            // 2. Update UI loading state
             SetLoginLoadingState(true);
             HideIncorrectCredentialsAlert();
             HideToast();
 
             try
             {
-                var auth = EnsureAuthManager();
-                var result = await auth.LoginAsync(email, password);
-
-                if (result.IsSuccess)
+                var mgr = LocalAccountManager.EnsureInstance();
+                if (mgr.Login(emailOrUser, password, out var account, out var error))
                 {
-                    // Phase A4: Connect in-memory session to local persistent storage
                     bool rememberMe = rememberMeToggle != null && rememberMeToggle.isOn;
-                    SessionManager.EnsureInstance().SaveRegisteredSession(result.Session, rememberMe);
+                    SessionManager.EnsureInstance().InitializeFromLocalAccount(account, rememberMe);
 
-                    // Clear password upon successful login
                     if (loginPasswordInput != null)
                     {
                         loginPasswordInput.text = string.Empty;
@@ -327,34 +323,12 @@ namespace Utsuru.UI
                     HideIncorrectCredentialsAlert();
                     HideToast();
 
-                    // Navigate to HomeScreen scene
-                    Debug.Log("[AuthenticationUIManager] Login successful. Navigating to HomeScreen scene...");
+                    Debug.Log($"[AuthenticationUIManager] Local login successful as '{account.username}' (Role: {account.role}). Navigating to HomeScreen...");
                     SceneManager.LoadScene("HomeScreen");
                 }
                 else
                 {
-                    // If email is not confirmed, set up verification UI so the player can resend if needed
-                    if (result.ErrorCode == "email_not_confirmed")
-                    {
-                        HideIncorrectCredentialsAlert();
-                        if (verificationEmailUI != null)
-                        {
-                            verificationEmailUI.SetEmail(email);
-                        }
-                        ShowTemporaryMessage("Please verify your email address before logging in.");
-                    }
-                    else if (IsCredentialError(result.ErrorCode, result.StatusCode))
-                    {
-                        // Email is wrong, unregistered, or password is incorrect:
-                        // Show IncorrectEmailPassword-Box and eliminate the black toast box at the bottom.
-                        ShowIncorrectCredentialsAlert();
-                    }
-                    else
-                    {
-                        // Network error, rate limited, server error, etc.
-                        HideIncorrectCredentialsAlert();
-                        ShowTemporaryMessage(result.ErrorMessage);
-                    }
+                    ShowIncorrectCredentialsAlert();
                 }
             }
             catch (Exception ex)
@@ -447,83 +421,66 @@ namespace Utsuru.UI
             HideIncorrectCredentialsAlert();
         }
 
-        public async void OnSignUpSubmitClicked()
+        public void OnSignUpSubmitClicked()
         {
             string email = signUpEmailInput != null ? signUpEmailInput.text.Trim() : string.Empty;
             string username = signUpUsernameInput != null ? signUpUsernameInput.text.Trim() : string.Empty;
             string password = signUpPasswordInput != null ? signUpPasswordInput.text : string.Empty;
 
-            // Validate inputs locally first before dispatching network request
-            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(password))
+            // Pertahankan bentuk email asli sesuai input field (jangan di-split)
+            if (string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email))
             {
-                ShowTemporaryMessage("Please enter your email and password.");
-                return;
+                username = email;
             }
 
-            if (string.IsNullOrEmpty(email) || !IsValidEmail(email))
+            if (string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(username))
             {
-                ShowTemporaryMessage("Please enter a valid email address.");
+                email = username;
+            }
+
+            if (string.IsNullOrEmpty(email))
+            {
+                ShowTemporaryMessage("Silakan masukkan email.");
                 return;
             }
 
             if (string.IsNullOrEmpty(password))
             {
-                ShowTemporaryMessage("Please enter your password.");
+                ShowTemporaryMessage("Silakan masukkan password.");
                 return;
             }
 
             if (password.Length < 6)
             {
-                ShowTemporaryMessage("Password must be at least 6 characters long.");
+                ShowTemporaryMessage("Password minimal harus 6 karakter.");
                 return;
             }
 
-            // Prevent repeated submissions while request is in-flight
             SetSignUpLoadingState(true);
 
             try
             {
-                var auth = EnsureAuthManager();
-                var result = await auth.SignUpAsync(email, password, username);
-
-                if (result.IsSuccess)
+                var mgr = LocalAccountManager.EnsureInstance();
+                if (mgr.SignUp(username, email, password, out string error))
                 {
-                    // Securely clear password input field
                     if (signUpPasswordInput != null)
                     {
                         signUpPasswordInput.text = string.Empty;
                     }
 
-                    if (result.IsEmailConfirmationRequired)
+                    ShowLoginPanel();
+                    if (loginEmailInput != null)
                     {
-                        // Pass registered email to dynamic verification display
-                        if (verificationEmailUI != null)
-                        {
-                            verificationEmailUI.SetEmail(email);
-                        }
-
-                        // Open EmailSentPanel
-                        ShowEmailSentPanel();
-                        ShowTemporaryMessage("Verification email sent! Check your inbox.");
+                        loginEmailInput.text = !string.IsNullOrEmpty(email) ? email : username;
                     }
-                    else
-                    {
-                        // Email confirmation is OFF in Supabase - transition smoothly to login panel
-                        ShowLoginPanel();
-                        if (loginEmailInput != null)
-                        {
-                            loginEmailInput.text = email;
-                        }
-                        ShowTemporaryMessage("Account created successfully! Please log in.");
-                    }
+                    ShowTemporaryMessage("Akun berhasil dibuat! Silakan login.");
                 }
                 else
                 {
-                    // Remain on SignUpPanel and display error message
-                    ShowTemporaryMessage(result.ErrorMessage);
+                    ShowTemporaryMessage(error);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ShowTemporaryMessage($"Registration error: {ex.Message}");
             }
@@ -533,51 +490,9 @@ namespace Utsuru.UI
             }
         }
 
-        public async void OnResendVerificationClicked()
+        public void OnResendVerificationClicked()
         {
-            if (resendCooldownRemaining > 0f)
-            {
-                ShowTemporaryMessage($"Please wait {Mathf.CeilToInt(resendCooldownRemaining)}s before resending.");
-                return;
-            }
-
-            string email = verificationEmailUI != null ? verificationEmailUI.GetEnteredSignUpEmail() : string.Empty;
-            if (string.IsNullOrEmpty(email) && signUpEmailInput != null)
-            {
-                email = signUpEmailInput.text.Trim();
-            }
-
-            if (string.IsNullOrEmpty(email) || !IsValidEmail(email))
-            {
-                ShowTemporaryMessage("No valid email address found to resend verification.");
-                return;
-            }
-
-            SetResendLoadingState(true);
-
-            try
-            {
-                var auth = EnsureAuthManager();
-                var result = await auth.ResendVerificationEmailAsync(email);
-
-                if (result.IsSuccess)
-                {
-                    ShowTemporaryMessage("Verification email resent! Check your inbox.");
-                    StartResendCooldown(60f);
-                }
-                else
-                {
-                    ShowTemporaryMessage(result.ErrorMessage);
-                }
-            }
-            catch (System.Exception ex)
-            {
-                ShowTemporaryMessage($"Resend error: {ex.Message}");
-            }
-            finally
-            {
-                SetResendLoadingState(false);
-            }
+            ShowTemporaryMessage("Mode offline lokal: Verifikasi email tidak diperlukan.");
         }
 
         private AuthManager EnsureAuthManager()
@@ -695,19 +610,13 @@ namespace Utsuru.UI
             }
         }
 
-        public async void OnForgotPasswordSubmitClicked()
+        public void OnForgotPasswordSubmitClicked()
         {
-            string email = forgotPasswordEmailInput != null ? forgotPasswordEmailInput.text.Trim() : string.Empty;
+            string emailOrUser = forgotPasswordEmailInput != null ? forgotPasswordEmailInput.text.Trim() : string.Empty;
 
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(emailOrUser))
             {
-                ShowTemporaryMessage("Please enter your email address.");
-                return;
-            }
-
-            if (!IsValidEmail(email))
-            {
-                ShowTemporaryMessage("Please enter a valid email address.");
+                ShowTemporaryMessage("Silakan masukkan username atau email.");
                 return;
             }
 
@@ -715,17 +624,16 @@ namespace Utsuru.UI
 
             try
             {
-                var auth = EnsureAuthManager();
-                var result = await auth.SendPasswordResetEmailAsync(email);
-
-                if (result.IsSuccess)
+                var mgr = LocalAccountManager.EnsureInstance();
+                if (mgr.AccountExists(emailOrUser))
                 {
-                    ShowTemporaryMessage("Reset code sent! Please check your email inbox.");
+                    recoveryTargetAccount = emailOrUser;
+                    ShowTemporaryMessage("Akun ditemukan! Silakan masukkan password baru.");
                     ShowResetPasswordPanel();
                 }
                 else
                 {
-                    ShowTemporaryMessage(result.ErrorMessage);
+                    ShowTemporaryMessage("Akun / Email tidak ditemukan di database lokal.");
                 }
             }
             catch (Exception ex)
@@ -738,56 +646,49 @@ namespace Utsuru.UI
             }
         }
 
-        public async void OnResetPasswordSubmitClicked()
+        public void OnResetPasswordSubmitClicked()
         {
-            string email = EnsureAuthManager().LastRecoveryEmail;
-            if (string.IsNullOrEmpty(email) && forgotPasswordEmailInput != null)
+            string target = recoveryTargetAccount;
+            if (string.IsNullOrEmpty(target) && forgotPasswordEmailInput != null)
             {
-                email = forgotPasswordEmailInput.text.Trim();
+                target = forgotPasswordEmailInput.text.Trim();
             }
-            if (string.IsNullOrEmpty(email) && loginEmailInput != null)
+            if (string.IsNullOrEmpty(target) && loginEmailInput != null)
             {
-                email = loginEmailInput.text.Trim();
+                target = loginEmailInput.text.Trim();
             }
 
-            if (string.IsNullOrEmpty(email) || !IsValidEmail(email))
+            if (string.IsNullOrEmpty(target))
             {
-                ShowTemporaryMessage("Please enter your email in the Forgot Password screen first.");
+                ShowTemporaryMessage("Silakan tentukan akun di menu Lupa Password terlebih dahulu.");
                 ShowForgotPasswordPanel();
                 return;
             }
 
-            string resetCode = resetPasswordCodeInput != null ? resetPasswordCodeInput.text.Trim() : string.Empty;
             string newPassword = resetPasswordNewInput != null ? resetPasswordNewInput.text : string.Empty;
             string confirmPassword = resetPasswordConfirmInput != null ? resetPasswordConfirmInput.text : string.Empty;
 
-            if (string.IsNullOrEmpty(resetCode))
-            {
-                ShowTemporaryMessage("Please enter your reset code.");
-                return;
-            }
-
             if (string.IsNullOrEmpty(newPassword))
             {
-                ShowTemporaryMessage("Please enter a new password.");
+                ShowTemporaryMessage("Silakan masukkan password baru.");
                 return;
             }
 
             if (newPassword.Length < 6)
             {
-                ShowTemporaryMessage("Password must be at least 6 characters long.");
+                ShowTemporaryMessage("Password minimal harus 6 karakter.");
                 return;
             }
 
             if (string.IsNullOrEmpty(confirmPassword))
             {
-                ShowTemporaryMessage("Please confirm your new password.");
+                ShowTemporaryMessage("Silakan konfirmasi password baru.");
                 return;
             }
 
             if (newPassword != confirmPassword)
             {
-                ShowTemporaryMessage("Passwords do not match. Please re-enter.");
+                ShowTemporaryMessage("Konfirmasi password tidak cocok.");
                 return;
             }
 
@@ -795,20 +696,16 @@ namespace Utsuru.UI
 
             try
             {
-                var auth = EnsureAuthManager();
-                var result = await auth.ResetPasswordWithCodeAsync(email, resetCode, newPassword);
-
-                if (result.IsSuccess)
+                var mgr = LocalAccountManager.EnsureInstance();
+                if (mgr.ResetPassword(target, newPassword, out string error))
                 {
-                    // Clear fields
                     if (resetPasswordCodeInput != null) resetPasswordCodeInput.text = string.Empty;
                     if (resetPasswordNewInput != null) resetPasswordNewInput.text = string.Empty;
                     if (resetPasswordConfirmInput != null) resetPasswordConfirmInput.text = string.Empty;
 
-                    // Pre-fill email in LoginPanel for convenience
                     if (loginEmailInput != null)
                     {
-                        loginEmailInput.text = email;
+                        loginEmailInput.text = target;
                     }
                     if (loginPasswordInput != null)
                     {
@@ -816,11 +713,11 @@ namespace Utsuru.UI
                     }
 
                     ShowLoginPanel();
-                    ShowTemporaryMessage("Password reset successfully! Please log in with your new password.");
+                    ShowTemporaryMessage("Password berhasil direset! Silakan login.");
                 }
                 else
                 {
-                    ShowTemporaryMessage(result.ErrorMessage);
+                    ShowTemporaryMessage(error);
                 }
             }
             catch (Exception ex)
