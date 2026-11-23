@@ -138,7 +138,7 @@ namespace Utsuru.DictionaryUI
             }
 
             int percent = total > 0 ? Mathf.RoundToInt((float)discovered / total * 100f) : 0;
-            progressLabel.text = $"Kosakata Ditemukan: {discovered} / {total} ({percent}%)";
+            progressLabel.text = $"Vocabulary Discovered: {discovered} / {total} ({percent}%)";
         }
 
         private void RenderCurrentPage()
@@ -151,7 +151,7 @@ namespace Utsuru.DictionaryUI
 
             if (pageIndicatorLabel != null)
             {
-                pageIndicatorLabel.text = $"Halaman {currentPage + 1} / {totalPages}";
+                pageIndicatorLabel.text = $"Page {currentPage + 1} / {totalPages}";
             }
 
             if (prevPageButton != null) prevPageButton.interactable = currentPage > 0;
@@ -185,8 +185,8 @@ namespace Utsuru.DictionaryUI
                 if (emptyStateLabel != null)
                 {
                     emptyStateLabel.text = string.IsNullOrEmpty(searchKeyword)
-                        ? "Belum ada katalog kosakata yang terdaftar."
-                        : $"Tidak ditemukan kosakata dengan kata kunci \"{searchKeyword}\".";
+                        ? "No vocabulary registered in the catalog yet."
+                        : $"No vocabulary found matching keyword \"{searchKeyword}\".";
                 }
             }
         }

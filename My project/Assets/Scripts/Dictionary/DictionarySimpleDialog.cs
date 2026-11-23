@@ -62,7 +62,7 @@ namespace Utsuru.DictionaryUI
                 messageLabel.text = message;
             }
             if (inputField != null) inputField.gameObject.SetActive(false);
-            if (confirmButtonText != null) confirmButtonText.text = confirmText ?? "Ya";
+            if (confirmButtonText != null) confirmButtonText.text = confirmText ?? "Yes";
 
             if (dialogRoot != null) dialogRoot.SetActive(true);
         }

@@ -30,6 +30,7 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private Button tabQuizButton;
         [SerializeField] private Button tabHiraganaButton;
         [SerializeField] private Button tabModuleButton;
+        [SerializeField] private Button tabFlashcardButton;
         [SerializeField] private Button tabExitButton;
 
         [Header("Spread Buku (Isi 2 Halaman)")]
@@ -50,6 +51,7 @@ namespace Utsuru.DictionaryUI
             if (tabQuizButton != null) tabQuizButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Quiz));
             if (tabHiraganaButton != null) tabHiraganaButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Hiragana));
             if (tabModuleButton != null) tabModuleButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Module));
+            if (tabFlashcardButton != null) tabFlashcardButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Flashcard));
             if (tabExitButton != null) tabExitButton.onClick.AddListener(Close);
 
             // Default: tertutup saat awal mulai
@@ -187,6 +189,7 @@ namespace Utsuru.DictionaryUI
             SetTabHighlight(tabQuizButton, currentTab == DictionaryBookMode.Quiz);
             SetTabHighlight(tabHiraganaButton, currentTab == DictionaryBookMode.Hiragana);
             SetTabHighlight(tabModuleButton, currentTab == DictionaryBookMode.Module);
+            SetTabHighlight(tabFlashcardButton, currentTab == DictionaryBookMode.Flashcard);
         }
 
         private void SetTabHighlight(Button btn, bool isActive)
