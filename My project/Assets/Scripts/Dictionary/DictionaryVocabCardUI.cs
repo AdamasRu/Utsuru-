@@ -62,7 +62,7 @@ namespace Utsuru.DictionaryUI
                 if (meaningLabel != null) meaningLabel.text = vocab != null ? vocab.translation : "-";
                 if (categoryBadge != null)
                 {
-                    categoryBadge.text = vocab != null && !string.IsNullOrEmpty(vocab.category) ? vocab.category : "Umum";
+                    categoryBadge.text = vocab != null && !string.IsNullOrEmpty(vocab.category) ? vocab.category : "General";
                 }
             }
             else
@@ -72,7 +72,7 @@ namespace Utsuru.DictionaryUI
 
                 if (lockedHintLabel != null)
                 {
-                    lockedHintLabel.text = "🔒 Belum Ditemukan\n(Potret objek di kota)";
+                    lockedHintLabel.text = "🔒 Not Discovered Yet\n(Photograph objects in town)";
                 }
             }
         }

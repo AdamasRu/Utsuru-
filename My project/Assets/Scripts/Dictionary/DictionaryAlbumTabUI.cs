@@ -76,7 +76,7 @@ namespace Utsuru.DictionaryUI
             if (sortDropdown != null)
             {
                 sortDropdown.ClearOptions();
-                sortDropdown.AddOptions(new List<string> { "Terbaru (Stack)", "Terlama", "Favorit Teratas", "Abjad Jepang (A-I-U)" });
+                sortDropdown.AddOptions(new List<string> { "Newest (Stack)", "Oldest", "Favorites First", "Japanese Alphabetical (A-I-U)" });
                 sortDropdown.onValueChanged.AddListener(OnSortChanged);
             }
         }
@@ -140,7 +140,7 @@ namespace Utsuru.DictionaryUI
             filterFavoriteOnly = !filterFavoriteOnly;
             if (favoriteFilterText != null)
             {
-                favoriteFilterText.text = filterFavoriteOnly ? "★ Favorit Saja" : "☆ Semua Foto";
+                favoriteFilterText.text = filterFavoriteOnly ? "★ Favorites Only" : "☆ All Photos";
                 favoriteFilterText.color = filterFavoriteOnly ? new Color(1f, 0.85f, 0.1f) : Color.white;
             }
             currentPage = 0;
@@ -212,7 +212,7 @@ namespace Utsuru.DictionaryUI
 
             if (pageIndicatorLabel != null)
             {
-                pageIndicatorLabel.text = $"Halaman {currentPage + 1} / {totalPages}";
+                pageIndicatorLabel.text = $"Page {currentPage + 1} / {totalPages}";
             }
 
             if (prevPageButton != null) prevPageButton.interactable = currentPage > 0;
@@ -243,8 +243,8 @@ namespace Utsuru.DictionaryUI
                 if (emptyStateLabel != null)
                 {
                     emptyStateLabel.text = filterFavoriteOnly
-                        ? "Belum ada foto favorit di album ini."
-                        : "Album ini masih kosong.\nBuka Mode Kamera (C) untuk memotret objek jalanan!";
+                        ? "No favorite photos in this album yet."
+                        : "This album is currently empty.\nOpen Camera Mode (C) to snap photos of street objects!";
                 }
             }
         }
@@ -288,7 +288,7 @@ namespace Utsuru.DictionaryUI
         private void PromptCreateAlbum()
         {
             if (dialog == null) return;
-            dialog.ShowInput("Buat Album Baru", "Album Baru", "Buat", (name) =>
+            dialog.ShowInput("Create New Album", "New Album", "Create", (name) =>
             {
                 if (!string.IsNullOrWhiteSpace(name))
                 {
@@ -305,7 +305,7 @@ namespace Utsuru.DictionaryUI
             var currentAlbum = dictionary.Albums.FirstOrDefault(a => a.albumId == dictionary.ActiveAlbumId);
             if (currentAlbum == null) return;
 
-            dialog.ShowInput("Ganti Nama Album", currentAlbum.albumName, "Simpan", (newName) =>
+            dialog.ShowInput("Rename Album", currentAlbum.albumName, "Save", (newName) =>
             {
                 if (!string.IsNullOrWhiteSpace(newName))
                 {
@@ -320,14 +320,14 @@ namespace Utsuru.DictionaryUI
             if (dialog == null) return;
             if (dictionary.Albums.Count <= 1)
             {
-                dialog.ShowConfirm("Perhatian", "Tidak bisa menghapus album terakhir. Minimal harus ada 1 album di Dictionary.", "Tutup", null);
+                dialog.ShowConfirm("Notice", "Cannot delete the last album. There must be at least 1 album in the Dictionary.", "Close", null);
                 return;
             }
 
             var currentAlbum = dictionary.Albums.FirstOrDefault(a => a.albumId == dictionary.ActiveAlbumId);
             if (currentAlbum == null) return;
 
-            dialog.ShowConfirm("Hapus Album", $"Apakah kamu yakin ingin menghapus album '{currentAlbum.albumName}'?\nSemua foto di dalamnya juga akan terhapus.", "Hapus", () =>
+            dialog.ShowConfirm("Delete Album", $"Are you sure you want to delete album '{currentAlbum.albumName}'?\nAll photos inside it will also be deleted.", "Delete", () =>
             {
                 dictionary.DeleteAlbum(currentAlbum.albumId);
                 RefreshUI();

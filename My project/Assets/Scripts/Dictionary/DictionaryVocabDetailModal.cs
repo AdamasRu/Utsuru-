@@ -56,11 +56,11 @@ namespace Utsuru.DictionaryUI
             if (kanjiLabel != null) kanjiLabel.text = vocab.DisplayJapanese;
             if (romajiLabel != null) romajiLabel.text = vocab.romaji;
             if (meaningLabel != null) meaningLabel.text = vocab.translation;
-            if (categoryLabel != null) categoryLabel.text = !string.IsNullOrEmpty(vocab.category) ? $"Kategori: {vocab.category}" : "";
+            if (categoryLabel != null) categoryLabel.text = !string.IsNullOrEmpty(vocab.category) ? $"Category: {vocab.category}" : "";
 
             if (exampleLabel != null)
             {
-                exampleLabel.text = !string.IsNullOrEmpty(vocab.exampleSentence) ? vocab.exampleSentence : "Belum ada contoh kalimat.";
+                exampleLabel.text = !string.IsNullOrEmpty(vocab.exampleSentence) ? vocab.exampleSentence : "No example sentence available.";
                 exampleLabel.gameObject.SetActive(false);
             }
             if (exampleToggle != null) exampleToggle.SetIsOnWithoutNotify(false);

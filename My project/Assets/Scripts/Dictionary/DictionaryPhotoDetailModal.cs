@@ -67,9 +67,9 @@ namespace Utsuru.DictionaryUI
             if (dateTakenLabel != null)
             {
                 if (DateTime.TryParse(currentRecord.dateTaken, out DateTime dt))
-                    dateTakenLabel.text = $"Diambil: {dt:dd/MM/yyyy HH:mm}";
+                    dateTakenLabel.text = $"Taken: {dt:dd/MM/yyyy HH:mm}";
                 else
-                    dateTakenLabel.text = $"Diambil: {currentRecord.dateTaken}";
+                    dateTakenLabel.text = $"Taken: {currentRecord.dateTaken}";
             }
 
             // Tampilkan foto
@@ -84,7 +84,7 @@ namespace Utsuru.DictionaryUI
             {
                 if (dictionary.Database != null && dictionary.Database.TryGetObject(currentRecord.objectId, out ObjectInfo info) && info.vocabulary != null)
                 {
-                    vocabLabel.text = $"{info.vocabulary.DisplayJapanese} ({info.vocabulary.romaji})\nArti: {info.vocabulary.translation}";
+                    vocabLabel.text = $"{info.vocabulary.DisplayJapanese} ({info.vocabulary.romaji})\nMeaning: {info.vocabulary.translation}";
                 }
                 else
                 {
@@ -102,7 +102,7 @@ namespace Utsuru.DictionaryUI
         {
             if (favoriteButtonText != null && currentRecord != null)
             {
-                favoriteButtonText.text = currentRecord.isFavorite ? "★ Favorit" : "☆ Tambah Favorit";
+                favoriteButtonText.text = currentRecord.isFavorite ? "★ Favorite" : "☆ Add Favorite";
                 favoriteButtonText.color = currentRecord.isFavorite ? new Color(1f, 0.85f, 0.1f) : Color.white;
             }
         }
@@ -157,9 +157,9 @@ namespace Utsuru.DictionaryUI
             if (confirmDialog != null)
             {
                 confirmDialog.ShowConfirm(
-                    "Hapus Foto",
-                    $"Apakah kamu yakin ingin menghapus foto '{currentRecord.objectName}'?",
-                    "Hapus",
+                    "Delete Photo",
+                    $"Are you sure you want to delete the photo '{currentRecord.objectName}'?",
+                    "Delete",
                     () =>
                     {
                         if (dictionary != null && currentRecord != null)

@@ -13,7 +13,8 @@ namespace Utsuru.DictionaryUI
         Favorite,
         Quiz,
         Hiragana,
-        Module
+        Module,
+        Flashcard
     }
 
     /// <summary>
@@ -45,6 +46,22 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private TextMeshProUGUI placeholderDescText;
         [SerializeField] private GameObject emptyStateNotice;
         [SerializeField] private TextMeshProUGUI emptyStateText;
+
+        [Header("Kana Spread (Tab Hiragana / Katakana)")]
+        [SerializeField] private GameObject kanaSpreadRoot;
+        [SerializeField] private DictionaryKanaSpreadUI kanaSpreadUI;
+
+        [Header("Module Spread (Tab Module / Course)")]
+        [SerializeField] private GameObject moduleSpreadRoot;
+        [SerializeField] private DictionaryModuleSpreadUI moduleSpreadUI;
+
+        [Header("Quiz Spread (Tab Quiz Challenge)")]
+        [SerializeField] private GameObject quizSpreadRoot;
+        [SerializeField] private DictionaryQuizSpreadUI quizSpreadUI;
+
+        [Header("Flashcard Spread (Tab Flashcard)")]
+        [SerializeField] private GameObject flashcardSpreadRoot;
+        [SerializeField] private DictionaryFlashcardSpreadUI flashcardSpreadUI;
 
         [Header("Animasi Domino Pergantian Halaman")]
         [Tooltip("Jeda waktu antar pasangan slot domino (detik)")]
@@ -116,6 +133,13 @@ namespace Utsuru.DictionaryUI
             if (isPageTurning) return; // Jeda HANYA berlaku selama animasi transisi
             if (currentSpreadIndex > 0)
             {
+                if (currentMode == DictionaryBookMode.Hiragana)
+                {
+                    currentSpreadIndex--;
+                    UpdateKanaSpreadVisual();
+                    return;
+                }
+
                 if (photoSpreadRoot != null && gameObject.activeInHierarchy)
                 {
                     if (pageTurnCoroutine != null) StopCoroutine(pageTurnCoroutine);
@@ -135,6 +159,13 @@ namespace Utsuru.DictionaryUI
             int totalSpreads = GetTotalSpreads();
             if (currentSpreadIndex < totalSpreads - 1)
             {
+                if (currentMode == DictionaryBookMode.Hiragana)
+                {
+                    currentSpreadIndex++;
+                    UpdateKanaSpreadVisual();
+                    return;
+                }
+
                 if (photoSpreadRoot != null && gameObject.activeInHierarchy)
                 {
                     if (pageTurnCoroutine != null) StopCoroutine(pageTurnCoroutine);
@@ -266,16 +297,91 @@ namespace Utsuru.DictionaryUI
             if (dictionaryManager == null)
                 dictionaryManager = FindFirstObjectByType<DictionaryManager>();
 
-            // 1. Tangani mode Placeholder (Quiz, Hiragana, Module)
-            if (currentMode == DictionaryBookMode.Quiz || 
-                currentMode == DictionaryBookMode.Hiragana || 
-                currentMode == DictionaryBookMode.Module)
+            // 1. Tangani mode Hiragana / Katakana (Tabel Native Lengkap Hiragana & Katakana)
+            if (currentMode == DictionaryBookMode.Hiragana)
             {
-                ShowPlaceholderMode(currentMode);
+                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
+                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
+                if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (placeholderRoot != null) placeholderRoot.SetActive(false);
+                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
+                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(true);
+
+                if (currentSpreadIndex >= 3) currentSpreadIndex = 2;
+                UpdateKanaSpreadVisual();
                 return;
             }
 
-            // 2. Mode Foto (Album, Like, Favorite)
+            // 2. Tangani mode Module (Course: Daftar Isi Kiri + Scroll Reader Kanan)
+            if (currentMode == DictionaryBookMode.Module)
+            {
+                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
+                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
+                if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (placeholderRoot != null) placeholderRoot.SetActive(false);
+                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
+                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(true);
+
+                if (leftPageNumberText != null) leftPageNumberText.text = "CONTENTS";
+                if (rightPageNumberText != null) rightPageNumberText.text = "MODULE A1";
+                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                return;
+            }
+
+            // 3. Tangani mode Quiz (Interactive Quiz Challenge)
+            if (currentMode == DictionaryBookMode.Quiz)
+            {
+                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
+                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
+                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
+                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (placeholderRoot != null) placeholderRoot.SetActive(false);
+                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
+
+                if (quizSpreadRoot != null)
+                {
+                    quizSpreadRoot.SetActive(true);
+                    if (quizSpreadUI != null) quizSpreadUI.StartOrRefreshQuiz();
+                }
+
+                if (leftPageNumberText != null) leftPageNumberText.text = "QUIZ";
+                if (rightPageNumberText != null) rightPageNumberText.text = "PRACTICE";
+                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                return;
+            }
+
+            // 4. Tangani mode Flashcard (PBO CRUD Study Deck)
+            if (currentMode == DictionaryBookMode.Flashcard)
+            {
+                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
+                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
+                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
+                if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+                if (placeholderRoot != null) placeholderRoot.SetActive(false);
+                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
+
+                if (flashcardSpreadRoot != null)
+                {
+                    flashcardSpreadRoot.SetActive(true);
+                    if (flashcardSpreadUI != null) flashcardSpreadUI.StartOrRefresh();
+                }
+
+                if (leftPageNumberText != null) leftPageNumberText.text = "FLASHCARD";
+                if (rightPageNumberText != null) rightPageNumberText.text = "STUDY";
+                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                return;
+            }
+
+            // 5. Mode Foto (Album, Like, Favorite)
+            if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
+            if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
+            if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+            if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
             if (photoSpreadRoot != null) photoSpreadRoot.SetActive(true);
             if (placeholderRoot != null) placeholderRoot.SetActive(false);
 
@@ -369,10 +475,32 @@ namespace Utsuru.DictionaryUI
             }
         }
 
+        public void SetKanaSpread(int spreadIndex)
+        {
+            currentSpreadIndex = Mathf.Clamp(spreadIndex, 0, 2);
+            UpdateKanaSpreadVisual();
+        }
+
         private int GetTotalSpreads()
         {
+            if (currentMode == DictionaryBookMode.Hiragana) return 3;
+            if (currentMode == DictionaryBookMode.Module || currentMode == DictionaryBookMode.Quiz || currentMode == DictionaryBookMode.Flashcard) return 1;
             int total = currentFilteredPhotos.Count;
             return Mathf.Max(1, Mathf.CeilToInt(total / 8f));
+        }
+
+        private void UpdateKanaSpreadVisual()
+        {
+            if (kanaSpreadUI != null)
+            {
+                kanaSpreadUI.SetSpread(currentSpreadIndex);
+            }
+
+            if (leftPageNumberText != null) leftPageNumberText.text = (currentSpreadIndex * 2 + 1).ToString();
+            if (rightPageNumberText != null) rightPageNumberText.text = (currentSpreadIndex * 2 + 2).ToString();
+
+            if (leftPageClickArea != null) leftPageClickArea.interactable = currentSpreadIndex > 0;
+            if (rightPageClickArea != null) rightPageClickArea.interactable = currentSpreadIndex < 2;
         }
 
         private void OnPhotoLikeToggled(PhotoRecord record, bool isLiked)
