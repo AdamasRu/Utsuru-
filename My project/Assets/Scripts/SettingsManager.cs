@@ -350,6 +350,11 @@ public class SettingsManager : MonoBehaviour
         curMusicVol = Mathf.Round(val);
         if (musicVolValueText != null) musicVolValueText.text = curMusicVol.ToString("0");
         PlayerPrefs.SetFloat("Setting_MusicVol", curMusicVol);
+
+        if (Utsuru.Audio.AudioManager.Instance != null)
+        {
+            Utsuru.Audio.AudioManager.Instance.SetMusicVolumeFromSlider(curMusicVol);
+        }
     }
 
     private void OnVoiceVolChanged(float val)
@@ -419,6 +424,10 @@ public class SettingsManager : MonoBehaviour
         if (DialogueManager.Instance != null && DialogueManager.Instance.VoiceAudioSource != null)
         {
             DialogueManager.Instance.VoiceAudioSource.volume = curVoiceVol / 100f;
+        }
+        if (Utsuru.Audio.AudioManager.Instance != null)
+        {
+            Utsuru.Audio.AudioManager.Instance.SetMusicVolumeFromSlider(curMusicVol);
         }
 
         // 2. Controls

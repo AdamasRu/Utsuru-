@@ -166,6 +166,12 @@ namespace Utsuru.Capture.Editor
             sentenceBoxRt.anchoredPosition = new Vector2(0f, -382f);
             var sentenceBoxImg = sentenceBoxGo.AddComponent<Image>();
             sentenceBoxImg.sprite = sentenceBoxSprite;
+            var sentenceBoxBtn = sentenceBoxGo.AddComponent<Button>();
+            ColorBlock sColors = sentenceBoxBtn.colors;
+            sColors.normalColor = Color.white;
+            sColors.highlightedColor = new Color(0.92f, 0.95f, 1f, 1f);
+            sColors.pressedColor = new Color(0.82f, 0.88f, 0.98f, 1f);
+            sentenceBoxBtn.colors = sColors;
 
             // Sentence Japanese text
             GameObject sentJpGo = CreateUIObject("JapaneseSentence", sentenceBoxGo.transform);
@@ -293,6 +299,8 @@ namespace Utsuru.Capture.Editor
             so.FindProperty("kanjiLabel").objectReferenceValue = kanjiTmp;
             so.FindProperty("romajiLabel").objectReferenceValue = romajiTmp;
             so.FindProperty("audioButton").objectReferenceValue = audioBtn;
+            so.FindProperty("vocabAudioButton").objectReferenceValue = audioBtn;
+            so.FindProperty("sentenceAudioButton").objectReferenceValue = sentenceBoxBtn;
             so.FindProperty("saveButton").objectReferenceValue = saveBtn;
             so.FindProperty("closeButton").objectReferenceValue = retakeBtn;
             so.FindProperty("retakeButton").objectReferenceValue = retakeBtn;
