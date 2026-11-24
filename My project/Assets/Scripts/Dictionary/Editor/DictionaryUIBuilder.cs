@@ -117,9 +117,10 @@ namespace Utsuru.DictionaryUI.Editor
             Button tabFav = CreateTabButton("Tab_Favorite", tabsGo.transform, bmFavoriteSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(255.35f, -29.36f), 0.9f);
             Button tabQuiz = CreateTabButton("Tab_Quiz", tabsGo.transform, bmQuizSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(345.35f, -29.36f), 0.9f);
 
-            // Tab Kanan: Top-Right (Scale 0.9)
+            // Tab Kanan: Top-Right (Scale 0.9) - 3 Tab (Hiragana, Module, Flashcard) + Exit
             Button tabHiragana = CreateTabButton("Tab_Hiragana", tabsGo.transform, bmHiraganaSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-200f, -29.36f), 0.9f);
             Button tabModule = CreateTabButton("Tab_Module", tabsGo.transform, bmModuleSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-290f, -29.36f), 0.9f);
+            Button tabFlashcard = CreateTabButton("Tab_Flashcard", tabsGo.transform, bmHiraganaSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-380f, -29.36f), 0.9f);
             Button tabExit = CreateTabButton("Tab_Exit", tabsGo.transform, bmExitSprite, new Vector2(84f, 85f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-45.45f, -84f), 0.9f);
 
             // 6.4 BookSpread (Area Isi Buku 2 Halaman)
@@ -370,6 +371,7 @@ namespace Utsuru.DictionaryUI.Editor
             ctrlSo.FindProperty("tabQuizButton").objectReferenceValue = tabQuiz;
             ctrlSo.FindProperty("tabHiraganaButton").objectReferenceValue = tabHiragana;
             ctrlSo.FindProperty("tabModuleButton").objectReferenceValue = tabModule;
+            ctrlSo.FindProperty("tabFlashcardButton").objectReferenceValue = tabFlashcard;
             ctrlSo.FindProperty("tabExitButton").objectReferenceValue = tabExit;
             ctrlSo.FindProperty("bookSpread").objectReferenceValue = bookSpread;
             ctrlSo.ApplyModifiedPropertiesWithoutUndo();
