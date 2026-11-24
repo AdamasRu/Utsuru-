@@ -110,6 +110,16 @@ namespace Utsuru.UI
             EnsureToastUI();
             HideIncorrectCredentialsAlert();
             HideToast();
+            EnsureSakuraEmitter();
+        }
+
+        private void EnsureSakuraEmitter()
+        {
+            if (loginPanel != null) SakuraSceneIntegrator.EnsureEmitterForPanel(loginPanel.transform);
+            if (signUpPanel != null) SakuraSceneIntegrator.EnsureEmitterForPanel(signUpPanel.transform);
+            if (emailSentPanel != null) SakuraSceneIntegrator.EnsureEmitterForPanel(emailSentPanel.transform);
+            if (forgotPasswordPanel != null) SakuraSceneIntegrator.EnsureEmitterForPanel(forgotPasswordPanel.transform);
+            if (resetPasswordPanel != null) SakuraSceneIntegrator.EnsureEmitterForPanel(resetPasswordPanel.transform);
         }
 
         private void CacheButtonTexts()
@@ -170,9 +180,25 @@ namespace Utsuru.UI
 
         /// <summary>
         /// Activates the specified panel and hides all other authentication panels.
+        /// Uses smooth pure white fade transition.
         /// </summary>
         /// <param name="activePanel">The GameObject of the panel to show.</param>
         public void ShowPanel(GameObject activePanel)
+        {
+            if (ScreenFadeTransition.Instance != null && gameObject.activeInHierarchy)
+            {
+                ScreenFadeTransition.Instance.DoTransition(() =>
+                {
+                    ApplyPanelSwitch(activePanel);
+                });
+            }
+            else
+            {
+                ApplyPanelSwitch(activePanel);
+            }
+        }
+
+        private void ApplyPanelSwitch(GameObject activePanel)
         {
             if (loginPanel != null) loginPanel.SetActive(loginPanel == activePanel);
             if (signUpPanel != null) signUpPanel.SetActive(signUpPanel == activePanel);
@@ -329,7 +355,17 @@ namespace Utsuru.UI
 
                     // Navigate to HomeScreen scene
                     Debug.Log("[AuthenticationUIManager] Login successful. Navigating to HomeScreen scene...");
-                    SceneManager.LoadScene("HomeScreen");
+                    if (ScreenFadeTransition.Instance != null)
+                    {
+                        ScreenFadeTransition.Instance.DoTransition(() =>
+                        {
+                            SceneManager.LoadScene("HomeScreen");
+                        });
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("HomeScreen");
+                    }
                 }
                 else
                 {
@@ -430,8 +466,18 @@ namespace Utsuru.UI
             // Set up guest session in SessionManager
             SessionManager.EnsureInstance().SetGuestSession("Guest");
 
-            // Transition directly to HomeScreen
-            SceneManager.LoadScene("HomeScreen");
+            // Transition directly to HomeScreen with white fade
+            if (ScreenFadeTransition.Instance != null)
+            {
+                ScreenFadeTransition.Instance.DoTransition(() =>
+                {
+                    SceneManager.LoadScene("HomeScreen");
+                });
+            }
+            else
+            {
+                SceneManager.LoadScene("HomeScreen");
+            }
         }
 
         public void ToggleRememberMe()

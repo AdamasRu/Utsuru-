@@ -207,6 +207,22 @@ public class SettingsManager : MonoBehaviour
     public void SwitchTab(int tabIndex)
     {
         Debug.Log($"[SettingsManager] Switch tab to: {tabIndex}");
+
+        if (Utsuru.UI.ScreenFadeTransition.Instance != null && gameObject.activeInHierarchy)
+        {
+            Utsuru.UI.ScreenFadeTransition.Instance.DoTransition(() =>
+            {
+                ApplyTabSwitch(tabIndex);
+            });
+        }
+        else
+        {
+            ApplyTabSwitch(tabIndex);
+        }
+    }
+
+    private void ApplyTabSwitch(int tabIndex)
+    {
         if (gameplayPanel != null) gameplayPanel.SetActive(tabIndex == 0);
         if (controlsPanel != null) controlsPanel.SetActive(tabIndex == 1);
         if (graphicsPanel != null) graphicsPanel.SetActive(tabIndex == 2);
