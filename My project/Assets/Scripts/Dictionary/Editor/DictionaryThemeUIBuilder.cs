@@ -7,12 +7,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utsuru.Store;
+using Utsuru.Store.Editor;
 
 namespace Utsuru.DictionaryUI.Editor
 {
     /// <summary>
-    /// Membangun tab Theme dan halaman Apply Theme di dalam Dictionary tanpa merusak layout Dictionary yang sudah ada.
-    /// Juga menghubungkan DictionaryThemeApplier dengan BookContainer & sprite Book_*.png.
+    /// Membangun tab Theme model slide per tema di dalam Dictionary:
+    /// - Page Kiri kosong agar fokus ke live preview sampul buku.
+    /// - Page Kanan berisi Header bergaya Quiz (nama tema + slide), deskripsi,
+    ///   tombol status (Apply / Applied / Locked), dan tombol hint buka Store jika terkunci.
     /// </summary>
     [InitializeOnLoad]
     public static class DictionaryThemeUIBuilder
@@ -75,6 +78,7 @@ namespace Utsuru.DictionaryUI.Editor
         public static void BuildThemeUI(bool saveScene = true)
         {
             DictionaryAssetImporter.ConfigureSprites();
+            StoreUIBuilder.ConfigureStoreSprites();
 
             var controller = Object.FindFirstObjectByType<DictionaryUIController>(FindObjectsInactive.Include);
             var bookSpread = Object.FindFirstObjectByType<DictionaryBookSpreadUI>(FindObjectsInactive.Include);
@@ -86,17 +90,27 @@ namespace Utsuru.DictionaryUI.Editor
 
             Undo.RegisterCompleteObjectUndo(controller.gameObject, "Build Dictionary Theme UI");
 
+            // Font
             var zenFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/ZenMaruGothic-Bold SDF.asset");
             var nunitoFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+            var balooExtraBold = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-ExtraBold SDF.asset")
+                ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo-Regular SDF 1.asset")
+                ?? zenFont;
+
             if (zenFont != null) zenFont.ReadFontAssetDefinition();
             if (nunitoFont != null) nunitoFont.ReadFontAssetDefinition();
+            if (balooExtraBold != null) balooExtraBold.ReadFontAssetDefinition();
 
-            Sprite cardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Card Background.png");
-            Sprite pillBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Category Pill.png");
-            Sprite btnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Button_Unselected.png");
+            // Sprites
+            Sprite pillHeaderSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Quiz/Pill_Header.png");
+            Sprite bgActionBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/background_btn_buy.png");
             Sprite tabBookmarkSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_theme.png")
                 ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_module.png")
                 ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_hiragana.png");
+
+            Color darkBrown = new Color(0.373f, 0.224f, 0.137f, 1f);
+            Color quizBrown = new Color(0.24f, 0.16f, 0.13f, 1f);
+            Color descBrown = new Color(0.36f, 0.26f, 0.21f, 1f);
 
             // 1. Pastikan DictionaryThemeApplier terpasang dan tersambung ke BookContainer + semua Book_*.png
             Transform dictView = controller.transform.Find("DictionaryView");
@@ -111,24 +125,23 @@ namespace Utsuru.DictionaryUI.Editor
 
             var bindings = new List<DictionaryThemeApplier.ThemeSpriteBinding>();
             IReadOnlyList<StoreThemeDefinition> allThemes = StoreThemeCatalog.All;
+
             for (int i = 0; i < allThemes.Count; i++)
             {
-                Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>(allThemes[i].bookAssetPath);
+                Sprite bookSprite = AssetDatabase.LoadAssetAtPath<Sprite>(allThemes[i].bookAssetPath);
                 bindings.Add(new DictionaryThemeApplier.ThemeSpriteBinding
                 {
                     themeId = allThemes[i].id,
-                    bookSprite = s
+                    bookSprite = bookSprite
                 });
 
-                if (allThemes[i].id == StoreThemeCatalog.DefaultThemeId && s != null && bookCoverImg != null)
+                if (allThemes[i].id == StoreThemeCatalog.DefaultThemeId && bookSprite != null && bookCoverImg != null)
                 {
-                    // Set default editor cover sprite ke Plain
-                    bookCoverImg.sprite = s;
+                    bookCoverImg.sprite = bookSprite;
                 }
             }
             applier.ConfigureReferences(bookCoverImg, bindings);
 
-            // Serialize bindings agar tersimpan di scene
             var applierSo = new SerializedObject(applier);
             applierSo.FindProperty("bookCoverImage").objectReferenceValue = bookCoverImg;
             var spritesProp = applierSo.FindProperty("themeSprites");
@@ -176,108 +189,171 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(themeRoot.GetComponent<RectTransform>());
             var themeSpreadUI = themeRoot.AddComponent<DictionaryThemeSpreadUI>();
 
-            // Halaman Kiri (Plain, Sakura, Botanical)
+            // Halaman Kiri: KOSONG sesuai desain (fokus preview sampul buku)
             GameObject leftPage = CreateUIObject("LeftThemePage", themeRoot.transform);
             RectTransform leftRt = leftPage.GetComponent<RectTransform>();
             SetPageTransform(leftRt, isLeft: true);
-            leftRt.anchoredPosition = new Vector2(56f, 20f);
-            leftRt.localScale = new Vector3(0.9f, 0.9f, 1f);
 
-            CreatePageHeader(leftPage.transform, "BOOK THEMES", "Pilih dan terapkan tema buku kamusmu", zenFont, nunitoFont);
+            // Halaman Kanan: Header (gaya Quiz), Deskripsi, Tombol Status, Tombol Hint Store
+            GameObject rightPage = CreateUIObject("RightThemePage", themeRoot.transform);
+            RectTransform rightRt = rightPage.GetComponent<RectTransform>();
+            SetPageTransform(rightRt, isLeft: false);
+            CanvasGroup rightCg = rightPage.AddComponent<CanvasGroup>();
 
-            GameObject noticeGo = CreateUIObject("StatusNotice", leftPage.transform);
+            // A. Header Pill Badge (gaya Quiz) - Menampilkan Nama Tema
+            GameObject headerBadgeGo = CreateUIObject("HeaderBadge", rightPage.transform);
+            RectTransform headerBadgeRt = headerBadgeGo.GetComponent<RectTransform>();
+            headerBadgeRt.anchorMin = new Vector2(0.5f, 1f);
+            headerBadgeRt.anchorMax = new Vector2(0.5f, 1f);
+            headerBadgeRt.pivot = new Vector2(0.5f, 1f);
+            headerBadgeRt.sizeDelta = new Vector2(496f, 63f);
+            headerBadgeRt.anchoredPosition = new Vector2(0f, -49.56f);
+
+            var headerImg = headerBadgeGo.AddComponent<Image>();
+            if (pillHeaderSprite != null)
+            {
+                headerImg.sprite = pillHeaderSprite;
+                headerImg.type = Image.Type.Sliced;
+            }
+            headerImg.color = pillHeaderSprite != null ? Color.white : quizBrown;
+
+            GameObject headerTextGo = CreateUIObject("Text", headerBadgeGo.transform);
+            SetStretch(headerTextGo.GetComponent<RectTransform>());
+            var headerTmp = headerTextGo.AddComponent<TextMeshProUGUI>();
+            headerTmp.font = zenFont;
+            headerTmp.fontSize = 28f;
+            headerTmp.fontStyle = FontStyles.Bold;
+            headerTmp.alignment = TextAlignmentOptions.Center;
+            headerTmp.color = Color.white;
+            headerTmp.text = "Plain Theme";
+
+            // B. Subtitle Slide Indicator (gaya Quiz PromptText)
+            GameObject promptGo = CreateUIObject("PromptText", rightPage.transform);
+            RectTransform promptRt = promptGo.GetComponent<RectTransform>();
+            promptRt.anchorMin = new Vector2(0.5f, 1f);
+            promptRt.anchorMax = new Vector2(0.5f, 1f);
+            promptRt.pivot = new Vector2(0.5f, 1f);
+            promptRt.sizeDelta = new Vector2(748.3f, 32f);
+            promptRt.anchoredPosition = new Vector2(0f, -116.1f);
+
+            var promptTmp = promptGo.AddComponent<TextMeshProUGUI>();
+            promptTmp.font = nunitoFont;
+            promptTmp.fontSize = 30f;
+            promptTmp.fontStyle = FontStyles.Bold;
+            promptTmp.alignment = TextAlignmentOptions.Center;
+            promptTmp.color = quizBrown;
+            promptTmp.text = "Theme 1 / 6";
+
+            // C. Tombol Status (Apply / Applied / Locked) - Gaya Pill Store
+            GameObject statusBtnGo = CreateUIObject("StatusActionButton", rightPage.transform);
+            RectTransform statusBtnRt = statusBtnGo.GetComponent<RectTransform>();
+            statusBtnRt.anchorMin = new Vector2(0.5f, 1f);
+            statusBtnRt.anchorMax = new Vector2(0.5f, 1f);
+            statusBtnRt.pivot = new Vector2(0.5f, 1f);
+            statusBtnRt.sizeDelta = new Vector2(230f, 78f);
+            statusBtnRt.anchoredPosition = new Vector2(0f, -280f);
+
+            Image statusBtnImg = statusBtnGo.AddComponent<Image>();
+            if (bgActionBtnSprite != null)
+            {
+                statusBtnImg.sprite = bgActionBtnSprite;
+                statusBtnImg.type = Image.Type.Simple;
+                statusBtnImg.preserveAspect = true;
+            }
+            statusBtnImg.color = Color.white;
+
+            Button statusBtn = statusBtnGo.AddComponent<Button>();
+            statusBtn.targetGraphic = statusBtnImg;
+
+            GameObject statusTxtGo = CreateUIObject("Text", statusBtnGo.transform);
+            SetStretch(statusTxtGo.GetComponent<RectTransform>());
+            var statusBtnTmp = statusTxtGo.AddComponent<TextMeshProUGUI>();
+            statusBtnTmp.font = balooExtraBold ?? zenFont;
+            statusBtnTmp.fontSize = 28f;
+            statusBtnTmp.fontStyle = FontStyles.Bold;
+            statusBtnTmp.alignment = TextAlignmentOptions.Center;
+            statusBtnTmp.color = darkBrown;
+            statusBtnTmp.text = "Applied";
+
+            // D. Tombol Hint Buka Store (hanya muncul jika tema BELUM dimiliki)
+            GameObject storeHintGo = CreateUIObject("BtnOpenStoreHint", rightPage.transform);
+            RectTransform storeHintRt = storeHintGo.GetComponent<RectTransform>();
+            storeHintRt.anchorMin = new Vector2(0.5f, 1f);
+            storeHintRt.anchorMax = new Vector2(0.5f, 1f);
+            storeHintRt.pivot = new Vector2(0.5f, 1f);
+            storeHintRt.sizeDelta = new Vector2(360f, 56f);
+            storeHintRt.anchoredPosition = new Vector2(0f, -385f);
+
+            Image storeHintImg = storeHintGo.AddComponent<Image>();
+            if (pillHeaderSprite != null)
+            {
+                storeHintImg.sprite = pillHeaderSprite;
+                storeHintImg.type = Image.Type.Sliced;
+            }
+            storeHintImg.color = pillHeaderSprite != null ? Color.white : quizBrown;
+
+            Button storeHintBtn = storeHintGo.AddComponent<Button>();
+            storeHintBtn.targetGraphic = storeHintImg;
+
+            GameObject storeHintTxtGo = CreateUIObject("Text", storeHintGo.transform);
+            SetStretch(storeHintTxtGo.GetComponent<RectTransform>());
+            var storeHintTmp = storeHintTxtGo.AddComponent<TextMeshProUGUI>();
+            storeHintTmp.font = zenFont ?? nunitoFont;
+            storeHintTmp.fontSize = 20f;
+            storeHintTmp.fontStyle = FontStyles.Bold;
+            storeHintTmp.alignment = TextAlignmentOptions.Center;
+            storeHintTmp.color = Color.white;
+            storeHintTmp.text = "Open Store (F)  •  300 Points";
+            storeHintGo.SetActive(false);
+
+            // E. Feedback Notice di bawah tombol
+            GameObject noticeGo = CreateUIObject("StatusNotice", rightPage.transform);
             RectTransform noticeRt = noticeGo.GetComponent<RectTransform>();
             noticeRt.anchorMin = new Vector2(0.5f, 1f);
             noticeRt.anchorMax = new Vector2(0.5f, 1f);
             noticeRt.pivot = new Vector2(0.5f, 1f);
-            noticeRt.sizeDelta = new Vector2(660f, 36f);
-            noticeRt.anchoredPosition = new Vector2(0f, -126f);
+            noticeRt.sizeDelta = new Vector2(540f, 44f);
+            noticeRt.anchoredPosition = new Vector2(0f, -470f);
+
             var noticeTmp = noticeGo.AddComponent<TextMeshProUGUI>();
             noticeTmp.font = nunitoFont ?? zenFont;
-            noticeTmp.fontSize = 16.5f;
+            noticeTmp.fontSize = 20f;
             noticeTmp.fontStyle = FontStyles.Bold;
             noticeTmp.alignment = TextAlignmentOptions.Center;
-            noticeTmp.color = new Color(0.32f, 0.27f, 0.45f, 1f);
-            noticeTmp.text = "Beli tema tambahan di Store dengan menekan F saat eksplorasi.";
-
-            // Halaman Kanan (Autumn, Midnight, Summer + Tombol Open Store)
-            GameObject rightPage = CreateUIObject("RightThemePage", themeRoot.transform);
-            RectTransform rightRt = rightPage.GetComponent<RectTransform>();
-            SetPageTransform(rightRt, isLeft: false);
-            rightRt.anchoredPosition = new Vector2(-56f, 20f);
-            rightRt.localScale = new Vector3(0.9f, 0.9f, 1f);
-
-            CreatePageHeader(rightPage.transform, "COLLECTION", "Tema yang sudah dibeli siap dipakai kapan saja", zenFont, nunitoFont);
-
-            // Tombol Shortcut ke Store di header kanan
-            GameObject storeBtnGo = CreateUIObject("BtnOpenStore", rightPage.transform);
-            RectTransform storeBtnRt = storeBtnGo.GetComponent<RectTransform>();
-            storeBtnRt.anchorMin = new Vector2(0.5f, 1f);
-            storeBtnRt.anchorMax = new Vector2(0.5f, 1f);
-            storeBtnRt.pivot = new Vector2(0.5f, 1f);
-            storeBtnRt.sizeDelta = new Vector2(260f, 40f);
-            storeBtnRt.anchoredPosition = new Vector2(0f, -124f);
-            Image storeBtnImg = storeBtnGo.AddComponent<Image>();
-            if (pillBgSprite != null)
-            {
-                storeBtnImg.sprite = pillBgSprite;
-                storeBtnImg.type = Image.Type.Sliced;
-                storeBtnImg.pixelsPerUnitMultiplier = 0.85f;
-            }
-            storeBtnImg.color = new Color(0.373f, 0.224f, 0.137f, 1f);
-            Button openStoreBtn = storeBtnGo.AddComponent<Button>();
-            openStoreBtn.targetGraphic = storeBtnImg;
-
-            GameObject storeTxtGo = CreateUIObject("Text", storeBtnGo.transform);
-            SetStretch(storeTxtGo.GetComponent<RectTransform>());
-            var storeBtnTmp = storeTxtGo.AddComponent<TextMeshProUGUI>();
-            storeBtnTmp.font = zenFont ?? nunitoFont;
-            storeBtnTmp.fontSize = 17f;
-            storeBtnTmp.fontStyle = FontStyles.Bold;
-            storeBtnTmp.alignment = TextAlignmentOptions.Center;
-            storeBtnTmp.color = Color.white;
-            storeBtnTmp.text = "Open Store (F)";
-
-            // 6 Slot Tema (3 di Halaman Kiri, 3 di Halaman Kanan)
-            var slots = new List<DictionaryThemeSpreadUI.ThemeOptionSlot>();
-            float[] rowYs = new float[] { -180f, -380f, -580f };
-
-            for (int i = 0; i < allThemes.Count; i++)
-            {
-                Transform pageParent = i < 3 ? leftPage.transform : rightPage.transform;
-                float posY = rowYs[i % 3];
-                slots.Add(CreateThemeOptionRow(
-                    $"ThemeSlot_{allThemes[i].id}",
-                    pageParent,
-                    posY,
-                    cardBgSprite,
-                    pillBgSprite,
-                    btnSprite,
-                    zenFont,
-                    nunitoFont
-                ));
-            }
+            noticeTmp.color = quizBrown;
+            noticeTmp.text = "";
 
             // Wire DictionaryThemeSpreadUI
-            themeSpreadUI.ConfigureReferences(applier, noticeTmp, openStoreBtn, slots);
+            themeSpreadUI.ConfigureReferences(
+                applier,
+                bookSpread,
+                leftPage,
+                rightPage,
+                rightCg,
+                headerTmp,
+                promptTmp,
+                statusBtn,
+                statusBtnImg,
+                statusBtnTmp,
+                storeHintBtn,
+                storeHintTmp,
+                noticeTmp
+            );
+
             var spreadUiSo = new SerializedObject(themeSpreadUI);
             spreadUiSo.FindProperty("themeApplier").objectReferenceValue = applier;
+            spreadUiSo.FindProperty("bookSpread").objectReferenceValue = bookSpread;
+            spreadUiSo.FindProperty("leftPageRoot").objectReferenceValue = leftPage;
+            spreadUiSo.FindProperty("rightPageRoot").objectReferenceValue = rightPage;
+            spreadUiSo.FindProperty("rightPageCanvasGroup").objectReferenceValue = rightCg;
+            spreadUiSo.FindProperty("themeNameHeaderText").objectReferenceValue = headerTmp;
+            spreadUiSo.FindProperty("slideSubtitleText").objectReferenceValue = promptTmp;
+            spreadUiSo.FindProperty("statusActionButton").objectReferenceValue = statusBtn;
+            spreadUiSo.FindProperty("statusActionButtonBg").objectReferenceValue = statusBtnImg;
+            spreadUiSo.FindProperty("statusActionButtonText").objectReferenceValue = statusBtnTmp;
+            spreadUiSo.FindProperty("storeHintButton").objectReferenceValue = storeHintBtn;
+            spreadUiSo.FindProperty("storeHintButtonText").objectReferenceValue = storeHintTmp;
             spreadUiSo.FindProperty("statusNoticeText").objectReferenceValue = noticeTmp;
-            spreadUiSo.FindProperty("openStoreShortcutButton").objectReferenceValue = openStoreBtn;
-            var optionSlotsProp = spreadUiSo.FindProperty("optionSlots");
-            optionSlotsProp.arraySize = slots.Count;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                var elem = optionSlotsProp.GetArrayElementAtIndex(i);
-                elem.FindPropertyRelative("cardBackground").objectReferenceValue = slots[i].cardBackground;
-                elem.FindPropertyRelative("bookPreviewImage").objectReferenceValue = slots[i].bookPreviewImage;
-                elem.FindPropertyRelative("swatchAccent").objectReferenceValue = slots[i].swatchAccent;
-                elem.FindPropertyRelative("titleText").objectReferenceValue = slots[i].titleText;
-                elem.FindPropertyRelative("statusBadgeText").objectReferenceValue = slots[i].statusBadgeText;
-                elem.FindPropertyRelative("actionButton").objectReferenceValue = slots[i].actionButton;
-                elem.FindPropertyRelative("actionButtonBg").objectReferenceValue = slots[i].actionButtonBg;
-                elem.FindPropertyRelative("actionButtonText").objectReferenceValue = slots[i].actionButtonText;
-            }
             spreadUiSo.ApplyModifiedPropertiesWithoutUndo();
 
             themeRoot.SetActive(false);
@@ -300,184 +376,34 @@ namespace Utsuru.DictionaryUI.Editor
             if (saveScene)
             {
                 EditorSceneManager.SaveScene(currentScene);
-                Debug.Log("[DictionaryThemeUIBuilder] Tab Theme & DictionaryThemeApplier berhasil dibangun dan disimpan.");
+                Debug.Log("[DictionaryThemeUIBuilder] Tab Theme (Slide Live Preview + Fade) berhasil dibangun dan disimpan.");
             }
             else
             {
-                Debug.Log("[DictionaryThemeUIBuilder] Tab Theme & DictionaryThemeApplier berhasil dibangun ke scene aktif.");
+                Debug.Log("[DictionaryThemeUIBuilder] Tab Theme (Slide Live Preview + Fade) berhasil dibangun ke scene aktif.");
             }
-        }
-
-        private static DictionaryThemeSpreadUI.ThemeOptionSlot CreateThemeOptionRow(
-            string name,
-            Transform parent,
-            float posY,
-            Sprite cardBgSprite,
-            Sprite pillSprite,
-            Sprite btnSprite,
-            TMP_FontAsset zenFont,
-            TMP_FontAsset nunitoFont)
-        {
-            GameObject rowGo = CreateUIObject(name, parent);
-            RectTransform rowRt = rowGo.GetComponent<RectTransform>();
-            rowRt.anchorMin = new Vector2(0.5f, 1f);
-            rowRt.anchorMax = new Vector2(0.5f, 1f);
-            rowRt.pivot = new Vector2(0.5f, 1f);
-            rowRt.sizeDelta = new Vector2(660f, 176f);
-            rowRt.anchoredPosition = new Vector2(0f, posY);
-
-            Image rowBg = rowGo.AddComponent<Image>();
-            if (cardBgSprite != null)
-            {
-                rowBg.sprite = cardBgSprite;
-                rowBg.type = Image.Type.Sliced;
-            }
-            rowBg.color = new Color(0.99f, 0.97f, 0.93f, 1f);
-
-            Outline rowOutline = rowGo.AddComponent<Outline>();
-            rowOutline.effectColor = new Color(0.75f, 0.68f, 0.60f, 0.65f);
-            rowOutline.effectDistance = new Vector2(1.5f, -1.5f);
-
-            // Color Accent Bar di sisi kiri kartu
-            GameObject accentGo = CreateUIObject("SwatchAccent", rowGo.transform);
-            RectTransform accentRt = accentGo.GetComponent<RectTransform>();
-            accentRt.anchorMin = new Vector2(0f, 0f);
-            accentRt.anchorMax = new Vector2(0f, 1f);
-            accentRt.pivot = new Vector2(0f, 0.5f);
-            accentRt.sizeDelta = new Vector2(14f, -16f);
-            accentRt.anchoredPosition = new Vector2(8f, 0f);
-            Image accentImg = accentGo.AddComponent<Image>();
-            accentImg.color = Color.white;
-
-            // Book Preview Thumbnail
-            GameObject previewGo = CreateUIObject("BookPreview", rowGo.transform);
-            RectTransform previewRt = previewGo.GetComponent<RectTransform>();
-            previewRt.anchorMin = new Vector2(0f, 0.5f);
-            previewRt.anchorMax = new Vector2(0f, 0.5f);
-            previewRt.pivot = new Vector2(0f, 0.5f);
-            previewRt.sizeDelta = new Vector2(170f, 118f);
-            previewRt.anchoredPosition = new Vector2(34f, 0f);
-            Image previewImg = previewGo.AddComponent<Image>();
-            previewImg.preserveAspect = true;
-            previewImg.color = Color.white;
-
-            // Title Text
-            GameObject titleGo = CreateUIObject("TitleText", rowGo.transform);
-            RectTransform titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0f, 0.5f);
-            titleRt.anchorMax = new Vector2(0f, 0.5f);
-            titleRt.pivot = new Vector2(0f, 0.5f);
-            titleRt.sizeDelta = new Vector2(250f, 40f);
-            titleRt.anchoredPosition = new Vector2(218f, 22f);
-            var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
-            titleTmp.font = zenFont ?? nunitoFont;
-            titleTmp.fontSize = 23f;
-            titleTmp.fontStyle = FontStyles.Bold;
-            titleTmp.alignment = TextAlignmentOptions.Left;
-            titleTmp.color = new Color(0.24f, 0.18f, 0.14f, 1f);
-            titleTmp.text = "Theme";
-
-            // Status Badge Text
-            GameObject statusGo = CreateUIObject("StatusText", rowGo.transform);
-            RectTransform statusRt = statusGo.GetComponent<RectTransform>();
-            statusRt.anchorMin = new Vector2(0f, 0.5f);
-            statusRt.anchorMax = new Vector2(0f, 0.5f);
-            statusRt.pivot = new Vector2(0f, 0.5f);
-            statusRt.sizeDelta = new Vector2(250f, 32f);
-            statusRt.anchoredPosition = new Vector2(218f, -20f);
-            var statusTmp = statusGo.AddComponent<TextMeshProUGUI>();
-            statusTmp.font = nunitoFont ?? zenFont;
-            statusTmp.fontSize = 17f;
-            statusTmp.fontStyle = FontStyles.Bold;
-            statusTmp.alignment = TextAlignmentOptions.Left;
-            statusTmp.color = new Color(0.35f, 0.30f, 0.45f, 1f);
-            statusTmp.text = "Dimiliki";
-
-            // Action Button (Apply / Active / Buy)
-            GameObject btnGo = CreateUIObject("ActionButton", rowGo.transform);
-            RectTransform btnRt = btnGo.GetComponent<RectTransform>();
-            btnRt.anchorMin = new Vector2(1f, 0.5f);
-            btnRt.anchorMax = new Vector2(1f, 0.5f);
-            btnRt.pivot = new Vector2(1f, 0.5f);
-            btnRt.sizeDelta = new Vector2(148f, 52f);
-            btnRt.anchoredPosition = new Vector2(-22f, 0f);
-
-            Image btnImg = btnGo.AddComponent<Image>();
-            Sprite resolvedBtnSprite = pillSprite != null ? pillSprite : btnSprite;
-            if (resolvedBtnSprite != null)
-            {
-                btnImg.sprite = resolvedBtnSprite;
-                btnImg.type = Image.Type.Sliced;
-                btnImg.pixelsPerUnitMultiplier = 0.85f;
-            }
-            btnImg.color = new Color(0.36f, 0.25f, 0.58f, 1f);
-
-            Button btn = btnGo.AddComponent<Button>();
-            btn.targetGraphic = btnImg;
-
-            GameObject btnTxtGo = CreateUIObject("Text", btnGo.transform);
-            SetStretch(btnTxtGo.GetComponent<RectTransform>());
-            var btnTmp = btnTxtGo.AddComponent<TextMeshProUGUI>();
-            btnTmp.font = zenFont ?? nunitoFont;
-            btnTmp.fontSize = 18.5f;
-            btnTmp.fontStyle = FontStyles.Bold;
-            btnTmp.alignment = TextAlignmentOptions.Center;
-            btnTmp.color = Color.white;
-            btnTmp.text = "Apply";
-
-            return new DictionaryThemeSpreadUI.ThemeOptionSlot
-            {
-                cardBackground = rowBg,
-                bookPreviewImage = previewImg,
-                swatchAccent = accentImg,
-                titleText = titleTmp,
-                statusBadgeText = statusTmp,
-                actionButton = btn,
-                actionButtonBg = btnImg,
-                actionButtonText = btnTmp
-            };
-        }
-
-        private static void CreatePageHeader(Transform parent, string title, string subtitle, TMP_FontAsset zenFont, TMP_FontAsset nunitoFont)
-        {
-            GameObject titleGo = CreateUIObject("PageTitle", parent);
-            RectTransform titleRt = titleGo.GetComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0.5f, 1f);
-            titleRt.anchorMax = new Vector2(0.5f, 1f);
-            titleRt.pivot = new Vector2(0.5f, 1f);
-            titleRt.sizeDelta = new Vector2(680f, 44f);
-            titleRt.anchoredPosition = new Vector2(0f, -44f);
-
-            var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
-            titleTmp.font = zenFont;
-            titleTmp.fontSize = 28f;
-            titleTmp.fontStyle = FontStyles.Bold;
-            titleTmp.alignment = TextAlignmentOptions.Center;
-            titleTmp.color = new Color(0.28f, 0.22f, 0.55f, 1f);
-            titleTmp.text = title;
-
-            GameObject subGo = CreateUIObject("PageSubtitle", parent);
-            RectTransform subRt = subGo.GetComponent<RectTransform>();
-            subRt.anchorMin = new Vector2(0.5f, 1f);
-            subRt.anchorMax = new Vector2(0.5f, 1f);
-            subRt.pivot = new Vector2(0.5f, 1f);
-            subRt.sizeDelta = new Vector2(680f, 32f);
-            subRt.anchoredPosition = new Vector2(0f, -86f);
-
-            var subTmp = subGo.AddComponent<TextMeshProUGUI>();
-            subTmp.font = nunitoFont;
-            subTmp.fontSize = 16.5f;
-            subTmp.alignment = TextAlignmentOptions.Center;
-            subTmp.color = new Color(0.42f, 0.38f, 0.54f, 1f);
-            subTmp.text = subtitle;
         }
 
         private static void SetPageTransform(RectTransform rt, bool isLeft)
         {
-            rt.anchorMin = isLeft ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
-            rt.anchorMax = isLeft ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
-            rt.pivot = isLeft ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
-            rt.sizeDelta = new Vector2(740f, 820f);
+            if (isLeft)
+            {
+                rt.anchorMin = new Vector2(0f, 0.5f);
+                rt.anchorMax = new Vector2(0f, 0.5f);
+                rt.pivot = new Vector2(0f, 0.5f);
+                rt.sizeDelta = new Vector2(740f, 820f);
+                rt.anchoredPosition = new Vector2(17f, 0f);
+                rt.localScale = Vector3.one;
+            }
+            else
+            {
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.pivot = new Vector2(0f, 0.5f);
+                rt.sizeDelta = new Vector2(740f, 820f);
+                rt.anchoredPosition = new Vector2(0f, 0f);
+                rt.localScale = Vector3.one;
+            }
         }
 
         private static GameObject CreateUIObject(string name, Transform parent)

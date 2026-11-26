@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,79 +9,134 @@ using Utsuru.Store;
 namespace Utsuru.DictionaryUI
 {
     /// <summary>
-    /// Tab khusus di dalam buku Dictionary untuk memilih dan menerapkan (Apply) tema buku yang dimiliki.
-    /// Tema default Plain selalu dimiliki; 5 tema lainnya dibeli terlebih dahulu melalui Store (tekan F).
+    /// Tab Theme model slide per tema (1 slide = 1 tema):
+    /// - Page Kiri kosong agar fokus ke live preview sampul buku.
+    /// - Page Kanan menampilkan Header (nama tema), deskripsi/indikator slide,
+    ///   tombol status (Apply / Applied / Locked), dan tombol hint buka Store (jika belum dimiliki).
+    /// - Perpindahan slide menggunakan Btn_PreviousPage & Btn_NextPage dengan animasi Fade.
     /// </summary>
     public class DictionaryThemeSpreadUI : MonoBehaviour
     {
-        [Serializable]
-        public class ThemeOptionSlot
-        {
-            public Image cardBackground;
-            public Image bookPreviewImage;
-            public Image swatchAccent;
-            public TMP_Text titleText;
-            public TMP_Text statusBadgeText;
-            public Button actionButton;
-            public Image actionButtonBg;
-            public TMP_Text actionButtonText;
-        }
-
-        [Header("Referensi")]
+        [Header("Referensi Sistem")]
         [SerializeField] private DictionaryThemeApplier themeApplier;
+        [SerializeField] private DictionaryBookSpreadUI bookSpread;
+
+        [Header("Halaman & Animasi Fade")]
+        [SerializeField] private GameObject leftPageRoot;
+        [SerializeField] private GameObject rightPageRoot;
+        [SerializeField] private CanvasGroup rightPageCanvasGroup;
+        [SerializeField] private float fadeOutDuration = 0.18f;
+        [SerializeField] private float fadeInDuration = 0.22f;
+
+        [Header("Konten Halaman Kanan")]
+        [SerializeField] private TMP_Text themeNameHeaderText;
+        [SerializeField] private TMP_Text slideSubtitleText;
+        [SerializeField] private Button statusActionButton;
+        [SerializeField] private Image statusActionButtonBg;
+        [SerializeField] private TMP_Text statusActionButtonText;
+        [SerializeField] private Button storeHintButton;
+        [SerializeField] private TMP_Text storeHintButtonText;
         [SerializeField] private TMP_Text statusNoticeText;
-        [SerializeField] private Button openStoreShortcutButton;
-        [SerializeField] private List<ThemeOptionSlot> optionSlots = new List<ThemeOptionSlot>();
 
         private StoreThemeManager themeManager;
+        private int currentSlideIndex = 0;
+        private bool isFading = false;
+        private int lastEnterFrame = -1;
+        private Coroutine fadeCoroutine;
 
-        private static readonly Color ActiveCardBg = new Color(0.92f, 0.97f, 0.91f, 1f);
-        private static readonly Color OwnedCardBg = new Color(0.99f, 0.97f, 0.93f, 1f);
-        private static readonly Color LockedCardBg = new Color(0.91f, 0.89f, 0.86f, 0.9f);
+        // Warna tombol status selaras dengan desain Store
+        private static readonly Color AppliedButtonTint = new Color(0.84f, 0.94f, 0.83f, 1f);
+        private static readonly Color ApplyButtonTint = Color.white;
+        private static readonly Color LockedButtonTint = new Color(0.86f, 0.82f, 0.78f, 0.95f);
 
-        private static readonly Color ActiveBtnColor = new Color(0.24f, 0.58f, 0.34f, 1f);
-        private static readonly Color ApplyBtnColor = new Color(0.36f, 0.25f, 0.58f, 1f);
-        private static readonly Color LockedBtnColor = new Color(0.55f, 0.44f, 0.35f, 1f);
+        private static readonly Color AppliedTextColor = new Color(0.16f, 0.42f, 0.20f, 1f);
+        private static readonly Color DarkBrownTextColor = new Color(0.373f, 0.224f, 0.137f, 1f);
+        private static readonly Color LockedTextColor = new Color(0.45f, 0.36f, 0.30f, 1f);
+
+        public int CurrentSlideIndex => currentSlideIndex;
+        public int TotalSlides => themeManager != null ? themeManager.AllThemes.Count : StoreThemeCatalog.All.Count;
+        public bool CanGoPrevious => currentSlideIndex > 0 && !isFading;
+        public bool CanGoNext => currentSlideIndex < TotalSlides - 1 && !isFading;
 
         private void Awake()
         {
-            if (openStoreShortcutButton != null)
+            if (bookSpread == null)
+                bookSpread = GetComponentInParent<DictionaryBookSpreadUI>();
+
+            if (storeHintButton != null)
             {
-                openStoreShortcutButton.onClick.RemoveAllListeners();
-                openStoreShortcutButton.onClick.AddListener(OpenStoreFromDictionary);
+                storeHintButton.onClick.RemoveAllListeners();
+                storeHintButton.onClick.AddListener(OpenStoreFromDictionary);
             }
         }
 
         private void OnEnable()
         {
             EnsureBound();
-            Refresh();
+            ResetAndEnterFirstSlide();
+        }
+
+        private void OnDisable()
+        {
+            if (fadeCoroutine != null)
+            {
+                StopCoroutine(fadeCoroutine);
+                fadeCoroutine = null;
+            }
+            isFading = false;
+
+            if (rightPageCanvasGroup != null)
+                rightPageCanvasGroup.alpha = 1f;
+
+            // Kembalikan sampul buku ke tema aktif sebenarnya jika pemain hanya melihat preview
+            if (themeApplier != null)
+            {
+                themeApplier.ApplyCurrentTheme();
+            }
         }
 
         private void OnDestroy()
         {
             if (themeManager != null)
             {
-                themeManager.OnThemesUpdated -= Refresh;
+                themeManager.OnThemesUpdated -= HandleThemesUpdated;
                 themeManager.OnActiveThemeChanged -= HandleThemeChanged;
             }
         }
 
         public void ConfigureReferences(
             DictionaryThemeApplier applier,
-            TMP_Text noticeText,
-            Button storeShortcutBtn,
-            List<ThemeOptionSlot> slots)
+            DictionaryBookSpreadUI spread,
+            GameObject leftRoot,
+            GameObject rightRoot,
+            CanvasGroup rightCg,
+            TMP_Text headerText,
+            TMP_Text subtitleText,
+            Button statusBtn,
+            Image statusBtnBg,
+            TMP_Text statusBtnText,
+            Button hintStoreBtn,
+            TMP_Text hintStoreText,
+            TMP_Text noticeText)
         {
             themeApplier = applier;
+            bookSpread = spread;
+            leftPageRoot = leftRoot;
+            rightPageRoot = rightRoot;
+            rightPageCanvasGroup = rightCg;
+            themeNameHeaderText = headerText;
+            slideSubtitleText = subtitleText;
+            statusActionButton = statusBtn;
+            statusActionButtonBg = statusBtnBg;
+            statusActionButtonText = statusBtnText;
+            storeHintButton = hintStoreBtn;
+            storeHintButtonText = hintStoreText;
             statusNoticeText = noticeText;
-            openStoreShortcutButton = storeShortcutBtn;
-            if (slots != null) optionSlots = slots;
 
-            if (openStoreShortcutButton != null)
+            if (storeHintButton != null)
             {
-                openStoreShortcutButton.onClick.RemoveAllListeners();
-                openStoreShortcutButton.onClick.AddListener(OpenStoreFromDictionary);
+                storeHintButton.onClick.RemoveAllListeners();
+                storeHintButton.onClick.AddListener(OpenStoreFromDictionary);
             }
         }
 
@@ -91,8 +147,8 @@ namespace Utsuru.DictionaryUI
                 themeManager = StoreThemeManager.EnsureInstance();
                 if (themeManager != null)
                 {
-                    themeManager.OnThemesUpdated -= Refresh;
-                    themeManager.OnThemesUpdated += Refresh;
+                    themeManager.OnThemesUpdated -= HandleThemesUpdated;
+                    themeManager.OnThemesUpdated += HandleThemesUpdated;
                     themeManager.OnActiveThemeChanged -= HandleThemeChanged;
                     themeManager.OnActiveThemeChanged += HandleThemeChanged;
                 }
@@ -102,109 +158,223 @@ namespace Utsuru.DictionaryUI
             {
                 themeApplier = FindFirstObjectByType<DictionaryThemeApplier>(FindObjectsInactive.Include);
             }
+
+            if (bookSpread == null)
+            {
+                bookSpread = GetComponentInParent<DictionaryBookSpreadUI>();
+            }
+
+            if (rightPageCanvasGroup == null && rightPageRoot != null)
+            {
+                rightPageCanvasGroup = rightPageRoot.GetComponent<CanvasGroup>();
+                if (rightPageCanvasGroup == null)
+                    rightPageCanvasGroup = rightPageRoot.AddComponent<CanvasGroup>();
+            }
+        }
+
+        private void HandleThemesUpdated()
+        {
+            RefreshCurrentSlideVisual(applyBookPreview: gameObject.activeInHierarchy);
         }
 
         private void HandleThemeChanged(string _)
         {
-            Refresh();
+            RefreshCurrentSlideVisual(applyBookPreview: gameObject.activeInHierarchy);
         }
 
         public void Refresh()
         {
             EnsureBound();
+            ResetAndEnterFirstSlide();
+        }
+
+        private void ResetAndEnterFirstSlide()
+        {
+            if (Application.isPlaying && lastEnterFrame == Time.frameCount)
+                return;
+            lastEnterFrame = Time.frameCount;
+
+            if (fadeCoroutine != null)
+            {
+                StopCoroutine(fadeCoroutine);
+                fadeCoroutine = null;
+            }
+            isFading = false;
+
+            currentSlideIndex = 0; // Page 1 selalu tema Plain
+            if (statusNoticeText != null) statusNoticeText.text = "";
+
+            if (rightPageCanvasGroup != null) rightPageCanvasGroup.alpha = 1f;
+            RefreshCurrentSlideVisual(applyBookPreview: true);
+        }
+
+        public void PreviousSpread()
+        {
+            if (!CanGoPrevious) return;
+            SwitchSlide(currentSlideIndex - 1);
+        }
+
+        public void NextSpread()
+        {
+            if (!CanGoNext) return;
+            SwitchSlide(currentSlideIndex + 1);
+        }
+
+        private void SwitchSlide(int targetIndex)
+        {
+            int total = TotalSlides;
+            if (targetIndex < 0 || targetIndex >= total) return;
+
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+
+            if (gameObject.activeInHierarchy && rightPageCanvasGroup != null)
+            {
+                fadeCoroutine = StartCoroutine(FadeSlideRoutine(targetIndex));
+            }
+            else
+            {
+                currentSlideIndex = targetIndex;
+                if (statusNoticeText != null) statusNoticeText.text = "";
+                RefreshCurrentSlideVisual(applyBookPreview: true);
+            }
+        }
+
+        private IEnumerator FadeSlideRoutine(int targetIndex)
+        {
+            isFading = true;
+            UpdateNavigationButtons();
+
+            // Mulai crossfade sampul buku bersamaan dengan fade halaman kanan
+            IReadOnlyList<StoreThemeDefinition> all = themeManager != null ? themeManager.AllThemes : null;
+            if (all != null && targetIndex >= 0 && targetIndex < all.Count && themeApplier != null)
+            {
+                themeApplier.CrossfadeToTheme(all[targetIndex].id, fadeOutDuration + fadeInDuration);
+            }
+
+            // 1. Fade-Out Halaman Kanan
+            float elapsed = 0f;
+            while (elapsed < fadeOutDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / fadeOutDuration);
+                if (rightPageCanvasGroup != null)
+                    rightPageCanvasGroup.alpha = Mathf.SmoothStep(1f, 0f, t);
+                yield return null;
+            }
+
+            if (rightPageCanvasGroup != null) rightPageCanvasGroup.alpha = 0f;
+
+            // 2. Ganti Slide (sampul buku sudah ditangani oleh CrossfadeToTheme)
+            currentSlideIndex = targetIndex;
+            if (statusNoticeText != null) statusNoticeText.text = "";
+            RefreshCurrentSlideVisual(applyBookPreview: false);
+
+            // 3. Fade-In Halaman Kanan
+            elapsed = 0f;
+            while (elapsed < fadeInDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / fadeInDuration);
+                if (rightPageCanvasGroup != null)
+                    rightPageCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+                yield return null;
+            }
+
+            if (rightPageCanvasGroup != null) rightPageCanvasGroup.alpha = 1f;
+
+            isFading = false;
+            fadeCoroutine = null;
+            UpdateNavigationButtons();
+        }
+
+        private void RefreshCurrentSlideVisual(bool applyBookPreview)
+        {
+            EnsureBound();
             if (themeManager == null) return;
 
             IReadOnlyList<StoreThemeDefinition> all = themeManager.AllThemes;
+            if (all == null || all.Count == 0) return;
 
-            for (int i = 0; i < optionSlots.Count; i++)
+            currentSlideIndex = Mathf.Clamp(currentSlideIndex, 0, all.Count - 1);
+            StoreThemeDefinition def = all[currentSlideIndex];
+
+            bool isOwned = themeManager.IsOwned(def.id);
+            bool isApplied = themeManager.IsApplied(def.id);
+
+            // Live preview sampul buku sesuai slide yang dibuka
+            if (applyBookPreview && themeApplier != null)
             {
-                ThemeOptionSlot slot = optionSlots[i];
-                if (slot == null) continue;
+                themeApplier.PreviewTheme(def.id);
+            }
 
-                if (i >= all.Count)
+            // Pastikan page kiri tetap kosong & aktif (atau container kosong)
+            if (leftPageRoot != null) leftPageRoot.SetActive(true);
+            if (rightPageRoot != null) rightPageRoot.SetActive(true);
+
+            // 1. Header (Nama Tema) & Subtitle Slide
+            if (themeNameHeaderText != null)
+                themeNameHeaderText.text = def.displayName;
+
+            if (slideSubtitleText != null)
+                slideSubtitleText.text = $"Theme {currentSlideIndex + 1} / {all.Count}";
+
+            // 2. Tombol Status (Apply / Applied / Locked)
+            if (statusActionButton != null)
+            {
+                statusActionButton.onClick.RemoveAllListeners();
+                string targetId = def.id;
+
+                if (isApplied)
                 {
-                    if (slot.cardBackground != null)
-                        slot.cardBackground.gameObject.SetActive(false);
-                    continue;
-                }
-
-                StoreThemeDefinition def = all[i];
-                if (slot.cardBackground != null)
-                    slot.cardBackground.gameObject.SetActive(true);
-
-                bool isOwned = themeManager.IsOwned(def.id);
-                bool isApplied = themeManager.IsApplied(def.id);
-
-                if (slot.titleText != null)
-                    slot.titleText.text = def.displayName;
-
-                if (slot.swatchAccent != null)
-                    slot.swatchAccent.color = def.swatchBottomColor;
-
-                if (slot.bookPreviewImage != null)
-                {
-                    Sprite bookSprite = themeApplier != null ? themeApplier.GetBookSprite(def.id) : null;
-                    if (bookSprite != null)
+                    statusActionButton.interactable = false;
+                    if (statusActionButtonBg != null) statusActionButtonBg.color = AppliedButtonTint;
+                    if (statusActionButtonText != null)
                     {
-                        slot.bookPreviewImage.sprite = bookSprite;
-                        slot.bookPreviewImage.color = isOwned ? Color.white : new Color(0.65f, 0.65f, 0.65f, 0.85f);
-                    }
-                    else
-                    {
-                        slot.bookPreviewImage.color = def.swatchBottomColor;
+                        statusActionButtonText.text = "Applied";
+                        statusActionButtonText.color = AppliedTextColor;
                     }
                 }
-
-                if (slot.cardBackground != null)
+                else if (isOwned)
                 {
-                    slot.cardBackground.color = isApplied ? ActiveCardBg : (isOwned ? OwnedCardBg : LockedCardBg);
+                    statusActionButton.interactable = true;
+                    if (statusActionButtonBg != null) statusActionButtonBg.color = ApplyButtonTint;
+                    if (statusActionButtonText != null)
+                    {
+                        statusActionButtonText.text = "Apply";
+                        statusActionButtonText.color = DarkBrownTextColor;
+                    }
+                    statusActionButton.onClick.AddListener(() => OnApplyClicked(targetId));
                 }
-
-                if (slot.statusBadgeText != null)
+                else
                 {
-                    if (isApplied)
+                    statusActionButton.interactable = false;
+                    if (statusActionButtonBg != null) statusActionButtonBg.color = LockedButtonTint;
+                    if (statusActionButtonText != null)
                     {
-                        slot.statusBadgeText.text = "Sedang Dipakai";
-                        slot.statusBadgeText.color = new Color(0.14f, 0.45f, 0.22f, 1f);
-                    }
-                    else if (isOwned)
-                    {
-                        slot.statusBadgeText.text = def.isDefaultFree ? "Default Gratis" : "Dimiliki";
-                        slot.statusBadgeText.color = new Color(0.28f, 0.24f, 0.45f, 1f);
-                    }
-                    else
-                    {
-                        slot.statusBadgeText.text = $"Terkunci • {def.pricePoints} Poin";
-                        slot.statusBadgeText.color = new Color(0.55f, 0.35f, 0.25f, 1f);
+                        statusActionButtonText.text = "Locked";
+                        statusActionButtonText.color = LockedTextColor;
                     }
                 }
+            }
 
-                if (slot.actionButton != null)
+            // 3. Tombol Hint Buka Store (hanya muncul jika tema BELUM terbuka)
+            if (storeHintButton != null)
+            {
+                storeHintButton.gameObject.SetActive(!isOwned);
+                if (!isOwned && storeHintButtonText != null)
                 {
-                    slot.actionButton.onClick.RemoveAllListeners();
-                    string targetId = def.id;
-
-                    if (isApplied)
-                    {
-                        slot.actionButton.interactable = false;
-                        if (slot.actionButtonBg != null) slot.actionButtonBg.color = ActiveBtnColor;
-                        if (slot.actionButtonText != null) slot.actionButtonText.text = "Active";
-                    }
-                    else if (isOwned)
-                    {
-                        slot.actionButton.interactable = true;
-                        if (slot.actionButtonBg != null) slot.actionButtonBg.color = ApplyBtnColor;
-                        if (slot.actionButtonText != null) slot.actionButtonText.text = "Apply";
-                        slot.actionButton.onClick.AddListener(() => OnApplyClicked(targetId));
-                    }
-                    else
-                    {
-                        slot.actionButton.interactable = true;
-                        if (slot.actionButtonBg != null) slot.actionButtonBg.color = LockedBtnColor;
-                        if (slot.actionButtonText != null) slot.actionButtonText.text = "Buy (Store)";
-                        slot.actionButton.onClick.AddListener(OpenStoreFromDictionary);
-                    }
+                    storeHintButtonText.text = $"Open Store (F)  •  {def.pricePoints} Points";
                 }
+            }
+
+            UpdateNavigationButtons();
+        }
+
+        public void UpdateNavigationButtons()
+        {
+            if (bookSpread != null)
+            {
+                bookSpread.UpdateThemeNavigationState(CanGoPrevious, CanGoNext);
             }
         }
 
@@ -218,10 +388,10 @@ namespace Utsuru.DictionaryUI
             {
                 statusNoticeText.text = message;
                 statusNoticeText.color = ok
-                    ? new Color(0.16f, 0.46f, 0.24f, 1f)
+                    ? AppliedTextColor
                     : new Color(0.65f, 0.20f, 0.18f, 1f);
             }
-            Refresh();
+            RefreshCurrentSlideVisual(applyBookPreview: true);
         }
 
         private void OpenStoreFromDictionary()

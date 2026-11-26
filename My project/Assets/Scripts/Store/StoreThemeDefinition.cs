@@ -85,7 +85,7 @@ namespace Utsuru.Store
                 0,
                 true,
                 "Assets/UI/Dictionary/Book/Book_Plain.png",
-                "",
+                "Assets/UI/Store/item_plain.png",
                 new Color(0.961f, 0.918f, 0.855f, 1f),
                 new Color(0.871f, 0.796f, 0.690f, 1f)
             ),

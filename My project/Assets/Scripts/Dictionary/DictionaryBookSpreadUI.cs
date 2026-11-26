@@ -143,6 +143,12 @@ namespace Utsuru.DictionaryUI
                 return;
             }
 
+            if (currentMode == DictionaryBookMode.Theme)
+            {
+                if (themeSpreadUI != null) themeSpreadUI.PreviousSpread();
+                return;
+            }
+
             if (currentSpreadIndex > 0)
             {
                 if (currentMode == DictionaryBookMode.Hiragana)
@@ -172,6 +178,12 @@ namespace Utsuru.DictionaryUI
             if (currentMode == DictionaryBookMode.Quiz)
             {
                 if (quizSpreadUI != null) quizSpreadUI.NextSpread();
+                return;
+            }
+
+            if (currentMode == DictionaryBookMode.Theme)
+            {
+                if (themeSpreadUI != null) themeSpreadUI.NextSpread();
                 return;
             }
 
@@ -407,7 +419,7 @@ namespace Utsuru.DictionaryUI
                 return;
             }
 
-            // 4b. Tangani mode Theme (Pengaturan & Apply Tema Buku)
+            // 4b. Tangani mode Theme (Preview & Apply Tema Buku per Slide)
             if (currentMode == DictionaryBookMode.Theme)
             {
                 if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
@@ -424,10 +436,15 @@ namespace Utsuru.DictionaryUI
                     if (themeSpreadUI != null) themeSpreadUI.Refresh();
                 }
 
-                if (leftPageNumberText != null) leftPageNumberText.text = "THEMES";
-                if (rightPageNumberText != null) rightPageNumberText.text = "CUSTOMIZE";
-                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
-                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                if (themeSpreadUI != null)
+                {
+                    themeSpreadUI.UpdateNavigationButtons();
+                }
+                else
+                {
+                    if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                    if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                }
                 return;
             }
 
@@ -569,6 +586,13 @@ namespace Utsuru.DictionaryUI
                 if (leftPageNumberText != null) leftPageNumberText.text = $"QUIZ {spread * 2 + 1}";
                 if (rightPageNumberText != null) rightPageNumberText.text = $"QUIZ {spread * 2 + 2}";
             }
+        }
+
+        public void UpdateThemeNavigationState(bool canPrev, bool canNext)
+        {
+            if (currentMode != DictionaryBookMode.Theme) return;
+            if (leftPageClickArea != null) leftPageClickArea.interactable = canPrev;
+            if (rightPageClickArea != null) rightPageClickArea.interactable = canNext;
         }
 
         private void OnPhotoLikeToggled(PhotoRecord record, bool isLiked)
