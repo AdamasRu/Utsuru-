@@ -23,14 +23,14 @@ namespace Utsuru.Capture.Editor
 
             // Load Sprites
             var cardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Card Background.png");
-            var bannerNewSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Banner New Kotoba.png");
+            var bannerNewSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/background_discovered.png");
             var audioBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Audio Button.png");
             var sentenceBoxSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Sentence Box.png");
             var catPillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Category Pill.png");
-            var saveWithPointsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Save Button.png");
-            var saveNoPointsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Save Button Without Point Badge.png");
+            var saveWithPointsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/btn_save.png");
+            var saveNoPointsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/btn_save.png");
             var pointBadgeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Point Badge.png");
-            var retakeBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Retake Button.png");
+            var retakeBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/btn_retake.png");
             var keyHintSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Key Hint Badges.png");
 
             // Load Fonts
