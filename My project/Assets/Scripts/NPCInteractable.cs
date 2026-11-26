@@ -18,6 +18,9 @@ public class NPCInteractable : MonoBehaviour
     private Transform playerTransform;
     private Quaternion defaultRotation;
 
+    public bool HasCompletedDialogue { get; private set; }
+    public DialogueChoice CompletedChoice { get; private set; }
+
     private void Start()
     {
         defaultRotation = transform.rotation;
@@ -51,18 +54,28 @@ public class NPCInteractable : MonoBehaviour
 
     private void HandleInteractionInput()
     {
+        if (!isPlayerNearby || npcData == null || DialogueManager.Instance == null)
+            return;
+
+        // Jangan trigger dialog ulang jika dialog masih terbuka atau baru ditutup pada frame ini
+        if (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame)
+            return;
+
+        // Jangan trigger jika menu modal lain sedang terbuka
+        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsPaused)
+            return;
+        if (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
+            return;
+
         bool ePressed = Input.GetKeyDown(KeyCode.E);
 #if ENABLE_INPUT_SYSTEM
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
             ePressed = true;
 #endif
 
-        if (isPlayerNearby && ePressed)
+        if (ePressed)
         {
-            if (DialogueManager.Instance != null && npcData != null)
-            {
-                DialogueManager.Instance.StartDialogue(npcData, npcNameOverride, npcAvatarOverride);
-            }
+            DialogueManager.Instance.StartDialogue(npcData, npcNameOverride, npcAvatarOverride, this);
         }
     }
 
@@ -71,6 +84,14 @@ public class NPCInteractable : MonoBehaviour
         npcData = data;
         npcNameOverride = characterName;
         npcAvatarOverride = avatar;
+        HasCompletedDialogue = false;
+        CompletedChoice = default;
+    }
+
+    public void MarkDialogueCompleted(DialogueChoice chosenResponse)
+    {
+        HasCompletedDialogue = true;
+        CompletedChoice = chosenResponse;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -81,7 +102,7 @@ public class NPCInteractable : MonoBehaviour
             isPlayerNearby = true;
             playerTransform = (cc != null) ? cc.transform : other.transform;
 
-            // Munculkan tulisan [E] Talk di tengah layar
+            // Munculkan tulisan [E] Talk di tengah layar (kecuali dialog sedang aktif)
             if (DialogueManager.Instance != null)
                 DialogueManager.Instance.ShowInteractionPrompt(true);
         }

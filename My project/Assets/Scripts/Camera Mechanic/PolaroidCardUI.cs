@@ -62,6 +62,8 @@ namespace Utsuru.Capture
         /// <summary>Dipicu saat BtnSimpan ditekan, setelah foto masuk ke Dictionary.</summary>
         public event Action<PhotoRecord> OnPhotoSaved;
 
+        public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
+
         private PhotoCaptureResult current;
         private bool testMode;
 

@@ -72,8 +72,11 @@ public class PauseMenuManager : MonoBehaviour
 
         if (escPressed)
         {
-            // Jangan buka pause menu jika pemain sedang berada di dalam dialog NPC
+            // Jangan buka pause menu jika pemain sedang berada di dalam dialog NPC atau menu Achievements
             if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+                return;
+
+            if (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
                 return;
 
             // Jika sedang membuka panel Settings, tekan ESC akan kembali ke Main Pause Content
