@@ -34,9 +34,17 @@ namespace Utsuru.Store
         [SerializeField, Range(0.5f, 5f)] private float blurSpread = 2.0f;
         [SerializeField, Range(1, 4)] private int downsampleFactor = 2;
 
+        [System.Serializable]
+        public class ThemePreviewBinding
+        {
+            public string themeId;
+            public Sprite previewSprite;
+        }
+
         [Header("Header & Cards")]
         [SerializeField] private TMP_Text pointsBalanceText;
         [SerializeField] private List<StoreThemeCardUI> themeCards = new List<StoreThemeCardUI>();
+        [SerializeField] private List<ThemePreviewBinding> themePreviews = new List<ThemePreviewBinding>();
         [SerializeField] private Button closeButton;
         [SerializeField] private KeyCode toggleKey = KeyCode.F;
 
@@ -292,13 +300,28 @@ namespace Utsuru.Store
                     StoreThemeDefinition def = items[i];
                     bool isOwned = themeManager.IsOwned(def.id);
                     bool canAfford = currentPoints >= def.pricePoints;
-                    themeCards[i].Setup(def, isOwned, canAfford, HandleBuyThemeClicked);
+                    Sprite previewSprite = GetPreviewSprite(def.id);
+                    themeCards[i].Setup(def, previewSprite, isOwned, canAfford, HandleBuyThemeClicked);
                 }
                 else
                 {
                     themeCards[i].gameObject.SetActive(false);
                 }
             }
+        }
+
+        private Sprite GetPreviewSprite(string themeId)
+        {
+            if (themePreviews == null) return null;
+            for (int i = 0; i < themePreviews.Count; i++)
+            {
+                if (themePreviews[i] != null &&
+                    string.Equals(themePreviews[i].themeId, themeId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return themePreviews[i].previewSprite;
+                }
+            }
+            return null;
         }
 
         private void HandleBuyThemeClicked(string themeId)

@@ -187,36 +187,42 @@ namespace Utsuru.Capture
                 }
             }
 
-            // New Discovery vs Already Discovered
-            if (result.IsNewDiscovery)
+            // TopBanner tampil jika objek belum tersimpan di Dictionary; sembunyikan jika sudah ada di Dictionary
+            string objId = result.Target != null ? result.Target.ObjectId : result.Info?.objectId;
+            bool isSavedInDictionary = dictionary != null && !string.IsNullOrEmpty(objId) && dictionary.HasSavedPhotoForObject(objId);
+            bool showTopBanner = !isSavedInDictionary;
+            bool canEarnPoints = dictionary == null || string.IsNullOrEmpty(objId) || !dictionary.IsObjectDiscovered(objId);
+
+            if (showTopBanner)
             {
-                if (bannerImage != null && bannerNewKotobaSprite != null)
+                if (bannerImage != null)
                 {
-                    bannerImage.sprite = bannerNewKotobaSprite;
+                    if (bannerNewKotobaSprite != null)
+                        bannerImage.sprite = bannerNewKotobaSprite;
                     bannerImage.gameObject.SetActive(true);
                 }
-                if (saveButtonImage != null && saveButtonWithPointsSprite != null)
+                if (saveButtonImage != null)
                 {
-                    saveButtonImage.sprite = saveButtonWithPointsSprite;
+                    Sprite targetSaveSprite = canEarnPoints ? saveButtonWithPointsSprite : saveButtonWithoutPointsSprite;
+                    if (targetSaveSprite != null)
+                        saveButtonImage.sprite = targetSaveSprite;
                 }
                 if (pointBadgeObject != null)
                 {
-                    pointBadgeObject.SetActive(true);
+                    pointBadgeObject.SetActive(canEarnPoints);
                 }
-                if (pointBadgeLabel != null)
+                if (pointBadgeLabel != null && canEarnPoints)
                 {
-                    pointBadgeLabel.text = "+15 Points";
+                    var pts = PointRewardSystem.Instance ?? FindFirstObjectByType<PointRewardSystem>();
+                    int reward = pts != null ? pts.PointsPerNewWord : 10;
+                    pointBadgeLabel.text = $"+{reward} Points";
                 }
             }
             else
             {
                 if (bannerImage != null)
                 {
-                    if (bannerAlreadyDiscoveredSprite != null)
-                        bannerImage.sprite = bannerAlreadyDiscoveredSprite;
-                    else if (bannerNewKotobaSprite != null)
-                        bannerImage.sprite = bannerNewKotobaSprite; // Temporary fallback per user choice
-                    bannerImage.gameObject.SetActive(true);
+                    bannerImage.gameObject.SetActive(false);
                 }
                 if (saveButtonImage != null && saveButtonWithoutPointsSprite != null)
                 {
@@ -389,11 +395,30 @@ namespace Utsuru.Capture
                 return;
             }
 
+            string objId = current.Target != null ? current.Target.ObjectId : current.Info?.objectId;
+            bool isFirstDiscovery = !string.IsNullOrEmpty(objId) && !dictionary.IsObjectDiscovered(objId);
+
             PhotoRecord record = PhotoFileStore.Save(current, dictionary.ActiveAlbumId);
-            dictionary.AddPhoto(record);
+            bool overwritten = dictionary.SaveOrOverwritePhoto(record);
+
+            if (isFirstDiscovery && current.Vocabulary != null)
+            {
+                dictionary.MarkDiscovered(objId, current.Vocabulary.vocabularyId);
+                var pts = PointRewardSystem.Instance ?? FindFirstObjectByType<PointRewardSystem>();
+                if (pts != null && pts.PointsPerNewWord > 0)
+                {
+                    pts.EarnPoints(pts.PointsPerNewWord);
+                }
+            }
+
             OnPhotoSaved?.Invoke(record);
 
-            if (hud != null) hud.ShowMessage(savedMessage);
+            if (hud != null)
+            {
+                hud.ShowMessage(overwritten
+                    ? "Foto di Dictionary berhasil diperbarui!"
+                    : savedMessage);
+            }
             Close();
         }
 

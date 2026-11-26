@@ -112,7 +112,8 @@ namespace Utsuru.Capture
                 return;
             }
 
-            bool isNew = !dictionary.IsObjectDiscovered(target.ObjectId);
+            bool isSavedInDictionary = dictionary.HasSavedPhotoForObject(target.ObjectId);
+            bool isNew = !isSavedInDictionary;
 
             if (!isNew && !allowReviewCaptured)
             {
@@ -127,22 +128,19 @@ namespace Utsuru.Capture
             Texture2D snapshot = TakeSnapshot();
             detector.SuppressHighlight(false);
 
-            int earned = 0;
-            if (isNew)
-            {
-                dictionary.MarkDiscovered(target.ObjectId, info.vocabulary.vocabularyId);
-                earned = points != null ? points.PointsPerNewWord : 0;
-                if (points != null) points.EarnPoints(earned);
-            }
-
             if (sfxSource != null && shutterClip != null) sfxSource.PlayOneShot(shutterClip);
             if (hud != null)
             {
                 hud.PlayFlash();
                 if (isNew)
-                    hud.ShowMessage(string.Format(newWordMessageFormat, info.vocabulary.japaneseWord, earned));
+                {
+                    int potentialPoints = points != null ? points.PointsPerNewWord : 0;
+                    hud.ShowMessage(string.Format(newWordMessageFormat, info.vocabulary.japaneseWord, potentialPoints));
+                }
                 else
+                {
                     hud.ShowMessage(alreadyPhotoMessage);
+                }
             }
 
             OnPhotoCaptured?.Invoke(new PhotoCaptureResult

@@ -16,6 +16,7 @@ namespace Utsuru.Store
         public int pricePoints;
         public bool isDefaultFree;
         public string bookAssetPath;
+        public string storePreviewAssetPath;
         public Color swatchTopColor;
         public Color swatchBottomColor;
 
@@ -26,6 +27,7 @@ namespace Utsuru.Store
             int pricePoints,
             bool isDefaultFree,
             string bookAssetPath,
+            string storePreviewAssetPath,
             Color swatchTopColor,
             Color swatchBottomColor)
         {
@@ -35,6 +37,7 @@ namespace Utsuru.Store
             this.pricePoints = pricePoints;
             this.isDefaultFree = isDefaultFree;
             this.bookAssetPath = bookAssetPath;
+            this.storePreviewAssetPath = storePreviewAssetPath;
             this.swatchTopColor = swatchTopColor;
             this.swatchBottomColor = swatchBottomColor;
         }
@@ -82,6 +85,7 @@ namespace Utsuru.Store
                 0,
                 true,
                 "Assets/UI/Dictionary/Book/Book_Plain.png",
+                "",
                 new Color(0.961f, 0.918f, 0.855f, 1f),
                 new Color(0.871f, 0.796f, 0.690f, 1f)
             ),
@@ -92,6 +96,7 @@ namespace Utsuru.Store
                 300,
                 false,
                 "Assets/UI/Dictionary/Book/Book_Pink.png",
+                "Assets/UI/Store/item_sakura.png",
                 new Color(1.000f, 0.871f, 0.890f, 1f),
                 new Color(1.000f, 0.718f, 0.773f, 1f)
             ),
@@ -102,6 +107,7 @@ namespace Utsuru.Store
                 300,
                 false,
                 "Assets/UI/Dictionary/Book/Book_Green.png",
+                "Assets/UI/Store/item_botanical.png",
                 new Color(0.871f, 1.000f, 0.871f, 1f),
                 new Color(0.635f, 0.961f, 0.706f, 1f)
             ),
@@ -112,8 +118,9 @@ namespace Utsuru.Store
                 300,
                 false,
                 "Assets/UI/Dictionary/Book/Book_Orange.png",
+                "Assets/UI/Store/item_autumn.png",
                 new Color(1.000f, 0.890f, 0.749f, 1f),
-                new Color(1.000f, 0.737f, 0.478f, 1f)
+                new Color(0.996f, 0.737f, 0.478f, 1f)
             ),
             new StoreThemeDefinition(
                 MidnightThemeId,
@@ -122,6 +129,7 @@ namespace Utsuru.Store
                 300,
                 false,
                 "Assets/UI/Dictionary/Book/Book_Purple.png",
+                "Assets/UI/Store/item_midnight.png",
                 new Color(0.820f, 0.812f, 1.000f, 1f),
                 new Color(0.647f, 0.639f, 0.980f, 1f)
             ),
@@ -132,6 +140,7 @@ namespace Utsuru.Store
                 300,
                 false,
                 "Assets/UI/Dictionary/Book/Book_Yellow.png",
+                "Assets/UI/Store/item_summer.png",
                 new Color(1.000f, 0.973f, 0.725f, 1f),
                 new Color(1.000f, 0.941f, 0.482f, 1f)
             )

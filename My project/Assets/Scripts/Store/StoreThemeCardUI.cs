@@ -6,12 +6,12 @@ using UnityEngine.UI;
 namespace Utsuru.Store
 {
     /// <summary>
-    /// Komponen UI untuk satu kartu tema di modal Store (preview warna, nama tema, dan tombol harga/Owned).
+    /// Komponen UI untuk satu kartu tema di modal Store (preview item_*.png, nama tema, dan tombol harga/Owned).
     /// </summary>
     public class StoreThemeCardUI : MonoBehaviour
     {
         [SerializeField] private Image cardBackground;
-        [SerializeField] private RawImage swatchPreview;
+        [SerializeField] private Image swatchPreview;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private Button actionButton;
         [SerializeField] private Image actionButtonBg;
@@ -20,12 +20,11 @@ namespace Utsuru.Store
 
         private string currentThemeId;
         private Action<string> onBuyClicked;
-        private Texture2D runtimeGradientTex;
 
         private static readonly Color OwnedCardTint = new Color(0.92f, 0.90f, 0.84f, 1f);
         private static readonly Color AvailableCardTint = Color.white;
-        private static readonly Color OwnedPillColor = new Color(0.76f, 0.84f, 0.72f, 1f);
-        private static readonly Color AvailablePillColor = new Color(0.86f, 0.80f, 0.72f, 1f);
+        private static readonly Color OwnedButtonTint = new Color(0.86f, 0.93f, 0.84f, 1f);
+        private static readonly Color AvailableButtonTint = Color.white;
         private static readonly Color UnaffordableTextColor = new Color(0.65f, 0.22f, 0.18f, 1f);
         private static readonly Color NormalTextColor = new Color(0.30f, 0.19f, 0.12f, 1f);
 
@@ -38,18 +37,9 @@ namespace Utsuru.Store
             }
         }
 
-        private void OnDestroy()
-        {
-            if (runtimeGradientTex != null)
-            {
-                Destroy(runtimeGradientTex);
-                runtimeGradientTex = null;
-            }
-        }
-
         public void ConfigureReferences(
             Image cardBg,
-            RawImage preview,
+            Image preview,
             TMP_Text title,
             Button button,
             Image buttonBg,
@@ -71,7 +61,12 @@ namespace Utsuru.Store
             }
         }
 
-        public void Setup(StoreThemeDefinition def, bool isOwned, bool canAfford, Action<string> buyCallback)
+        public void Setup(
+            StoreThemeDefinition def,
+            Sprite previewSprite,
+            bool isOwned,
+            bool canAfford,
+            Action<string> buyCallback)
         {
             if (def == null) return;
 
@@ -81,14 +76,25 @@ namespace Utsuru.Store
             if (titleText != null)
                 titleText.text = def.displayName;
 
-            ApplySwatchGradient(def.swatchTopColor, def.swatchBottomColor);
+            if (swatchPreview != null)
+            {
+                if (previewSprite != null)
+                {
+                    swatchPreview.sprite = previewSprite;
+                    swatchPreview.color = Color.white;
+                }
+                else
+                {
+                    swatchPreview.sprite = null;
+                    swatchPreview.color = def.swatchBottomColor;
+                }
+            }
 
             if (cardBackground != null)
                 cardBackground.color = isOwned ? OwnedCardTint : AvailableCardTint;
 
             if (actionButton != null)
             {
-                // Tetap bisa diklik saat belum dimiliki agar saat poin kurang bisa memunculkan pesan peringatan DPPL.
                 actionButton.interactable = !isOwned;
             }
 
@@ -96,47 +102,26 @@ namespace Utsuru.Store
                 starIconObject.SetActive(!isOwned);
 
             if (actionButtonBg != null)
-                actionButtonBg.color = isOwned ? OwnedPillColor : AvailablePillColor;
+                actionButtonBg.color = isOwned ? OwnedButtonTint : AvailableButtonTint;
 
             if (actionLabelText != null)
             {
+                RectTransform labelRt = actionLabelText.rectTransform;
                 if (isOwned)
                 {
+                    labelRt.offsetMin = new Vector2(8f, 0f);
+                    labelRt.offsetMax = new Vector2(-8f, 0f);
                     actionLabelText.text = "Owned";
                     actionLabelText.color = new Color(0.18f, 0.36f, 0.19f, 1f);
                 }
                 else
                 {
+                    labelRt.offsetMin = new Vector2(44f, 0f);
+                    labelRt.offsetMax = new Vector2(-10f, 0f);
                     actionLabelText.text = def.pricePoints.ToString();
                     actionLabelText.color = canAfford ? NormalTextColor : UnaffordableTextColor;
                 }
             }
-        }
-
-        private void ApplySwatchGradient(Color topColor, Color bottomColor)
-        {
-            if (swatchPreview == null) return;
-
-            if (runtimeGradientTex == null)
-            {
-                runtimeGradientTex = new Texture2D(2, 32, TextureFormat.RGBA32, false)
-                {
-                    wrapMode = TextureWrapMode.Clamp,
-                    filterMode = FilterMode.Bilinear
-                };
-            }
-
-            for (int y = 0; y < 32; y++)
-            {
-                float t = y / 31f;
-                Color c = Color.Lerp(bottomColor, topColor, t);
-                runtimeGradientTex.SetPixel(0, y, c);
-                runtimeGradientTex.SetPixel(1, y, c);
-            }
-            runtimeGradientTex.Apply();
-
-            swatchPreview.texture = runtimeGradientTex;
-            swatchPreview.color = Color.white;
         }
 
         private void HandleActionClicked()

@@ -102,6 +102,15 @@ namespace Utsuru.Capture
             return discoveredObjects.Contains(objectId);
         }
 
+        /// <summary>Cek apakah objek ini sudah memiliki foto yang tersimpan di Dictionary.</summary>
+        public bool HasSavedPhotoForObject(string objectId)
+        {
+            if (string.IsNullOrEmpty(objectId) || data == null || data.photos == null)
+                return false;
+
+            return data.photos.Exists(p => p != null && string.Equals(p.objectId, objectId, StringComparison.Ordinal));
+        }
+
         public bool IsVocabularyDiscovered(int vocabularyId)
         {
             return data.discoveredVocabularyIds.Contains(vocabularyId);
@@ -115,12 +124,47 @@ namespace Utsuru.Capture
             Persist();
         }
 
-        /// <summary>Simpan foto ke album aktif dengan urutan Stack (LIFO: foto terbaru paling atas).</summary>
+        /// <summary>Simpan foto ke album aktif atau overwrite foto lama jika objectId sudah ada di Dictionary.</summary>
         public void AddPhoto(PhotoRecord record)
         {
-            // Sesuai permintaan pengguna: disimpan dengan urutan Stack (elemen terbaru di indeks 0)
+            SaveOrOverwritePhoto(record);
+        }
+
+        /// <summary>
+        /// Menyimpan foto baru ke Dictionary. Jika objectId sudah pernah disimpan,
+        /// foto lama (PNG & record) diganti dengan foto baru sambil mempertahankan status albumId, isLiked, dan isFavorite.
+        /// Mengembalikan true jika menimpa foto lama.
+        /// </summary>
+        public bool SaveOrOverwritePhoto(PhotoRecord record)
+        {
+            if (record == null) return false;
+
+            bool overwritten = false;
+            if (!string.IsNullOrEmpty(record.objectId))
+            {
+                for (int i = data.photos.Count - 1; i >= 0; i--)
+                {
+                    PhotoRecord existing = data.photos[i];
+                    if (existing != null && string.Equals(existing.objectId, record.objectId, StringComparison.Ordinal))
+                    {
+                        if (!overwritten)
+                        {
+                            record.albumId = existing.albumId;
+                            record.isLiked = existing.isLiked;
+                            record.isFavorite = existing.isFavorite;
+                            overwritten = true;
+                        }
+
+                        PhotoFileStore.Delete(existing.imagePath);
+                        data.photos.RemoveAt(i);
+                    }
+                }
+            }
+
+            // Simpan dengan urutan Stack (elemen terbaru di indeks 0)
             data.photos.Insert(0, record);
             Persist();
+            return overwritten;
         }
 
         /// <summary>Ubah status favorit foto (bintang).</summary>

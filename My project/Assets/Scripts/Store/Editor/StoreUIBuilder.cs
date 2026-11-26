@@ -12,12 +12,13 @@ namespace Utsuru.Store.Editor
 {
     /// <summary>
     /// Membangun dan menghubungkan UI Store Tema Kamus & StoreThemeManager ke Day_Showcase.unity,
-    /// mengikuti desain modal krem + blur latar 3D + keybind 'F'.
+    /// menggunakan aset asli dari Assets/UI/Store dengan dimensi piksel yang presisi.
     /// </summary>
     [InitializeOnLoad]
     public static class StoreUIBuilder
     {
         private const string DayShowcaseScenePath = "Assets/Japanese_Street/Scenes/Day_Showcase.unity";
+        private const string StoreAssetsFolder = "Assets/UI/Store";
 
         static StoreUIBuilder()
         {
@@ -43,6 +44,55 @@ namespace Utsuru.Store.Editor
             if (active.IsValid() && active.path == DayShowcaseScenePath)
             {
                 EnsureStoreInActiveScene(saveScene: !active.isDirty);
+            }
+        }
+
+        public static void ConfigureStoreSprites()
+        {
+            if (!AssetDatabase.IsValidFolder(StoreAssetsFolder)) return;
+
+            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { StoreAssetsFolder });
+            int changedCount = 0;
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer == null) continue;
+
+                bool changed = false;
+                if (importer.textureType != TextureImporterType.Sprite)
+                {
+                    importer.textureType = TextureImporterType.Sprite;
+                    changed = true;
+                }
+                if (importer.spriteImportMode != SpriteImportMode.Single)
+                {
+                    importer.spriteImportMode = SpriteImportMode.Single;
+                    changed = true;
+                }
+                if (!importer.alphaIsTransparency)
+                {
+                    importer.alphaIsTransparency = true;
+                    changed = true;
+                }
+                if (importer.mipmapEnabled)
+                {
+                    importer.mipmapEnabled = false;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    importer.SaveAndReimport();
+                    changedCount++;
+                }
+            }
+
+            if (changedCount > 0)
+            {
+                AssetDatabase.Refresh();
+                Debug.Log($"[StoreUIBuilder] Configured {changedCount} Store sprites.");
             }
         }
 
@@ -72,6 +122,7 @@ namespace Utsuru.Store.Editor
         public static void BuildUI(bool saveScene = true)
         {
             AchievementAssetImporter.ConfigureAssets();
+            ConfigureStoreSprites();
 
             Canvas canvas = Object.FindFirstObjectByType<Canvas>();
             if (canvas == null)
@@ -89,11 +140,12 @@ namespace Utsuru.Store.Editor
                 manager = mgrGo.AddComponent<StoreThemeManager>();
             }
 
-            // 2. Muat Sprites & Material
-            Sprite panelBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Achievements/Achievements-Panel-Bg.png");
-            Sprite boxSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Achievements/Achievements-Box.png");
-            Sprite starsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Achievements/Stars-Point-Icon.png");
-            Sprite closeBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Achievements/Close-Button-Shape.png");
+            // 2. Muat Sprites dari Assets/UI/Store/
+            Sprite bgPanelSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/background.png");         // 1135 x 963
+            Sprite bgItemSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/background_item.png");     // 237 x 291
+            Sprite bgBuyBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/background_btn_buy.png");// 145 x 52
+            Sprite bgCloseBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/background_btn_close.png"); // 173 x 67
+            Sprite starSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Store/star.png");                // 36 x 32
             Sprite pillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Category Pill.png");
             Material blurMat = AchievementAssetImporter.EnsureBlurMaterial();
 
@@ -153,20 +205,21 @@ namespace Utsuru.Store.Editor
             tintImg.color = new Color(0.08f, 0.05f, 0.03f, 0.22f);
             tintImg.raycastTarget = true;
 
-            // 5.3 MainPanel (1140 x 880 sesuai proporsi mockup Store)
+            // 5.3 MainPanel — ukuran presisi 1135 x 963 sesuai background.png
             GameObject panelGo = CreateUIObject("MainPanel", viewGo.transform);
             RectTransform panelRt = panelGo.GetComponent<RectTransform>();
             panelRt.anchorMin = new Vector2(0.5f, 0.5f);
             panelRt.anchorMax = new Vector2(0.5f, 0.5f);
             panelRt.pivot = new Vector2(0.5f, 0.5f);
-            panelRt.sizeDelta = new Vector2(1140f, 880f);
+            panelRt.sizeDelta = new Vector2(1135f, 963f);
             panelRt.anchoredPosition = Vector2.zero;
 
             Image panelImg = panelGo.AddComponent<Image>();
-            if (panelBgSprite != null)
+            if (bgPanelSprite != null)
             {
-                panelImg.sprite = panelBgSprite;
-                panelImg.type = Image.Type.Sliced;
+                panelImg.sprite = bgPanelSprite;
+                panelImg.type = Image.Type.Simple;
+                panelImg.preserveAspect = true;
                 panelImg.color = Color.white;
             }
             else
@@ -175,14 +228,14 @@ namespace Utsuru.Store.Editor
             }
             panelImg.raycastTarget = true;
 
-            // 5.4 Header ("STORE" di kiri + badge poin di kanan + garis pemisah)
+            // 5.4 Header ("STORE" di kiri + badge poin background_btn_buy 145x52 di kanan + garis pemisah)
             GameObject headerTitleGo = CreateUIObject("HeaderTitle", panelGo.transform);
             RectTransform headerRt = headerTitleGo.GetComponent<RectTransform>();
             headerRt.anchorMin = new Vector2(0f, 1f);
             headerRt.anchorMax = new Vector2(0f, 1f);
             headerRt.pivot = new Vector2(0f, 1f);
             headerRt.sizeDelta = new Vector2(420f, 84f);
-            headerRt.anchoredPosition = new Vector2(140f, -46f);
+            headerRt.anchoredPosition = new Vector2(160f, -48f);
 
             TextMeshProUGUI headerTmp = headerTitleGo.AddComponent<TextMeshProUGUI>();
             if (balooExtraBold != null) headerTmp.font = balooExtraBold;
@@ -193,49 +246,53 @@ namespace Utsuru.Store.Editor
             headerTmp.color = darkBrown;
             headerTmp.characterSpacing = 2f;
 
-            // Pill Saldo Poin di kanan atas
+            // Pill Saldo Poin di kanan atas — ukuran presisi 145 x 52 sesuai background_btn_buy.png
             GameObject pointsBadgeGo = CreateUIObject("PointsBalanceBadge", panelGo.transform);
             RectTransform pointsBadgeRt = pointsBadgeGo.GetComponent<RectTransform>();
             pointsBadgeRt.anchorMin = new Vector2(1f, 1f);
             pointsBadgeRt.anchorMax = new Vector2(1f, 1f);
             pointsBadgeRt.pivot = new Vector2(1f, 1f);
-            pointsBadgeRt.sizeDelta = new Vector2(210f, 64f);
-            pointsBadgeRt.anchoredPosition = new Vector2(-140f, -54f);
+            pointsBadgeRt.sizeDelta = new Vector2(145f, 52f);
+            pointsBadgeRt.anchoredPosition = new Vector2(-160f, -62f);
 
             Image pointsBadgeImg = pointsBadgeGo.AddComponent<Image>();
-            if (pillSprite != null)
+            if (bgBuyBtnSprite != null)
             {
-                pointsBadgeImg.sprite = pillSprite;
-                pointsBadgeImg.type = Image.Type.Sliced;
-                pointsBadgeImg.pixelsPerUnitMultiplier = 0.8f;
+                pointsBadgeImg.sprite = bgBuyBtnSprite;
+                pointsBadgeImg.type = Image.Type.Simple;
+                pointsBadgeImg.preserveAspect = true;
+                pointsBadgeImg.color = Color.white;
             }
-            pointsBadgeImg.color = new Color(0.86f, 0.80f, 0.72f, 1f);
+            else
+            {
+                pointsBadgeImg.color = new Color(0.86f, 0.80f, 0.72f, 1f);
+            }
 
-            Outline badgeOutline = pointsBadgeGo.AddComponent<Outline>();
-            badgeOutline.effectColor = mediumBrown;
-            badgeOutline.effectDistance = new Vector2(2f, -2f);
-
+            // StarIcon — ukuran presisi 36 x 32 sesuai star.png
             GameObject headerStarGo = CreateUIObject("StarIcon", pointsBadgeGo.transform);
             RectTransform headerStarRt = headerStarGo.GetComponent<RectTransform>();
             headerStarRt.anchorMin = new Vector2(0f, 0.5f);
             headerStarRt.anchorMax = new Vector2(0f, 0.5f);
             headerStarRt.pivot = new Vector2(0f, 0.5f);
-            headerStarRt.sizeDelta = new Vector2(40f, 40f);
-            headerStarRt.anchoredPosition = new Vector2(20f, 0f);
+            headerStarRt.sizeDelta = new Vector2(36f, 32f);
+            headerStarRt.anchoredPosition = new Vector2(12f, 0f);
             Image headerStarImg = headerStarGo.AddComponent<Image>();
-            if (starsSprite != null) headerStarImg.sprite = starsSprite;
+            if (starSprite != null) headerStarImg.sprite = starSprite;
             headerStarImg.preserveAspect = true;
 
             GameObject pointsTextGo = CreateUIObject("PointsBalanceText", pointsBadgeGo.transform);
             RectTransform pointsTextRt = pointsTextGo.GetComponent<RectTransform>();
             pointsTextRt.anchorMin = Vector2.zero;
             pointsTextRt.anchorMax = Vector2.one;
-            pointsTextRt.offsetMin = new Vector2(64f, 0f);
-            pointsTextRt.offsetMax = new Vector2(-16f, 0f);
+            pointsTextRt.offsetMin = new Vector2(46f, 0f);
+            pointsTextRt.offsetMax = new Vector2(-10f, 0f);
             TextMeshProUGUI pointsBalanceTmp = pointsTextGo.AddComponent<TextMeshProUGUI>();
             if (balooExtraBold != null) pointsBalanceTmp.font = balooExtraBold;
             pointsBalanceTmp.text = "0";
-            pointsBalanceTmp.fontSize = 36f;
+            pointsBalanceTmp.fontSize = 28f;
+            pointsBalanceTmp.enableAutoSizing = true;
+            pointsBalanceTmp.fontSizeMin = 18f;
+            pointsBalanceTmp.fontSizeMax = 28f;
             pointsBalanceTmp.fontStyle = FontStyles.Bold;
             pointsBalanceTmp.alignment = TextAlignmentOptions.Center;
             pointsBalanceTmp.color = darkBrown;
@@ -246,47 +303,52 @@ namespace Utsuru.Store.Editor
             dividerRt.anchorMin = new Vector2(0.5f, 1f);
             dividerRt.anchorMax = new Vector2(0.5f, 1f);
             dividerRt.pivot = new Vector2(0.5f, 1f);
-            dividerRt.sizeDelta = new Vector2(860f, 4f);
+            dividerRt.sizeDelta = new Vector2(815f, 3f);
             dividerRt.anchoredPosition = new Vector2(0f, -142f);
             Image dividerImg = dividerGo.AddComponent<Image>();
             dividerImg.color = mediumBrown;
 
-            // 5.5 Grid Kartu Tema (3 atas, 2 bawah — total 5 kartu)
+            // 5.5 Grid Kartu Tema (3 atas, 2 bawah — total 5 kartu @ 237 x 291)
             Vector2[] cardPositions = new Vector2[]
             {
-                new Vector2(-280f, 118f), // Row 1 Left (Sakura)
-                new Vector2(0f, 118f),    // Row 1 Center (Botanical)
-                new Vector2(280f, 118f),  // Row 1 Right (Autumn)
-                new Vector2(-140f, -172f),// Row 2 Left (Midnight)
-                new Vector2(140f, -172f)  // Row 2 Right (Summer)
+                new Vector2(-270f, 158f),  // Row 1 Left (Sakura)
+                new Vector2(0f, 158f),     // Row 1 Center (Botanical)
+                new Vector2(270f, 158f),   // Row 1 Right (Autumn)
+                new Vector2(-135f, -158f), // Row 2 Left (Midnight)
+                new Vector2(135f, -158f)   // Row 2 Right (Summer)
             };
 
+            IReadOnlyList<StoreThemeDefinition> storeItems = StoreThemeCatalog.StoreItems;
             List<StoreThemeCardUI> cards = new List<StoreThemeCardUI>();
             for (int i = 0; i < cardPositions.Length; i++)
             {
+                Sprite itemPreviewSprite = i < storeItems.Count && !string.IsNullOrEmpty(storeItems[i].storePreviewAssetPath)
+                    ? AssetDatabase.LoadAssetAtPath<Sprite>(storeItems[i].storePreviewAssetPath)
+                    : null;
+
                 StoreThemeCardUI card = CreateThemeCard(
                     $"ThemeCard_{i + 1}",
                     panelGo.transform,
                     cardPositions[i],
-                    boxSprite,
-                    pillSprite,
-                    starsSprite,
+                    bgItemSprite,
+                    itemPreviewSprite,
+                    bgBuyBtnSprite,
+                    starSprite,
                     balooExtraBold,
                     nunitoBold,
-                    darkBrown,
-                    mediumBrown
+                    darkBrown
                 );
                 cards.Add(card);
             }
 
-            // 5.6 Feedback Banner (muncul sementara saat beli sukses / poin kurang)
+            // 5.6 Feedback Banner
             GameObject feedbackGo = CreateUIObject("FeedbackBanner", panelGo.transform);
             RectTransform feedbackRt = feedbackGo.GetComponent<RectTransform>();
             feedbackRt.anchorMin = new Vector2(0.5f, 0f);
             feedbackRt.anchorMax = new Vector2(0.5f, 0f);
             feedbackRt.pivot = new Vector2(0.5f, 0f);
-            feedbackRt.sizeDelta = new Vector2(760f, 46f);
-            feedbackRt.anchoredPosition = new Vector2(0f, 112f);
+            feedbackRt.sizeDelta = new Vector2(760f, 44f);
+            feedbackRt.anchoredPosition = new Vector2(0f, 114f);
 
             Image feedbackBg = feedbackGo.AddComponent<Image>();
             if (pillSprite != null)
@@ -308,20 +370,22 @@ namespace Utsuru.Store.Editor
             feedbackTmp.color = Color.white;
             feedbackGo.SetActive(false);
 
-            // 5.7 Close Button
+            // 5.7 Close Button — ukuran presisi 173 x 67 sesuai background_btn_close.png
             GameObject closeGo = CreateUIObject("CloseButton", panelGo.transform);
             RectTransform closeRt = closeGo.GetComponent<RectTransform>();
             closeRt.anchorMin = new Vector2(0.5f, 0f);
             closeRt.anchorMax = new Vector2(0.5f, 0f);
             closeRt.pivot = new Vector2(0.5f, 0f);
-            closeRt.sizeDelta = new Vector2(180f, 68f);
-            closeRt.anchoredPosition = new Vector2(0f, 34f);
+            closeRt.sizeDelta = new Vector2(173f, 67f);
+            closeRt.anchoredPosition = new Vector2(0f, 36f);
 
             Image closeImg = closeGo.AddComponent<Image>();
-            if (closeBtnSprite != null)
+            if (bgCloseBtnSprite != null)
             {
-                closeImg.sprite = closeBtnSprite;
+                closeImg.sprite = bgCloseBtnSprite;
+                closeImg.type = Image.Type.Simple;
                 closeImg.preserveAspect = true;
+                closeImg.color = Color.white;
             }
             else
             {
@@ -336,7 +400,7 @@ namespace Utsuru.Store.Editor
             TextMeshProUGUI closeTmp = closeTxtGo.AddComponent<TextMeshProUGUI>();
             if (balooBold != null) closeTmp.font = balooBold;
             closeTmp.text = "Close";
-            closeTmp.fontSize = 28f;
+            closeTmp.fontSize = 26f;
             closeTmp.fontStyle = FontStyles.Bold;
             closeTmp.alignment = TextAlignmentOptions.Center;
             closeTmp.color = Color.white;
@@ -364,6 +428,18 @@ namespace Utsuru.Store.Editor
                 cardsProp.GetArrayElementAtIndex(i).objectReferenceValue = cards[i];
             }
 
+            SerializedProperty previewsProp = so.FindProperty("themePreviews");
+            previewsProp.arraySize = storeItems.Count;
+            for (int i = 0; i < storeItems.Count; i++)
+            {
+                var elem = previewsProp.GetArrayElementAtIndex(i);
+                elem.FindPropertyRelative("themeId").stringValue = storeItems[i].id;
+                Sprite s = !string.IsNullOrEmpty(storeItems[i].storePreviewAssetPath)
+                    ? AssetDatabase.LoadAssetAtPath<Sprite>(storeItems[i].storePreviewAssetPath)
+                    : null;
+                elem.FindPropertyRelative("previewSprite").objectReferenceValue = s;
+            }
+
             so.ApplyModifiedProperties();
 
             Scene currentScene = EditorSceneManager.GetActiveScene();
@@ -371,11 +447,11 @@ namespace Utsuru.Store.Editor
             if (saveScene)
             {
                 EditorSceneManager.SaveScene(currentScene);
-                Debug.Log("[StoreUIBuilder] Store UI built, wired, and scene saved.");
+                Debug.Log("[StoreUIBuilder] Store UI built with exact Assets/UI/Store sprites and saved.");
             }
             else
             {
-                Debug.Log("[StoreUIBuilder] Store UI built and wired into active scene.");
+                Debug.Log("[StoreUIBuilder] Store UI built with exact Assets/UI/Store sprites.");
             }
         }
 
@@ -383,27 +459,29 @@ namespace Utsuru.Store.Editor
             string name,
             Transform parent,
             Vector2 anchoredPos,
-            Sprite boxSprite,
-            Sprite pillSprite,
-            Sprite starsSprite,
+            Sprite bgItemSprite,
+            Sprite itemPreviewSprite,
+            Sprite bgBuyBtnSprite,
+            Sprite starSprite,
             TMP_FontAsset balooExtraBold,
             TMP_FontAsset nunitoBold,
-            Color darkBrown,
-            Color mediumBrown)
+            Color darkBrown)
         {
+            // Card — ukuran presisi 237 x 291 sesuai background_item.png
             GameObject cardGo = CreateUIObject(name, parent);
             RectTransform cardRt = cardGo.GetComponent<RectTransform>();
             cardRt.anchorMin = new Vector2(0.5f, 0.5f);
             cardRt.anchorMax = new Vector2(0.5f, 0.5f);
             cardRt.pivot = new Vector2(0.5f, 0.5f);
-            cardRt.sizeDelta = new Vector2(246f, 266f);
+            cardRt.sizeDelta = new Vector2(237f, 291f);
             cardRt.anchoredPosition = anchoredPos;
 
             Image cardBg = cardGo.AddComponent<Image>();
-            if (boxSprite != null)
+            if (bgItemSprite != null)
             {
-                cardBg.sprite = boxSprite;
-                cardBg.type = Image.Type.Sliced;
+                cardBg.sprite = bgItemSprite;
+                cardBg.type = Image.Type.Simple;
+                cardBg.preserveAspect = true;
                 cardBg.color = Color.white;
             }
             else
@@ -411,26 +489,25 @@ namespace Utsuru.Store.Editor
                 cardBg.color = new Color(0.93f, 0.87f, 0.78f, 1f);
             }
 
-            Outline cardOutline = cardGo.AddComponent<Outline>();
-            cardOutline.effectColor = mediumBrown;
-            cardOutline.effectDistance = new Vector2(2f, -2f);
-
             StoreThemeCardUI cardUI = cardGo.AddComponent<StoreThemeCardUI>();
 
-            // Swatch Preview Square
+            // Swatch Preview — ukuran presisi 176 x 158 sesuai item_*.png
             GameObject previewGo = CreateUIObject("SwatchPreview", cardGo.transform);
             RectTransform previewRt = previewGo.GetComponent<RectTransform>();
             previewRt.anchorMin = new Vector2(0.5f, 1f);
             previewRt.anchorMax = new Vector2(0.5f, 1f);
             previewRt.pivot = new Vector2(0.5f, 1f);
-            previewRt.sizeDelta = new Vector2(168f, 144f);
+            previewRt.sizeDelta = new Vector2(176f, 158f);
             previewRt.anchoredPosition = new Vector2(0f, -18f);
 
-            RawImage previewRaw = previewGo.AddComponent<RawImage>();
-            previewRaw.color = Color.white;
-            Outline previewOutline = previewGo.AddComponent<Outline>();
-            previewOutline.effectColor = new Color(0.75f, 0.68f, 0.60f, 0.75f);
-            previewOutline.effectDistance = new Vector2(1.5f, -1.5f);
+            Image previewImg = previewGo.AddComponent<Image>();
+            if (itemPreviewSprite != null)
+            {
+                previewImg.sprite = itemPreviewSprite;
+                previewImg.type = Image.Type.Simple;
+                previewImg.preserveAspect = true;
+            }
+            previewImg.color = Color.white;
 
             // Title Label
             GameObject titleGo = CreateUIObject("TitleText", cardGo.transform);
@@ -438,59 +515,60 @@ namespace Utsuru.Store.Editor
             titleRt.anchorMin = new Vector2(0.5f, 0f);
             titleRt.anchorMax = new Vector2(0.5f, 0f);
             titleRt.pivot = new Vector2(0.5f, 0f);
-            titleRt.sizeDelta = new Vector2(226f, 34f);
-            titleRt.anchoredPosition = new Vector2(0f, 64f);
+            titleRt.sizeDelta = new Vector2(216f, 32f);
+            titleRt.anchoredPosition = new Vector2(0f, 72f);
 
             TextMeshProUGUI titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
             if (nunitoBold != null) titleTmp.font = nunitoBold;
             titleTmp.text = "Theme Name";
-            titleTmp.fontSize = 21f;
+            titleTmp.fontSize = 20f;
             titleTmp.fontStyle = FontStyles.Bold;
             titleTmp.alignment = TextAlignmentOptions.Center;
             titleTmp.color = darkBrown;
 
-            // Price / Owned Pill Button
+            // Price / Owned Pill Button — ukuran presisi 145 x 52 sesuai background_btn_buy.png
             GameObject btnGo = CreateUIObject("PriceButton", cardGo.transform);
             RectTransform btnRt = btnGo.GetComponent<RectTransform>();
             btnRt.anchorMin = new Vector2(0.5f, 0f);
             btnRt.anchorMax = new Vector2(0.5f, 0f);
             btnRt.pivot = new Vector2(0.5f, 0f);
-            btnRt.sizeDelta = new Vector2(174f, 44f);
-            btnRt.anchoredPosition = new Vector2(0f, 14f);
+            btnRt.sizeDelta = new Vector2(145f, 52f);
+            btnRt.anchoredPosition = new Vector2(0f, 16f);
 
             Image btnImg = btnGo.AddComponent<Image>();
-            if (pillSprite != null)
+            if (bgBuyBtnSprite != null)
             {
-                btnImg.sprite = pillSprite;
-                btnImg.type = Image.Type.Sliced;
-                btnImg.pixelsPerUnitMultiplier = 0.85f;
+                btnImg.sprite = bgBuyBtnSprite;
+                btnImg.type = Image.Type.Simple;
+                btnImg.preserveAspect = true;
+                btnImg.color = Color.white;
             }
-            btnImg.color = new Color(0.86f, 0.80f, 0.72f, 1f);
-
-            Outline btnOutline = btnGo.AddComponent<Outline>();
-            btnOutline.effectColor = mediumBrown;
-            btnOutline.effectDistance = new Vector2(1.5f, -1.5f);
+            else
+            {
+                btnImg.color = new Color(0.86f, 0.80f, 0.72f, 1f);
+            }
 
             Button btn = btnGo.AddComponent<Button>();
             btn.targetGraphic = btnImg;
 
+            // StarIcon — ukuran presisi 36 x 32 sesuai star.png
             GameObject starGo = CreateUIObject("StarIcon", btnGo.transform);
             RectTransform starRt = starGo.GetComponent<RectTransform>();
             starRt.anchorMin = new Vector2(0f, 0.5f);
             starRt.anchorMax = new Vector2(0f, 0.5f);
             starRt.pivot = new Vector2(0f, 0.5f);
-            starRt.sizeDelta = new Vector2(28f, 28f);
-            starRt.anchoredPosition = new Vector2(22f, 0f);
+            starRt.sizeDelta = new Vector2(36f, 32f);
+            starRt.anchoredPosition = new Vector2(12f, 0f);
             Image starImg = starGo.AddComponent<Image>();
-            if (starsSprite != null) starImg.sprite = starsSprite;
+            if (starSprite != null) starImg.sprite = starSprite;
             starImg.preserveAspect = true;
 
             GameObject labelGo = CreateUIObject("ActionLabel", btnGo.transform);
             RectTransform labelRt = labelGo.GetComponent<RectTransform>();
             labelRt.anchorMin = Vector2.zero;
             labelRt.anchorMax = Vector2.one;
-            labelRt.offsetMin = new Vector2(16f, 0f);
-            labelRt.offsetMax = new Vector2(-12f, 0f);
+            labelRt.offsetMin = new Vector2(44f, 0f);
+            labelRt.offsetMax = new Vector2(-10f, 0f);
 
             TextMeshProUGUI labelTmp = labelGo.AddComponent<TextMeshProUGUI>();
             if (balooExtraBold != null) labelTmp.font = balooExtraBold;
@@ -500,7 +578,7 @@ namespace Utsuru.Store.Editor
             labelTmp.alignment = TextAlignmentOptions.Center;
             labelTmp.color = darkBrown;
 
-            cardUI.ConfigureReferences(cardBg, previewRaw, titleTmp, btn, btnImg, starGo, labelTmp);
+            cardUI.ConfigureReferences(cardBg, previewImg, titleTmp, btn, btnImg, starGo, labelTmp);
             return cardUI;
         }
 
