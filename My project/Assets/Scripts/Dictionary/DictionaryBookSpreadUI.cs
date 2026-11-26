@@ -136,6 +136,13 @@ namespace Utsuru.DictionaryUI
         public void PreviousSpread()
         {
             if (isPageTurning) return; // Jeda HANYA berlaku selama animasi transisi
+
+            if (currentMode == DictionaryBookMode.Quiz)
+            {
+                if (quizSpreadUI != null) quizSpreadUI.PreviousSpread();
+                return;
+            }
+
             if (currentSpreadIndex > 0)
             {
                 if (currentMode == DictionaryBookMode.Hiragana)
@@ -161,6 +168,13 @@ namespace Utsuru.DictionaryUI
         public void NextSpread()
         {
             if (isPageTurning) return; // Jeda HANYA berlaku selama animasi transisi
+
+            if (currentMode == DictionaryBookMode.Quiz)
+            {
+                if (quizSpreadUI != null) quizSpreadUI.NextSpread();
+                return;
+            }
+
             int totalSpreads = GetTotalSpreads();
             if (currentSpreadIndex < totalSpreads - 1)
             {
@@ -356,9 +370,16 @@ namespace Utsuru.DictionaryUI
                 }
 
                 if (leftPageNumberText != null) leftPageNumberText.text = "QUIZ";
-                if (rightPageNumberText != null) rightPageNumberText.text = "PRACTICE";
-                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
-                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                if (rightPageNumberText != null) rightPageNumberText.text = "CHALLENGE";
+                if (quizSpreadUI != null)
+                {
+                    quizSpreadUI.UpdateNavigationButtons();
+                }
+                else
+                {
+                    if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                    if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                }
                 return;
             }
 
@@ -535,6 +556,19 @@ namespace Utsuru.DictionaryUI
 
             if (leftPageClickArea != null) leftPageClickArea.interactable = currentSpreadIndex > 0;
             if (rightPageClickArea != null) rightPageClickArea.interactable = currentSpreadIndex < 2;
+        }
+
+        public void UpdateQuizNavigationState(bool canPrev, bool canNext)
+        {
+            if (currentMode != DictionaryBookMode.Quiz) return;
+            if (leftPageClickArea != null) leftPageClickArea.interactable = canPrev;
+            if (rightPageClickArea != null) rightPageClickArea.interactable = canNext;
+            if (quizSpreadUI != null)
+            {
+                int spread = quizSpreadUI.CurrentSpreadIndex;
+                if (leftPageNumberText != null) leftPageNumberText.text = $"QUIZ {spread * 2 + 1}";
+                if (rightPageNumberText != null) rightPageNumberText.text = $"QUIZ {spread * 2 + 2}";
+            }
         }
 
         private void OnPhotoLikeToggled(PhotoRecord record, bool isLiked)
