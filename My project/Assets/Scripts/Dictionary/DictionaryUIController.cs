@@ -61,6 +61,11 @@ namespace Utsuru.DictionaryUI
 
         private void Update()
         {
+            if (!IsOpen && Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
+            {
+                return;
+            }
+
             if (IsTogglePressed())
             {
                 Toggle();

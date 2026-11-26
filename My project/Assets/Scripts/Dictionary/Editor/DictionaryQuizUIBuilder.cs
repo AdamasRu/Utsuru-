@@ -75,8 +75,8 @@ namespace Utsuru.DictionaryUI.Editor
             statusHlg.childForceExpandWidth = true;
             statusHlg.childForceExpandHeight = true;
 
-            var progressBadgeText = CreateStatusBadge("ProgressBadge", statusRow.transform, "Question 1 / 5", pillBgSprite, new Color(0.88f, 0.85f, 0.96f, 1f), new Color(0.28f, 0.22f, 0.55f, 1f), zenFont, 24f);
-            var scoreBadgeText = CreateStatusBadge("ScoreBadge", statusRow.transform, "Score: 0", pillBgSprite, new Color(0.85f, 0.94f, 0.88f, 1f), new Color(0.18f, 0.52f, 0.32f, 1f), zenFont, 24f);
+            var progressBadgeText = CreateStatusBadge("ProgressBadge", statusRow.transform, "Question 1 / 5", pillBgSprite, new Color(0.88f, 0.85f, 0.96f, 1f), new Color(0.28f, 0.22f, 0.55f, 1f), zenFont, 18f);
+            var scoreBadgeText = CreateStatusBadge("ScoreBadge", statusRow.transform, "Score: 0", pillBgSprite, new Color(0.85f, 0.94f, 0.88f, 1f), new Color(0.18f, 0.52f, 0.32f, 1f), zenFont, 18f);
 
             // Kotak Kartu Pertanyaan
             GameObject questionCardGo = CreateUIObject("QuestionCard", leftQuizPage.transform);
@@ -170,18 +170,22 @@ namespace Utsuru.DictionaryUI.Editor
             GameObject catBadgeGo = CreateUIObject("CategoryBadge", questionCardGo.transform);
             var catBadgeLe = catBadgeGo.AddComponent<LayoutElement>();
             catBadgeLe.preferredWidth = 260f;
-            catBadgeLe.preferredHeight = 38f;
+            catBadgeLe.preferredHeight = 36f;
 
             var catBadgeImg = catBadgeGo.AddComponent<Image>();
             catBadgeImg.sprite = pillBgSprite;
             catBadgeImg.type = Image.Type.Sliced;
+            catBadgeImg.pixelsPerUnitMultiplier = 0.95f;
             catBadgeImg.color = new Color(0.92f, 0.90f, 0.96f, 0.9f);
 
             GameObject catTextGo = CreateUIObject("Text", catBadgeGo.transform);
             SetStretch(catTextGo.GetComponent<RectTransform>());
             var catBadgeTmp = catTextGo.AddComponent<TextMeshProUGUI>();
             catBadgeTmp.font = nunitoFont;
-            catBadgeTmp.fontSize = 24f;
+            catBadgeTmp.fontSize = 16f;
+            catBadgeTmp.enableAutoSizing = true;
+            catBadgeTmp.fontSizeMin = 12f;
+            catBadgeTmp.fontSizeMax = 16f;
             catBadgeTmp.fontStyle = FontStyles.Bold;
             catBadgeTmp.alignment = TextAlignmentOptions.Center;
             catBadgeTmp.color = new Color(0.42f, 0.36f, 0.60f, 1f);
@@ -262,6 +266,7 @@ namespace Utsuru.DictionaryUI.Editor
                 var letterImg = letterGo.AddComponent<Image>();
                 letterImg.sprite = pillBgSprite;
                 letterImg.type = Image.Type.Sliced;
+                letterImg.pixelsPerUnitMultiplier = 0.75f;
                 letterImg.color = new Color(0.38f, 0.32f, 0.65f, 1f);
                 choiceBadgeImages[i] = letterImg;
 
@@ -269,7 +274,7 @@ namespace Utsuru.DictionaryUI.Editor
                 SetStretch(letterTextGo.GetComponent<RectTransform>());
                 var letterTmp = letterTextGo.AddComponent<TextMeshProUGUI>();
                 letterTmp.font = zenFont;
-                letterTmp.fontSize = 24f;
+                letterTmp.fontSize = 21f;
                 letterTmp.fontStyle = FontStyles.Bold;
                 letterTmp.alignment = TextAlignmentOptions.Center;
                 letterTmp.color = Color.white;
@@ -348,28 +353,32 @@ namespace Utsuru.DictionaryUI.Editor
             // Feedback Banner (Pill hijau/merah)
             GameObject fbBannerGo = CreateUIObject("Banner", feedbackGo.transform);
             var fbBannerLe = fbBannerGo.AddComponent<LayoutElement>();
-            fbBannerLe.preferredHeight = 38f;
+            fbBannerLe.preferredHeight = 36f;
 
             var fbBannerImg = fbBannerGo.AddComponent<Image>();
             fbBannerImg.sprite = pillBgSprite;
             fbBannerImg.type = Image.Type.Sliced;
+            fbBannerImg.pixelsPerUnitMultiplier = 0.95f;
             fbBannerImg.color = new Color(0.18f, 0.68f, 0.38f, 1f);
 
             GameObject fbBannerTextGo = CreateUIObject("Text", fbBannerGo.transform);
             SetStretch(fbBannerTextGo.GetComponent<RectTransform>());
             var fbBannerTmp = fbBannerTextGo.AddComponent<TextMeshProUGUI>();
             fbBannerTmp.font = zenFont;
-            fbBannerTmp.fontSize = 24f;
+            fbBannerTmp.fontSize = 18f;
             fbBannerTmp.fontStyle = FontStyles.Bold;
             fbBannerTmp.alignment = TextAlignmentOptions.Center;
             fbBannerTmp.color = Color.white;
             fbBannerTmp.text = "CORRECT! (正解)";
 
-            // Example Sentence Text (ZenMaruGothic 24f)
+            // Example Sentence Text
             GameObject fbSentGo = CreateUIObject("SentenceText", feedbackGo.transform);
             var fbSentTmp = fbSentGo.AddComponent<TextMeshProUGUI>();
             fbSentTmp.font = zenFont;
-            fbSentTmp.fontSize = 24f;
+            fbSentTmp.fontSize = 17f;
+            fbSentTmp.enableAutoSizing = true;
+            fbSentTmp.fontSizeMin = 13f;
+            fbSentTmp.fontSizeMax = 17f;
             fbSentTmp.color = new Color(0.24f, 0.20f, 0.32f, 1f);
             fbSentTmp.textWrappingMode = TextWrappingModes.Normal;
             fbSentTmp.text = "「毎朝、自転車で学校に行きます。」\nI go to school by bicycle every morning.";
@@ -384,12 +393,13 @@ namespace Utsuru.DictionaryUI.Editor
             nextBtnRt.anchorMin = new Vector2(0.5f, 1f);
             nextBtnRt.anchorMax = new Vector2(0.5f, 1f);
             nextBtnRt.pivot = new Vector2(0.5f, 1f);
-            nextBtnRt.sizeDelta = new Vector2(680f, 54f);
+            nextBtnRt.sizeDelta = new Vector2(680f, 50f);
             nextBtnRt.anchoredPosition = new Vector2(0f, -700f);
 
             var nextBtnImg = nextBtnGo.AddComponent<Image>();
             nextBtnImg.sprite = pillBgSprite;
             nextBtnImg.type = Image.Type.Sliced;
+            nextBtnImg.pixelsPerUnitMultiplier = 0.72f;
             nextBtnImg.color = new Color(0.38f, 0.32f, 0.65f, 1f); // Royal purple
 
             var nextBtn = nextBtnGo.AddComponent<Button>();
@@ -399,7 +409,7 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(nextTextGo.GetComponent<RectTransform>());
             var nextTmp = nextTextGo.AddComponent<TextMeshProUGUI>();
             nextTmp.font = zenFont;
-            nextTmp.fontSize = 26f;
+            nextTmp.fontSize = 20f;
             nextTmp.fontStyle = FontStyles.Bold;
             nextTmp.alignment = TextAlignmentOptions.Center;
             nextTmp.color = Color.white;
@@ -444,13 +454,14 @@ namespace Utsuru.DictionaryUI.Editor
             var lockImg = lockBadgeGo.AddComponent<Image>();
             lockImg.sprite = pillBgSprite;
             lockImg.type = Image.Type.Sliced;
+            lockImg.pixelsPerUnitMultiplier = 0.85f;
             lockImg.color = new Color(0.85f, 0.40f, 0.45f, 1f);
 
             GameObject lockTextGo = CreateUIObject("Text", lockBadgeGo.transform);
             SetStretch(lockTextGo.GetComponent<RectTransform>());
             var lockTmp = lockTextGo.AddComponent<TextMeshProUGUI>();
             lockTmp.font = zenFont;
-            lockTmp.fontSize = 24f;
+            lockTmp.fontSize = 19f;
             lockTmp.fontStyle = FontStyles.Bold;
             lockTmp.alignment = TextAlignmentOptions.Center;
             lockTmp.color = Color.white;
@@ -495,6 +506,7 @@ namespace Utsuru.DictionaryUI.Editor
             var demoBtnImg = demoBtnGo.AddComponent<Image>();
             demoBtnImg.sprite = pillBgSprite;
             demoBtnImg.type = Image.Type.Sliced;
+            demoBtnImg.pixelsPerUnitMultiplier = 0.72f;
             demoBtnImg.color = new Color(0.38f, 0.32f, 0.65f, 1f);
 
             var demoBtn = demoBtnGo.AddComponent<Button>();
@@ -504,7 +516,7 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(demoTextGo.GetComponent<RectTransform>());
             var demoTmp = demoTextGo.AddComponent<TextMeshProUGUI>();
             demoTmp.font = zenFont;
-            demoTmp.fontSize = 24f;
+            demoTmp.fontSize = 19f;
             demoTmp.fontStyle = FontStyles.Bold;
             demoTmp.alignment = TextAlignmentOptions.Center;
             demoTmp.color = Color.white;
@@ -549,13 +561,14 @@ namespace Utsuru.DictionaryUI.Editor
             var resBadgeImg = resBadgeGo.AddComponent<Image>();
             resBadgeImg.sprite = pillBgSprite;
             resBadgeImg.type = Image.Type.Sliced;
+            resBadgeImg.pixelsPerUnitMultiplier = 0.85f;
             resBadgeImg.color = new Color(0.18f, 0.72f, 0.42f, 1f);
 
             GameObject resBadgeTextGo = CreateUIObject("Text", resBadgeGo.transform);
             SetStretch(resBadgeTextGo.GetComponent<RectTransform>());
             var resBadgeTmp = resBadgeTextGo.AddComponent<TextMeshProUGUI>();
             resBadgeTmp.font = zenFont;
-            resBadgeTmp.fontSize = 24f;
+            resBadgeTmp.fontSize = 19f;
             resBadgeTmp.fontStyle = FontStyles.Bold;
             resBadgeTmp.alignment = TextAlignmentOptions.Center;
             resBadgeTmp.color = Color.white;
@@ -604,11 +617,12 @@ namespace Utsuru.DictionaryUI.Editor
             GameObject playAgainBtnGo = CreateUIObject("PlayAgainButton", resultCardGo.transform);
             var playAgainBtnLe = playAgainBtnGo.AddComponent<LayoutElement>();
             playAgainBtnLe.preferredWidth = 320f;
-            playAgainBtnLe.preferredHeight = 56f;
+            playAgainBtnLe.preferredHeight = 52f;
 
             var playAgainBtnImg = playAgainBtnGo.AddComponent<Image>();
             playAgainBtnImg.sprite = pillBgSprite;
             playAgainBtnImg.type = Image.Type.Sliced;
+            playAgainBtnImg.pixelsPerUnitMultiplier = 0.72f;
             playAgainBtnImg.color = new Color(0.38f, 0.32f, 0.65f, 1f);
 
             var playAgainBtn = playAgainBtnGo.AddComponent<Button>();
@@ -618,7 +632,7 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(playAgainTextGo.GetComponent<RectTransform>());
             var playAgainTmp = playAgainTextGo.AddComponent<TextMeshProUGUI>();
             playAgainTmp.font = zenFont;
-            playAgainTmp.fontSize = 26f;
+            playAgainTmp.fontSize = 20f;
             playAgainTmp.fontStyle = FontStyles.Bold;
             playAgainTmp.alignment = TextAlignmentOptions.Center;
             playAgainTmp.color = Color.white;
@@ -764,7 +778,10 @@ namespace Utsuru.DictionaryUI.Editor
 
             var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
             titleTmp.font = zenFont;
-            titleTmp.fontSize = 34f;
+            titleTmp.fontSize = 26f;
+            titleTmp.enableAutoSizing = true;
+            titleTmp.fontSizeMin = 20f;
+            titleTmp.fontSizeMax = 26f;
             titleTmp.fontStyle = FontStyles.Bold;
             titleTmp.alignment = TextAlignmentOptions.Center;
             titleTmp.color = new Color(0.18f, 0.14f, 0.28f);
@@ -776,13 +793,16 @@ namespace Utsuru.DictionaryUI.Editor
             subRt.anchorMax = new Vector2(1f, 0f);
             subRt.pivot = new Vector2(0.5f, 0f);
             subRt.anchoredPosition = new Vector2(0f, 0f);
-            subRt.sizeDelta = new Vector2(0f, 30f);
+            subRt.sizeDelta = new Vector2(0f, 28f);
 
             var subTmp = subGo.AddComponent<TextMeshProUGUI>();
             subTmp.font = nunitoFont;
-            subTmp.fontSize = 24f;
+            subTmp.fontSize = 16f;
+            subTmp.enableAutoSizing = true;
+            subTmp.fontSizeMin = 12f;
+            subTmp.fontSizeMax = 16f;
             subTmp.alignment = TextAlignmentOptions.Center;
-            subTmp.color = new Color(0.48f, 0.44f, 0.58f);
+            subTmp.color = new Color(0.42f, 0.38f, 0.54f);
             subTmp.text = subtitle;
 
             GameObject lineGo = CreateUIObject("DividerLine", pageParent);
@@ -804,6 +824,7 @@ namespace Utsuru.DictionaryUI.Editor
             var badgeImg = badgeGo.AddComponent<Image>();
             badgeImg.sprite = pillSprite;
             badgeImg.type = Image.Type.Sliced;
+            badgeImg.pixelsPerUnitMultiplier = 0.85f;
             badgeImg.color = bgColor;
 
             GameObject textGo = CreateUIObject("Text", badgeGo.transform);
@@ -811,6 +832,7 @@ namespace Utsuru.DictionaryUI.Editor
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.font = font;
             tmp.fontSize = fontSize;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = textColor;

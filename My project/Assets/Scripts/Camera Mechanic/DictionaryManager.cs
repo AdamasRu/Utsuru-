@@ -31,6 +31,8 @@ namespace Utsuru.Capture
     /// </summary>
     public class DictionaryManager : MonoBehaviour
     {
+        public static DictionaryManager Instance { get; private set; }
+
         [Tooltip("Sementara tetap. Nanti diganti ID akun dari sistem login.")]
         [SerializeField] private string accountId = "player1";
 
@@ -51,21 +53,48 @@ namespace Utsuru.Capture
         public int ActiveAlbumId => data.activeAlbumId;
         public IReadOnlyList<AlbumRecord> Albums => data.albums;
         public IReadOnlyList<PhotoRecord> Photos => data.photos;
+        public IReadOnlyList<int> DiscoveredVocabularyIds => data != null ? data.discoveredVocabularyIds : null;
+        public IReadOnlyList<string> DiscoveredObjectIds => data != null ? data.discoveredObjectIds : null;
         public int DiscoveredVocabularyCount => data.discoveredVocabularyIds.Count;
         public ObjectDatabaseProvider Database => database;
 
         private void Awake()
         {
+            if (Instance == null) Instance = this;
+            else if (Instance != this) Debug.LogWarning("[DictionaryManager] Ditemukan duplikat instance.");
+
             if (database == null) database = FindFirstObjectByType<ObjectDatabaseProvider>();
 
             storage = new LocalStorage();
 
-            if (!storage.TryLoad<DictionaryData>(accountId, SaveKey, out data) || data == null)
+            string activeAccount = ResolveAccountId();
+            if (!storage.TryLoad<DictionaryData>(activeAccount, SaveKey, out data) || data == null)
                 data = new DictionaryData();
 
             foreach (string id in data.discoveredObjectIds) discoveredObjects.Add(id);
 
             EnsureDefaultAlbum();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
+        /// <summary>
+        /// Menentukan akun aktif secara dinamis: jika pengguna login via SessionManager,
+        /// gunakan Username/ProfileId-nya; jika tidak, fallback ke accountId ("player1").
+        /// </summary>
+        public string ResolveAccountId()
+        {
+            if (Utsuru.Authentication.SessionManager.Instance != null && Utsuru.Authentication.SessionManager.Instance.IsLoggedIn)
+            {
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.Username))
+                    return Utsuru.Authentication.SessionManager.Instance.Username;
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.LocalProfileId))
+                    return Utsuru.Authentication.SessionManager.Instance.LocalProfileId;
+            }
+            return string.IsNullOrEmpty(accountId) ? "player1" : accountId;
         }
 
         public bool IsObjectDiscovered(string objectId)
@@ -246,7 +275,7 @@ namespace Utsuru.Capture
 
         private void Persist()
         {
-            storage.Save(accountId, SaveKey, data);
+            storage.Save(ResolveAccountId(), SaveKey, data);
             OnDictionaryChanged?.Invoke();
         }
 

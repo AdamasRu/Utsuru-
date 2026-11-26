@@ -128,13 +128,27 @@ public class SettingsManager : MonoBehaviour
 
     private void Awake()
     {
+        Initialize();
+    }
+
+    public void Initialize()
+    {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else if (Instance != this)
+        {
+            Destroy(this);
+            return;
+        }
 
         LoadSettings();
         SetupListeners();
         SwitchTab(0); // Default Gameplay tab
         ApplySettings();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     private void Start()
@@ -371,7 +385,11 @@ public class SettingsManager : MonoBehaviour
 
     public void OnBackClicked()
     {
-        if (PauseMenuManager.Instance != null)
+        if (Utsuru.UI.HomeScreenUIManager.Instance != null)
+        {
+            Utsuru.UI.HomeScreenUIManager.Instance.ShowHomeScreen();
+        }
+        else if (PauseMenuManager.Instance != null)
         {
             PauseMenuManager.Instance.CloseSettingsView();
         }
@@ -384,13 +402,16 @@ public class SettingsManager : MonoBehaviour
     public void OnBackToTitleClicked()
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (PauseMenuManager.Instance != null)
         {
             PauseMenuManager.Instance.GoToMainMenu();
         }
         else
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("HomeScreen");
         }
     }
 
@@ -467,6 +488,7 @@ public class SettingsManager : MonoBehaviour
 
     private void ApplyDisplayAndResolution()
     {
+#if !UNITY_EDITOR
         FullScreenMode mode = FullScreenMode.FullScreenWindow;
         if (curDisplayModeIndex == 1) mode = FullScreenMode.Windowed;
         else if (curDisplayModeIndex == 2) mode = FullScreenMode.FullScreenWindow;
@@ -478,6 +500,7 @@ public class SettingsManager : MonoBehaviour
         {
             Screen.SetResolution(w, h, mode);
         }
+#endif
     }
 
     private void ApplyGraphicsQuality()

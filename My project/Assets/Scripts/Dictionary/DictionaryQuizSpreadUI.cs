@@ -288,6 +288,7 @@ namespace Utsuru.DictionaryUI
                 {
                     photoPreviewImage.texture = q.snapshotTexture;
                     photoPreviewImage.color = Color.white;
+                    DictionaryPolaroidCardUI.ApplyAspectCropUV(photoPreviewImage, q.snapshotTexture);
                     if (photoFrameContainer != null) photoFrameContainer.SetActive(true);
                 }
                 else

@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance { get; private set; }
     public static bool HideEnglishTranslation = false;
     public bool IsDialogueActive => dialoguePanel != null && dialoguePanel.activeSelf;
+    public bool WasClosedThisFrame => Time.frameCount == dialogueClosedFrame;
 
     [Header("Panel Utama")]
     [SerializeField] private GameObject dialoguePanel;
@@ -61,8 +62,11 @@ public class DialogueManager : MonoBehaviour
     private bool isShowingResponse = false;
     private bool isWaitingToClose = false;
     private int dialogueOpenedFrame = -1;
+    private int dialogueClosedFrame = -1;
+    private NPCInteractable currentSourceNpc;
     private List<DialogueChoice> currentActiveChoices = new List<DialogueChoice>();
 
+    private string currentNpcDisplayName = "";
     private string currentJpQuestion = "";
     private string currentRmQuestion = "";
     private string currentEnQuestion = "";
@@ -176,14 +180,17 @@ public class DialogueManager : MonoBehaviour
         if (textEnglish != null) textEnglish.gameObject.SetActive(!HideEnglishTranslation);
     }
 
-    public void StartDialogue(NPCData data, string customName = "", Sprite customAvatar = null)
+    public void StartDialogue(NPCData data, string customName = "", Sprite customAvatar = null, NPCInteractable sourceNpc = null)
     {
-        if (data == null) return;
+        if (data == null || IsDialogueActive) return;
+
         dialogueOpenedFrame = Time.frameCount;
         currentData = data;
+        currentSourceNpc = sourceNpc;
         isShowingResponse = false;
         isWaitingToClose = false;
         currentActiveChoices.Clear();
+        ClearChoices();
 
         ShowInteractionPrompt(false);
         dialoguePanel.SetActive(true);
@@ -194,89 +201,20 @@ public class DialogueManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Pasang Nama Karakter & Sesuaikan Lebar Kapsul NamePill Otomatis
-        string displayName = !string.IsNullOrEmpty(customName) ? customName : data.npcName;
-        if (nameText != null)
+        SetupCharacterHeader(data, customName, customAvatar);
+
+        // Jika dialog dengan NPC ini sudah selesai sebelumnya, hanya tampilkan jawaban/balasan NPC
+        if (sourceNpc != null && sourceNpc.HasCompletedDialogue)
         {
-            nameText.text = displayName;
-            if (nameText.transform.parent != null)
-            {
-                nameText.transform.parent.gameObject.SetActive(true);
-                RectTransform pillRt = nameText.transform.parent as RectTransform;
-                if (pillRt != null)
-                {
-                    // Hitung lebar teks secara akurat + beri padding kapsul 36px
-                    float textWidth = nameText.preferredWidth;
-                    float autoWidth = Mathf.Max(textWidth + 36f, 130f);
-                    pillRt.sizeDelta = new Vector2(autoWidth, 36f);
-                }
-            }
-        }
+            if (replayAudioButton != null) replayAudioButton.gameObject.SetActive(true);
+            if (scoreBadgePill != null) scoreBadgePill.SetActive(false);
+            if (choosePromptText != null) choosePromptText.gameObject.SetActive(false);
+            if (choicesContainer != null) choicesContainer.gameObject.SetActive(false);
 
-        // Pasang Role Tag (Contoh: "Shopkeeper", "Eco Neighbor", dsb.)
-        if (roleTagText != null)
-        {
-            if (!string.IsNullOrEmpty(data.roleTag))
-            {
-                roleTagText.text = data.roleTag;
-                if (roleTagText.transform.parent != null)
-                {
-                    roleTagText.transform.parent.gameObject.SetActive(true);
-                    RectTransform rpRt = roleTagText.transform.parent as RectTransform;
-                    if (rpRt != null)
-                    {
-                        float textWidth = roleTagText.preferredWidth;
-                        float autoWidth = Mathf.Max(textWidth + 28f, 110f);
-                        rpRt.sizeDelta = new Vector2(autoWidth, 34f);
-
-                        // Geser posisi JLPT tag agar berjarak rapi di sebelah kanan RolePill
-                        if (jlptTagText != null)
-                        {
-                            RectTransform jlptRt = jlptTagText.rectTransform;
-                            if (jlptRt != null)
-                            {
-                                jlptRt.anchoredPosition = new Vector2(autoWidth + 16f, jlptRt.anchoredPosition.y);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (roleTagText.transform.parent != null)
-                    roleTagText.transform.parent.gameObject.SetActive(false);
-
-                if (jlptTagText != null)
-                {
-                    RectTransform jlptRt = jlptTagText.rectTransform;
-                    if (jlptRt != null)
-                    {
-                        jlptRt.anchoredPosition = new Vector2(0f, jlptRt.anchoredPosition.y);
-                    }
-                }
-            }
-        }
-
-        // Pasang JLPT Tag
-        if (jlptTagText != null)
-        {
-            jlptTagText.text = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
-            jlptTagText.gameObject.SetActive(true);
-        }
-
-        // Pasang Foto Avatar Sesuai Karakter yang Bicara
-        Sprite avatarToUse = customAvatar != null ? customAvatar : data.avatarPortrait;
-        if (avatarImage != null)
-        {
-            if (avatarToUse != null)
-            {
-                avatarImage.sprite = avatarToUse;
-                avatarImage.gameObject.SetActive(true);
-            }
-            else
-            {
-                avatarImage.gameObject.SetActive(false);
-            }
+            isShowingResponse = true;
+            PlayDialogueAudio();
+            DisplayChoiceResponse(sourceNpc.CompletedChoice);
+            return;
         }
 
         // Reset state tombol header
@@ -553,6 +491,11 @@ public class DialogueManager : MonoBehaviour
                 ScoreManager.Instance.AddScore(reward);
             }
 
+            string npcKey = currentData != null
+                ? $"{currentNpcDisplayName}::{currentData.questionJapanese}"
+                : currentNpcDisplayName;
+            Utsuru.Achievements.AchievementManager.EnsureInstance()?.RecordNpcDialogueCorrect(npcKey);
+
             if (scoreBadgePill != null)
             {
                 scoreBadgePill.SetActive(true);
@@ -571,6 +514,103 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        if (currentSourceNpc != null)
+        {
+            currentSourceNpc.MarkDialogueCompleted(choice);
+        }
+
+        DisplayChoiceResponse(choice);
+    }
+
+    private void SetupCharacterHeader(NPCData data, string customName, Sprite customAvatar)
+    {
+        // Pasang Nama Karakter & Sesuaikan Lebar Kapsul NamePill Otomatis
+        string displayName = !string.IsNullOrEmpty(customName) ? customName : data.npcName;
+        currentNpcDisplayName = displayName;
+        if (nameText != null)
+        {
+            nameText.text = displayName;
+            if (nameText.transform.parent != null)
+            {
+                nameText.transform.parent.gameObject.SetActive(true);
+                RectTransform pillRt = nameText.transform.parent as RectTransform;
+                if (pillRt != null)
+                {
+                    float textWidth = nameText.preferredWidth;
+                    float autoWidth = Mathf.Max(textWidth + 36f, 130f);
+                    pillRt.sizeDelta = new Vector2(autoWidth, 36f);
+                }
+            }
+        }
+
+        // Pasang Role Tag
+        if (roleTagText != null)
+        {
+            if (!string.IsNullOrEmpty(data.roleTag))
+            {
+                roleTagText.text = data.roleTag;
+                if (roleTagText.transform.parent != null)
+                {
+                    roleTagText.transform.parent.gameObject.SetActive(true);
+                    RectTransform rpRt = roleTagText.transform.parent as RectTransform;
+                    if (rpRt != null)
+                    {
+                        float textWidth = roleTagText.preferredWidth;
+                        float autoWidth = Mathf.Max(textWidth + 28f, 110f);
+                        rpRt.sizeDelta = new Vector2(autoWidth, 34f);
+
+                        if (jlptTagText != null)
+                        {
+                            RectTransform jlptRt = jlptTagText.rectTransform;
+                            if (jlptRt != null)
+                            {
+                                jlptRt.anchoredPosition = new Vector2(autoWidth + 16f, jlptRt.anchoredPosition.y);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (roleTagText.transform.parent != null)
+                    roleTagText.transform.parent.gameObject.SetActive(false);
+
+                if (jlptTagText != null)
+                {
+                    RectTransform jlptRt = jlptTagText.rectTransform;
+                    if (jlptRt != null)
+                    {
+                        jlptRt.anchoredPosition = new Vector2(0f, jlptRt.anchoredPosition.y);
+                    }
+                }
+            }
+        }
+
+        // Pasang JLPT Tag
+        if (jlptTagText != null)
+        {
+            jlptTagText.text = !string.IsNullOrEmpty(data.jlptTag) ? data.jlptTag : "Formality: Casual & Friendly • JLPT N5";
+            jlptTagText.gameObject.SetActive(true);
+        }
+
+        // Pasang Foto Avatar Sesuai Karakter yang Bicara
+        Sprite avatarToUse = customAvatar != null ? customAvatar : data.avatarPortrait;
+        if (avatarImage != null)
+        {
+            if (avatarToUse != null)
+            {
+                avatarImage.sprite = avatarToUse;
+                avatarImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                avatarImage.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void DisplayChoiceResponse(DialogueChoice choice)
+    {
         // Urai respon balasan NPC (Jepang, Romaji, Indonesia/Inggris)
         string rawResponse = choice.npcResponse;
         string jpResponse = "";
@@ -638,9 +678,11 @@ public class DialogueManager : MonoBehaviour
     public void CloseDialogue()
     {
         if (typingRoutine != null) StopCoroutine(typingRoutine);
+        dialogueClosedFrame = Time.frameCount;
         isTyping = false;
         isShowingResponse = false;
         isWaitingToClose = false;
+        currentSourceNpc = null;
         ClearChoices();
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);

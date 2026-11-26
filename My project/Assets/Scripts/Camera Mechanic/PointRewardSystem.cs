@@ -12,10 +12,13 @@ namespace Utsuru.Capture
     /// <summary>
     /// PointRewardSystem (DPPL): menyimpan dan menghitung poin pemain.
     /// Poin dipakai untuk membeli hiasan (UI-06) dan ditampilkan di HUD.
+    /// Berfungsi sebagai single source of truth untuk seluruh perolehan poin (Fotografi & Dialog NPC).
     /// </summary>
     public class PointRewardSystem : MonoBehaviour
     {
-        [Tooltip("Sementara tetap. Nanti diganti ID akun dari sistem login.")]
+        public static PointRewardSystem Instance { get; private set; }
+
+        [Tooltip("ID akun cadangan jika belum login. Jika ada sesi aktif, otomatis menggunakan username dari SessionManager.")]
         [SerializeField] private string accountId = "player1";
 
         [Tooltip("Poin saat menemukan objek baru. DPPL menulis '+[N] Poin' tanpa nilai pasti, jadi ini placeholder.")]
@@ -31,11 +34,80 @@ namespace Utsuru.Capture
         /// <summary>Dipicu tiap total poin berubah, membawa total terbaru.</summary>
         public event Action<int> OnPointsChanged;
 
+        /// <summary>Mendapatkan ID akun aktif saat ini.</summary>
+        public string CurrentAccountId => ResolveAccountId();
+
         private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Debug.LogWarning("[PointRewardSystem] Ditemukan instance duplikat. Menggunakan instance yang sudah ada.");
+            }
+
             storage = new LocalStorage();
-            if (storage.TryLoad<PointsData>(accountId, SaveKey, out PointsData loaded) && loaded != null)
+            LoadPoints();
+
+            // Hubungkan otomatis dengan ScoreManager jika sudah ada di scene
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.BindPointRewardSystem(this);
+            }
+        }
+
+        private void Start()
+        {
+            // Pastikan sinkronisasi dengan ScoreManager di tahap Start jika ScoreManager baru inisialisasi
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.BindPointRewardSystem(this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
+
+        /// <summary>
+        /// Menentukan akun aktif secara dinamis: jika pengguna login via SessionManager,
+        /// gunakan Username/ProfileId-nya; jika tidak, fallback ke accountId ("player1").
+        /// </summary>
+        public string ResolveAccountId()
+        {
+            if (Utsuru.Authentication.SessionManager.Instance != null && Utsuru.Authentication.SessionManager.Instance.IsLoggedIn)
+            {
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.Username))
+                    return Utsuru.Authentication.SessionManager.Instance.Username;
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.LocalProfileId))
+                    return Utsuru.Authentication.SessionManager.Instance.LocalProfileId;
+            }
+            return string.IsNullOrEmpty(accountId) ? "player1" : accountId;
+        }
+
+        /// <summary>
+        /// Memuat poin dari penyimpanan lokal berdasarkan akun aktif.
+        /// </summary>
+        public void LoadPoints()
+        {
+            if (storage == null) storage = new LocalStorage();
+            string activeId = ResolveAccountId();
+            if (storage.TryLoad<PointsData>(activeId, SaveKey, out PointsData loaded) && loaded != null)
+            {
                 Points = loaded.points;
+            }
+            else
+            {
+                Points = 0;
+            }
+
+            OnPointsChanged?.Invoke(Points);
         }
 
         public void EarnPoints(int amount)
@@ -58,7 +130,9 @@ namespace Utsuru.Capture
 
         private void Persist()
         {
-            storage.Save(accountId, SaveKey, new PointsData { points = Points });
+            if (storage == null) storage = new LocalStorage();
+            string activeId = ResolveAccountId();
+            storage.Save(activeId, SaveKey, new PointsData { points = Points });
             OnPointsChanged?.Invoke(Points);
         }
 
@@ -68,7 +142,7 @@ namespace Utsuru.Capture
             Points = 0;
             if (storage == null) storage = new LocalStorage();
             Persist();
-            Debug.Log("[PointRewardSystem] Poin direset ke 0!");
+            Debug.Log($"[PointRewardSystem] Poin direset ke 0 untuk akun '{ResolveAccountId()}'!");
         }
     }
 }

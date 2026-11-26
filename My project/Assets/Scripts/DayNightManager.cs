@@ -69,8 +69,8 @@ public class DayNightManager : MonoBehaviour
         // Tentukan waktu berikutnya
         bool targetIsNight = (currentState == TimeOfDayState.Day);
 
-        // 2. Jalankan Cutscene Transisi
-        yield return StartCoroutine(cutsceneUI.PlayTransitionRoutine(targetIsNight, () =>
+        // 2. Jalankan Cutscene Transisi (atau langsung ubah environment jika cutsceneUI belum diisi)
+        System.Action applyTransition = () =>
         {
             // BAGIAN INI DIEKSEKUSI TEPAT SAAT LAYAR SEDANG HITAM PEKAT
             currentState = targetIsNight ? TimeOfDayState.Night : TimeOfDayState.Day;
@@ -81,7 +81,16 @@ public class DayNightManager : MonoBehaviour
             {
                 NPCSpawner.Instance.SpawnRandomNPCs();
             }
-        }));
+        };
+
+        if (cutsceneUI != null)
+        {
+            yield return StartCoroutine(cutsceneUI.PlayTransitionRoutine(targetIsNight, applyTransition));
+        }
+        else
+        {
+            applyTransition();
+        }
 
         // 3. Transisi selesai, reset timer dan kembalikan kontrol player
         timer = durationInMinutes * 60f;
