@@ -50,6 +50,12 @@ namespace Utsuru.UI
         [Tooltip("Name of the gameplay scene to load when Play is clicked.")]
         [SerializeField] private string gameplaySceneName = "Day_Showcase";
 
+        private UISakuraRain sakuraRain;
+        private Coroutine panelTransitionCoroutine;
+        private Coroutine guestPopupCoroutine;
+        private GameObject currentActivePanel;
+        private bool initialEntrancePlayed;
+
         private void Awake()
         {
             Initialize();
@@ -82,7 +88,22 @@ namespace Utsuru.UI
                 settingsOptionsPanel.SetActive(false);
             }
 
+            InitializeVisualEffects();
             ShowHomeScreen();
+        }
+
+        private void InitializeVisualEffects()
+        {
+            Canvas canvas = GetComponentInParent<Canvas>() ?? FindFirstObjectByType<Canvas>();
+            UIPanelAnimator.EnsureSharedBackground(canvas, GetAllMenuPanels());
+
+            sakuraRain = UISakuraRain.EnsureForCanvas(canvas);
+            sakuraRain?.AttachToCanvasBackgroundLayer(canvas, true);
+
+            UIPanelAnimator.AttachButtonFeedbackInChildren(homeScreenPanel);
+            UIPanelAnimator.AttachButtonFeedbackInChildren(creditsPanel);
+            UIPanelAnimator.AttachButtonFeedbackInChildren(settingsOptionsPanel);
+            UIPanelAnimator.AttachButtonFeedbackInChildren(guestSavePopup);
         }
 
         private void Update()
@@ -220,15 +241,12 @@ namespace Utsuru.UI
         }
 
         /// <summary>
-        /// Activates HomeScreen panel and deactivates other panels.
+        /// Activates HomeScreen panel and deactivates other panels with smooth animation.
         /// </summary>
         public void ShowHomeScreen()
         {
-            if (homeScreenPanel != null) homeScreenPanel.SetActive(true);
-            if (creditsPanel != null) creditsPanel.SetActive(false);
-            if (settingsOptionsPanel != null) settingsOptionsPanel.SetActive(false);
-            HideGuestSavePopup();
-
+            HideGuestSavePopup(!initialEntrancePlayed);
+            SwitchMenuPanel(homeScreenPanel, slideDirection: -1, enableSakura: true);
             UpdateLogoutButtonVisibility();
         }
 
@@ -266,27 +284,85 @@ namespace Utsuru.UI
         }
 
         /// <summary>
-        /// Activates Credits panel and deactivates other panels.
+        /// Activates Credits panel and deactivates other panels with smooth animation.
         /// </summary>
         public void ShowCredits()
         {
-            if (homeScreenPanel != null) homeScreenPanel.SetActive(false);
-            if (creditsPanel != null) creditsPanel.SetActive(true);
-            if (settingsOptionsPanel != null) settingsOptionsPanel.SetActive(false);
+            SwitchMenuPanel(creditsPanel, slideDirection: 1, enableSakura: true);
         }
 
         /// <summary>
-        /// Activates Settings-Options panel and deactivates other panels.
+        /// Activates Settings-Options panel and hides sakura rain (excluded on Options/Settings).
         /// </summary>
         public void ShowSettingsOptions()
         {
-            if (homeScreenPanel != null) homeScreenPanel.SetActive(false);
-            if (creditsPanel != null) creditsPanel.SetActive(false);
-            if (settingsOptionsPanel != null) settingsOptionsPanel.SetActive(true);
+            SwitchMenuPanel(settingsOptionsPanel, slideDirection: 1, enableSakura: false);
+        }
+
+        private GameObject[] GetAllMenuPanels()
+        {
+            return new GameObject[] { homeScreenPanel, creditsPanel, settingsOptionsPanel };
+        }
+
+        private void SwitchMenuPanel(GameObject targetPanel, int slideDirection, bool enableSakura)
+        {
+            if (targetPanel == null) return;
+
+            GameObject[] allPanels = GetAllMenuPanels();
+
+            if (!initialEntrancePlayed)
+            {
+                initialEntrancePlayed = true;
+                for (int i = 0; i < allPanels.Length; i++)
+                {
+                    if (allPanels[i] != null && allPanels[i] != targetPanel)
+                    {
+                        UIPanelAnimator.ResetPanelVisuals(allPanels[i], 1f);
+                        allPanels[i].SetActive(false);
+                    }
+                }
+
+                currentActivePanel = targetPanel;
+                sakuraRain?.SetVisible(enableSakura, immediate: true);
+                panelTransitionCoroutine = StartCoroutine(UIPanelAnimator.PlayPanelEntranceRoutine(targetPanel));
+                return;
+            }
+
+            if (currentActivePanel == targetPanel && targetPanel.activeSelf)
+            {
+                sakuraRain?.SetVisible(enableSakura);
+                return;
+            }
+
+            GameObject previousPanel = currentActivePanel;
+
+            if (panelTransitionCoroutine != null)
+            {
+                StopCoroutine(panelTransitionCoroutine);
+                for (int i = 0; i < allPanels.Length; i++)
+                {
+                    if (allPanels[i] != null && allPanels[i] != previousPanel)
+                    {
+                        UIPanelAnimator.ResetPanelVisuals(allPanels[i], 1f);
+                        allPanels[i].SetActive(false);
+                    }
+                }
+            }
+
+            sakuraRain?.SetVisible(enableSakura);
+
+            currentActivePanel = targetPanel;
+            panelTransitionCoroutine = StartCoroutine(RunMenuPanelSwitch(previousPanel, targetPanel, allPanels, slideDirection));
+        }
+
+        private IEnumerator RunMenuPanelSwitch(GameObject fromPanel, GameObject toPanel, GameObject[] allPanels, int direction)
+        {
+            yield return UIPanelAnimator.SwitchPanelRoutine(fromPanel, toPanel, allPanels, direction);
+            panelTransitionCoroutine = null;
         }
 
         /// <summary>
-        /// Handler for Play Button click. Loads the target gameplay scene.
+        /// Handler for Play Button click. Loads the target gameplay scene with fade.
         /// </summary>
         public void OnPlayButtonClicked()
         {
@@ -294,7 +370,7 @@ namespace Utsuru.UI
             try
             {
                 Time.timeScale = 1f;
-                SceneManager.LoadScene(gameplaySceneName);
+                UISceneFader.LoadSceneWithFade(gameplaySceneName);
             }
             catch (System.Exception ex)
             {
@@ -337,7 +413,7 @@ namespace Utsuru.UI
                 }
             }
 
-            SceneManager.LoadScene("LoginPage");
+            UISceneFader.LoadSceneWithFade("LoginPage");
         }
 
         private Coroutine cloudFeedbackRoutine;
@@ -396,7 +472,8 @@ namespace Utsuru.UI
         {
             if (guestSavePopup != null)
             {
-                guestSavePopup.SetActive(true);
+                if (guestPopupCoroutine != null) StopCoroutine(guestPopupCoroutine);
+                guestPopupCoroutine = StartCoroutine(AnimateGuestPopupRoutine(show: true));
             }
             else
             {
@@ -410,10 +487,79 @@ namespace Utsuru.UI
         /// </summary>
         public void HideGuestSavePopup()
         {
-            if (guestSavePopup != null)
+            HideGuestSavePopup(immediate: false);
+        }
+
+        private void HideGuestSavePopup(bool immediate)
+        {
+            if (guestSavePopup == null) return;
+
+            if (guestPopupCoroutine != null)
             {
+                StopCoroutine(guestPopupCoroutine);
+                guestPopupCoroutine = null;
+            }
+
+            if (immediate || !guestSavePopup.activeSelf)
+            {
+                UIPanelAnimator.ResetPanelVisuals(guestSavePopup, 1f);
+                guestSavePopup.SetActive(false);
+                return;
+            }
+
+            guestPopupCoroutine = StartCoroutine(AnimateGuestPopupRoutine(show: false));
+        }
+
+        private IEnumerator AnimateGuestPopupRoutine(bool show)
+        {
+            CanvasGroup cg = UIPanelAnimator.EnsureCanvasGroup(guestSavePopup);
+            Transform card = guestSavePopup.transform.Find("Card");
+
+            if (show)
+            {
+                guestSavePopup.SetActive(true);
+                cg.alpha = 0f;
+                cg.blocksRaycasts = true;
+                cg.interactable = true;
+                if (card != null) card.localScale = new Vector3(0.94f, 0.94f, 1f);
+
+                float elapsed = 0f;
+                const float dur = 0.2f;
+                while (elapsed < dur)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    float t = Mathf.Clamp01(elapsed / dur);
+                    float eased = 1f - Mathf.Pow(1f - t, 3f);
+                    cg.alpha = eased;
+                    if (card != null) card.localScale = Vector3.Lerp(new Vector3(0.94f, 0.94f, 1f), Vector3.one, eased);
+                    yield return null;
+                }
+
+                cg.alpha = 1f;
+                if (card != null) card.localScale = Vector3.one;
+            }
+            else
+            {
+                cg.interactable = true;
+                cg.blocksRaycasts = false;
+                float startAlpha = cg.alpha;
+                float elapsed = 0f;
+                const float dur = 0.14f;
+                while (elapsed < dur)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    float t = Mathf.Clamp01(elapsed / dur);
+                    cg.alpha = Mathf.Lerp(startAlpha, 0f, t);
+                    if (card != null) card.localScale = Vector3.Lerp(Vector3.one, new Vector3(0.95f, 0.95f, 1f), t);
+                    yield return null;
+                }
+
+                UIPanelAnimator.ResetPanelVisuals(guestSavePopup, 1f);
+                if (card != null) card.localScale = Vector3.one;
                 guestSavePopup.SetActive(false);
             }
+
+            guestPopupCoroutine = null;
         }
 
         /// <summary>
@@ -421,9 +567,9 @@ namespace Utsuru.UI
         /// </summary>
         public void OnGuestPopupLoginClicked()
         {
-            HideGuestSavePopup();
+            HideGuestSavePopup(immediate: true);
             Debug.Log("[HomeScreenUIManager] Navigating to LoginPage from Guest Save Popup...");
-            SceneManager.LoadScene("LoginPage");
+            UISceneFader.LoadSceneWithFade("LoginPage");
         }
 
         private IEnumerator ShowCloudFeedbackRoutine(string message, float duration)

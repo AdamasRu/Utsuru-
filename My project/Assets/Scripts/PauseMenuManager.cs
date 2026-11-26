@@ -28,13 +28,21 @@ public class PauseMenuManager : MonoBehaviour
 
     public bool IsPaused { get; private set; } = false;
 
+    private Coroutine pauseVisibilityCoroutine;
+    private Coroutine subPanelCoroutine;
+    private GameObject currentSubPanel;
+    private bool isNavigatingToMenu;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
         if (pausePanel != null)
+        {
+            Utsuru.UI.UIPanelAnimator.AttachButtonFeedbackInChildren(pausePanel);
             pausePanel.SetActive(false);
+        }
 
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
@@ -100,15 +108,37 @@ public class PauseMenuManager : MonoBehaviour
     public void PauseGame()
     {
         IsPaused = true;
+        isNavigatingToMenu = false;
 
-        if (pausePanel != null)
-            pausePanel.SetActive(true);
+        if (pauseVisibilityCoroutine != null)
+        {
+            StopCoroutine(pauseVisibilityCoroutine);
+            pauseVisibilityCoroutine = null;
+        }
+        if (subPanelCoroutine != null)
+        {
+            StopCoroutine(subPanelCoroutine);
+            subPanelCoroutine = null;
+        }
 
         if (mainPauseContent != null)
+        {
+            Utsuru.UI.UIPanelAnimator.ResetPanelVisuals(mainPauseContent, 1f);
             mainPauseContent.SetActive(true);
+        }
 
         if (settingsPanel != null)
+        {
+            Utsuru.UI.UIPanelAnimator.ResetPanelVisuals(settingsPanel, 1f);
             settingsPanel.SetActive(false);
+        }
+
+        currentSubPanel = mainPauseContent;
+
+        if (pausePanel != null)
+        {
+            pauseVisibilityCoroutine = StartCoroutine(PlayPauseOpenRoutine());
+        }
 
         Time.timeScale = 0f;
 
@@ -130,11 +160,16 @@ public class PauseMenuManager : MonoBehaviour
     {
         IsPaused = false;
 
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
-        if (settingsPanel != null)
-            settingsPanel.SetActive(false);
+        if (pauseVisibilityCoroutine != null)
+        {
+            StopCoroutine(pauseVisibilityCoroutine);
+            pauseVisibilityCoroutine = null;
+        }
+        if (subPanelCoroutine != null)
+        {
+            StopCoroutine(subPanelCoroutine);
+            subPanelCoroutine = null;
+        }
 
         Time.timeScale = 1f;
 
@@ -149,24 +184,67 @@ public class PauseMenuManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (pausePanel != null && pausePanel.activeSelf)
+        {
+            pauseVisibilityCoroutine = StartCoroutine(PlayPauseCloseRoutine());
+        }
+        else if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
     }
 
     public void OpenSettingsView()
     {
-        if (mainPauseContent != null)
-            mainPauseContent.SetActive(false);
+        if (settingsPanel == null) return;
+        if (currentSubPanel == settingsPanel && settingsPanel.activeSelf) return;
 
-        if (settingsPanel != null)
-            settingsPanel.SetActive(true);
+        SwitchPauseSubPanel(mainPauseContent, settingsPanel, slideDirection: 1);
     }
 
     public void CloseSettingsView()
     {
-        if (settingsPanel != null)
-            settingsPanel.SetActive(false);
+        if (mainPauseContent == null) return;
+        if (currentSubPanel == mainPauseContent && mainPauseContent.activeSelf) return;
 
-        if (mainPauseContent != null)
-            mainPauseContent.SetActive(true);
+        SwitchPauseSubPanel(settingsPanel, mainPauseContent, slideDirection: -1);
+    }
+
+    private void SwitchPauseSubPanel(GameObject fromPanel, GameObject toPanel, int slideDirection)
+    {
+        if (subPanelCoroutine != null)
+        {
+            StopCoroutine(subPanelCoroutine);
+            subPanelCoroutine = null;
+        }
+
+        GameObject[] subPanels = new GameObject[] { mainPauseContent, settingsPanel };
+        currentSubPanel = toPanel;
+        subPanelCoroutine = StartCoroutine(RunPauseSubPanelSwitch(fromPanel, toPanel, subPanels, slideDirection));
+    }
+
+    private System.Collections.IEnumerator PlayPauseOpenRoutine()
+    {
+        yield return Utsuru.UI.UIPanelAnimator.PlayPanelEntranceRoutine(pausePanel, 0.20f);
+        pauseVisibilityCoroutine = null;
+    }
+
+    private System.Collections.IEnumerator PlayPauseCloseRoutine()
+    {
+        yield return Utsuru.UI.UIPanelAnimator.PlayPanelExitRoutine(pausePanel, 0.16f);
+        if (settingsPanel != null)
+        {
+            Utsuru.UI.UIPanelAnimator.ResetPanelVisuals(settingsPanel, 1f);
+            settingsPanel.SetActive(false);
+        }
+        pauseVisibilityCoroutine = null;
+    }
+
+    private System.Collections.IEnumerator RunPauseSubPanelSwitch(GameObject fromPanel, GameObject toPanel, GameObject[] subPanels, int direction)
+    {
+        yield return Utsuru.UI.UIPanelAnimator.SwitchPanelRoutine(fromPanel, toPanel, subPanels, direction);
+        subPanelCoroutine = null;
     }
 
     public void GoToMainMenu()
@@ -182,14 +260,23 @@ public class PauseMenuManager : MonoBehaviour
 
     private void OnBackToMenuClicked()
     {
+        if (isNavigatingToMenu) return;
+        isNavigatingToMenu = true;
+
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        if (pausePanel != null)
+        {
+            CanvasGroup cg = Utsuru.UI.UIPanelAnimator.EnsureCanvasGroup(pausePanel);
+            cg.blocksRaycasts = false;
+        }
         Debug.Log("[PauseMenuManager] Tombol 'Back To Menu' diklik! Memuat HomeScreen...");
 
         try
         {
-            SceneManager.LoadScene(mainMenuSceneName);
+            string target = Application.CanStreamedLevelBeLoaded(mainMenuSceneName) ? mainMenuSceneName : "HomeScreen";
+            Utsuru.UI.UISceneFader.LoadSceneWithFade(target);
         }
         catch (System.Exception ex)
         {

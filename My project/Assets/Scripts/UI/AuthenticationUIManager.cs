@@ -95,6 +95,10 @@ namespace Utsuru.UI
         private string originalResetPasswordSubmitText = "Continue";
         private float resendCooldownRemaining = 0f;
         private Coroutine resendCooldownCoroutine;
+        private UISakuraRain sakuraRain;
+        private Coroutine panelTransitionCoroutine;
+        private GameObject currentActivePanel;
+        private bool initialEntrancePlayed;
 
         private void Awake()
         {
@@ -107,9 +111,38 @@ namespace Utsuru.UI
             AutoAssignReferences();
             CacheButtonTexts();
             SetupButtonListeners();
+            InitializeVisualEffects();
             EnsureToastUI();
             HideIncorrectCredentialsAlert();
             HideToast();
+        }
+
+        private void InitializeVisualEffects()
+        {
+            Canvas canvas = GetComponentInParent<Canvas>() ?? FindFirstObjectByType<Canvas>();
+            GameObject[] panels = GetAllAuthPanels();
+
+            UIPanelAnimator.EnsureSharedBackground(canvas, panels);
+
+            sakuraRain = UISakuraRain.EnsureForCanvas(canvas);
+            sakuraRain?.AttachToCanvasBackgroundLayer(canvas, true);
+
+            for (int i = 0; i < panels.Length; i++)
+            {
+                UIPanelAnimator.AttachButtonFeedbackInChildren(panels[i]);
+            }
+        }
+
+        private GameObject[] GetAllAuthPanels()
+        {
+            return new GameObject[]
+            {
+                loginPanel,
+                signUpPanel,
+                emailSentPanel,
+                forgotPasswordPanel,
+                resetPasswordPanel
+            };
         }
 
         private void CacheButtonTexts()
@@ -169,16 +202,66 @@ namespace Utsuru.UI
         #region Panel Navigation
 
         /// <summary>
-        /// Activates the specified panel and hides all other authentication panels.
+        /// Activates the specified panel and hides all other authentication panels smoothly.
         /// </summary>
         /// <param name="activePanel">The GameObject of the panel to show.</param>
         public void ShowPanel(GameObject activePanel)
         {
-            if (loginPanel != null) loginPanel.SetActive(loginPanel == activePanel);
-            if (signUpPanel != null) signUpPanel.SetActive(signUpPanel == activePanel);
-            if (emailSentPanel != null) emailSentPanel.SetActive(emailSentPanel == activePanel);
-            if (forgotPasswordPanel != null) forgotPasswordPanel.SetActive(forgotPasswordPanel == activePanel);
-            if (resetPasswordPanel != null) resetPasswordPanel.SetActive(resetPasswordPanel == activePanel);
+            if (activePanel == null) return;
+
+            GameObject[] allPanels = GetAllAuthPanels();
+
+            if (!initialEntrancePlayed)
+            {
+                initialEntrancePlayed = true;
+                for (int i = 0; i < allPanels.Length; i++)
+                {
+                    GameObject p = allPanels[i];
+                    if (p != null && p != activePanel)
+                    {
+                        UIPanelAnimator.ResetPanelVisuals(p, 1f);
+                        p.SetActive(false);
+                    }
+                }
+
+                currentActivePanel = activePanel;
+                sakuraRain?.SetVisible(true, immediate: true);
+                panelTransitionCoroutine = StartCoroutine(UIPanelAnimator.PlayPanelEntranceRoutine(activePanel));
+                return;
+            }
+
+            if (currentActivePanel == activePanel && activePanel.activeSelf)
+            {
+                sakuraRain?.SetVisible(true);
+                return;
+            }
+
+            GameObject previousPanel = currentActivePanel;
+            int slideDirection = activePanel == loginPanel ? -1 : 1;
+
+            if (panelTransitionCoroutine != null)
+            {
+                StopCoroutine(panelTransitionCoroutine);
+                // Clean up any mid-flight panels cleanly before starting the new switch
+                for (int i = 0; i < allPanels.Length; i++)
+                {
+                    if (allPanels[i] != null && allPanels[i] != previousPanel)
+                    {
+                        UIPanelAnimator.ResetPanelVisuals(allPanels[i], 1f);
+                        allPanels[i].SetActive(false);
+                    }
+                }
+            }
+
+            sakuraRain?.SetVisible(true);
+            currentActivePanel = activePanel;
+            panelTransitionCoroutine = StartCoroutine(RunPanelSwitch(previousPanel, activePanel, allPanels, slideDirection));
+        }
+
+        private IEnumerator RunPanelSwitch(GameObject fromPanel, GameObject toPanel, GameObject[] allPanels, int direction)
+        {
+            yield return UIPanelAnimator.SwitchPanelRoutine(fromPanel, toPanel, allPanels, direction);
+            panelTransitionCoroutine = null;
         }
 
         public void ShowLoginPanel()
@@ -327,9 +410,9 @@ namespace Utsuru.UI
                     HideIncorrectCredentialsAlert();
                     HideToast();
 
-                    // Navigate to HomeScreen scene
+                    // Navigate to HomeScreen scene with smooth fade
                     Debug.Log("[AuthenticationUIManager] Login successful. Navigating to HomeScreen scene...");
-                    SceneManager.LoadScene("HomeScreen");
+                    UISceneFader.LoadSceneWithFade("HomeScreen");
                 }
                 else
                 {
@@ -430,8 +513,8 @@ namespace Utsuru.UI
             // Set up guest session in SessionManager
             SessionManager.EnsureInstance().SetGuestSession("Guest");
 
-            // Transition directly to HomeScreen
-            SceneManager.LoadScene("HomeScreen");
+            // Transition smoothly to HomeScreen
+            UISceneFader.LoadSceneWithFade("HomeScreen");
         }
 
         public void ToggleRememberMe()
