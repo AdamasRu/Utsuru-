@@ -29,9 +29,33 @@ namespace Utsuru.Capture
         [Tooltip("Script gerak/look player yang dimatikan saat popup Polaroid tampil.")]
         [SerializeField] private Behaviour[] playerControlBehaviours;
 
-        [Header("Zoom viewfinder")]
-        [SerializeField] private float viewfinderFov = 30f;
-        [SerializeField] private float zoomSpeed = 10f;
+        [Header("Zoom Viewfinder Settings")]
+        [Tooltip("FOV minimum saat zoom maksimal (mendekat).")]
+        [SerializeField] private float minFov = 15f;
+        [Tooltip("FOV maksimum saat zoom keluar (sudut lebar).")]
+        [SerializeField] private float maxFov = 45f;
+        [Tooltip("FOV default saat awal masuk mode kamera.")]
+        [SerializeField] private float defaultFov = 30f;
+        [Tooltip("Sensitivitas / step zoom saat mouse scroll diputar.")]
+        [SerializeField] private float zoomStep = 2.5f;
+        [Tooltip("Kecepatan lerp transisi zoom FOV.")]
+        [SerializeField] private float zoomSpeed = 12f;
+
+        [Header("UI Slider Zoom")]
+        [Tooltip("UI Slider vertikal untuk zoom kamera.")]
+        [SerializeField] private UnityEngine.UI.Slider zoomSlider;
+
+        [Header("UI Hints Luar Mode Kamera")]
+        [Tooltip("Hint kamera di HUD yang disembunyikan saat mode kamera aktif.")]
+        [SerializeField] private GameObject cameraHintObject;
+
+        [Tooltip("Hint dictionary di HUD yang disembunyikan saat mode kamera aktif.")]
+        [SerializeField] private GameObject dictionaryHintObject;
+
+        public float MinFov => minFov;
+        public float MaxFov => maxFov;
+        public float DefaultFov => defaultFov;
+        public float CurrentFov => currentCameraFov;
 
         public bool IsCameraActive { get; private set; }
         public Camera PlayerCamera => playerCamera;
@@ -41,7 +65,9 @@ namespace Utsuru.Capture
         public event Action<bool> OnCameraModeChanged;
 
         private float normalFov = 60f;
+        private float currentCameraFov = 30f;
         private bool controlsLocked;
+        private bool isUpdatingSliderInternally;
 
         private void Awake()
         {
@@ -84,6 +110,15 @@ namespace Utsuru.Capture
             }
             if (viewfinderRoot != null) viewfinderRoot.SetActive(false);
 
+            if (cameraHintObject == null)
+            {
+                cameraHintObject = GameObject.Find("CameraHint") ?? GameObject.Find("Camera Mechanic/CameraHint");
+            }
+            if (dictionaryHintObject == null)
+            {
+                dictionaryHintObject = GameObject.Find("DictionaryHint") ?? GameObject.Find("Camera Mechanic/DictionaryHint");
+            }
+
             // Auto-populate playerControlBehaviours jika belum di-assign di Inspector
             if (playerControlBehaviours == null || playerControlBehaviours.Length == 0)
             {
@@ -98,6 +133,14 @@ namespace Utsuru.Capture
                     if (list.Count > 0) playerControlBehaviours = list.ToArray();
                 }
             }
+            currentCameraFov = defaultFov;
+            if (zoomSlider != null)
+            {
+                zoomSlider.minValue = 0f;
+                zoomSlider.maxValue = 1f;
+                zoomSlider.onValueChanged.AddListener(OnSliderValueChanged);
+                SyncSliderWithFov(currentCameraFov);
+            }
         }
 
         private void Start()
@@ -108,6 +151,10 @@ namespace Utsuru.Capture
 
         private void OnDestroy()
         {
+            if (zoomSlider != null)
+            {
+                zoomSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            }
             if (Instance == this) Instance = null;
         }
 
@@ -116,7 +163,20 @@ namespace Utsuru.Capture
             if (!controlsLocked && CameraInput.ToggleCameraPressed())
                 SetCameraActive(!IsCameraActive);
 
-            float targetFov = IsCameraActive ? viewfinderFov : normalFov;
+            if (IsCameraActive && !controlsLocked)
+            {
+                float scroll = CameraInput.GetMouseScrollDelta();
+                if (Mathf.Abs(scroll) > 0.01f)
+                {
+                    // Scroll ke atas (> 0) -> Zoom In -> FOV mengecil
+                    // Scroll ke bawah (< 0) -> Zoom Out -> FOV membesar
+                    currentCameraFov -= scroll * zoomStep;
+                    currentCameraFov = Mathf.Clamp(currentCameraFov, minFov, maxFov);
+                    SyncSliderWithFov(currentCameraFov);
+                }
+            }
+
+            float targetFov = IsCameraActive ? currentCameraFov : normalFov;
             float t = 1f - Mathf.Exp(-zoomSpeed * Time.unscaledDeltaTime);
 
             if (virtualCamera != null)
@@ -130,6 +190,37 @@ namespace Utsuru.Capture
             {
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFov, t);
             }
+        }
+
+        public void SetZoomSlider(UnityEngine.UI.Slider slider)
+        {
+            if (zoomSlider != null)
+            {
+                zoomSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            }
+            zoomSlider = slider;
+            if (zoomSlider != null)
+            {
+                zoomSlider.minValue = 0f;
+                zoomSlider.maxValue = 1f;
+                zoomSlider.onValueChanged.AddListener(OnSliderValueChanged);
+                SyncSliderWithFov(currentCameraFov);
+            }
+        }
+
+        private void SyncSliderWithFov(float fov)
+        {
+            if (zoomSlider == null) return;
+            isUpdatingSliderInternally = true;
+            // 0 = maxFov (zoom keluar/bawah), 1 = minFov (zoom dekat/atas)
+            zoomSlider.value = Mathf.InverseLerp(maxFov, minFov, fov);
+            isUpdatingSliderInternally = false;
+        }
+
+        private void OnSliderValueChanged(float sliderValue)
+        {
+            if (isUpdatingSliderInternally) return;
+            currentCameraFov = Mathf.Lerp(maxFov, minFov, sliderValue);
         }
 
         /// <summary>Dipakai SettingsManager saat player mengubah FOV agar tidak tertarik kembali oleh loop Update kamera.</summary>
@@ -157,8 +248,16 @@ namespace Utsuru.Capture
             if (controlsLocked || IsCameraActive == active) return;
 
             IsCameraActive = active;
+            if (active)
+            {
+                currentCameraFov = defaultFov;
+                SyncSliderWithFov(currentCameraFov);
+            }
+
             Debug.Log($"[CameraModeController] Mode OpenCamera {(active ? "AKTIF" : "MATI")}");
             if (viewfinderRoot != null) viewfinderRoot.SetActive(active);
+            if (cameraHintObject != null) cameraHintObject.SetActive(!active);
+            if (dictionaryHintObject != null) dictionaryHintObject.SetActive(!active);
             OnCameraModeChanged?.Invoke(active);
         }
 

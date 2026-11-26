@@ -31,5 +31,18 @@ namespace Utsuru.Capture
             return Input.GetMouseButtonDown(0);
 #endif
         }
+
+        public static float GetMouseScrollDelta()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var mouse = Mouse.current;
+            if (mouse == null) return 0f;
+            float scrollY = mouse.scroll.ReadValue().y;
+            if (Mathf.Abs(scrollY) < 0.01f) return 0f;
+            return Mathf.Abs(scrollY) >= 10f ? scrollY / 120f : scrollY;
+#else
+            return Input.mouseScrollDelta.y;
+#endif
+        }
     }
 }

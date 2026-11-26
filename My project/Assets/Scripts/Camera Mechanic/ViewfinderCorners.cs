@@ -13,6 +13,10 @@ namespace Utsuru.Capture
     /// </summary>
     public class ViewfinderCorners : MonoBehaviour
     {
+        [Header("Mode Overlay")]
+        [Tooltip("Jika false, overlay prosedural tidak dibangun (menggunakan aset outline sprite).")]
+        [SerializeField] private bool buildProceduralOverlay = false;
+
         [Header("Garis Sudut Pembingkai (Outer Frame)")]
         [SerializeField] private Color frameColor = new Color(1f, 1f, 1f, 0.85f);
         [SerializeField] private Color shadowColor = new Color(0f, 0f, 0f, 0.5f);
@@ -69,6 +73,7 @@ namespace Utsuru.Capture
 
         private void EnsureBuilt()
         {
+            if (!buildProceduralOverlay) return;
             if (overlayBuilt) return;
             overlayBuilt = true;
 
