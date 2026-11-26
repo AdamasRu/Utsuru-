@@ -93,6 +93,18 @@ create index if not exists idx_player_photos_user on public.player_photos(user_i
 create index if not exists idx_player_photos_album on public.player_photos(album_id);
 create index if not exists idx_player_photos_vocab on public.player_photos(vocabulary_id);
 
+-- 5b. TABEL KEPEMILIKAN & TEMA AKTIF KAMUS (STORE)
+create table if not exists public.player_themes (
+    id bigint generated always as identity primary key,
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    theme_id text not null,
+    is_applied boolean not null default false,
+    purchased_at timestamptz not null default now(),
+    constraint uq_player_theme unique(user_id, theme_id)
+);
+
+create index if not exists idx_player_themes_user on public.player_themes(user_id);
+
 -- 6. KEAMANAN ROW LEVEL SECURITY (RLS)
 alter table public.profiles enable row level security;
 alter table public.master_vocabularies enable row level security;
@@ -102,6 +114,7 @@ alter table public.player_discovered_vocabularies enable row level security;
 alter table public.player_discovered_objects enable row level security;
 alter table public.player_albums enable row level security;
 alter table public.player_photos enable row level security;
+alter table public.player_themes enable row level security;
 
 -- 7. RLS POLICIES (Hak Akses Data)
 create policy "Allow read master vocabularies" on public.master_vocabularies for select to public using (true);
@@ -131,6 +144,11 @@ create policy "Users can insert own photos" on public.player_photos for insert t
 create policy "Users can update own photos" on public.player_photos for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 create policy "Users can delete own photos" on public.player_photos for delete to authenticated using ((select auth.uid()) = user_id);
 
+create policy "Users can view own themes" on public.player_themes for select to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can insert own themes" on public.player_themes for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can update own themes" on public.player_themes for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "Users can delete own themes" on public.player_themes for delete to authenticated using ((select auth.uid()) = user_id);
+
 -- 8. TRIGGER OTOMATIS: INITIALIZE DATA SAAT USER REGISTER DI AUTH.USERS
 -- Jalankan blok ini di SQL Editor Dashboard Supabase jika trigger belum aktif:
 create or replace function public.handle_new_user()
@@ -156,6 +174,10 @@ begin
   insert into public.player_albums (user_id, local_album_id, album_name, is_default)
   values (new.id, 1, 'Album Utama', true)
   on conflict (user_id, local_album_id) do nothing;
+
+  insert into public.player_themes (user_id, theme_id, is_applied)
+  values (new.id, 'plain', true)
+  on conflict (user_id, theme_id) do nothing;
 
   return new;
 end;

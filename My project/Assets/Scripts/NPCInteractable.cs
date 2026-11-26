@@ -66,6 +66,8 @@ public class NPCInteractable : MonoBehaviour
             return;
         if (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
             return;
+        if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
+            return;
 
         bool ePressed = Input.GetKeyDown(KeyCode.E);
 #if ENABLE_INPUT_SYSTEM

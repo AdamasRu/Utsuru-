@@ -17,7 +17,8 @@ namespace Utsuru.DictionaryUI.Editor
 
             // 2. Muat aset Sprite
             var bgDictSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/BG_dictionary.png");
-            var bookPurpleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Purple.png");
+            var bookPlainSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Plain.png")
+                ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Purple.png");
 
             var bmAlbumSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_home.png");
             var bmLikeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_like.png");
@@ -99,7 +100,7 @@ namespace Utsuru.DictionaryUI.Editor
             bookRt.sizeDelta = new Vector2(1720f, 940f);
             bookRt.anchoredPosition = new Vector2(0f, -25f);
             var bookImg = bookGo.AddComponent<Image>();
-            bookImg.sprite = bookPurpleSprite;
+            bookImg.sprite = bookPlainSprite;
             bookImg.preserveAspect = false;
 
             // 6.3 TopTabs (Bookmark Tabs di Atas Buku)
@@ -395,6 +396,9 @@ namespace Utsuru.DictionaryUI.Editor
             // Bangun Tab Quiz Challenge secara otomatis
             DictionaryQuizUIBuilder.BuildQuizUI();
 
+            // Bangun Tab Theme & sambungkan DictionaryThemeApplier
+            DictionaryThemeUIBuilder.BuildThemeUI(saveScene: false);
+
             // Awalnya tutup viewRoot
             viewGo.SetActive(false);
 
@@ -406,6 +410,76 @@ namespace Utsuru.DictionaryUI.Editor
             }
 
             Debug.Log("[DictionaryUIBuilder] Berhasil membangun UI Dictionary Rework di Canvas/Dictionary!");
+        }
+
+        [MenuItem("Tools/Utsuru/Update PhotoSpread Card Layout")]
+        public static void UpdatePhotoSpreadCardLayout()
+        {
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            if (canvas == null) return;
+
+            Transform photoRoot = canvas.transform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/PhotoSpreadRoot");
+            if (photoRoot == null)
+            {
+                Debug.LogWarning("[DictionaryUIBuilder] PhotoSpreadRoot tidak ditemukan di scene aktif.");
+                return;
+            }
+
+            Undo.RegisterCompleteObjectUndo(photoRoot.gameObject, "Update PhotoSpread Card Layout");
+            int updated = 0;
+
+            foreach (var card in photoRoot.GetComponentsInChildren<DictionaryPolaroidCardUI>(true))
+            {
+                Transform container = card.transform.Find("CardContainer") ?? card.transform.Find("PolaroidCard");
+                if (container == null) continue;
+                Transform front = container.Find("CardFace_Front");
+                if (front == null) continue;
+
+                Transform kanji = front.Find("KanjiLabel");
+                if (kanji != null)
+                {
+                    if (kanji.TryGetComponent<RectTransform>(out var kRt))
+                        kRt.anchoredPosition = new Vector2(-111f, -194f);
+                    if (kanji.TryGetComponent<TextMeshProUGUI>(out var kTmp))
+                    {
+                        kTmp.enableAutoSizing = true;
+                        kTmp.fontSizeMin = 12f;
+                        kTmp.fontSizeMax = 20f;
+                        kTmp.fontSize = 20f;
+                        EditorUtility.SetDirty(kTmp);
+                    }
+                }
+
+                Transform mean = front.Find("MeaningLabel");
+                if (mean != null)
+                {
+                    if (mean.TryGetComponent<RectTransform>(out var mRt))
+                        mRt.anchoredPosition = new Vector2(-111f, -248f);
+                    if (mean.TryGetComponent<TextMeshProUGUI>(out var mTmp))
+                    {
+                        mTmp.enableAutoSizing = true;
+                        mTmp.fontSizeMin = 10.5f;
+                        mTmp.fontSizeMax = 16f;
+                        mTmp.fontSize = 16f;
+                        EditorUtility.SetDirty(mTmp);
+                    }
+                }
+
+                Transform like = front.Find("Btn_Like");
+                if (like != null && like.TryGetComponent<RectTransform>(out var lRt))
+                    lRt.anchoredPosition = new Vector2(-77f, 56.6f);
+
+                Transform fav = front.Find("Btn_Favorite");
+                if (fav != null && fav.TryGetComponent<RectTransform>(out var fRt))
+                    fRt.anchoredPosition = new Vector2(-45.45f, 57.7f);
+
+                updated++;
+            }
+
+            EditorUtility.SetDirty(photoRoot.gameObject);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(photoRoot.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(photoRoot.gameObject.scene);
+            Debug.Log($"[DictionaryUIBuilder] Berhasil memperbarui layout {updated} kartu di PhotoSpreadRoot.");
         }
 
         private static Button CreateTabButton(string name, Transform parent, Sprite sprite, Vector2 size, Vector2 anchorMin, Vector2 anchorMax, Vector2 pos, float scale = 0.9f)
@@ -517,13 +591,13 @@ namespace Utsuru.DictionaryUI.Editor
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
             kanjiRt.pivot = new Vector2(0f, 1f);
             kanjiRt.sizeDelta = new Vector2(244f, 50f);
-            kanjiRt.anchoredPosition = new Vector2(-122f, -194f);
+            kanjiRt.anchoredPosition = new Vector2(-111f, -194f);
             var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
             kanjiTmp.font = zenFont;
-            kanjiTmp.fontSize = 19f;
+            kanjiTmp.fontSize = 20f;
             kanjiTmp.enableAutoSizing = true;
             kanjiTmp.fontSizeMin = 12f;
-            kanjiTmp.fontSizeMax = 19f;
+            kanjiTmp.fontSizeMax = 20f;
             kanjiTmp.lineSpacing = -6f;
             kanjiTmp.textWrappingMode = TextWrappingModes.NoWrap;
             kanjiTmp.overflowMode = TextOverflowModes.Ellipsis;
@@ -540,13 +614,13 @@ namespace Utsuru.DictionaryUI.Editor
             meanRt.anchorMax = new Vector2(0.5f, 1f);
             meanRt.pivot = new Vector2(0f, 1f);
             meanRt.sizeDelta = new Vector2(244f, 52f);
-            meanRt.anchoredPosition = new Vector2(-122f, -248f);
+            meanRt.anchoredPosition = new Vector2(-111f, -248f);
             var meanTmp = meanGo.AddComponent<TextMeshProUGUI>();
             meanTmp.font = nunitoFont;
-            meanTmp.fontSize = 14f;
+            meanTmp.fontSize = 16f;
             meanTmp.enableAutoSizing = true;
             meanTmp.fontSizeMin = 10.5f;
-            meanTmp.fontSizeMax = 14f;
+            meanTmp.fontSizeMax = 16f;
             meanTmp.lineSpacing = -4f;
             meanTmp.overflowMode = TextOverflowModes.Ellipsis;
             meanTmp.alignment = TextAlignmentOptions.TopLeft;
@@ -563,7 +637,7 @@ namespace Utsuru.DictionaryUI.Editor
             likeRt.anchorMax = new Vector2(1f, 0f);
             likeRt.pivot = new Vector2(0.5f, 0.5f);
             likeRt.sizeDelta = new Vector2(26f, 26f);
-            likeRt.anchoredPosition = new Vector2(-66f, 35f);
+            likeRt.anchoredPosition = new Vector2(-77f, 56.6f);
             var likeBtn = likeGo.AddComponent<Button>();
             var likeImg = likeGo.AddComponent<Image>();
             likeImg.sprite = likeOff;
@@ -578,7 +652,7 @@ namespace Utsuru.DictionaryUI.Editor
             favRt.anchorMax = new Vector2(1f, 0f);
             favRt.pivot = new Vector2(0.5f, 0.5f);
             favRt.sizeDelta = new Vector2(28f, 28f);
-            favRt.anchoredPosition = new Vector2(-34f, 35f);
+            favRt.anchoredPosition = new Vector2(-45.45f, 57.7f);
             var favBtn = favGo.AddComponent<Button>();
             var favImg = favGo.AddComponent<Image>();
             favImg.sprite = favOff;

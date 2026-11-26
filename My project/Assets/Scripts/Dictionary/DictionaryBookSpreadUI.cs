@@ -14,7 +14,8 @@ namespace Utsuru.DictionaryUI
         Quiz,
         Hiragana,
         Module,
-        Flashcard
+        Flashcard,
+        Theme
     }
 
     /// <summary>
@@ -62,6 +63,10 @@ namespace Utsuru.DictionaryUI
         [Header("Flashcard Spread (Tab Flashcard)")]
         [SerializeField] private GameObject flashcardSpreadRoot;
         [SerializeField] private DictionaryFlashcardSpreadUI flashcardSpreadUI;
+
+        [Header("Theme Spread (Tab Theme)")]
+        [SerializeField] private GameObject themeSpreadRoot;
+        [SerializeField] private DictionaryThemeSpreadUI themeSpreadUI;
 
         [Header("Animasi Domino Pergantian Halaman")]
         [Tooltip("Jeda waktu antar pasangan slot domino (detik)")]
@@ -304,6 +309,7 @@ namespace Utsuru.DictionaryUI
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
                 if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(true);
@@ -320,6 +326,7 @@ namespace Utsuru.DictionaryUI
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
                 if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(true);
@@ -338,6 +345,7 @@ namespace Utsuru.DictionaryUI
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
                 if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
 
@@ -361,6 +369,7 @@ namespace Utsuru.DictionaryUI
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+                if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
 
@@ -377,11 +386,36 @@ namespace Utsuru.DictionaryUI
                 return;
             }
 
+            // 4b. Tangani mode Theme (Pengaturan & Apply Tema Buku)
+            if (currentMode == DictionaryBookMode.Theme)
+            {
+                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
+                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
+                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
+                if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
+                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+                if (placeholderRoot != null) placeholderRoot.SetActive(false);
+                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
+
+                if (themeSpreadRoot != null)
+                {
+                    themeSpreadRoot.SetActive(true);
+                    if (themeSpreadUI != null) themeSpreadUI.Refresh();
+                }
+
+                if (leftPageNumberText != null) leftPageNumberText.text = "THEMES";
+                if (rightPageNumberText != null) rightPageNumberText.text = "CUSTOMIZE";
+                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
+                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
+                return;
+            }
+
             // 5. Mode Foto (Album, Like, Favorite)
             if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
             if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
             if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
             if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
+            if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
             if (photoSpreadRoot != null) photoSpreadRoot.SetActive(true);
             if (placeholderRoot != null) placeholderRoot.SetActive(false);
 
@@ -484,7 +518,7 @@ namespace Utsuru.DictionaryUI
         private int GetTotalSpreads()
         {
             if (currentMode == DictionaryBookMode.Hiragana) return 3;
-            if (currentMode == DictionaryBookMode.Module || currentMode == DictionaryBookMode.Quiz || currentMode == DictionaryBookMode.Flashcard) return 1;
+            if (currentMode == DictionaryBookMode.Module || currentMode == DictionaryBookMode.Quiz || currentMode == DictionaryBookMode.Flashcard || currentMode == DictionaryBookMode.Theme) return 1;
             int total = currentFilteredPhotos.Count;
             return Mathf.Max(1, Mathf.CeilToInt(total / 8f));
         }

@@ -157,6 +157,9 @@ namespace Utsuru.Achievements
             if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
                 return false;
 
+            if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
+                return false;
+
             if (cachedDictionaryUI == null)
                 cachedDictionaryUI = FindFirstObjectByType<DictionaryUIController>();
             if (cachedDictionaryUI != null && cachedDictionaryUI.IsOpen)

@@ -10,6 +10,7 @@ using Utsuru.Authentication.Configuration;
 using Utsuru.Authentication.Models;
 using Utsuru.Authentication.Security;
 using Utsuru.Capture;
+using Utsuru.Store;
 
 namespace Utsuru.CloudSync
 {
@@ -221,8 +222,44 @@ namespace Utsuru.CloudSync
                 }
             }
 
+            // 3. Ambil & Sinkronkan Kepemilikan Tema Kamus + Tema Aktif ke player_themes
+            List<string> ownedThemes = null;
+            string activeThemeId = StoreThemeCatalog.DefaultThemeId;
+            List<ThemePurchaseRecord> themePurchaseRecords = null;
+
+            if (StoreThemeManager.Instance != null)
+            {
+                ownedThemes = StoreThemeManager.Instance.GetOwnedThemeIdsSnapshot();
+                activeThemeId = StoreThemeManager.Instance.ActiveThemeId;
+                themePurchaseRecords = StoreThemeManager.Instance.GetPurchaseRecordsSnapshot();
+            }
+            else if (storage.TryLoad<StoreThemeSaveData>(accountName, StoreThemeManager.SaveKey, out StoreThemeSaveData tData) && tData != null)
+            {
+                ownedThemes = tData.ownedThemeIds != null ? new List<string>(tData.ownedThemeIds) : new List<string>();
+                if (!string.IsNullOrEmpty(tData.activeThemeId))
+                    activeThemeId = tData.activeThemeId;
+                themePurchaseRecords = tData.purchaseRecords;
+            }
+            else
+            {
+                ownedThemes = new List<string>();
+            }
+
+            if (!ownedThemes.Contains(StoreThemeCatalog.DefaultThemeId))
+            {
+                ownedThemes.Add(StoreThemeCatalog.DefaultThemeId);
+            }
+
+            foreach (string themeId in ownedThemes)
+            {
+                if (string.IsNullOrEmpty(themeId)) continue;
+                bool isApplied = string.Equals(themeId, activeThemeId, StringComparison.OrdinalIgnoreCase);
+                string purchasedAt = FindThemePurchaseTimestamp(themePurchaseRecords, themeId);
+                yield return UpsertThemeToCloud(userId, token, themeId, isApplied, purchasedAt);
+            }
+
             IsSaving = false;
-            Debug.Log($"[SupabaseCloudSync] Save to Cloud berhasil diselesaikan! (Poin: {pointsToSync}, Foto: {uploadedPhotos})");
+            Debug.Log($"[SupabaseCloudSync] Save to Cloud berhasil diselesaikan! (Poin: {pointsToSync}, Foto: {uploadedPhotos}, Tema: {ownedThemes.Count})");
             onComplete?.Invoke(true, "Progres berhasil disimpan ke Cloud!");
         }
 
@@ -335,6 +372,52 @@ namespace Utsuru.CloudSync
                 dbReq.SetRequestHeader("Prefer", "resolution=merge-duplicates");
 
                 yield return dbReq.SendWebRequest();
+            }
+        }
+
+        private static string FindThemePurchaseTimestamp(List<ThemePurchaseRecord> records, string themeId)
+        {
+            if (records != null)
+            {
+                for (int i = 0; i < records.Count; i++)
+                {
+                    if (records[i] != null &&
+                        string.Equals(records[i].themeId, themeId, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrEmpty(records[i].purchasedAt))
+                    {
+                        return records[i].purchasedAt;
+                    }
+                }
+            }
+            return DateTime.UtcNow.ToString("o");
+        }
+
+        private IEnumerator UpsertThemeToCloud(string userId, string token, string themeId, bool isApplied, string purchasedAt)
+        {
+            string url = $"{config.ProjectUrl}/rest/v1/player_themes?on_conflict=user_id,theme_id";
+            string safeThemeId = EscapeJson(themeId);
+            string safeDate = EscapeJson(!string.IsNullOrEmpty(purchasedAt) ? purchasedAt : DateTime.UtcNow.ToString("o"));
+            string payload = "{"
+                + $"\"user_id\":\"{userId}\","
+                + $"\"theme_id\":\"{safeThemeId}\","
+                + $"\"is_applied\":{(isApplied ? "true" : "false")},"
+                + $"\"purchased_at\":\"{safeDate}\""
+                + "}";
+
+            using (UnityWebRequest req = new UnityWebRequest(url, "POST"))
+            {
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(payload);
+                req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                req.downloadHandler = new DownloadHandlerBuffer();
+                ApplyHeaders(req, token);
+                req.SetRequestHeader("Prefer", "resolution=merge-duplicates");
+
+                yield return req.SendWebRequest();
+
+                if (req.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogWarning($"[SupabaseCloudSync] Gagal sync tema '{themeId}' ke cloud: {req.error}");
+                }
             }
         }
 

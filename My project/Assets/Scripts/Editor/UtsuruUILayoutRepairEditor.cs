@@ -241,8 +241,8 @@ namespace Utsuru.DictionaryUI.Editor
                     SetRect(front.Find("PhotoFrame"), new Vector2(244f, 166f), new Vector2(0f, -20f));
 
                     Transform kanji = front.Find("KanjiLabel");
-                    SetRect(kanji, new Vector2(244f, 50f), new Vector2(-122f, -194f));
-                    var kTmp = SetTmp(kanji, zenFont, 19f, true, 12f, 19f);
+                    SetRect(kanji, new Vector2(244f, 50f), new Vector2(-111f, -194f));
+                    var kTmp = SetTmp(kanji, zenFont, 20f, true, 12f, 20f);
                     if (kTmp != null)
                     {
                         kTmp.lineSpacing = -6f;
@@ -252,8 +252,8 @@ namespace Utsuru.DictionaryUI.Editor
                     }
 
                     Transform mean = front.Find("MeaningLabel");
-                    SetRect(mean, new Vector2(244f, 52f), new Vector2(-122f, -248f));
-                    var mTmp = SetTmp(mean, nunitoFont, 14f, true, 10.5f, 14f);
+                    SetRect(mean, new Vector2(244f, 52f), new Vector2(-111f, -248f));
+                    var mTmp = SetTmp(mean, nunitoFont, 16f, true, 10.5f, 16f);
                     if (mTmp != null)
                     {
                         mTmp.lineSpacing = -4f;
@@ -262,8 +262,8 @@ namespace Utsuru.DictionaryUI.Editor
                         mTmp.alignment = TextAlignmentOptions.TopLeft;
                     }
 
-                    SetRect(front.Find("Btn_Like"), new Vector2(26f, 26f), new Vector2(-66f, 35f));
-                    SetRect(front.Find("Btn_Favorite"), new Vector2(28f, 28f), new Vector2(-34f, 35f));
+                    SetRect(front.Find("Btn_Like"), new Vector2(26f, 26f), new Vector2(-77f, 56.6f));
+                    SetRect(front.Find("Btn_Favorite"), new Vector2(28f, 28f), new Vector2(-45.45f, 57.7f));
                 }
 
                 Transform back = container.Find("CardFace_Back");

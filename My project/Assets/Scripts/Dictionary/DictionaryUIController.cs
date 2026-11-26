@@ -31,10 +31,12 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private Button tabHiraganaButton;
         [SerializeField] private Button tabModuleButton;
         [SerializeField] private Button tabFlashcardButton;
+        [SerializeField] private Button tabThemeButton;
         [SerializeField] private Button tabExitButton;
 
         [Header("Spread Buku (Isi 2 Halaman)")]
         [SerializeField] private DictionaryBookSpreadUI bookSpread;
+        [SerializeField] private DictionaryThemeApplier themeApplier;
 
         public bool IsOpen => viewRoot != null && viewRoot.activeSelf;
 
@@ -52,6 +54,7 @@ namespace Utsuru.DictionaryUI
             if (tabHiraganaButton != null) tabHiraganaButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Hiragana));
             if (tabModuleButton != null) tabModuleButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Module));
             if (tabFlashcardButton != null) tabFlashcardButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Flashcard));
+            if (tabThemeButton != null) tabThemeButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Theme));
             if (tabExitButton != null) tabExitButton.onClick.AddListener(Close);
 
             // Default: tertutup saat awal mulai
@@ -62,6 +65,10 @@ namespace Utsuru.DictionaryUI
         private void Update()
         {
             if (!IsOpen && Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
+            {
+                return;
+            }
+            if (!IsOpen && Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
             {
                 return;
             }
@@ -113,6 +120,12 @@ namespace Utsuru.DictionaryUI
         public void Open(DictionaryBookMode startingTab = DictionaryBookMode.Album)
         {
             if (IsOpen) return;
+            if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
+                return;
+
+            if (themeApplier == null)
+                themeApplier = GetComponent<DictionaryThemeApplier>() ?? FindFirstObjectByType<DictionaryThemeApplier>(FindObjectsInactive.Include);
+            themeApplier?.ApplyCurrentTheme();
 
             // Blok shutter kamera agar tidak memotret saat buka buku
             if (CameraCaptureSystem.Instance != null)
@@ -153,22 +166,29 @@ namespace Utsuru.DictionaryUI
             {
                 if (viewRoot != null) viewRoot.SetActive(false);
 
-                Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
+                bool otherModalOpen =
+                    (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen) ||
+                    (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen);
 
-                if (CameraCaptureSystem.Instance != null)
+                if (!otherModalOpen)
                 {
-                    CameraCaptureSystem.Instance.InputBlocked = false;
-                }
+                    Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
 
-                var cameraMode = FindFirstObjectByType<CameraModeController>();
-                if (cameraMode != null)
-                {
-                    cameraMode.SetControlsLocked(false);
-                }
-                else
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
+                    if (CameraCaptureSystem.Instance != null)
+                    {
+                        CameraCaptureSystem.Instance.InputBlocked = false;
+                    }
+
+                    var cameraMode = FindFirstObjectByType<CameraModeController>();
+                    if (cameraMode != null)
+                    {
+                        cameraMode.SetControlsLocked(false);
+                    }
+                    else
+                    {
+                        Cursor.lockState = CursorLockMode.Locked;
+                        Cursor.visible = false;
+                    }
                 }
 
                 Debug.Log("[DictionaryUIController] Dictionary DITUTUP.");
@@ -195,6 +215,7 @@ namespace Utsuru.DictionaryUI
             SetTabHighlight(tabHiraganaButton, currentTab == DictionaryBookMode.Hiragana);
             SetTabHighlight(tabModuleButton, currentTab == DictionaryBookMode.Module);
             SetTabHighlight(tabFlashcardButton, currentTab == DictionaryBookMode.Flashcard);
+            SetTabHighlight(tabThemeButton, currentTab == DictionaryBookMode.Theme);
         }
 
         private void SetTabHighlight(Button btn, bool isActive)

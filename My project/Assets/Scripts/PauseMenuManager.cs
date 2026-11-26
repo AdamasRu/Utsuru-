@@ -100,6 +100,9 @@ public class PauseMenuManager : MonoBehaviour
             if (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
                 return;
 
+            if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
+                return;
+
             // Jika sedang membuka panel Settings, tekan ESC akan kembali ke Main Pause Content
             if (settingsPanel != null && settingsPanel.activeSelf)
             {
