@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 namespace Utsuru.UI
 {
@@ -29,6 +31,14 @@ namespace Utsuru.UI
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button exitGameButton;
         [SerializeField] private Button logoutButton;
+        [SerializeField] private Button saveToCloudButton;
+        [SerializeField] private TMP_Text saveToCloudText;
+
+        [Header("Guest Save Popup")]
+        [Tooltip("Popup modal yang muncul saat guest menekan tombol Save to Cloud.")]
+        [SerializeField] private GameObject guestSavePopup;
+        [SerializeField] private Button guestPopupLoginButton;
+        [SerializeField] private Button guestPopupCloseButton;
 
         [Header("Credits Buttons")]
         [SerializeField] private Button creditsBackButton;
@@ -59,6 +69,10 @@ namespace Utsuru.UI
 
             SetupListeners();
 
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             // Briefly awaken settings panel if needed so SettingsManager applies initial audio/graphics settings
             if (settingsOptionsPanel != null && !settingsOptionsPanel.activeSelf)
             {
@@ -73,10 +87,14 @@ namespace Utsuru.UI
 
         private void Update()
         {
-            // Allow returning to HomeScreen with the Escape key when in subpanels
+            // Allow returning to HomeScreen with the Escape key when in subpanels or popups
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (creditsPanel != null && creditsPanel.activeSelf)
+                if (guestSavePopup != null && guestSavePopup.activeSelf)
+                {
+                    HideGuestSavePopup();
+                }
+                else if (creditsPanel != null && creditsPanel.activeSelf)
                 {
                     ShowHomeScreen();
                 }
@@ -125,6 +143,22 @@ namespace Utsuru.UI
                 logoutButton.onClick.AddListener(OnLogoutButtonClicked);
             }
 
+            if (saveToCloudButton == null && homeScreenPanel != null)
+            {
+                var t = homeScreenPanel.transform.Find("SaveToCloudButton");
+                if (t != null) saveToCloudButton = t.GetComponent<Button>();
+            }
+
+            if (saveToCloudButton != null)
+            {
+                if (saveToCloudText == null)
+                {
+                    saveToCloudText = saveToCloudButton.GetComponentInChildren<TMP_Text>();
+                }
+                saveToCloudButton.onClick.RemoveAllListeners();
+                saveToCloudButton.onClick.AddListener(OnSaveToCloudClicked);
+            }
+
             if (creditsBackButton != null)
             {
                 creditsBackButton.onClick.RemoveAllListeners();
@@ -136,6 +170,53 @@ namespace Utsuru.UI
                 settingsBackButton.onClick.RemoveAllListeners();
                 settingsBackButton.onClick.AddListener(ShowHomeScreen);
             }
+
+            // Setup Guest Save Popup references and buttons
+            if (guestSavePopup == null)
+            {
+                var canvas = transform.parent != null ? transform.parent : transform;
+                var popupT = canvas.Find("GuestSavePopup");
+                if (popupT != null) guestSavePopup = popupT.gameObject;
+            }
+
+            if (guestSavePopup != null)
+            {
+                if (guestPopupLoginButton == null)
+                {
+                    var loginT = guestSavePopup.transform.Find("Card/Buttons/LoginButton") 
+                                 ?? guestSavePopup.transform.Find("Card/LoginButton")
+                                 ?? guestSavePopup.transform.Find("LoginButton");
+                    if (loginT != null) guestPopupLoginButton = loginT.GetComponent<Button>();
+                }
+
+                if (guestPopupCloseButton == null)
+                {
+                    var closeT = guestSavePopup.transform.Find("Card/Buttons/CloseButton") 
+                                 ?? guestSavePopup.transform.Find("Card/CloseButton")
+                                 ?? guestSavePopup.transform.Find("CloseButton");
+                    if (closeT != null) guestPopupCloseButton = closeT.GetComponent<Button>();
+                }
+
+                if (guestPopupLoginButton != null)
+                {
+                    guestPopupLoginButton.onClick.RemoveAllListeners();
+                    guestPopupLoginButton.onClick.AddListener(OnGuestPopupLoginClicked);
+                }
+
+                if (guestPopupCloseButton != null)
+                {
+                    guestPopupCloseButton.onClick.RemoveAllListeners();
+                    guestPopupCloseButton.onClick.AddListener(HideGuestSavePopup);
+                }
+
+                // If popup has a backdrop button, dismiss on backdrop click
+                var backdropBtn = guestSavePopup.GetComponent<Button>();
+                if (backdropBtn != null)
+                {
+                    backdropBtn.onClick.RemoveAllListeners();
+                    backdropBtn.onClick.AddListener(HideGuestSavePopup);
+                }
+            }
         }
 
         /// <summary>
@@ -146,6 +227,7 @@ namespace Utsuru.UI
             if (homeScreenPanel != null) homeScreenPanel.SetActive(true);
             if (creditsPanel != null) creditsPanel.SetActive(false);
             if (settingsOptionsPanel != null) settingsOptionsPanel.SetActive(false);
+            HideGuestSavePopup();
 
             UpdateLogoutButtonVisibility();
         }
@@ -209,13 +291,14 @@ namespace Utsuru.UI
         public void OnPlayButtonClicked()
         {
             Debug.Log($"[HomeScreenUIManager] Play button clicked. Loading scene '{gameplaySceneName}'...");
-            if (!string.IsNullOrEmpty(gameplaySceneName) && Application.CanStreamedLevelBeLoaded(gameplaySceneName))
+            try
             {
+                Time.timeScale = 1f;
                 SceneManager.LoadScene(gameplaySceneName);
             }
-            else
+            catch (System.Exception ex)
             {
-                Debug.LogWarning($"[HomeScreenUIManager] Scene '{gameplaySceneName}' is not loaded or not in Build Settings.");
+                Debug.LogError($"[HomeScreenUIManager] Error loading scene '{gameplaySceneName}': {ex.Message}");
             }
         }
 
@@ -255,6 +338,104 @@ namespace Utsuru.UI
             }
 
             SceneManager.LoadScene("LoginPage");
+        }
+
+        private Coroutine cloudFeedbackRoutine;
+
+        /// <summary>
+        /// Handler for Save to Cloud button click.
+        /// Triggers manual, on-demand synchronization of points, discoveries, and photos to Supabase.
+        /// </summary>
+        public void OnSaveToCloudClicked()
+        {
+            Debug.Log("[HomeScreenUIManager] Save to Cloud button clicked.");
+
+            if (cloudFeedbackRoutine != null)
+            {
+                StopCoroutine(cloudFeedbackRoutine);
+            }
+
+            var syncManager = Utsuru.CloudSync.SupabaseCloudSyncManager.EnsureInstance();
+
+            // Cek apakah pemain bermain sebagai Guest atau belum memiliki sesi login akun terdaftar
+            if (!syncManager.IsUserLoggedIn(out _, out _))
+            {
+                Debug.Log("[HomeScreenUIManager] Player is in Guest mode / not logged in. Showing 'Login to save to cloud' popup.");
+                ShowGuestSavePopup();
+                return;
+            }
+
+            if (saveToCloudButton != null) saveToCloudButton.interactable = false;
+            if (saveToCloudText != null) saveToCloudText.text = "Saving...";
+
+            syncManager.SaveAllProgressToCloud((success, message) =>
+            {
+                if (this == null) return;
+                string feedback;
+                if (success)
+                {
+                    feedback = "Saved!";
+                }
+                else if (message != null && (message.Contains("login") || message.Contains("Login")))
+                {
+                    ShowGuestSavePopup();
+                    feedback = "Login Required!";
+                }
+                else
+                {
+                    feedback = "Save Failed";
+                }
+                cloudFeedbackRoutine = StartCoroutine(ShowCloudFeedbackRoutine(feedback, 2.5f));
+            });
+        }
+
+        /// <summary>
+        /// Menampilkan notifikasi popup modal saat pemain Guest ingin menyimpan ke Cloud.
+        /// </summary>
+        public void ShowGuestSavePopup()
+        {
+            if (guestSavePopup != null)
+            {
+                guestSavePopup.SetActive(true);
+            }
+            else
+            {
+                // Fallback jika GameObject popup belum di-assign
+                cloudFeedbackRoutine = StartCoroutine(ShowCloudFeedbackRoutine("Login Required!", 2.5f));
+            }
+        }
+
+        /// <summary>
+        /// Menutup notifikasi popup modal Guest.
+        /// </summary>
+        public void HideGuestSavePopup()
+        {
+            if (guestSavePopup != null)
+            {
+                guestSavePopup.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Menangani klik tombol Login di dalam popup Guest: mengarahkan pemain ke halaman LoginPage.
+        /// </summary>
+        public void OnGuestPopupLoginClicked()
+        {
+            HideGuestSavePopup();
+            Debug.Log("[HomeScreenUIManager] Navigating to LoginPage from Guest Save Popup...");
+            SceneManager.LoadScene("LoginPage");
+        }
+
+        private IEnumerator ShowCloudFeedbackRoutine(string message, float duration)
+        {
+            if (saveToCloudText != null) saveToCloudText.text = message;
+            if (saveToCloudButton != null) saveToCloudButton.interactable = false;
+
+            yield return new WaitForSecondsRealtime(duration);
+
+            if (saveToCloudText != null) saveToCloudText.text = "Save to Cloud";
+            if (saveToCloudButton != null) saveToCloudButton.interactable = true;
+            cloudFeedbackRoutine = null;
         }
 
         private void OnDestroy()

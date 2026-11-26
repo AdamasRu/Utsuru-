@@ -62,6 +62,7 @@ namespace Utsuru.Authentication
                 // 4. Initialize SessionManager strictly offline from local profile
                 SessionManager sessionMgr = SessionManager.EnsureInstance();
                 sessionMgr.InitializeFromLocalProfile(profile);
+                Utsuru.CloudSync.SupabaseCloudSyncManager.EnsureInstance();
 
                 // 5. Navigate directly to HomeScreen without touching network
                 Debug.Log($"[StartupManager] Direct offline navigation to scene '{targetSceneName}'...");

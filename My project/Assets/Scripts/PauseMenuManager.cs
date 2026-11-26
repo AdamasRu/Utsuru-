@@ -24,7 +24,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private StarterAssetsInputs playerInputs;
 
     [Header("Scene Settings")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private string mainMenuSceneName = "HomeScreen";
 
     public bool IsPaused { get; private set; } = false;
 
@@ -180,19 +180,18 @@ public class PauseMenuManager : MonoBehaviour
     private void OnBackToMenuClicked()
     {
         Time.timeScale = 1f;
-        Debug.Log("[PauseMenuManager] Tombol 'Back To Menu' diklik!");
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Debug.Log("[PauseMenuManager] Tombol 'Back To Menu' diklik! Memuat HomeScreen...");
 
-        if (Application.CanStreamedLevelBeLoaded(mainMenuSceneName))
+        try
         {
             SceneManager.LoadScene(mainMenuSceneName);
         }
-        else
+        catch (System.Exception ex)
         {
-            Debug.LogWarning($"[PauseMenuManager] Scene '{mainMenuSceneName}' belum ada di Build Settings. Kembali ke scene index 0.");
-            if (SceneManager.sceneCountInBuildSettings > 0)
-            {
-                SceneManager.LoadScene(0);
-            }
+            Debug.LogWarning($"[PauseMenuManager] Gagal memuat scene '{mainMenuSceneName}': {ex.Message}. Kembali ke HomeScreen.");
+            SceneManager.LoadScene("HomeScreen");
         }
     }
 }

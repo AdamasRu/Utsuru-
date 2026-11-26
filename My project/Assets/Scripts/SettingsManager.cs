@@ -402,13 +402,16 @@ public class SettingsManager : MonoBehaviour
     public void OnBackToTitleClicked()
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (PauseMenuManager.Instance != null)
         {
             PauseMenuManager.Instance.GoToMainMenu();
         }
         else
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("HomeScreen");
         }
     }
 

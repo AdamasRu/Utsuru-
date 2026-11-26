@@ -105748,6 +105748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   scoreText: {fileID: 669746359}
+  pointRewardSystem: {fileID: 2013859666}
 --- !u!4 &1194375518
 Transform:
   m_ObjectHideFlags: 0
@@ -159455,7 +159456,7 @@ MonoBehaviour:
   settingsPanel: {fileID: 943840876}
   playerController: {fileID: 4496757404770652536}
   playerInputs: {fileID: 200953497353489667}
-  mainMenuSceneName: MainMenu
+  mainMenuSceneName: HomeScreen
 --- !u!4 &1750771914
 Transform:
   m_ObjectHideFlags: 0
