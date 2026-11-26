@@ -419,7 +419,7 @@ namespace Utsuru.DictionaryUI.Editor
                 titleLe.flexibleWidth = 1f;
 
                 // Badge Jumlah Modul di Kanan
-                CreateBadge(btnTopRowGo.transform, $"{ch.moduleCount} Modules", new Color(0.85f, 0.88f, 0.98f, 0.95f), new Color(0.25f, 0.35f, 0.75f), nunitoFont, 108f, pillBgSprite, height: 28f, fontSize: 13f);
+                CreateBadge(btnTopRowGo.transform, $"{ch.moduleCount} Modules", new Color(0.85f, 0.88f, 0.98f, 0.95f), new Color(0.25f, 0.35f, 0.75f), nunitoFont, 142f, pillBgSprite, height: 31f, fontSize: 16f);
 
                 // Baris Bawah: Teks Subtitle Bab
                 GameObject btnSubGo = CreateUIObject("Subtitle", btnGo.transform);

@@ -27,6 +27,8 @@ namespace Utsuru.DictionaryUI.Editor
             var bmHiraganaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_hiragana.png");
             var bmModuleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_module.png");
             var bmExitSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_exit.png");
+            var btnPrevSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_previous.png");
+            var btnNextSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_next.png");
 
             var polaroidBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Polaroid.png");
             var tapeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Polaroid/Tape_Washi.png");
@@ -151,8 +153,8 @@ namespace Utsuru.DictionaryUI.Editor
             leftPageRt.sizeDelta = new Vector2(740f, 820f);
             leftPageRt.anchoredPosition = new Vector2(17f, 0f);
 
-            // Tombol Klik Halaman Kiri (Previous Spread) - hanya pada strip tepi luar buku (di luar polaroid)
-            GameObject leftClickGo = CreateUIObject("LeftPageClickArea", leftPageGo.transform);
+            // Tombol Klik Halaman Kiri (Previous Spread)
+            GameObject leftClickGo = CreateUIObject("Btn_PreviousPage", leftPageGo.transform);
             RectTransform leftClickRt = leftClickGo.GetComponent<RectTransform>();
             leftClickRt.anchorMin = new Vector2(0f, 0f);
             leftClickRt.anchorMax = new Vector2(0f, 1f);
@@ -160,26 +162,18 @@ namespace Utsuru.DictionaryUI.Editor
             leftClickRt.sizeDelta = new Vector2(75f, 0f);
             leftClickRt.anchoredPosition = Vector2.zero;
             var leftClickImg = leftClickGo.AddComponent<Image>();
-            leftClickImg.color = new Color(0f, 0f, 0f, 0.001f); // Invisible raycast target
+            if (btnPrevSprite != null)
+            {
+                leftClickImg.sprite = btnPrevSprite;
+                leftClickImg.preserveAspect = true;
+                leftClickImg.color = Color.white;
+            }
+            else
+            {
+                leftClickImg.color = new Color(0f, 0f, 0f, 0.001f);
+            }
             var leftClickBtn = leftClickGo.AddComponent<Button>();
-            leftClickBtn.transition = Selectable.Transition.None;
-
-            // Indikator visual panah halaman sebelumnya (<) di area tepi buku
-            GameObject leftArrowGo = CreateUIObject("ArrowIcon", leftClickGo.transform);
-            RectTransform leftArrowRt = leftArrowGo.GetComponent<RectTransform>();
-            leftArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
-            leftArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
-            leftArrowRt.pivot = new Vector2(0.5f, 0.5f);
-            leftArrowRt.sizeDelta = new Vector2(40f, 60f);
-            leftArrowRt.anchoredPosition = Vector2.zero;
-            var leftArrowTmp = leftArrowGo.AddComponent<TextMeshProUGUI>();
-            leftArrowTmp.font = TMP_Settings.defaultFontAsset;
-            leftArrowTmp.fontSize = 32;
-            leftArrowTmp.fontStyle = FontStyles.Bold;
-            leftArrowTmp.alignment = TextAlignmentOptions.Center;
-            leftArrowTmp.color = new Color(0.48f, 0.42f, 0.55f, 0.65f);
-            leftArrowTmp.text = "<";
-            leftArrowTmp.raycastTarget = false;
+            leftClickBtn.targetGraphic = leftClickImg;
 
             // SlotGrid Kiri
             GameObject leftGridGo = CreateUIObject("SlotGrid_Left", leftPageGo.transform);
@@ -195,8 +189,8 @@ namespace Utsuru.DictionaryUI.Editor
             rightPageRt.sizeDelta = new Vector2(740f, 820f);
             rightPageRt.anchoredPosition = new Vector2(-100f, 0f);
 
-            // Tombol Klik Halaman Kanan (Next Spread) - stretch left dengan posisi x = 25
-            GameObject rightClickGo = CreateUIObject("RightPageClickArea", rightPageGo.transform);
+            // Tombol Klik Halaman Kanan (Next Spread)
+            GameObject rightClickGo = CreateUIObject("Btn_NextPage", rightPageGo.transform);
             RectTransform rightClickRt = rightClickGo.GetComponent<RectTransform>();
             rightClickRt.anchorMin = new Vector2(0f, 0f);
             rightClickRt.anchorMax = new Vector2(0f, 1f);
@@ -204,26 +198,18 @@ namespace Utsuru.DictionaryUI.Editor
             rightClickRt.sizeDelta = new Vector2(75f, 0f);
             rightClickRt.anchoredPosition = new Vector2(25f, 0f);
             var rightClickImg = rightClickGo.AddComponent<Image>();
-            rightClickImg.color = new Color(0f, 0f, 0f, 0.001f); // Invisible raycast target
+            if (btnNextSprite != null)
+            {
+                rightClickImg.sprite = btnNextSprite;
+                rightClickImg.preserveAspect = true;
+                rightClickImg.color = Color.white;
+            }
+            else
+            {
+                rightClickImg.color = new Color(0f, 0f, 0f, 0.001f);
+            }
             var rightClickBtn = rightClickGo.AddComponent<Button>();
-            rightClickBtn.transition = Selectable.Transition.None;
-
-            // Indikator visual panah halaman selanjutnya (>) di area tepi buku
-            GameObject rightArrowGo = CreateUIObject("ArrowIcon", rightClickGo.transform);
-            RectTransform rightArrowRt = rightArrowGo.GetComponent<RectTransform>();
-            rightArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
-            rightArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
-            rightArrowRt.pivot = new Vector2(0.5f, 0.5f);
-            rightArrowRt.sizeDelta = new Vector2(40f, 60f);
-            rightArrowRt.anchoredPosition = Vector2.zero;
-            var rightArrowTmp = rightArrowGo.AddComponent<TextMeshProUGUI>();
-            rightArrowTmp.font = TMP_Settings.defaultFontAsset;
-            rightArrowTmp.fontSize = 32;
-            rightArrowTmp.fontStyle = FontStyles.Bold;
-            rightArrowTmp.alignment = TextAlignmentOptions.Center;
-            rightArrowTmp.color = new Color(0.48f, 0.42f, 0.55f, 0.65f);
-            rightArrowTmp.text = ">";
-            rightArrowTmp.raycastTarget = false;
+            rightClickBtn.targetGraphic = rightClickImg;
 
             // SlotGrid Kanan
             GameObject rightGridGo = CreateUIObject("SlotGrid_Right", rightPageGo.transform);
@@ -410,6 +396,70 @@ namespace Utsuru.DictionaryUI.Editor
             }
 
             Debug.Log("[DictionaryUIBuilder] Berhasil membangun UI Dictionary Rework di Canvas/Dictionary!");
+        }
+
+        [MenuItem("Tools/Utsuru/Update Dictionary Page Buttons")]
+        public static void UpdateDictionaryPageButtons()
+        {
+            DictionaryAssetImporter.ConfigureSprites();
+
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            if (canvas == null) return;
+
+            Transform photoRoot = canvas.transform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/PhotoSpreadRoot");
+            if (photoRoot == null)
+            {
+                Debug.LogWarning("[DictionaryUIBuilder] PhotoSpreadRoot tidak ditemukan di scene aktif.");
+                return;
+            }
+
+            var btnPrevSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_previous.png");
+            var btnNextSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_next.png");
+
+            Undo.RegisterCompleteObjectUndo(photoRoot.gameObject, "Update Dictionary Page Buttons");
+
+            Transform leftBtnTr = photoRoot.Find("LeftPage/LeftPageClickArea") ?? photoRoot.Find("LeftPage/Btn_PreviousPage");
+            if (leftBtnTr != null)
+            {
+                leftBtnTr.name = "Btn_PreviousPage";
+                Transform oldArrow = leftBtnTr.Find("ArrowIcon");
+                if (oldArrow != null) Object.DestroyImmediate(oldArrow.gameObject);
+                if (leftBtnTr.TryGetComponent<Image>(out var img) && btnPrevSprite != null)
+                {
+                    img.sprite = btnPrevSprite;
+                    img.preserveAspect = true;
+                    img.color = Color.white;
+                }
+                if (leftBtnTr.TryGetComponent<Button>(out var btn))
+                {
+                    btn.transition = Selectable.Transition.ColorTint;
+                    btn.targetGraphic = leftBtnTr.GetComponent<Image>();
+                }
+            }
+
+            Transform rightBtnTr = photoRoot.Find("RightPage/RightPageClickArea") ?? photoRoot.Find("RightPage/Btn_NextPage");
+            if (rightBtnTr != null)
+            {
+                rightBtnTr.name = "Btn_NextPage";
+                Transform oldArrow = rightBtnTr.Find("ArrowIcon");
+                if (oldArrow != null) Object.DestroyImmediate(oldArrow.gameObject);
+                if (rightBtnTr.TryGetComponent<Image>(out var img) && btnNextSprite != null)
+                {
+                    img.sprite = btnNextSprite;
+                    img.preserveAspect = true;
+                    img.color = Color.white;
+                }
+                if (rightBtnTr.TryGetComponent<Button>(out var btn))
+                {
+                    btn.transition = Selectable.Transition.ColorTint;
+                    btn.targetGraphic = rightBtnTr.GetComponent<Image>();
+                }
+            }
+
+            EditorUtility.SetDirty(photoRoot.gameObject);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(photoRoot.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(photoRoot.gameObject.scene);
+            Debug.Log("[DictionaryUIBuilder] Btn_PreviousPage & Btn_NextPage berhasil diperbarui dan disimpan.");
         }
 
         [MenuItem("Tools/Utsuru/Update PhotoSpread Card Layout")]
