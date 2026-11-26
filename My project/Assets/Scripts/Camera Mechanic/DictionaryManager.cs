@@ -290,5 +290,27 @@ namespace Utsuru.Capture
             Persist();
             Debug.Log("[DictionaryManager] Data progres berhasil direset!");
         }
+
+        /// <summary>Menu klik kanan di Inspector untuk menghapus seluruh foto Polaroid di Dictionary beserta berkas fisiknya.</summary>
+        [ContextMenu("Hapus Semua Foto Polaroid (Clear Photos)")]
+        public void ClearAllPhotos()
+        {
+            if (data == null)
+            {
+                if (storage == null) storage = new LocalStorage();
+                storage.TryLoad<DictionaryData>(accountId, SaveKey, out data);
+            }
+
+            if (data != null && data.photos != null)
+            {
+                foreach (var p in data.photos)
+                {
+                    PhotoFileStore.Delete(p.imagePath);
+                }
+                data.photos.Clear();
+                Persist();
+                Debug.Log("[DictionaryManager] Seluruh foto Polaroid berhasil dihapus dari Dictionary!");
+            }
+        }
     }
 }
