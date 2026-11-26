@@ -17,33 +17,9 @@ namespace Utsuru.DictionaryUI.Editor
         private const string PrefKey = "Utsuru_UILayoutRepair_Version";
         private const string TargetVersion = "v5_20261126";
 
-        [InitializeOnLoadMethod]
         private static void AutoRepairOnceOnLoad()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode || Application.isPlaying)
-                return;
-
-            if (EditorPrefs.GetString(PrefKey, "") == TargetVersion)
-                return;
-
-            EditorApplication.delayCall += () =>
-            {
-                if (EditorApplication.isPlayingOrWillChangePlaymode || Application.isPlaying)
-                    return;
-
-                Scene active = SceneManager.GetActiveScene();
-                if (!active.IsValid() || !active.isLoaded)
-                    return;
-
-                // Only run auto-save on Day_Showcase so we never surprise other scenes unexpectedly
-                if (active.name != "Day_Showcase")
-                    return;
-
-                if (RepairOpenSceneInternal(saveScene: true))
-                {
-                    EditorPrefs.SetString(PrefKey, TargetVersion);
-                }
-            };
+            // Disabled automatic scene overwrite so custom CameraHUD & Polaroid layouts are preserved.
         }
 
         [MenuItem("Tools/Utsuru/Repair All Dictionary & Polaroid UI")]

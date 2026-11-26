@@ -47,15 +47,6 @@ namespace Utsuru.Capture
 
         private void Start()
         {
-            if (points == null)
-            {
-                points = PointRewardSystem.Instance ?? FindFirstObjectByType<PointRewardSystem>();
-                if (points != null && enabled)
-                {
-                    points.OnPointsChanged -= UpdatePoints;
-                    points.OnPointsChanged += UpdatePoints;
-                }
-            }
             if (points != null) UpdatePoints(points.Points);
         }
 
