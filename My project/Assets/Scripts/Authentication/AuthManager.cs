@@ -80,10 +80,45 @@ namespace Utsuru.Authentication
             }
         }
 
+        /// <summary>
+        /// Ensures a standalone singleton instance exists on its own non-UI GameObject.
+        /// </summary>
+        public static AuthManager EnsureInstance()
+        {
+            if (Instance == null)
+            {
+                var existing = FindFirstObjectByType<AuthManager>();
+                if (existing != null && existing.GetComponent<Canvas>() == null && existing.GetComponentInParent<Canvas>() == null)
+                {
+                    Instance = existing;
+                }
+                else
+                {
+                    GameObject go = new GameObject("AuthManager");
+                    Instance = go.AddComponent<AuthManager>();
+                }
+            }
+            return Instance;
+        }
+
         private void Awake()
         {
             if (Instance == null)
             {
+                if (GetComponent<Canvas>() != null || GetComponentInParent<Canvas>() != null)
+                {
+                    Debug.LogWarning("[AuthManager] AuthManager should not live on a Canvas; creating a standalone AuthManager object instead.", this);
+                    GameObject standalone = new GameObject("AuthManager");
+                    AuthManager mgr = standalone.AddComponent<AuthManager>();
+                    if (mgr.projectConfig == null && projectConfig != null)
+                    {
+                        mgr.projectConfig = projectConfig;
+                        mgr.EnsureInitialized();
+                    }
+                    Destroy(this);
+                    return;
+                }
+
                 Instance = this;
                 if (transform.parent != null)
                 {
@@ -93,11 +128,26 @@ namespace Utsuru.Authentication
             }
             else if (Instance != this)
             {
-                Destroy(gameObject);
+                if (GetComponent<Canvas>() != null || GetComponentInParent<Canvas>() != null)
+                {
+                    Destroy(this);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
                 return;
             }
 
             EnsureInitialized();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         /// <summary>

@@ -62,31 +62,32 @@ namespace Utsuru.Capture.Editor
             bannerRt.anchorMin = new Vector2(0.5f, 0.5f);
             bannerRt.anchorMax = new Vector2(0.5f, 0.5f);
             bannerRt.pivot = new Vector2(0.5f, 0.5f);
-            bannerRt.sizeDelta = new Vector2(550f, 80f);
-            bannerRt.anchoredPosition = new Vector2(0f, 350f);
+            bannerRt.sizeDelta = new Vector2(680f, 100f);
+            bannerRt.anchoredPosition = new Vector2(0f, 428f);
             var bannerImg = bannerGo.AddComponent<Image>();
             bannerImg.sprite = bannerNewSprite;
             bannerImg.preserveAspect = true;
 
-            // 1.3 Main Card (500 x 600 px)
+            // 1.3 Main Card (aspect-matched 736:881 => 640x766 agar area putih bawah lega)
             GameObject cardGo = CreateUIObject("Card", panelGo.transform);
             RectTransform cardRt = cardGo.GetComponent<RectTransform>();
             cardRt.anchorMin = new Vector2(0.5f, 0.5f);
             cardRt.anchorMax = new Vector2(0.5f, 0.5f);
             cardRt.pivot = new Vector2(0.5f, 0.5f);
-            cardRt.sizeDelta = new Vector2(510f, 610f);
-            cardRt.anchoredPosition = new Vector2(0f, 0f);
+            cardRt.sizeDelta = new Vector2(640f, 766f);
+            cardRt.anchoredPosition = new Vector2(0f, -8f);
             var cardImg = cardGo.AddComponent<Image>();
             cardImg.sprite = cardBgSprite;
+            cardImg.preserveAspect = true;
 
-            // 1.3.1 Photo Area (16:9, width 430, height 242)
+            // 1.3.1 Photo Area (16:9 width 510, height 287; PolaroidCardUI applies center-crop UV)
             GameObject photoGo = CreateUIObject("PhotoImage", cardGo.transform);
             RectTransform photoRt = photoGo.GetComponent<RectTransform>();
             photoRt.anchorMin = new Vector2(0.5f, 1f);
             photoRt.anchorMax = new Vector2(0.5f, 1f);
             photoRt.pivot = new Vector2(0.5f, 1f);
-            photoRt.sizeDelta = new Vector2(430f, 242f);
-            photoRt.anchoredPosition = new Vector2(0f, -40f);
+            photoRt.sizeDelta = new Vector2(510f, 287f);
+            photoRt.anchoredPosition = new Vector2(0f, -38f);
             var photoRaw = photoGo.AddComponent<RawImage>();
             photoRaw.color = Color.white;
 
@@ -96,12 +97,12 @@ namespace Utsuru.Capture.Editor
             dateStampRt.anchorMin = new Vector2(1f, 0f);
             dateStampRt.anchorMax = new Vector2(1f, 0f);
             dateStampRt.pivot = new Vector2(1f, 0f);
-            dateStampRt.sizeDelta = new Vector2(120f, 24f);
-            dateStampRt.anchoredPosition = new Vector2(-10f, 8f);
+            dateStampRt.sizeDelta = new Vector2(140f, 26f);
+            dateStampRt.anchoredPosition = new Vector2(-12f, 10f);
             var dateStampTmp = dateStampGo.AddComponent<TextMeshProUGUI>();
             dateStampTmp.font = nunitoFont;
             dateStampTmp.text = "24 01 10";
-            dateStampTmp.fontSize = 15;
+            dateStampTmp.fontSize = 16;
             dateStampTmp.fontStyle = FontStyles.Bold;
             dateStampTmp.alignment = TextAlignmentOptions.Right;
             dateStampTmp.color = new Color(1f, 0.48f, 0f, 0.95f); // Retro orange
@@ -112,10 +113,12 @@ namespace Utsuru.Capture.Editor
             catPillRt.anchorMin = new Vector2(0.5f, 1f);
             catPillRt.anchorMax = new Vector2(0.5f, 1f);
             catPillRt.pivot = new Vector2(0f, 1f);
-            catPillRt.sizeDelta = new Vector2(125f, 26f);
-            catPillRt.anchoredPosition = new Vector2(-215f, -290f);
+            catPillRt.sizeDelta = new Vector2(165f, 28f);
+            catPillRt.anchoredPosition = new Vector2(-255f, -338f);
             var catPillImg = catPillGo.AddComponent<Image>();
             catPillImg.sprite = catPillSprite;
+            catPillImg.type = Image.Type.Sliced;
+            catPillImg.pixelsPerUnitMultiplier = 1.2f;
 
             GameObject catTextGo = CreateUIObject("CategoryText", catPillGo.transform);
             RectTransform catTextRt = catTextGo.GetComponent<RectTransform>();
@@ -123,7 +126,10 @@ namespace Utsuru.Capture.Editor
             var catTmp = catTextGo.AddComponent<TextMeshProUGUI>();
             catTmp.font = nunitoFont;
             catTmp.text = "PLACES (場所)";
-            catTmp.fontSize = 10;
+            catTmp.fontSize = 12;
+            catTmp.enableAutoSizing = true;
+            catTmp.fontSizeMin = 9.5f;
+            catTmp.fontSizeMax = 12.5f;
             catTmp.fontStyle = FontStyles.Bold;
             catTmp.alignment = TextAlignmentOptions.Center;
             catTmp.color = new Color(0.01f, 0.52f, 0.78f); // Cyan blue
@@ -134,12 +140,15 @@ namespace Utsuru.Capture.Editor
             kanjiRt.anchorMin = new Vector2(0.5f, 1f);
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
             kanjiRt.pivot = new Vector2(0f, 1f);
-            kanjiRt.sizeDelta = new Vector2(430f, 32f);
-            kanjiRt.anchoredPosition = new Vector2(-215f, -320f);
+            kanjiRt.sizeDelta = new Vector2(510f, 42f);
+            kanjiRt.anchoredPosition = new Vector2(-255f, -370f);
             var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
             kanjiTmp.font = zenFont;
             kanjiTmp.text = "道 <size=70%><color=#8C7063>(みち)</color></size>";
-            kanjiTmp.fontSize = 24;
+            kanjiTmp.fontSize = 32;
+            kanjiTmp.enableAutoSizing = true;
+            kanjiTmp.fontSizeMin = 20f;
+            kanjiTmp.fontSizeMax = 32f;
             kanjiTmp.fontStyle = FontStyles.Bold;
             kanjiTmp.color = new Color(0.12f, 0.1f, 0.08f);
 
@@ -149,12 +158,15 @@ namespace Utsuru.Capture.Editor
             romajiRt.anchorMin = new Vector2(0.5f, 1f);
             romajiRt.anchorMax = new Vector2(0.5f, 1f);
             romajiRt.pivot = new Vector2(0f, 1f);
-            romajiRt.sizeDelta = new Vector2(430f, 22f);
-            romajiRt.anchoredPosition = new Vector2(-215f, -354f);
+            romajiRt.sizeDelta = new Vector2(510f, 24f);
+            romajiRt.anchoredPosition = new Vector2(-255f, -414f);
             var romajiTmp = romajiGo.AddComponent<TextMeshProUGUI>();
             romajiTmp.font = nunitoFont;
             romajiTmp.text = "<color=#2563EB><b>michi</b></color> <color=#94A3B8>•</color> <color=#475569>Street / Road</color>";
-            romajiTmp.fontSize = 14;
+            romajiTmp.fontSize = 18;
+            romajiTmp.enableAutoSizing = true;
+            romajiTmp.fontSizeMin = 13f;
+            romajiTmp.fontSizeMax = 18f;
 
             // 1.3.4 Sentence Box
             GameObject sentenceBoxGo = CreateUIObject("SentenceBox", cardGo.transform);
@@ -162,10 +174,11 @@ namespace Utsuru.Capture.Editor
             sentenceBoxRt.anchorMin = new Vector2(0.5f, 1f);
             sentenceBoxRt.anchorMax = new Vector2(0.5f, 1f);
             sentenceBoxRt.pivot = new Vector2(0.5f, 1f);
-            sentenceBoxRt.sizeDelta = new Vector2(430f, 74f);
-            sentenceBoxRt.anchoredPosition = new Vector2(0f, -382f);
+            sentenceBoxRt.sizeDelta = new Vector2(510f, 74f);
+            sentenceBoxRt.anchoredPosition = new Vector2(0f, -446f);
             var sentenceBoxImg = sentenceBoxGo.AddComponent<Image>();
             sentenceBoxImg.sprite = sentenceBoxSprite;
+            sentenceBoxImg.type = Image.Type.Sliced;
 
             // Sentence Japanese text
             GameObject sentJpGo = CreateUIObject("JapaneseSentence", sentenceBoxGo.transform);
@@ -173,12 +186,15 @@ namespace Utsuru.Capture.Editor
             sentJpRt.anchorMin = new Vector2(0f, 1f);
             sentJpRt.anchorMax = new Vector2(1f, 1f);
             sentJpRt.pivot = new Vector2(0f, 1f);
-            sentJpRt.sizeDelta = new Vector2(-24f, 24f);
-            sentJpRt.anchoredPosition = new Vector2(12f, -10f);
+            sentJpRt.sizeDelta = new Vector2(-28f, 26f);
+            sentJpRt.anchoredPosition = new Vector2(14f, -9f);
             var sentJpTmp = sentJpGo.AddComponent<TextMeshProUGUI>();
             sentJpTmp.font = zenFont;
             sentJpTmp.text = "「この道をまっすぐ行きます。」";
-            sentJpTmp.fontSize = 12.5f;
+            sentJpTmp.fontSize = 16.5f;
+            sentJpTmp.enableAutoSizing = true;
+            sentJpTmp.fontSizeMin = 12f;
+            sentJpTmp.fontSizeMax = 16.5f;
             sentJpTmp.fontStyle = FontStyles.Bold;
             sentJpTmp.color = new Color(0.12f, 0.1f, 0.08f);
 
@@ -188,58 +204,66 @@ namespace Utsuru.Capture.Editor
             sentTransRt.anchorMin = new Vector2(0f, 0f);
             sentTransRt.anchorMax = new Vector2(1f, 1f);
             sentTransRt.pivot = new Vector2(0f, 0f);
-            sentTransRt.sizeDelta = new Vector2(-24f, -36f);
-            sentTransRt.anchoredPosition = new Vector2(12f, 8f);
+            sentTransRt.sizeDelta = new Vector2(-28f, -38f);
+            sentTransRt.anchoredPosition = new Vector2(14f, 8f);
             var sentTransTmp = sentTransGo.AddComponent<TextMeshProUGUI>();
             sentTransTmp.font = nunitoFont;
             sentTransTmp.text = "(Kono michi o massugu ikimasu) — Go straight along this street.";
-            sentTransTmp.fontSize = 10.5f;
+            sentTransTmp.fontSize = 13.5f;
+            sentTransTmp.enableAutoSizing = true;
+            sentTransTmp.fontSizeMin = 10f;
+            sentTransTmp.fontSizeMax = 13.5f;
             sentTransTmp.fontStyle = FontStyles.Italic;
             sentTransTmp.color = new Color(0.35f, 0.42f, 0.5f);
 
-            // 1.3.5 Audio Button (Full-width pill)
+            // 1.3.5 Audio Button (Aspect-locked 594:81 => 510x69)
             GameObject audioBtnGo = CreateUIObject("BtnAudio", cardGo.transform);
             RectTransform audioBtnRt = audioBtnGo.GetComponent<RectTransform>();
             audioBtnRt.anchorMin = new Vector2(0.5f, 1f);
             audioBtnRt.anchorMax = new Vector2(0.5f, 1f);
             audioBtnRt.pivot = new Vector2(0.5f, 1f);
-            audioBtnRt.sizeDelta = new Vector2(430f, 58f);
-            audioBtnRt.anchoredPosition = new Vector2(0f, -464f);
+            audioBtnRt.sizeDelta = new Vector2(510f, 69f);
+            audioBtnRt.anchoredPosition = new Vector2(0f, -530f);
             var audioBtnImg = audioBtnGo.AddComponent<Image>();
             audioBtnImg.sprite = audioBtnSprite;
+            audioBtnImg.preserveAspect = true;
             var audioBtn = audioBtnGo.AddComponent<Button>();
 
-            // 1.3.6 Bottom Action Buttons Row
+            // 1.3.6 Bottom Action Buttons Row (dengan ruang putih polaroid lega di bawah)
             GameObject actionsRowGo = CreateUIObject("ActionButtonsRow", cardGo.transform);
             RectTransform actionsRowRt = actionsRowGo.GetComponent<RectTransform>();
             actionsRowRt.anchorMin = new Vector2(0.5f, 1f);
             actionsRowRt.anchorMax = new Vector2(0.5f, 1f);
             actionsRowRt.pivot = new Vector2(0.5f, 1f);
-            actionsRowRt.sizeDelta = new Vector2(430f, 50f);
-            actionsRowRt.anchoredPosition = new Vector2(0f, -532f);
+            actionsRowRt.sizeDelta = new Vector2(510f, 70f);
+            actionsRowRt.anchoredPosition = new Vector2(0f, -612f);
 
-            // Save Button (left, width 310)
+            // Save Button (left, 480:120 exact aspect => 348x86, tinggi pill hijau = 65px)
             GameObject saveBtnGo = CreateUIObject("BtnSave", actionsRowGo.transform);
             RectTransform saveBtnRt = saveBtnGo.GetComponent<RectTransform>();
             saveBtnRt.anchorMin = new Vector2(0f, 0.5f);
             saveBtnRt.anchorMax = new Vector2(0f, 0.5f);
             saveBtnRt.pivot = new Vector2(0f, 0.5f);
-            saveBtnRt.sizeDelta = new Vector2(310f, 50f);
-            saveBtnRt.anchoredPosition = new Vector2(0f, 0f);
+            saveBtnRt.sizeDelta = new Vector2(348f, 86f);
+            saveBtnRt.anchoredPosition = new Vector2(-12f, 0f);
             var saveBtnImg = saveBtnGo.AddComponent<Image>();
             saveBtnImg.sprite = saveWithPointsSprite;
+            saveBtnImg.preserveAspect = true;
             var saveBtn = saveBtnGo.AddComponent<Button>();
 
-            // Point Badge inside Save Button (right-aligned)
-            GameObject pointBadgeGo = CreateUIObject("PointBadge", saveBtnGo.transform);
+            // Point Badge di sisi kanan baris Category (sejajar CategoryPill agar TIDAK menabrak teks Save Button)
+            GameObject pointBadgeGo = CreateUIObject("PointBadge", cardGo.transform);
             RectTransform pointBadgeRt = pointBadgeGo.GetComponent<RectTransform>();
-            pointBadgeRt.anchorMin = new Vector2(1f, 0.5f);
-            pointBadgeRt.anchorMax = new Vector2(1f, 0.5f);
-            pointBadgeRt.pivot = new Vector2(1f, 0.5f);
-            pointBadgeRt.sizeDelta = new Vector2(74f, 24f);
-            pointBadgeRt.anchoredPosition = new Vector2(-12f, 0f);
+            pointBadgeRt.anchorMin = new Vector2(0.5f, 1f);
+            pointBadgeRt.anchorMax = new Vector2(0.5f, 1f);
+            pointBadgeRt.pivot = new Vector2(1f, 1f);
+            pointBadgeRt.sizeDelta = new Vector2(114f, 28f);
+            pointBadgeRt.anchoredPosition = new Vector2(255f, -338f);
             var pointBadgeImg = pointBadgeGo.AddComponent<Image>();
-            pointBadgeImg.sprite = pointBadgeSprite;
+            pointBadgeImg.sprite = catPillSprite != null ? catPillSprite : pointBadgeSprite;
+            pointBadgeImg.type = Image.Type.Sliced;
+            pointBadgeImg.pixelsPerUnitMultiplier = 1.2f;
+            pointBadgeImg.color = new Color(0.84f, 0.97f, 0.89f, 1f);
 
             GameObject pointBadgeTextGo = CreateUIObject("PointText", pointBadgeGo.transform);
             RectTransform pointBadgeTextRt = pointBadgeTextGo.GetComponent<RectTransform>();
@@ -247,21 +271,23 @@ namespace Utsuru.Capture.Editor
             var pointBadgeTmp = pointBadgeTextGo.AddComponent<TextMeshProUGUI>();
             pointBadgeTmp.font = nunitoFont;
             pointBadgeTmp.text = "+15 Points";
-            pointBadgeTmp.fontSize = 9.5f;
+            pointBadgeTmp.fontSize = 12.5f;
+            pointBadgeTmp.textWrappingMode = TextWrappingModes.NoWrap;
             pointBadgeTmp.fontStyle = FontStyles.Bold;
             pointBadgeTmp.alignment = TextAlignmentOptions.Center;
-            pointBadgeTmp.color = new Color(0.04f, 0.45f, 0.32f);
+            pointBadgeTmp.color = new Color(0.04f, 0.50f, 0.32f);
 
-            // Retake Button (right, width 110)
+            // Retake Button (right, 150:68 exact aspect => 140x63, tinggi persis setara pill Save!)
             GameObject retakeBtnGo = CreateUIObject("BtnRetake", actionsRowGo.transform);
             RectTransform retakeBtnRt = retakeBtnGo.GetComponent<RectTransform>();
             retakeBtnRt.anchorMin = new Vector2(1f, 0.5f);
             retakeBtnRt.anchorMax = new Vector2(1f, 0.5f);
             retakeBtnRt.pivot = new Vector2(1f, 0.5f);
-            retakeBtnRt.sizeDelta = new Vector2(110f, 50f);
-            retakeBtnRt.anchoredPosition = new Vector2(0f, 0f);
+            retakeBtnRt.sizeDelta = new Vector2(140f, 63f);
+            retakeBtnRt.anchoredPosition = new Vector2(0f, 1.5f);
             var retakeBtnImg = retakeBtnGo.AddComponent<Image>();
             retakeBtnImg.sprite = retakeBtnSprite;
+            retakeBtnImg.preserveAspect = true;
             var retakeBtn = retakeBtnGo.AddComponent<Button>();
 
             // 1.4 Bottom Hotkey Hints Bar
@@ -270,8 +296,8 @@ namespace Utsuru.Capture.Editor
             hotkeyRt.anchorMin = new Vector2(0.5f, 0f);
             hotkeyRt.anchorMax = new Vector2(0.5f, 0f);
             hotkeyRt.pivot = new Vector2(0.5f, 0f);
-            hotkeyRt.sizeDelta = new Vector2(209f, 27f);
-            hotkeyRt.anchoredPosition = new Vector2(0f, 25f);
+            hotkeyRt.sizeDelta = new Vector2(260f, 34f);
+            hotkeyRt.anchoredPosition = new Vector2(0f, 22f);
             var hotkeyImg = hotkeyGo.AddComponent<Image>();
             hotkeyImg.sprite = keyHintSprite;
             hotkeyImg.preserveAspect = true;

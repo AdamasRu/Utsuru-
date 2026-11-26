@@ -295,7 +295,12 @@ namespace Utsuru.DictionaryUI
             // Sisi Depan
             if (frontPhotoImage != null)
             {
-                frontPhotoImage.texture = GetOrLoadTexture(selectedCard.PhotoRelativePath);
+                Texture2D cardTex = GetOrLoadTexture(selectedCard.PhotoRelativePath);
+                frontPhotoImage.texture = cardTex;
+                if (cardTex != null)
+                {
+                    DictionaryPolaroidCardUI.ApplyAspectCropUV(frontPhotoImage, cardTex);
+                }
             }
             if (frontObjectNameText != null)
             {

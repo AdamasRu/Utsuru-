@@ -77,13 +77,14 @@ namespace Utsuru.DictionaryUI.Editor
             var summaryImg = summaryGo.AddComponent<Image>();
             summaryImg.sprite = pillBgSprite;
             summaryImg.type = Image.Type.Sliced;
+            summaryImg.pixelsPerUnitMultiplier = 0.85f;
             summaryImg.color = new Color(0.92f, 0.90f, 0.97f, 0.95f);
 
             GameObject summaryTextGo = CreateUIObject("Text", summaryGo.transform);
             SetStretch(summaryTextGo.GetComponent<RectTransform>());
             var summaryTmp = summaryTextGo.AddComponent<TextMeshProUGUI>();
             summaryTmp.font = zenFont;
-            summaryTmp.fontSize = 20f;
+            summaryTmp.fontSize = 17f;
             summaryTmp.fontStyle = FontStyles.Bold;
             summaryTmp.alignment = TextAlignmentOptions.Center;
             summaryTmp.color = new Color(0.28f, 0.22f, 0.55f, 1f);
@@ -338,13 +339,17 @@ namespace Utsuru.DictionaryUI.Editor
             var catBadgeImg = catBadgeGo.AddComponent<Image>();
             catBadgeImg.sprite = pillBgSprite;
             catBadgeImg.type = Image.Type.Sliced;
+            catBadgeImg.pixelsPerUnitMultiplier = 0.9f;
             catBadgeImg.color = new Color(0.92f, 0.90f, 0.96f, 0.9f);
 
             GameObject catTextGo = CreateUIObject("Text", catBadgeGo.transform);
             SetStretch(catTextGo.GetComponent<RectTransform>());
             var catBadgeTmp = catTextGo.AddComponent<TextMeshProUGUI>();
             catBadgeTmp.font = nunitoFont;
-            catBadgeTmp.fontSize = 22f;
+            catBadgeTmp.fontSize = 16.5f;
+            catBadgeTmp.enableAutoSizing = true;
+            catBadgeTmp.fontSizeMin = 12f;
+            catBadgeTmp.fontSizeMax = 16.5f;
             catBadgeTmp.fontStyle = FontStyles.Bold;
             catBadgeTmp.alignment = TextAlignmentOptions.Center;
             catBadgeTmp.color = new Color(0.42f, 0.36f, 0.60f, 1f);
@@ -653,7 +658,11 @@ namespace Utsuru.DictionaryUI.Editor
 
             var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
             titleTmp.font = zenFont;
-            titleTmp.fontSize = 24f;
+            titleTmp.fontSize = 19f;
+            titleTmp.enableAutoSizing = true;
+            titleTmp.fontSizeMin = 13f;
+            titleTmp.fontSizeMax = 19f;
+            titleTmp.overflowMode = TextOverflowModes.Ellipsis;
             titleTmp.fontStyle = FontStyles.Bold;
             titleTmp.color = new Color(0.18f, 0.14f, 0.28f, 1f);
             titleTmp.text = "自転車 / じてんしゃ";
@@ -668,7 +677,11 @@ namespace Utsuru.DictionaryUI.Editor
 
             var transTmp = transGo.AddComponent<TextMeshProUGUI>();
             transTmp.font = nunitoFont;
-            transTmp.fontSize = 20f;
+            transTmp.fontSize = 15f;
+            transTmp.enableAutoSizing = true;
+            transTmp.fontSizeMin = 11f;
+            transTmp.fontSizeMax = 15f;
+            transTmp.overflowMode = TextOverflowModes.Ellipsis;
             transTmp.color = new Color(0.48f, 0.44f, 0.58f, 1f);
             transTmp.text = "Sepeda [jitensha]";
 
@@ -682,13 +695,16 @@ namespace Utsuru.DictionaryUI.Editor
             badgeRt.anchoredPosition = new Vector2(-12f, 0f);
 
             var badgeImg = badgeGo.AddComponent<Image>();
+            badgeImg.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Category Pill.png");
+            badgeImg.type = Image.Type.Sliced;
+            badgeImg.pixelsPerUnitMultiplier = 1.25f;
             badgeImg.color = new Color(0.18f, 0.72f, 0.42f, 1f);
 
             GameObject badgeTextGo = CreateUIObject("Text", badgeGo.transform);
             SetStretch(badgeTextGo.GetComponent<RectTransform>());
             var badgeTmp = badgeTextGo.AddComponent<TextMeshProUGUI>();
             badgeTmp.font = zenFont;
-            badgeTmp.fontSize = 17f;
+            badgeTmp.fontSize = 14f;
             badgeTmp.fontStyle = FontStyles.Bold;
             badgeTmp.alignment = TextAlignmentOptions.Center;
             badgeTmp.color = Color.white;
@@ -913,6 +929,7 @@ namespace Utsuru.DictionaryUI.Editor
             var img = go.AddComponent<Image>();
             img.sprite = bgSprite;
             img.type = Image.Type.Sliced;
+            img.pixelsPerUnitMultiplier = 2.0f;
             img.color = Color.white;
 
             var btn = go.AddComponent<Button>();
@@ -922,7 +939,8 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(textGo.GetComponent<RectTransform>());
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.font = font;
-            tmp.fontSize = 19f;
+            tmp.fontSize = 16.5f;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = new Color(0.32f, 0.28f, 0.45f, 1f);
@@ -937,6 +955,7 @@ namespace Utsuru.DictionaryUI.Editor
             var img = go.AddComponent<Image>();
             img.sprite = bgSprite;
             img.type = Image.Type.Sliced;
+            img.pixelsPerUnitMultiplier = 1.85f;
             img.color = color;
 
             var btn = go.AddComponent<Button>();
@@ -946,7 +965,8 @@ namespace Utsuru.DictionaryUI.Editor
             SetStretch(textGo.GetComponent<RectTransform>());
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.font = font;
-            tmp.fontSize = 20f;
+            tmp.fontSize = 17.5f;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
@@ -967,7 +987,10 @@ namespace Utsuru.DictionaryUI.Editor
 
             var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
             titleTmp.font = zenFont;
-            titleTmp.fontSize = 36f;
+            titleTmp.fontSize = 28f;
+            titleTmp.enableAutoSizing = true;
+            titleTmp.fontSizeMin = 20f;
+            titleTmp.fontSizeMax = 28f;
             titleTmp.fontStyle = FontStyles.Bold;
             titleTmp.alignment = TextAlignmentOptions.Center;
             titleTmp.color = new Color(0.28f, 0.22f, 0.55f, 1f);
@@ -983,9 +1006,9 @@ namespace Utsuru.DictionaryUI.Editor
 
             var subTmp = subGo.AddComponent<TextMeshProUGUI>();
             subTmp.font = nunitoFont;
-            subTmp.fontSize = 20f;
+            subTmp.fontSize = 16.5f;
             subTmp.alignment = TextAlignmentOptions.Center;
-            subTmp.color = new Color(0.48f, 0.44f, 0.58f, 1f);
+            subTmp.color = new Color(0.42f, 0.38f, 0.54f, 1f);
             subTmp.text = subtitle;
         }
 

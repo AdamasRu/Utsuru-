@@ -14,7 +14,17 @@ namespace Utsuru.UI
         private static UISceneFader instance;
 
         private CanvasGroup overlayGroup;
+        private GraphicRaycaster raycaster;
         private bool isTransitioning;
+
+        public static bool IsTransitioning => instance != null && instance.isTransitioning;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void ResetRuntimeStateBeforeSceneLoad()
+        {
+            // Safeguard against scenes/ProjectSettings saved with timeScale == 0.
+            Time.timeScale = 1f;
+        }
 
         public static UISceneFader EnsureInstance()
         {
@@ -45,9 +55,14 @@ namespace Utsuru.UI
 
             instance = go.GetComponent<UISceneFader>();
             instance.overlayGroup = go.GetComponent<CanvasGroup>();
+            instance.raycaster = go.GetComponent<GraphicRaycaster>();
             instance.overlayGroup.alpha = 0f;
             instance.overlayGroup.blocksRaycasts = false;
             instance.overlayGroup.interactable = false;
+            if (instance.raycaster != null)
+            {
+                instance.raycaster.enabled = false;
+            }
 
             return instance;
         }
@@ -64,9 +79,11 @@ namespace Utsuru.UI
         {
             isTransitioning = true;
             overlayGroup.blocksRaycasts = true;
+            if (raycaster != null) raycaster.enabled = true;
 
             yield return FadeRoutine(0f, 1f, fadeOutDuration);
 
+            Time.timeScale = 1f;
             AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneName);
             if (loadOp != null)
             {
@@ -76,12 +93,16 @@ namespace Utsuru.UI
                 }
             }
 
+            Time.timeScale = 1f;
+
             // Allow one frame for the new scene's Start() / layout to settle before fading in.
             yield return null;
 
             yield return FadeRoutine(1f, 0f, fadeInDuration);
 
+            overlayGroup.alpha = 0f;
             overlayGroup.blocksRaycasts = false;
+            if (raycaster != null) raycaster.enabled = false;
             isTransitioning = false;
         }
 

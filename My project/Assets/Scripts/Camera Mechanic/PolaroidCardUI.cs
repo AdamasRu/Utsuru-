@@ -131,7 +131,14 @@ namespace Utsuru.Capture
             current = result;
             VocabularyEntry vocab = result.Vocabulary;
 
-            if (photoImage != null) photoImage.texture = result.Snapshot;
+            if (photoImage != null)
+            {
+                photoImage.texture = result.Snapshot;
+                if (result.Snapshot != null)
+                {
+                    ApplyAspectCropUV(photoImage, result.Snapshot);
+                }
+            }
 
             if (dateStampLabel != null)
             {
@@ -233,6 +240,36 @@ namespace Utsuru.Capture
             }
 
             if (panelRoot != null) panelRoot.SetActive(true);
+        }
+
+        private static void ApplyAspectCropUV(RawImage rawImg, Texture tex)
+        {
+            if (rawImg == null || tex == null || tex.width <= 0 || tex.height <= 0)
+            {
+                if (rawImg != null) rawImg.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            Rect r = rawImg.rectTransform.rect;
+            float targetAspect = (r.width > 1f && r.height > 1f) ? (r.width / r.height) : (490f / 300f);
+            float texAspect = (float)tex.width / tex.height;
+
+            if (Mathf.Abs(texAspect - targetAspect) < 0.01f)
+            {
+                rawImg.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            if (texAspect > targetAspect)
+            {
+                float w = targetAspect / texAspect;
+                rawImg.uvRect = new Rect((1f - w) * 0.5f, 0f, w, 1f);
+            }
+            else
+            {
+                float h = texAspect / targetAspect;
+                rawImg.uvRect = new Rect(0f, (1f - h) * 0.5f, 1f, h);
+            }
         }
 
         private static string FormatCategory(string cat)

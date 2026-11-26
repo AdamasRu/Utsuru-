@@ -278,17 +278,17 @@ namespace Utsuru.DictionaryUI.Editor
             leftModPageRt.anchoredPosition = new Vector2(56f, 20f);
             leftModPageRt.localScale = new Vector3(0.9f, 0.9f, 1f);
 
-            // Header TOC (Auto-wrap dan rapi di dalam halaman buku)
+            // Header TOC (Auto-wrap dan rapi tanpa bertumpuk di dalam halaman buku)
             GameObject tocHeaderGo = CreateUIObject("TOC_Header", leftModPage.transform);
             RectTransform tocHeaderRt = tocHeaderGo.GetComponent<RectTransform>();
             tocHeaderRt.anchorMin = new Vector2(0f, 1f);
             tocHeaderRt.anchorMax = new Vector2(1f, 1f);
             tocHeaderRt.pivot = new Vector2(0.5f, 1f);
-            tocHeaderRt.sizeDelta = new Vector2(-40f, 105f);
+            tocHeaderRt.sizeDelta = new Vector2(-40f, 84f);
             tocHeaderRt.anchoredPosition = new Vector2(0f, -14f);
 
             var tocHeaderVlg = tocHeaderGo.AddComponent<VerticalLayoutGroup>();
-            tocHeaderVlg.spacing = 6f;
+            tocHeaderVlg.spacing = 4f;
             tocHeaderVlg.childControlWidth = true;
             tocHeaderVlg.childControlHeight = true;
             tocHeaderVlg.childForceExpandWidth = true;
@@ -297,7 +297,10 @@ namespace Utsuru.DictionaryUI.Editor
             GameObject tocTitleGo = CreateUIObject("Title", tocHeaderGo.transform);
             var tocTitleTmp = tocTitleGo.AddComponent<TextMeshProUGUI>();
             tocTitleTmp.font = zenFont;
-            tocTitleTmp.fontSize = 32f;
+            tocTitleTmp.fontSize = 24f;
+            tocTitleTmp.enableAutoSizing = true;
+            tocTitleTmp.fontSizeMin = 18f;
+            tocTitleTmp.fontSizeMax = 24f;
             tocTitleTmp.fontStyle = FontStyles.Bold;
             tocTitleTmp.alignment = TextAlignmentOptions.Center;
             tocTitleTmp.color = new Color(0.20f, 0.16f, 0.28f);
@@ -308,9 +311,12 @@ namespace Utsuru.DictionaryUI.Editor
             GameObject tocSubGo = CreateUIObject("Subtitle", tocHeaderGo.transform);
             var tocSubTmp = tocSubGo.AddComponent<TextMeshProUGUI>();
             tocSubTmp.font = nunitoFont;
-            tocSubTmp.fontSize = 24f;
+            tocSubTmp.fontSize = 16f;
+            tocSubTmp.enableAutoSizing = true;
+            tocSubTmp.fontSizeMin = 12f;
+            tocSubTmp.fontSizeMax = 16f;
             tocSubTmp.alignment = TextAlignmentOptions.Center;
-            tocSubTmp.color = new Color(0.48f, 0.44f, 0.55f);
+            tocSubTmp.color = new Color(0.38f, 0.34f, 0.48f);
             tocSubTmp.textWrappingMode = TextWrappingModes.Normal;
             tocSubTmp.text = "Select a chapter to jump directly to its content:";
 
@@ -320,7 +326,7 @@ namespace Utsuru.DictionaryUI.Editor
             tocScrollRt.anchorMin = new Vector2(0f, 0f);
             tocScrollRt.anchorMax = new Vector2(1f, 1f);
             tocScrollRt.offsetMin = new Vector2(25f, 25f);
-            tocScrollRt.offsetMax = new Vector2(-25f, -130f);
+            tocScrollRt.offsetMax = new Vector2(-25f, -106f);
 
             var tocScroll = tocScrollGo.AddComponent<ScrollRect>();
             tocScroll.horizontal = false;
@@ -373,8 +379,8 @@ namespace Utsuru.DictionaryUI.Editor
                 tocButtonImages[c] = btnImg;
 
                 var btnVlg = btnGo.AddComponent<VerticalLayoutGroup>();
-                btnVlg.padding = new RectOffset(20, 20, 16, 16);
-                btnVlg.spacing = 8f;
+                btnVlg.padding = new RectOffset(18, 18, 12, 12);
+                btnVlg.spacing = 6f;
                 btnVlg.childControlWidth = true;
                 btnVlg.childControlHeight = true;
                 btnVlg.childForceExpandWidth = true;
@@ -384,12 +390,13 @@ namespace Utsuru.DictionaryUI.Editor
                 btnCsf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
                 var btnLe = btnGo.AddComponent<LayoutElement>();
-                btnLe.minHeight = 84f;
+                btnLe.minHeight = 68f;
 
                 // Baris Atas: Judul Bab + Badge Jumlah Modul
                 GameObject btnTopRowGo = CreateUIObject("TopRow", btnGo.transform);
                 var btnTopHlg = btnTopRowGo.AddComponent<HorizontalLayoutGroup>();
-                btnTopHlg.spacing = 12f;
+                btnTopHlg.spacing = 10f;
+                btnTopHlg.childAlignment = TextAnchor.MiddleLeft;
                 btnTopHlg.childControlWidth = true;
                 btnTopHlg.childControlHeight = true;
                 btnTopHlg.childForceExpandWidth = false;
@@ -399,7 +406,10 @@ namespace Utsuru.DictionaryUI.Editor
                 GameObject btnTitleGo = CreateUIObject("Title", btnTopRowGo.transform);
                 var titleTmp = btnTitleGo.AddComponent<TextMeshProUGUI>();
                 titleTmp.font = zenFont;
-                titleTmp.fontSize = 35f;
+                titleTmp.fontSize = 20f;
+                titleTmp.enableAutoSizing = true;
+                titleTmp.fontSizeMin = 15f;
+                titleTmp.fontSizeMax = 20f;
                 titleTmp.fontStyle = FontStyles.Bold;
                 titleTmp.color = new Color(0.18f, 0.14f, 0.28f);
                 titleTmp.textWrappingMode = TextWrappingModes.Normal;
@@ -409,14 +419,17 @@ namespace Utsuru.DictionaryUI.Editor
                 titleLe.flexibleWidth = 1f;
 
                 // Badge Jumlah Modul di Kanan
-                CreateBadge(btnTopRowGo.transform, $"{ch.moduleCount} Modules", new Color(0.85f, 0.88f, 0.98f, 0.95f), new Color(0.25f, 0.35f, 0.75f), nunitoFont, 140f, pillBgSprite, height: 42f, fontSize: 24f);
+                CreateBadge(btnTopRowGo.transform, $"{ch.moduleCount} Modules", new Color(0.85f, 0.88f, 0.98f, 0.95f), new Color(0.25f, 0.35f, 0.75f), nunitoFont, 108f, pillBgSprite, height: 28f, fontSize: 13f);
 
                 // Baris Bawah: Teks Subtitle Bab
                 GameObject btnSubGo = CreateUIObject("Subtitle", btnGo.transform);
                 var subTmp = btnSubGo.AddComponent<TextMeshProUGUI>();
                 subTmp.font = nunitoFont;
-                subTmp.fontSize = 26f;
-                subTmp.color = new Color(0.40f, 0.45f, 0.55f);
+                subTmp.fontSize = 15f;
+                subTmp.enableAutoSizing = true;
+                subTmp.fontSizeMin = 12f;
+                subTmp.fontSizeMax = 15f;
+                subTmp.color = new Color(0.38f, 0.42f, 0.54f);
                 subTmp.textWrappingMode = TextWrappingModes.Normal;
                 subTmp.text = ch.chapterSubtitle;
             }
@@ -492,10 +505,11 @@ namespace Utsuru.DictionaryUI.Editor
                 var bannerImg = bannerGo.AddComponent<Image>();
                 bannerImg.sprite = btnSelectSprite != null ? btnSelectSprite : cardChoice2Sprite;
                 bannerImg.type = Image.Type.Sliced;
+                bannerImg.pixelsPerUnitMultiplier = 1.6f;
                 bannerImg.color = new Color(0.36f, 0.30f, 0.62f, 0.98f); // Deep Royal Purple
 
                 var bannerVlg = bannerGo.AddComponent<VerticalLayoutGroup>();
-                bannerVlg.padding = new RectOffset(18, 18, 14, 14);
+                bannerVlg.padding = new RectOffset(16, 16, 10, 10);
                 bannerVlg.childControlWidth = true;
                 bannerVlg.childControlHeight = true;
                 bannerVlg.childForceExpandWidth = true;
@@ -505,12 +519,15 @@ namespace Utsuru.DictionaryUI.Editor
                 bannerCsf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
                 var bannerLe = bannerGo.AddComponent<LayoutElement>();
-                bannerLe.minHeight = 70f;
+                bannerLe.minHeight = 52f;
 
                 GameObject bannerTextGo = CreateUIObject("Title", bannerGo.transform);
                 var bannerTmp = bannerTextGo.AddComponent<TextMeshProUGUI>();
                 bannerTmp.font = zenFont;
-                bannerTmp.fontSize = 38f;
+                bannerTmp.fontSize = 22f;
+                bannerTmp.enableAutoSizing = true;
+                bannerTmp.fontSizeMin = 15f;
+                bannerTmp.fontSizeMax = 22f;
                 bannerTmp.fontStyle = FontStyles.Bold;
                 bannerTmp.alignment = TextAlignmentOptions.Center;
                 bannerTmp.color = Color.white;
@@ -531,8 +548,8 @@ namespace Utsuru.DictionaryUI.Editor
                         matCardImg.color = Color.white;
 
                         var matVlg = matCardGo.AddComponent<VerticalLayoutGroup>();
-                        matVlg.spacing = 16f;
-                        matVlg.padding = new RectOffset(22, 22, 20, 20);
+                        matVlg.spacing = 12f;
+                        matVlg.padding = new RectOffset(18, 18, 16, 16);
                         matVlg.childControlWidth = true;
                         matVlg.childControlHeight = true;
                         matVlg.childForceExpandWidth = true;
@@ -541,11 +558,11 @@ namespace Utsuru.DictionaryUI.Editor
                         var matCsf = matCardGo.AddComponent<ContentSizeFitter>();
                         matCsf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-                        // Header Kartu Modul: Judul Bersih (Badge FR dihapus)
+                        // Header Kartu Modul
                         GameObject matHeaderGo = CreateUIObject("Header", matCardGo.transform);
                         var matHlg = matHeaderGo.AddComponent<HorizontalLayoutGroup>();
                         matHlg.spacing = 10f;
-                        matHlg.padding = new RectOffset(2, 2, 2, 4);
+                        matHlg.padding = new RectOffset(2, 2, 2, 2);
                         matHlg.childControlWidth = true;
                         matHlg.childControlHeight = true;
                         matHlg.childForceExpandWidth = true;
@@ -555,7 +572,10 @@ namespace Utsuru.DictionaryUI.Editor
                         GameObject matTitleGo = CreateUIObject("Title", matHeaderGo.transform);
                         var matTitleTmp = matTitleGo.AddComponent<TextMeshProUGUI>();
                         matTitleTmp.font = zenFont;
-                        matTitleTmp.fontSize = 36f;
+                        matTitleTmp.fontSize = 23f;
+                        matTitleTmp.enableAutoSizing = true;
+                        matTitleTmp.fontSizeMin = 17f;
+                        matTitleTmp.fontSizeMax = 23f;
                         matTitleTmp.fontStyle = FontStyles.Bold;
                         matTitleTmp.color = new Color(0.18f, 0.15f, 0.25f);
                         matTitleTmp.verticalAlignment = VerticalAlignmentOptions.Middle;
@@ -573,7 +593,7 @@ namespace Utsuru.DictionaryUI.Editor
                             {
                                 GameObject imgContainerGo = CreateUIObject("ImageContainer", matCardGo.transform);
                                 var imgLe = imgContainerGo.AddComponent<LayoutElement>();
-                                imgLe.preferredHeight = 360f;
+                                imgLe.preferredHeight = 235f;
 
                                 GameObject spriteImgGo = CreateUIObject("SpriteImage", imgContainerGo.transform);
                                 SetStretch(spriteImgGo.GetComponent<RectTransform>());
@@ -597,8 +617,8 @@ namespace Utsuru.DictionaryUI.Editor
                                 boxImg.color = Color.white; // Warm ivory paper tint
 
                                 var boxVlg = phraseBoxGo.AddComponent<VerticalLayoutGroup>();
-                                boxVlg.spacing = 10f;
-                                boxVlg.padding = new RectOffset(18, 18, 16, 16);
+                                boxVlg.spacing = 6f;
+                                boxVlg.padding = new RectOffset(16, 16, 12, 12);
                                 boxVlg.childControlWidth = true;
                                 boxVlg.childControlHeight = true;
                                 boxVlg.childForceExpandWidth = true;
@@ -613,7 +633,7 @@ namespace Utsuru.DictionaryUI.Editor
                                     GameObject goalGo = CreateUIObject("Goal", phraseBoxGo.transform);
                                     var goalTmp = goalGo.AddComponent<TextMeshProUGUI>();
                                     goalTmp.font = nunitoFont;
-                                    goalTmp.fontSize = 28f;
+                                    goalTmp.fontSize = 17f;
                                     goalTmp.fontStyle = FontStyles.Bold;
                                     goalTmp.color = new Color(0.20f, 0.18f, 0.35f);
                                     goalTmp.textWrappingMode = TextWrappingModes.Normal;
@@ -626,7 +646,11 @@ namespace Utsuru.DictionaryUI.Editor
                                     GameObject jpGo = CreateUIObject("JapanesePhrase", phraseBoxGo.transform);
                                     var jpTmp = jpGo.AddComponent<TextMeshProUGUI>();
                                     jpTmp.font = zenFont;
-                                    jpTmp.fontSize = 42f;
+                                    jpTmp.fontSize = 25f;
+                                    jpTmp.enableAutoSizing = true;
+                                    jpTmp.fontSizeMin = 18f;
+                                    jpTmp.fontSizeMax = 25f;
+                                    jpTmp.lineSpacing = 4f;
                                     jpTmp.fontStyle = FontStyles.Bold;
                                     jpTmp.color = new Color(0.12f, 0.10f, 0.22f);
                                     jpTmp.textWrappingMode = TextWrappingModes.Normal;
@@ -639,9 +663,9 @@ namespace Utsuru.DictionaryUI.Editor
                                     GameObject expGo = CreateUIObject("Explanation", phraseBoxGo.transform);
                                     var expTmp = expGo.AddComponent<TextMeshProUGUI>();
                                     expTmp.font = nunitoFont;
-                                    expTmp.fontSize = 28f;
-                                    expTmp.lineSpacing = 8f;
-                                    expTmp.color = new Color(0.28f, 0.32f, 0.40f);
+                                    expTmp.fontSize = 15.5f;
+                                    expTmp.lineSpacing = 4f;
+                                    expTmp.color = new Color(0.24f, 0.28f, 0.36f);
                                     expTmp.textWrappingMode = TextWrappingModes.Normal;
                                     expTmp.text = act.explanation;
                                 }
@@ -652,9 +676,10 @@ namespace Utsuru.DictionaryUI.Editor
                                     GameObject kwGo = CreateUIObject("Keywords", phraseBoxGo.transform);
                                     var kwTmp = kwGo.AddComponent<TextMeshProUGUI>();
                                     kwTmp.font = zenFont;
-                                    kwTmp.fontSize = 26f;
+                                    kwTmp.fontSize = 15f;
+                                    kwTmp.lineSpacing = 3f;
                                     kwTmp.fontStyle = FontStyles.Normal;
-                                    kwTmp.color = new Color(0.40f, 0.35f, 0.55f);
+                                    kwTmp.color = new Color(0.38f, 0.32f, 0.54f);
                                     kwTmp.textWrappingMode = TextWrappingModes.Normal;
                                     kwTmp.text = $"• Expressions: {act.keywords}";
                                 }
@@ -772,26 +797,32 @@ namespace Utsuru.DictionaryUI.Editor
 
             var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
             titleTmp.font = zenFont;
-            titleTmp.fontSize = 34f;
+            titleTmp.fontSize = 26f;
+            titleTmp.enableAutoSizing = true;
+            titleTmp.fontSizeMin = 20f;
+            titleTmp.fontSizeMax = 26f;
             titleTmp.fontStyle = FontStyles.Bold;
             titleTmp.alignment = TextAlignmentOptions.Center;
             titleTmp.color = new Color(0.18f, 0.14f, 0.28f);
             titleTmp.text = title;
 
-            // Subtitle (Standar Minimal: 24f)
+            // Subtitle (rapi tanpa bertumpuk)
             GameObject subGo = CreateUIObject("Subtitle", headerGo.transform);
             RectTransform subRt = subGo.GetComponent<RectTransform>();
             subRt.anchorMin = new Vector2(0f, 0f);
             subRt.anchorMax = new Vector2(1f, 0f);
             subRt.pivot = new Vector2(0.5f, 0f);
             subRt.anchoredPosition = new Vector2(0f, 0f);
-            subRt.sizeDelta = new Vector2(0f, 30f);
+            subRt.sizeDelta = new Vector2(0f, 28f);
 
             var subTmp = subGo.AddComponent<TextMeshProUGUI>();
             subTmp.font = nunitoFont;
-            subTmp.fontSize = 24f;
+            subTmp.fontSize = 16f;
+            subTmp.enableAutoSizing = true;
+            subTmp.fontSizeMin = 12f;
+            subTmp.fontSizeMax = 16f;
             subTmp.alignment = TextAlignmentOptions.Center;
-            subTmp.color = new Color(0.48f, 0.44f, 0.58f);
+            subTmp.color = new Color(0.42f, 0.38f, 0.54f);
             subTmp.text = subtitle;
 
             // Thin Divider Line
@@ -836,6 +867,7 @@ namespace Utsuru.DictionaryUI.Editor
                 var btnImg = btnGo.AddComponent<Image>();
                 btnImg.sprite = pillSprite;
                 btnImg.type = Image.Type.Sliced;
+                btnImg.pixelsPerUnitMultiplier = 0.85f;
                 btnImg.color = new Color(0.92f, 0.90f, 0.96f, 0.85f);
 
                 var btn = btnGo.AddComponent<Button>();
@@ -845,7 +877,11 @@ namespace Utsuru.DictionaryUI.Editor
                 SetStretch(textGo.GetComponent<RectTransform>());
                 var tmp = textGo.AddComponent<TextMeshProUGUI>();
                 tmp.font = font;
-                tmp.fontSize = 24f; // STANDAR MINIMAL TAB MODUL
+                tmp.fontSize = 16.5f;
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMin = 12f;
+                tmp.fontSizeMax = 16.5f;
+                tmp.textWrappingMode = TextWrappingModes.NoWrap;
                 tmp.fontStyle = FontStyles.Bold;
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.color = new Color(0.35f, 0.30f, 0.48f, 1f);
@@ -863,7 +899,7 @@ namespace Utsuru.DictionaryUI.Editor
             barRt.anchorMin = new Vector2(0.5f, 1f);
             barRt.anchorMax = new Vector2(0.5f, 1f);
             barRt.pivot = new Vector2(0.5f, 1f);
-            barRt.sizeDelta = new Vector2(680f, 38f);
+            barRt.sizeDelta = new Vector2(680f, 36f);
             barRt.anchoredPosition = new Vector2(0f, -138f);
 
             var hlg = barGo.AddComponent<HorizontalLayoutGroup>();
@@ -879,6 +915,7 @@ namespace Utsuru.DictionaryUI.Editor
                 var colImg = colGo.AddComponent<Image>();
                 colImg.sprite = pillSprite;
                 colImg.type = Image.Type.Sliced;
+                colImg.pixelsPerUnitMultiplier = 1f;
                 colImg.color = new Color(0.92f, 0.89f, 0.96f, 0.80f);
                 colImg.raycastTarget = false;
 
@@ -886,7 +923,10 @@ namespace Utsuru.DictionaryUI.Editor
                 SetStretch(textGo.GetComponent<RectTransform>());
                 var tmp = textGo.AddComponent<TextMeshProUGUI>();
                 tmp.font = font;
-                tmp.fontSize = 24f; // STANDAR MINIMAL TAB MODUL
+                tmp.fontSize = 16f;
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMin = 12f;
+                tmp.fontSizeMax = 16f;
                 tmp.fontStyle = FontStyles.Bold;
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.color = new Color(0.35f, 0.28f, 0.48f, 1f);
@@ -953,13 +993,13 @@ namespace Utsuru.DictionaryUI.Editor
 
                 var kanaTmp = kanaGo.AddComponent<TextMeshProUGUI>();
                 kanaTmp.font = zenFont;
-                kanaTmp.fontSize = 32f; // HIGHLIGHT KARAKTER KANA
+                kanaTmp.fontSize = 26f;
                 kanaTmp.fontStyle = FontStyles.Bold;
                 kanaTmp.alignment = TextAlignmentOptions.Center;
                 kanaTmp.color = new Color(0.18f, 0.14f, 0.26f, 1f);
                 kanaTmp.text = cell.kana;
 
-                // Teks Romaji (Nunito-Bold) - STANDAR MINIMAL: 24f
+                // Teks Romaji (Nunito-Bold)
                 GameObject romajiGo = CreateUIObject("Romaji", cellGo.transform);
                 RectTransform romajiRt = romajiGo.GetComponent<RectTransform>();
                 romajiRt.anchorMin = new Vector2(0f, 0f);
@@ -971,7 +1011,7 @@ namespace Utsuru.DictionaryUI.Editor
 
                 var romajiTmp = romajiGo.AddComponent<TextMeshProUGUI>();
                 romajiTmp.font = nunitoFont;
-                romajiTmp.fontSize = 24f; // STANDAR MINIMAL TAB MODUL
+                romajiTmp.fontSize = 15f;
                 romajiTmp.fontStyle = FontStyles.Bold;
                 romajiTmp.alignment = TextAlignmentOptions.Center;
                 romajiTmp.color = new Color(0.48f, 0.42f, 0.58f, 1f);
@@ -1001,18 +1041,19 @@ namespace Utsuru.DictionaryUI.Editor
             badgeRt.anchorMax = new Vector2(0.5f, 1f);
             badgeRt.pivot = new Vector2(0.5f, 1f);
             badgeRt.anchoredPosition = new Vector2(0f, -10f);
-            badgeRt.sizeDelta = new Vector2(480f, 36f);
+            badgeRt.sizeDelta = new Vector2(380f, 32f);
 
             var badgeImg = badgeGo.AddComponent<Image>();
             badgeImg.sprite = pillSprite;
             badgeImg.type = Image.Type.Sliced;
+            badgeImg.pixelsPerUnitMultiplier = 1.05f;
             badgeImg.color = new Color(0.38f, 0.32f, 0.65f, 1f);
 
             GameObject badgeTextGo = CreateUIObject("Text", badgeGo.transform);
             SetStretch(badgeTextGo.GetComponent<RectTransform>());
             var badgeTmp = badgeTextGo.AddComponent<TextMeshProUGUI>();
             badgeTmp.font = zenFont;
-            badgeTmp.fontSize = 24f; // STANDAR MINIMAL TAB MODUL
+            badgeTmp.fontSize = 15.5f;
             badgeTmp.fontStyle = FontStyles.Bold;
             badgeTmp.alignment = TextAlignmentOptions.Center;
             badgeTmp.color = Color.white;
@@ -1024,23 +1065,27 @@ namespace Utsuru.DictionaryUI.Editor
             contentRt.anchorMin = Vector2.zero;
             contentRt.anchorMax = Vector2.one;
             contentRt.offsetMin = new Vector2(16f, 10f);
-            contentRt.offsetMax = new Vector2(-16f, -48f);
+            contentRt.offsetMax = new Vector2(-16f, -46f);
 
             var contentTmp = contentGo.AddComponent<TextMeshProUGUI>();
             contentTmp.font = zenFont;
-            contentTmp.fontSize = 24f; // STANDAR MINIMAL TAB MODUL
-            contentTmp.lineSpacing = 6f;
+            contentTmp.fontSize = 14.5f;
+            contentTmp.enableAutoSizing = true;
+            contentTmp.fontSizeMin = 11f;
+            contentTmp.fontSizeMax = 14.5f;
+            contentTmp.lineSpacing = 3f;
             contentTmp.color = new Color(0.24f, 0.20f, 0.32f, 1f);
             contentTmp.textWrappingMode = TextWrappingModes.Normal;
             contentTmp.text = contentText;
         }
 
-        private static void CreateBadge(Transform parent, string text, Color bgColor, Color textColor, TMP_FontAsset font, float width, Sprite pillSprite, float height = 40f, float fontSize = 24f)
+        private static void CreateBadge(Transform parent, string text, Color bgColor, Color textColor, TMP_FontAsset font, float width, Sprite pillSprite, float height = 30f, float fontSize = 14f)
         {
             GameObject badgeGo = CreateUIObject("Badge", parent);
             var badgeImg = badgeGo.AddComponent<Image>();
             badgeImg.sprite = pillSprite;
             badgeImg.type = Image.Type.Sliced;
+            badgeImg.pixelsPerUnitMultiplier = Mathf.Clamp(34f / Mathf.Max(20f, height), 0.75f, 1.5f);
             badgeImg.color = bgColor;
             var le = badgeGo.AddComponent<LayoutElement>();
             le.preferredWidth = width;
@@ -1052,6 +1097,7 @@ namespace Utsuru.DictionaryUI.Editor
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.font = font;
             tmp.fontSize = fontSize;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = textColor;

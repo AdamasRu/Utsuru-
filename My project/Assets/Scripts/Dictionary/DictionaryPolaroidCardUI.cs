@@ -151,25 +151,54 @@ namespace Utsuru.DictionaryUI
                 tapeImage.color = TapeColors[slotIndex % TapeColors.Length];
             }
 
-            // 2. Foto Snapshot (4:3)
+            // 2. Foto Snapshot (Center-crop UV agar rasio foto tidak pernah gepeng)
             if (photoImage != null)
             {
                 photoImage.texture = texture;
                 photoImage.gameObject.SetActive(texture != null);
+                if (texture != null)
+                {
+                    ApplyAspectCropUV(photoImage, texture);
+                }
             }
 
-            // 3. Teks Kosakata Depan
+            // 3. Teks Kosakata Depan (Max 2 baris rapi: Kanji di atas, Furigana di bawah bila panjang)
             if (info != null && info.vocabulary != null)
             {
                 var v = info.vocabulary;
                 if (kanjiLabel != null)
                 {
-                    string kanaText = string.IsNullOrEmpty(v.kana) ? "" : $" <size=75%>({v.kana})</size>";
-                    kanjiLabel.text = $"<b>{v.japaneseWord}</b>{kanaText}";
+                    kanjiLabel.fontSize = 19f;
+                    kanjiLabel.enableAutoSizing = true;
+                    kanjiLabel.fontSizeMin = 12f;
+                    kanjiLabel.fontSizeMax = 19f;
+                    kanjiLabel.lineSpacing = -6f;
+                    kanjiLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                    kanjiLabel.overflowMode = TextOverflowModes.Ellipsis;
+                    kanjiLabel.alignment = TextAlignmentOptions.TopLeft;
+                    if (string.IsNullOrEmpty(v.kana))
+                    {
+                        kanjiLabel.text = $"<b>{v.japaneseWord}</b>";
+                    }
+                    else
+                    {
+                        int totalLen = (v.japaneseWord?.Length ?? 0) + v.kana.Length;
+                        kanjiLabel.text = totalLen > 6
+                            ? $"<b>{v.japaneseWord}</b>\n<size=72%><color=#5B5056>({v.kana})</color></size>"
+                            : $"<b>{v.japaneseWord}</b> <size=74%><color=#5B5056>({v.kana})</color></size>";
+                    }
                 }
 
                 if (meaningLabel != null)
                 {
+                    meaningLabel.fontSize = 14f;
+                    meaningLabel.enableAutoSizing = true;
+                    meaningLabel.fontSizeMin = 10.5f;
+                    meaningLabel.fontSizeMax = 14f;
+                    meaningLabel.lineSpacing = -4f;
+                    meaningLabel.textWrappingMode = TextWrappingModes.Normal;
+                    meaningLabel.overflowMode = TextOverflowModes.Ellipsis;
+                    meaningLabel.alignment = TextAlignmentOptions.TopLeft;
                     string romajiText = string.IsNullOrEmpty(v.romaji) ? "" : v.romaji;
                     string englishText = string.IsNullOrEmpty(v.translation) ? (info.objectName ?? "") : v.translation;
                     meaningLabel.text = $"{romajiText} <color=#94A3B8>•</color> {englishText}";
@@ -177,15 +206,47 @@ namespace Utsuru.DictionaryUI
 
                 // Sisi Belakang (Contoh Kalimat)
                 if (backKanjiLabel != null)
+                {
+                    backKanjiLabel.fontSize = 23f;
+                    backKanjiLabel.enableAutoSizing = true;
+                    backKanjiLabel.fontSizeMin = 15f;
+                    backKanjiLabel.fontSizeMax = 23f;
+                    backKanjiLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                    backKanjiLabel.overflowMode = TextOverflowModes.Ellipsis;
+                    backKanjiLabel.alignment = TextAlignmentOptions.Center;
                     backKanjiLabel.text = $"<b>{v.japaneseWord}</b>";
+                }
 
                 if (backSentenceJapanese != null)
+                {
+                    backSentenceJapanese.fontSize = 15.5f;
+                    backSentenceJapanese.enableAutoSizing = true;
+                    backSentenceJapanese.fontSizeMin = 10.5f;
+                    backSentenceJapanese.fontSizeMax = 15.5f;
+                    backSentenceJapanese.lineSpacing = -2f;
+                    backSentenceJapanese.textWrappingMode = TextWrappingModes.Normal;
+                    backSentenceJapanese.overflowMode = TextOverflowModes.Ellipsis;
+                    backSentenceJapanese.alignment = TextAlignmentOptions.Center;
                     backSentenceJapanese.text = string.IsNullOrEmpty(v.exampleSentence) ? "「例文準備中」" : v.exampleSentence;
+                }
 
                 if (backSentenceEnglish != null)
                 {
+                    backSentenceEnglish.fontSize = 13.5f;
+                    backSentenceEnglish.enableAutoSizing = true;
+                    backSentenceEnglish.fontSizeMin = 9.5f;
+                    backSentenceEnglish.fontSizeMax = 13.5f;
+                    backSentenceEnglish.lineSpacing = -2f;
+                    backSentenceEnglish.textWrappingMode = TextWrappingModes.Normal;
+                    backSentenceEnglish.overflowMode = TextOverflowModes.Ellipsis;
+                    backSentenceEnglish.alignment = TextAlignmentOptions.Center;
                     string english = string.IsNullOrEmpty(v.translation) ? "" : $"Meaning: {v.translation}";
                     backSentenceEnglish.text = english;
+                }
+
+                if (backSentenceJapanese != null && backSentenceJapanese.transform.parent is RectTransform sentRt)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(sentRt);
                 }
             }
             else
@@ -240,6 +301,36 @@ namespace Utsuru.DictionaryUI
             if (favoriteIcon != null)
             {
                 favoriteIcon.sprite = isFav ? favoriteOnSprite : favoriteOffSprite;
+            }
+        }
+
+        public static void ApplyAspectCropUV(RawImage rawImg, Texture tex)
+        {
+            if (rawImg == null || tex == null || tex.width <= 0 || tex.height <= 0)
+            {
+                if (rawImg != null) rawImg.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            Rect r = rawImg.rectTransform.rect;
+            float targetAspect = (r.width > 1f && r.height > 1f) ? (r.width / r.height) : (244f / 174f);
+            float texAspect = (float)tex.width / tex.height;
+
+            if (Mathf.Approximately(texAspect, targetAspect) || Mathf.Abs(texAspect - targetAspect) < 0.01f)
+            {
+                rawImg.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            if (texAspect > targetAspect)
+            {
+                float w = targetAspect / texAspect;
+                rawImg.uvRect = new Rect((1f - w) * 0.5f, 0f, w, 1f);
+            }
+            else
+            {
+                float h = texAspect / targetAspect;
+                rawImg.uvRect = new Rect(0f, (1f - h) * 0.5f, 1f, h);
             }
         }
 
@@ -304,6 +395,10 @@ namespace Utsuru.DictionaryUI
             isFlippedBack = targetFlipped;
             if (frontFace != null) frontFace.SetActive(!isFlippedBack);
             if (backFace != null) backFace.SetActive(isFlippedBack);
+            if (isFlippedBack && backSentenceJapanese != null && backSentenceJapanese.transform.parent is RectTransform sentRt)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(sentRt);
+            }
 
             // Tahap 2: Lanjutkan dari 90 derajat ke endY dengan overshoot spring bounce saat mendarat
             elapsed = 0f;

@@ -503,6 +503,8 @@ namespace Utsuru.UI
 
         public void OnPlayAsGuestButtonClicked()
         {
+            if (UISceneFader.IsTransitioning) return;
+
             Debug.Log("[AuthenticationUIManager] Starting game in Guest mode...");
 
             if (playAsGuestButton != null)
@@ -514,6 +516,7 @@ namespace Utsuru.UI
             SessionManager.EnsureInstance().SetGuestSession("Guest");
 
             // Transition smoothly to HomeScreen
+            Time.timeScale = 1f;
             UISceneFader.LoadSceneWithFade("HomeScreen");
         }
 
@@ -667,15 +670,7 @@ namespace Utsuru.UI
         {
             if (authManager == null)
             {
-                authManager = AuthManager.Instance;
-                if (authManager == null)
-                {
-                    authManager = FindFirstObjectByType<AuthManager>();
-                    if (authManager == null)
-                    {
-                        authManager = gameObject.AddComponent<AuthManager>();
-                    }
-                }
+                authManager = AuthManager.EnsureInstance();
             }
             return authManager;
         }

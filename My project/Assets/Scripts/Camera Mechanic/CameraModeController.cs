@@ -102,7 +102,8 @@ namespace Utsuru.Capture
 
         private void Start()
         {
-            // Pastikan saat mulai bermain kontrol player selalu aktif, gravitasi berjalan, dan kursor terkunci
+            // Pastikan saat mulai bermain timeScale normal, kontrol player selalu aktif, gravitasi berjalan, dan kursor terkunci
+            Time.timeScale = 1f;
             SetControlsLocked(false);
         }
 
@@ -170,12 +171,17 @@ namespace Utsuru.Capture
         {
             controlsLocked = locked;
 
-            // 1. Nonaktifkan behaviour kontrol player (FirstPersonController, PlayerInput)
+            // 1. Nonaktifkan / aktifkan behaviour kontrol player (FirstPersonController, PlayerInput)
             if (playerControlBehaviours != null && playerControlBehaviours.Length > 0)
             {
                 foreach (var behaviour in playerControlBehaviours)
                 {
-                    if (behaviour != null) behaviour.enabled = !locked;
+                    if (behaviour == null) continue;
+                    behaviour.enabled = !locked;
+                    if (!locked && behaviour is PlayerInput pi)
+                    {
+                        pi.ActivateInput();
+                    }
                 }
             }
             else
@@ -187,7 +193,11 @@ namespace Utsuru.Capture
                     var fpc = player.GetComponent<FirstPersonController>();
                     if (fpc != null) fpc.enabled = !locked;
                     var pi = player.GetComponent<PlayerInput>();
-                    if (pi != null) pi.enabled = !locked;
+                    if (pi != null)
+                    {
+                        pi.enabled = !locked;
+                        if (!locked) pi.ActivateInput();
+                    }
                 }
             }
 

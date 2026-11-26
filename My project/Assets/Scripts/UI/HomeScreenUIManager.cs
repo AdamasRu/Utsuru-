@@ -55,6 +55,7 @@ namespace Utsuru.UI
         private Coroutine guestPopupCoroutine;
         private GameObject currentActivePanel;
         private bool initialEntrancePlayed;
+        private bool isStartingGameplay;
 
         private void Awake()
         {
@@ -73,6 +74,7 @@ namespace Utsuru.UI
                 return;
             }
 
+            isStartingGameplay = false;
             SetupListeners();
 
             Time.timeScale = 1f;
@@ -366,6 +368,9 @@ namespace Utsuru.UI
         /// </summary>
         public void OnPlayButtonClicked()
         {
+            if (isStartingGameplay || UISceneFader.IsTransitioning) return;
+            isStartingGameplay = true;
+
             Debug.Log($"[HomeScreenUIManager] Play button clicked. Loading scene '{gameplaySceneName}'...");
             try
             {
@@ -374,6 +379,7 @@ namespace Utsuru.UI
             }
             catch (System.Exception ex)
             {
+                isStartingGameplay = false;
                 Debug.LogError($"[HomeScreenUIManager] Error loading scene '{gameplaySceneName}': {ex.Message}");
             }
         }
@@ -398,6 +404,9 @@ namespace Utsuru.UI
         /// </summary>
         public void OnLogoutButtonClicked()
         {
+            if (isStartingGameplay || UISceneFader.IsTransitioning) return;
+            isStartingGameplay = true;
+
             Debug.Log("[HomeScreenUIManager] Logout button clicked.");
             if (Utsuru.Authentication.SessionManager.Instance != null)
             {

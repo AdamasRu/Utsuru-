@@ -35,8 +35,16 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+        IsPaused = false;
+        isNavigatingToMenu = false;
+        Time.timeScale = 1f;
 
         if (pausePanel != null)
         {
@@ -62,6 +70,11 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Start()
     {
+        if (!IsPaused)
+        {
+            Time.timeScale = 1f;
+        }
+
         if (playerController == null)
             playerController = Object.FindAnyObjectByType<FirstPersonController>();
 

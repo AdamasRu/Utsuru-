@@ -67,6 +67,10 @@ namespace Utsuru.DictionaryUI
             {
                 thumbnailImage.texture = thumbnail;
                 thumbnailImage.gameObject.SetActive(thumbnail != null);
+                if (thumbnail != null)
+                {
+                    DictionaryPolaroidCardUI.ApplyAspectCropUV(thumbnailImage, thumbnail);
+                }
             }
 
             // Status Badge
