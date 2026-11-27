@@ -145,32 +145,32 @@ namespace Utsuru.Store
             StoreThemeDefinition def = StoreThemeCatalog.GetById(themeId);
             if (def == null)
             {
-                message = "Tema tidak ditemukan.";
+                message = "Theme not found.";
                 return false;
             }
 
             if (def.isDefaultFree || IsOwned(def.id))
             {
-                message = $"{def.displayName} sudah dimiliki.";
+                message = $"{def.displayName} is already owned.";
                 return false;
             }
 
             var pointsSystem = PointRewardSystem.Instance ?? FindFirstObjectByType<PointRewardSystem>();
             if (pointsSystem == null)
             {
-                message = "Sistem poin belum siap.";
+                message = "Point system is not ready yet.";
                 return false;
             }
 
             if (pointsSystem.Points < def.pricePoints)
             {
-                message = "Poin tidak mencukupi untuk membeli tema ini!";
+                message = "Not enough points to purchase this theme!";
                 return false;
             }
 
             if (!pointsSystem.SpendPoints(def.pricePoints))
             {
-                message = "Poin tidak mencukupi untuk membeli tema ini!";
+                message = "Not enough points to purchase this theme!";
                 return false;
             }
 
@@ -188,7 +188,7 @@ namespace Utsuru.Store
             Debug.Log($"[StoreThemeManager] Tema '{def.displayName}' berhasil dibeli (-{def.pricePoints} poin).");
 
             OnThemesUpdated?.Invoke();
-            message = $"{def.displayName} berhasil dibeli! Terapkan melalui tab Theme di Dictionary.";
+            message = $"{def.displayName} purchased! Apply it from the Theme tab in your Dictionary.";
             return true;
         }
 
@@ -200,13 +200,13 @@ namespace Utsuru.Store
             StoreThemeDefinition def = StoreThemeCatalog.GetById(themeId);
             if (def == null)
             {
-                message = "Tema tidak ditemukan.";
+                message = "Theme not found.";
                 return false;
             }
 
             if (!IsOwned(def.id))
             {
-                message = "Tema belum dimiliki. Beli terlebih dahulu di Store (tekan F).";
+                message = "Theme not owned yet. Purchase it first in the Store (press T).";
                 return false;
             }
 
@@ -217,7 +217,7 @@ namespace Utsuru.Store
             OnActiveThemeChanged?.Invoke(def.id);
             OnThemesUpdated?.Invoke();
 
-            message = $"{def.displayName} berhasil diterapkan!";
+            message = $"{def.displayName} applied!";
             return true;
         }
 

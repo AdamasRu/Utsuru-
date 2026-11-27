@@ -409,7 +409,7 @@ namespace Utsuru.DictionaryUI
             }
             else if (statusNoticeText != null)
             {
-                statusNoticeText.text = "Tekan F di eksplorasi untuk membuka Store!";
+                statusNoticeText.text = "Press T while exploring to open the Store!";
             }
         }
     }

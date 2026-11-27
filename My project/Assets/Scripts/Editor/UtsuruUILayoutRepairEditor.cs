@@ -754,7 +754,7 @@ namespace Utsuru.DictionaryUI.Editor
     {
         private const string DayShowcaseScenePath = "Assets/Japanese_Street/Scenes/Day_Showcase.unity";
         private const string PrefKey = "Utsuru_HudButtonsSetup_Version";
-        private const string TargetVersion = "v9_20261127";
+        private const string TargetVersion = "v10_20261127";
 
         private const string AchievementBtnAssetPath = "Assets/UI/achievment btn.png";
         private const string StoreBtnAssetPath = "Assets/UI/Store/store button.png";
@@ -1058,10 +1058,12 @@ namespace Utsuru.DictionaryUI.Editor
             const string prefabPath = "Assets/Resources/Audio/BGMManager.prefab";
             const string menuClipPath = "Assets/Sounds/BGM_MainMenu.mp3";
             const string gameClipPath = "Assets/Sounds/BGM_InGame.mp3";
+            const string nightClipPath = "Assets/Sounds/snoozybeats-warm-breeze-lofi-music-chill-lofi-344259.mp3";
 
             AudioClip menuClip = AssetDatabase.LoadAssetAtPath<AudioClip>(menuClipPath);
             AudioClip gameClip = AssetDatabase.LoadAssetAtPath<AudioClip>(gameClipPath);
-            if (menuClip == null && gameClip == null) return;
+            AudioClip nightClip = AssetDatabase.LoadAssetAtPath<AudioClip>(nightClipPath);
+            if (menuClip == null && gameClip == null && nightClip == null) return;
 
             GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             if (existingPrefab != null)
@@ -1071,7 +1073,8 @@ namespace Utsuru.DictionaryUI.Editor
                 {
                     SerializedObject exSo = new SerializedObject(existingMgr);
                     if (exSo.FindProperty("mainMenuBgm")?.objectReferenceValue == menuClip &&
-                        exSo.FindProperty("inGameBgm")?.objectReferenceValue == gameClip)
+                        exSo.FindProperty("inGameBgm")?.objectReferenceValue == gameClip &&
+                        exSo.FindProperty("inGameNightBgm")?.objectReferenceValue == nightClip)
                     {
                         return;
                     }
@@ -1091,7 +1094,7 @@ namespace Utsuru.DictionaryUI.Editor
             srcA.ignoreListenerPause = srcB.ignoreListenerPause = true;
 
             var mgr = tempGo.AddComponent<Utsuru.Sound.BGMManager>();
-            mgr.SetBgmClipsEditor(menuClip, gameClip, srcA, srcB);
+            mgr.SetBgmClipsEditor(menuClip, gameClip, nightClip, srcA, srcB);
 
             PrefabUtility.SaveAsPrefabAsset(tempGo, prefabPath);
             Object.DestroyImmediate(tempGo);

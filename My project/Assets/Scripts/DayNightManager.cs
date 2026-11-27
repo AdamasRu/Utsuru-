@@ -123,6 +123,9 @@ public class DayNightManager : MonoBehaviour
 
         // 3. Perbarui pencahayaan global URP
         DynamicGI.UpdateEnvironment();
+
+        // 4. Sinkronkan BGM Siang / Malam
+        Utsuru.Sound.BGMManager.Instance?.SetTimeOfDay(isNight);
     }
 
     private void SetPlayerControl(bool isEnabled)

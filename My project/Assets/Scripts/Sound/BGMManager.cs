@@ -22,6 +22,7 @@ namespace Utsuru.Sound
         [Header("Audio Clips BGM")]
         [SerializeField] private AudioClip mainMenuBgm;
         [SerializeField] private AudioClip inGameBgm;
+        [SerializeField] private AudioClip inGameNightBgm;
 
         [Header("Pengaturan Volume & Crossfade")]
         [Tooltip("Volume maksimum BGM saat slider Music Settings di posisi 100% (dijaga lembut).")]
@@ -36,11 +37,13 @@ namespace Utsuru.Sound
         private AudioSource activeSource;
         private AudioClip currentTargetClip;
         private float currentActiveFactor = 1f;
+        private bool isNightActive = false;
         private Coroutine fadeCoroutine;
 
         private const string PrefabResourcePath = "Audio/BGMManager";
         private const string MainMenuClipPath = "Assets/Sounds/BGM_MainMenu.mp3";
         private const string InGameClipPath = "Assets/Sounds/BGM_InGame.mp3";
+        private const string InGameNightClipPath = "Assets/Sounds/snoozybeats-warm-breeze-lofi-music-chill-lofi-344259.mp3";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoInitializeAtRuntime()
@@ -111,11 +114,42 @@ namespace Utsuru.Sound
             UpdateBgmForScene(scene.name);
         }
 
-        public void UpdateBgmForScene(string sceneName)
+        public void SetTimeOfDay(bool isNight)
+        {
+            isNightActive = isNight;
+            UpdateBgmForScene(SceneManager.GetActiveScene().name, syncFromDayNightManager: false);
+        }
+
+        public void UpdateBgmForScene(string sceneName, bool syncFromDayNightManager = true)
         {
             EnsureSourcesAndClips();
 
-            AudioClip desiredClip = IsMainMenuScene(sceneName) ? mainMenuBgm : inGameBgm;
+            AudioClip desiredClip;
+            if (IsMainMenuScene(sceneName))
+            {
+                isNightActive = false;
+                desiredClip = mainMenuBgm;
+            }
+            else
+            {
+                if (syncFromDayNightManager)
+                {
+                    var dnm = FindFirstObjectByType<DayNightManager>();
+                    if (dnm != null)
+                    {
+                        isNightActive = (dnm.currentState == TimeOfDayState.Night);
+                    }
+                    else
+                    {
+                        isNightActive = !string.IsNullOrEmpty(sceneName) &&
+                            (sceneName.IndexOf("Night", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                             sceneName.IndexOf("Nigth", StringComparison.OrdinalIgnoreCase) >= 0);
+                    }
+                }
+
+                desiredClip = (isNightActive && inGameNightBgm != null) ? inGameNightBgm : inGameBgm;
+            }
+
             if (desiredClip == null) return;
 
             if (currentTargetClip == desiredClip && activeSource != null && activeSource.isPlaying)
@@ -256,6 +290,8 @@ namespace Utsuru.Sound
                 mainMenuBgm = AssetDatabase.LoadAssetAtPath<AudioClip>(MainMenuClipPath);
             if (inGameBgm == null)
                 inGameBgm = AssetDatabase.LoadAssetAtPath<AudioClip>(InGameClipPath);
+            if (inGameNightBgm == null)
+                inGameNightBgm = AssetDatabase.LoadAssetAtPath<AudioClip>(InGameNightClipPath);
 #endif
         }
 
@@ -269,10 +305,11 @@ namespace Utsuru.Sound
         }
 
 #if UNITY_EDITOR
-        public void SetBgmClipsEditor(AudioClip menuClip, AudioClip gameClip, AudioSource srcA, AudioSource srcB)
+        public void SetBgmClipsEditor(AudioClip menuClip, AudioClip gameClip, AudioClip nightClip, AudioSource srcA, AudioSource srcB)
         {
             mainMenuBgm = menuClip;
             inGameBgm = gameClip;
+            inGameNightBgm = nightClip;
             primarySource = srcA;
             secondarySource = srcB;
         }

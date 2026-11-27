@@ -242,6 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Utsuru.Sound.BGMManager
   mainMenuBgm: {fileID: 8300000, guid: eb393fd33f4184d4a8cc72b0fdb9f565, type: 3}
   inGameBgm: {fileID: 8300000, guid: 4fd162aa4bdfd7644a3d293c25df2584, type: 3}
+  inGameNightBgm: {fileID: 8300000, guid: 999d44749116bb4478217b5ae297cbca, type: 3}
   maxBgmVolume: 0.22
   crossfadeDuration: 1
   primarySource: {fileID: 3460726545844786385}

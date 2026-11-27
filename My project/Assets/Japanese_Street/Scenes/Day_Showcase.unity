@@ -119883,7 +119883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 271f547a8105d974d8acad3dfb9cfde2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightManager
-  durationInMinutes: 3
+  durationInMinutes: 0.3
   currentState: 0
   cutsceneUI: {fileID: 1276468270}
   playerController: {fileID: 4496757404770652536}
@@ -220042,7 +220042,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneTransitionUI
   canvasGroup: {fileID: 1276468272}
   transitionText: {fileID: 1904167474}
-  toNightText: NIght Time...
+  toNightText: Night Time...
   toDayText: Day Time...
   fadeDuration: 0.8
   holdDuration: 1
