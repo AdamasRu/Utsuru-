@@ -25,6 +25,7 @@ namespace Utsuru.Capture.Editor
             var cardBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Card Background.png");
             var bannerNewSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Banner New Kotoba.png");
             var audioBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Audio Button.png");
+            var playCircleSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/PlayCircleButton.png");
             var sentenceBoxSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Sentence Box.png");
             var catPillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Category Pill.png");
             var saveWithPointsSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/Save Button.png");
@@ -134,7 +135,7 @@ namespace Utsuru.Capture.Editor
             kanjiRt.anchorMin = new Vector2(0.5f, 1f);
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
             kanjiRt.pivot = new Vector2(0f, 1f);
-            kanjiRt.sizeDelta = new Vector2(430f, 32f);
+            kanjiRt.sizeDelta = new Vector2(265f, 32f);
             kanjiRt.anchoredPosition = new Vector2(-215f, -320f);
             var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
             kanjiTmp.font = zenFont;
@@ -142,6 +143,21 @@ namespace Utsuru.Capture.Editor
             kanjiTmp.fontSize = 24;
             kanjiTmp.fontStyle = FontStyles.Bold;
             kanjiTmp.color = new Color(0.12f, 0.1f, 0.08f);
+
+            // 1.3.3.1 Tombol Audio Vocabulary baru di samping Kanji (道)
+            // Cukup berupa ikon tombol play bulat biru (tanpa tulisan/label), ukuran & tampilan selaras dengan tombol audio
+            GameObject vocabAudioBtnGo = CreateUIObject("BtnVocabAudio", cardGo.transform);
+            RectTransform vocabAudioBtnRt = vocabAudioBtnGo.GetComponent<RectTransform>();
+            vocabAudioBtnRt.anchorMin = new Vector2(0.5f, 1f);
+            vocabAudioBtnRt.anchorMax = new Vector2(0.5f, 1f);
+            vocabAudioBtnRt.pivot = new Vector2(0f, 0.5f);
+            vocabAudioBtnRt.sizeDelta = new Vector2(34f, 34f);
+            // Posisi awal di samping kanan "道 (みち)" (x: -215f + ~110f = -105f, y: -336f)
+            vocabAudioBtnRt.anchoredPosition = new Vector2(-105f, -336f);
+            var vocabAudioBtnImg = vocabAudioBtnGo.AddComponent<Image>();
+            vocabAudioBtnImg.sprite = playCircleSprite;
+            vocabAudioBtnImg.preserveAspect = true;
+            var vocabAudioBtn = vocabAudioBtnGo.AddComponent<Button>();
 
             // Romaji & Meaning
             GameObject romajiGo = CreateUIObject("RomajiLabel", cardGo.transform);
@@ -166,12 +182,6 @@ namespace Utsuru.Capture.Editor
             sentenceBoxRt.anchoredPosition = new Vector2(0f, -382f);
             var sentenceBoxImg = sentenceBoxGo.AddComponent<Image>();
             sentenceBoxImg.sprite = sentenceBoxSprite;
-            var sentenceBoxBtn = sentenceBoxGo.AddComponent<Button>();
-            ColorBlock sColors = sentenceBoxBtn.colors;
-            sColors.normalColor = Color.white;
-            sColors.highlightedColor = new Color(0.92f, 0.95f, 1f, 1f);
-            sColors.pressedColor = new Color(0.82f, 0.88f, 0.98f, 1f);
-            sentenceBoxBtn.colors = sColors;
 
             // Sentence Japanese text
             GameObject sentJpGo = CreateUIObject("JapaneseSentence", sentenceBoxGo.transform);
@@ -299,8 +309,9 @@ namespace Utsuru.Capture.Editor
             so.FindProperty("kanjiLabel").objectReferenceValue = kanjiTmp;
             so.FindProperty("romajiLabel").objectReferenceValue = romajiTmp;
             so.FindProperty("audioButton").objectReferenceValue = audioBtn;
-            so.FindProperty("vocabAudioButton").objectReferenceValue = audioBtn;
-            so.FindProperty("sentenceAudioButton").objectReferenceValue = sentenceBoxBtn;
+            so.FindProperty("sentenceAudioButton").objectReferenceValue = audioBtn;
+            so.FindProperty("vocabAudioButton").objectReferenceValue = vocabAudioBtn;
+            so.FindProperty("vocabPlayCircleSprite").objectReferenceValue = playCircleSprite;
             so.FindProperty("saveButton").objectReferenceValue = saveBtn;
             so.FindProperty("closeButton").objectReferenceValue = retakeBtn;
             so.FindProperty("retakeButton").objectReferenceValue = retakeBtn;

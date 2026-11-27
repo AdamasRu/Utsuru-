@@ -114,49 +114,112 @@ namespace Utsuru.Capture.Editor
 
             Debug.Log("[AudioTest] PASSED 4: DictionaryVocabDetailModal berhasil memuat kedua audio secara terpisah.");
 
-            // 5. Test Button interactable state
+            // 5. Test Button interactable state & isolasi tombol
             GameObject tempGo = new GameObject("TestAudioButtonsUI");
             var cardUI = tempGo.AddComponent<PolaroidCardUI>();
 
-            var vBtnGo = new GameObject("VBtn", typeof(RectTransform), typeof(Button));
+            var vBtnGo = new GameObject("BtnVocabAudio", typeof(RectTransform), typeof(Button));
             vBtnGo.transform.SetParent(tempGo.transform);
             var vBtn = vBtnGo.GetComponent<Button>();
 
-            var sBtnGo = new GameObject("SBtn", typeof(RectTransform), typeof(Button));
+            var sBtnGo = new GameObject("BtnAudio", typeof(RectTransform), typeof(Button));
             sBtnGo.transform.SetParent(tempGo.transform);
             var sBtn = sBtnGo.GetComponent<Button>();
 
             var so = new SerializedObject(cardUI);
             so.FindProperty("vocabAudioButton").objectReferenceValue = vBtn;
             so.FindProperty("sentenceAudioButton").objectReferenceValue = sBtn;
+            so.FindProperty("audioButton").objectReferenceValue = sBtn;
             so.ApplyModifiedProperties();
 
-            // Uji saat audio tidak tersedia
-            var noAudioVocab = new VocabularyEntry { audioPath = "", sentenceAudioPath = "" };
-            cardUI.UpdateAudioButtonsState(noAudioVocab);
-
-            Debug.Log($"[AudioTest] 5. State Tanpa Audio: VocabBtn.interactable={vBtn.interactable}, SentenceBtn.interactable={sBtn.interactable}");
-
-            if (vBtn.interactable || sBtn.interactable)
+            // 5a. Uji saat audio kosakata kosong (audioPath = "")
+            cardUI.UpdateAudioButtonsState(vocabNoVocab);
+            Debug.Log($"[AudioTest] 5a. Vocab Kosong: VocabBtn.interactable={vBtn.interactable}, SentenceBtn.interactable={sBtn.interactable}");
+            if (vBtn.interactable)
             {
-                Debug.LogError("[AudioTest] GAGAL: Tombol harus nonaktif (interactable = false) saat audio tidak tersedia!");
+                Debug.LogError("[AudioTest] GAGAL: Tombol kosakata harus dinonaktifkan saat audioPath kosong!");
                 UnityEngine.Object.DestroyImmediate(tempGo);
                 return;
             }
+            if (!sBtn.interactable)
+            {
+                Debug.LogError("[AudioTest] GAGAL: Tombol Example Sentence TIDAK BOLEH terganggu saat audioPath kosong!");
+                UnityEngine.Object.DestroyImmediate(tempGo);
+                return;
+            }
+            Debug.Log("[AudioTest] PASSED 5a: Tombol kosakata nonaktif tanpa mengganggu tombol Example Sentence.");
 
-            // Uji saat audio tersedia
+            // 5b. Uji saat audio contoh kalimat kosong (sentenceAudioPath = "")
+            cardUI.UpdateAudioButtonsState(vocabNoSentence);
+            Debug.Log($"[AudioTest] 5b. Sentence Kosong: VocabBtn.interactable={vBtn.interactable}, SentenceBtn.interactable={sBtn.interactable}");
+            if (!vBtn.interactable)
+            {
+                Debug.LogError("[AudioTest] GAGAL: Tombol kosakata TIDAK BOLEH terganggu saat sentenceAudioPath kosong!");
+                UnityEngine.Object.DestroyImmediate(tempGo);
+                return;
+            }
+            if (sBtn.interactable)
+            {
+                Debug.LogError("[AudioTest] GAGAL: Tombol kalimat harus dinonaktifkan saat sentenceAudioPath kosong!");
+                UnityEngine.Object.DestroyImmediate(tempGo);
+                return;
+            }
+            Debug.Log("[AudioTest] PASSED 5b: Tombol kalimat nonaktif tanpa mengganggu tombol kosakata.");
+
+            // 5c. Uji saat kedua audio tersedia
             cardUI.UpdateAudioButtonsState(vocabBicycle);
-
-            Debug.Log($"[AudioTest] 5. State Dengan Audio: VocabBtn.interactable={vBtn.interactable}, SentenceBtn.interactable={sBtn.interactable}");
-
+            Debug.Log($"[AudioTest] 5c. Kedua Audio Ada: VocabBtn.interactable={vBtn.interactable}, SentenceBtn.interactable={sBtn.interactable}");
             if (!vBtn.interactable || !sBtn.interactable)
             {
-                Debug.LogError("[AudioTest] GAGAL: Tombol harus aktif (interactable = true) saat audio tersedia!");
+                Debug.LogError("[AudioTest] GAGAL: Kedua tombol harus aktif saat kedua audio tersedia!");
                 UnityEngine.Object.DestroyImmediate(tempGo);
                 return;
             }
+            Debug.Log("[AudioTest] PASSED 5c: Kedua tombol aktif secara independen.");
 
             UnityEngine.Object.DestroyImmediate(tempGo);
+
+            // 6. Uji UI Tombol Kosakata Bulat Biru (tanpa label/teks anak)
+            GameObject testUiRoot = new GameObject("TestVocabCircleUI");
+            var testCardUI = testUiRoot.AddComponent<PolaroidCardUI>();
+            var kanjiGo = new GameObject("KanjiLabel", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
+            kanjiGo.transform.SetParent(testUiRoot.transform);
+            var kTmp = kanjiGo.GetComponent<TMPro.TextMeshProUGUI>();
+            kTmp.text = "道";
+            var kRt = kanjiGo.GetComponent<RectTransform>();
+            kRt.sizeDelta = new Vector2(265f, 32f);
+            kRt.anchoredPosition = new Vector2(-215f, -320f);
+
+            var soTest = new SerializedObject(testCardUI);
+            soTest.FindProperty("kanjiLabel").objectReferenceValue = kTmp;
+            soTest.ApplyModifiedProperties();
+
+            testCardUI.EnsureVocabAudioButton();
+            Transform vocabBtnTr = testUiRoot.transform.Find("BtnVocabAudio");
+            if (vocabBtnTr == null)
+            {
+                Debug.LogError("[AudioTest] GAGAL: BtnVocabAudio tidak terbentuk!");
+                UnityEngine.Object.DestroyImmediate(testUiRoot);
+                return;
+            }
+
+            if (vocabBtnTr.childCount > 0)
+            {
+                Debug.LogError("[AudioTest] GAGAL: Tombol kosakata tidak boleh memiliki teks atau label anak!");
+                UnityEngine.Object.DestroyImmediate(testUiRoot);
+                return;
+            }
+
+            var btnRt = vocabBtnTr.GetComponent<RectTransform>();
+            if (btnRt.sizeDelta.x > 50f || btnRt.sizeDelta.y > 50f)
+            {
+                Debug.LogError($"[AudioTest] GAGAL: Ukuran tombol kosakata ({btnRt.sizeDelta}) bukan berupa ikon tombol bulat kecil!");
+                UnityEngine.Object.DestroyImmediate(testUiRoot);
+                return;
+            }
+
+            Debug.Log($"[AudioTest] PASSED 6: Tombol kosakata bulat biru terverifikasi tanpa label anak, ukuran: {btnRt.sizeDelta}");
+            UnityEngine.Object.DestroyImmediate(testUiRoot);
 
             Debug.Log("==========================================================");
             Debug.Log("[AudioTest] SEMUA PENGUJIAN SELESAI DENGAN STATUS: BERHASIL!");

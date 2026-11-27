@@ -31,10 +31,12 @@ namespace Utsuru.Capture
         [SerializeField] private AudioSource audioSource;
 
         [Header("Audio UI (Vocabulary & Example Sentence)")]
-        [Tooltip("Tombol audio pelafalan kosakata bahasa Jepang (dari audioPath/audioClip).")]
+        [Tooltip("Tombol audio baru di samping Kanji (道) untuk pelafalan kosakata bahasa Jepang (dari audioPath/audioClip).")]
         [SerializeField] private Button vocabAudioButton;
-        [Tooltip("Tombol audio contoh kalimat bahasa Jepang (dari sentenceAudioPath/sentenceAudioClip).")]
+        [Tooltip("Tombol audio yang sudah ada di bawah Example Sentence untuk contoh kalimat (dari sentenceAudioPath/sentenceAudioClip).")]
         [SerializeField] private Button sentenceAudioButton;
+        [Tooltip("Sprite tombol play bulat biru untuk audio kosakata.")]
+        [SerializeField] private Sprite vocabPlayCircleSprite;
 
         [Header("Banner & Badges")]
         [SerializeField] private Image bannerImage;
@@ -62,8 +64,8 @@ namespace Utsuru.Capture
         [SerializeField] private Button backdropCloseButton;
 
         [Header("Pesan (DPPL UI-04)")]
-        [SerializeField] private string audioErrorMessage = "File audio kosakata tidak tersedia untuk kata ini.";
-        [SerializeField] private string sentenceAudioErrorMessage = "File audio contoh kalimat tidak tersedia.";
+        [SerializeField] private string audioErrorMessage = "Audio kosakata tidak tersedia";
+        [SerializeField] private string sentenceAudioErrorMessage = "Audio contoh kalimat tidak tersedia";
         [SerializeField] private string savedMessage = "Foto berhasil disimpan ke album Dictionary!";
 
         /// <summary>Dipicu saat BtnSimpan ditekan, setelah foto masuk ke Dictionary.</summary>
@@ -82,17 +84,22 @@ namespace Utsuru.Capture
             if (panelRoot != null) panelRoot.SetActive(false);
 
             EnsureAudioSource();
+            EnsureVocabAudioButton();
 
-            // Hubungkan tombol audio kosakata
-            var vBtn = vocabAudioButton != null ? vocabAudioButton : audioButton;
-            if (vBtn != null)
+            // Hubungkan tombol audio kosakata baru di samping Kanji
+            if (vocabAudioButton != null)
             {
-                vBtn.onClick.RemoveListener(PlayVocabAudio);
-                vBtn.onClick.AddListener(PlayVocabAudio);
+                vocabAudioButton.onClick.RemoveListener(PlayVocabAudio);
+                vocabAudioButton.onClick.AddListener(PlayVocabAudio);
             }
 
-            // Hubungkan tombol audio contoh kalimat
-            SetupSentenceAudioButton();
+            // Balikin tombol audio yang sudah ada di bawah Example Sentence agar memutar audio Example Sentence
+            var sBtn = sentenceAudioButton != null ? sentenceAudioButton : audioButton;
+            if (sBtn != null)
+            {
+                sBtn.onClick.RemoveListener(PlaySentenceAudio);
+                sBtn.onClick.AddListener(PlaySentenceAudio);
+            }
 
             if (saveButton != null) saveButton.onClick.AddListener(Save);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
@@ -172,6 +179,8 @@ namespace Utsuru.Capture
                         : $"{vocab.japaneseWord} <size=70%><color=#8C7063>({vocab.kana})</color></size>";
                 }
                 else kanjiLabel.text = "-";
+
+                UpdateVocabAudioButtonPosition();
             }
 
             if (romajiLabel != null)
@@ -272,40 +281,98 @@ namespace Utsuru.Capture
             audioSource.spatialBlend = 0f; // 2D UI Sound
         }
 
-        private void SetupSentenceAudioButton()
+        /// <summary>
+        /// Memastikan tombol audio Vocabulary di samping Kanji (道) tersedia berupa ikon tombol play bulat biru
+        /// sesuai referensi gambar tanpa tulisan atau label di bawah/samping tombol.
+        /// </summary>
+        public void EnsureVocabAudioButton()
         {
-            if (sentenceAudioButton == null)
-            {
-                Transform sentenceBoxTransform = null;
-                if (exampleJapaneseLabel != null && exampleJapaneseLabel.transform.parent != null)
-                {
-                    sentenceBoxTransform = exampleJapaneseLabel.transform.parent;
-                }
-                else if (panelRoot != null)
-                {
-                    sentenceBoxTransform = panelRoot.transform.Find("Card/SentenceBox");
-                }
+            Transform cardTransform = null;
+            if (kanjiLabel != null) cardTransform = kanjiLabel.transform.parent;
+            else if (panelRoot != null) cardTransform = panelRoot.transform.Find("Card");
 
-                if (sentenceBoxTransform != null)
-                {
-                    sentenceAudioButton = sentenceBoxTransform.GetComponent<Button>();
-                    if (sentenceAudioButton == null)
-                    {
-                        sentenceAudioButton = sentenceBoxTransform.gameObject.AddComponent<Button>();
-                        ColorBlock colors = sentenceAudioButton.colors;
-                        colors.normalColor = Color.white;
-                        colors.highlightedColor = new Color(0.92f, 0.95f, 1f, 1f);
-                        colors.pressedColor = new Color(0.82f, 0.88f, 0.98f, 1f);
-                        sentenceAudioButton.colors = colors;
-                    }
-                }
+            if (cardTransform == null) return;
+
+            Transform existing = cardTransform.Find("BtnVocabAudio");
+            GameObject vocabBtnGo;
+            if (existing != null)
+            {
+                vocabBtnGo = existing.gameObject;
+            }
+            else
+            {
+                vocabBtnGo = new GameObject("BtnVocabAudio", typeof(RectTransform));
+                vocabBtnGo.transform.SetParent(cardTransform, false);
+                vocabBtnGo.layer = cardTransform.gameObject.layer;
             }
 
-            if (sentenceAudioButton != null)
+            // Pastikan tidak ada label/teks anak di tombol (cukup berupa ikon tombol play bulat biru)
+            for (int i = vocabBtnGo.transform.childCount - 1; i >= 0; i--)
             {
-                sentenceAudioButton.onClick.RemoveListener(PlaySentenceAudio);
-                sentenceAudioButton.onClick.AddListener(PlaySentenceAudio);
+                var child = vocabBtnGo.transform.GetChild(i).gameObject;
+                if (Application.isPlaying) Destroy(child);
+                else DestroyImmediate(child);
             }
+
+            RectTransform rt = vocabBtnGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 1f);
+            rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.sizeDelta = new Vector2(34f, 34f);
+
+            var img = vocabBtnGo.GetComponent<Image>() ?? vocabBtnGo.AddComponent<Image>();
+            if (vocabPlayCircleSprite == null)
+            {
+#if UNITY_EDITOR
+                vocabPlayCircleSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Polaroid/PlayCircleButton.png");
+#endif
+            }
+            if (vocabPlayCircleSprite != null)
+            {
+                img.sprite = vocabPlayCircleSprite;
+            }
+            img.color = Color.white;
+            img.preserveAspect = true;
+
+            vocabAudioButton = vocabBtnGo.GetComponent<Button>() ?? vocabBtnGo.AddComponent<Button>();
+            if (audioButton != null)
+            {
+                vocabAudioButton.colors = audioButton.colors;
+                vocabAudioButton.transition = audioButton.transition;
+            }
+
+            vocabAudioButton.onClick.RemoveListener(PlayVocabAudio);
+            vocabAudioButton.onClick.AddListener(PlayVocabAudio);
+
+            UpdateVocabAudioButtonPosition();
+        }
+
+        /// <summary>
+        /// Menempatkan tombol audio kosakata tepat di samping kanan teks Kanji secara dinamis.
+        /// </summary>
+        public void UpdateVocabAudioButtonPosition()
+        {
+            if (vocabAudioButton == null || kanjiLabel == null) return;
+
+            kanjiLabel.ForceMeshUpdate();
+
+            RectTransform kanjiRt = kanjiLabel.rectTransform;
+            RectTransform btnRt = vocabAudioButton.GetComponent<RectTransform>();
+
+            float kanjiWidth = kanjiLabel.preferredWidth;
+            float spacing = 10f;
+            float startX = kanjiRt.anchoredPosition.x;
+            float newX = startX + kanjiWidth + spacing;
+
+            // Batasi agar tidak melebihi margin kanan kartu (215f - lebar tombol)
+            float maxX = 215f - btnRt.sizeDelta.x;
+            if (newX > maxX) newX = maxX;
+
+            btnRt.anchorMin = kanjiRt.anchorMin;
+            btnRt.anchorMax = kanjiRt.anchorMax;
+            btnRt.pivot = new Vector2(0f, 0.5f);
+            float centerY = kanjiRt.anchoredPosition.y - (kanjiRt.sizeDelta.y * 0.5f);
+            btnRt.anchoredPosition = new Vector2(newX, centerY);
         }
 
         /// <summary>
@@ -314,27 +381,29 @@ namespace Utsuru.Capture
         /// </summary>
         public void UpdateAudioButtonsState(VocabularyEntry vocab)
         {
+            // Status tombol kosakata baru di samping Kanji
             AudioClip vocabClip = ResolveVocabAudio(vocab);
             bool hasVocab = vocabClip != null;
-
-            var vBtn = vocabAudioButton != null ? vocabAudioButton : audioButton;
-            if (vBtn != null)
+            if (vocabAudioButton != null)
             {
-                vBtn.interactable = hasVocab;
+                vocabAudioButton.interactable = hasVocab;
             }
 
+            // Status tombol contoh kalimat di bawah Example Sentence
             AudioClip sentenceClip = ResolveSentenceAudio(vocab);
             bool hasSentence = sentenceClip != null;
-
-            if (sentenceAudioButton != null)
+            var sBtn = sentenceAudioButton != null ? sentenceAudioButton : audioButton;
+            if (sBtn != null)
             {
-                sentenceAudioButton.interactable = hasSentence;
+                sBtn.interactable = hasSentence;
             }
         }
 
         /// <summary>
-        /// Memutar audio pelafalan kosakata bahasa Jepang menggunakan audioPath / audioClip secara terpisah.
-        /// Jika audioPath kosong, null, atau tidak ditemukan, tombol dinonaktifkan dan feedback ditampilkan tanpa error.
+        /// Memutar audio pelafalan kosakata bahasa Jepang dari audioPath / audioClip secara terpisah.
+        /// Tombol baru di samping Kanji (道).
+        /// Jika audioPath kosong, null, atau gagal dimuat, tampilkan feedback "Audio kosakata tidak tersedia"
+        /// tanpa mengganggu tombol Example Sentence.
         /// </summary>
         public void PlayVocabAudio()
         {
@@ -349,8 +418,7 @@ namespace Utsuru.Capture
 
             if (clip == null)
             {
-                var vBtn = vocabAudioButton != null ? vocabAudioButton : audioButton;
-                if (vBtn != null) vBtn.interactable = false;
+                if (vocabAudioButton != null) vocabAudioButton.interactable = false;
 
                 ShowAudioFeedback(audioErrorMessage);
                 return;
@@ -358,12 +426,12 @@ namespace Utsuru.Capture
 
             EnsureAudioSource();
             audioSource.PlayOneShot(clip);
-            Debug.Log($"[PolaroidCardUI] Memutar audio kosakata: '{vocab.DisplayJapanese}' ({clip.name})");
+            Debug.Log($"[PolaroidCardUI] Memutar audio kosakata (samping Kanji): '{vocab.DisplayJapanese}' ({clip.name})");
         }
 
         /// <summary>
-        /// Memutar audio contoh kalimat secara terpisah menggunakan sentenceAudioPath / sentenceAudioClip.
-        /// Jika audio kalimat tidak tersedia, tombol dinonaktifkan dan feedback ditampilkan tanpa error.
+        /// Memutar audio contoh kalimat dari sentenceAudioPath / sentenceAudioClip secara terpisah.
+        /// Tombol yang sudah ada di bawah Example Sentence.
         /// </summary>
         public void PlaySentenceAudio()
         {
@@ -378,7 +446,8 @@ namespace Utsuru.Capture
 
             if (clip == null)
             {
-                if (sentenceAudioButton != null) sentenceAudioButton.interactable = false;
+                var sBtn = sentenceAudioButton != null ? sentenceAudioButton : audioButton;
+                if (sBtn != null) sBtn.interactable = false;
 
                 ShowAudioFeedback(sentenceAudioErrorMessage);
                 return;
@@ -386,15 +455,15 @@ namespace Utsuru.Capture
 
             EnsureAudioSource();
             audioSource.PlayOneShot(clip);
-            Debug.Log($"[PolaroidCardUI] Memutar audio contoh kalimat: '{clip.name}'");
+            Debug.Log($"[PolaroidCardUI] Memutar audio contoh kalimat (tombol bawah): '{clip.name}'");
         }
 
         /// <summary>
-        /// Mempertahankan kompatibilitas untuk event listener lama atau referensi Inspector tombol utama.
+        /// Mempertahankan fungsi tombol audio bawaan di bawah Example Sentence agar kembali memutar audio Example Sentence seperti semula.
         /// </summary>
         public void PlayAudio()
         {
-            PlayVocabAudio();
+            PlaySentenceAudio();
         }
 
         private void ShowAudioFeedback(string message)
