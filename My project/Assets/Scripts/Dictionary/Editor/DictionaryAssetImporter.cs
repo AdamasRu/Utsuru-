@@ -40,6 +40,15 @@ namespace Utsuru.DictionaryUI.Editor
                         importer.mipmapEnabled = false;
                         changed = true;
                     }
+                    if (path.EndsWith("Book_CoverCounterPill.png", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        Vector4 targetBorder = new Vector4(44f, 20f, 44f, 20f);
+                        if (importer.spriteBorder != targetBorder)
+                        {
+                            importer.spriteBorder = targetBorder;
+                            changed = true;
+                        }
+                    }
 
                     if (changed)
                     {

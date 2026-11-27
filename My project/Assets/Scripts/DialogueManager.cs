@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using StarterAssets;
+using Utsuru.Capture;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -196,7 +197,19 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         UpdateSettingsVisibility();
 
-        // Kunci gerakan pemain & munculkan kursor
+        // Kunci seluruh gerakan, look, dan Mode Kamera; hanya izinkan interaksi kursor & dialog
+        if (CameraCaptureSystem.Instance != null)
+            CameraCaptureSystem.Instance.InputBlocked = true;
+
+        var cameraMode = CameraModeController.Instance ?? FindFirstObjectByType<CameraModeController>();
+        if (cameraMode != null)
+        {
+            if (cameraMode.IsCameraActive)
+                cameraMode.SetCameraActive(false);
+
+            cameraMode.SetControlsLocked(true);
+        }
+
         if (playerController != null) playerController.enabled = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -688,10 +701,22 @@ public class DialogueManager : MonoBehaviour
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (scoreBadgePill != null) scoreBadgePill.SetActive(false);
 
-        // Kembalikan kontrol player & kunci kursor kembali
+        // Kembalikan kontrol player & kunci kursor kembali (kecuali ada modal lain yang terbuka)
+        if (CameraCaptureSystem.Instance != null)
+            CameraCaptureSystem.Instance.InputBlocked = false;
+
+        var cameraMode = CameraModeController.Instance ?? FindFirstObjectByType<CameraModeController>();
+        if (cameraMode != null)
+        {
+            cameraMode.SetControlsLocked(false);
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         if (playerController != null) playerController.enabled = true;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void ClearChoices()

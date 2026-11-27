@@ -162,86 +162,94 @@ namespace Utsuru.DictionaryUI
                 }
             }
 
-            // 3. Teks Kosakata Depan (Max 2 baris rapi: Kanji di atas, Furigana di bawah bila panjang)
+            // 3. Teks Kosakata Depan (Satu baris tegas Kanji + kana di samping, disusul romaji • arti berwarna biru)
             if (info != null && info.vocabulary != null)
             {
                 var v = info.vocabulary;
                 if (kanjiLabel != null)
                 {
-                    kanjiLabel.fontSize = 19f;
+                    kanjiLabel.fontStyle = FontStyles.Normal;
+                    kanjiLabel.fontSize = 24f;
                     kanjiLabel.enableAutoSizing = true;
-                    kanjiLabel.fontSizeMin = 12f;
-                    kanjiLabel.fontSizeMax = 19f;
-                    kanjiLabel.lineSpacing = -6f;
+                    kanjiLabel.fontSizeMin = 10.5f;
+                    kanjiLabel.fontSizeMax = 24f;
+                    kanjiLabel.lineSpacing = 0f;
                     kanjiLabel.textWrappingMode = TextWrappingModes.NoWrap;
                     kanjiLabel.overflowMode = TextOverflowModes.Ellipsis;
-                    kanjiLabel.alignment = TextAlignmentOptions.TopLeft;
+                    kanjiLabel.alignment = TextAlignmentOptions.MidlineLeft;
+                    kanjiLabel.color = new Color(0.12f, 0.10f, 0.10f, 1f);
                     if (string.IsNullOrEmpty(v.kana))
                     {
                         kanjiLabel.text = $"<b>{v.japaneseWord}</b>";
                     }
                     else
                     {
-                        int totalLen = (v.japaneseWord?.Length ?? 0) + v.kana.Length;
-                        kanjiLabel.text = totalLen > 6
-                            ? $"<b>{v.japaneseWord}</b>\n<size=72%><color=#5B5056>({v.kana})</color></size>"
-                            : $"<b>{v.japaneseWord}</b> <size=74%><color=#5B5056>({v.kana})</color></size>";
+                        kanjiLabel.text = $"<b>{v.japaneseWord}</b> <size=64%><color=#5B5555>({v.kana})</color></size>";
                     }
                 }
 
                 if (meaningLabel != null)
                 {
-                    meaningLabel.fontSize = 14f;
+                    meaningLabel.fontStyle = FontStyles.Bold;
+                    meaningLabel.fontSize = 14.5f;
                     meaningLabel.enableAutoSizing = true;
-                    meaningLabel.fontSizeMin = 10.5f;
-                    meaningLabel.fontSizeMax = 14f;
-                    meaningLabel.lineSpacing = -4f;
+                    meaningLabel.fontSizeMin = 9.5f;
+                    meaningLabel.fontSizeMax = 14.5f;
+                    meaningLabel.lineSpacing = 2f;
                     meaningLabel.textWrappingMode = TextWrappingModes.Normal;
                     meaningLabel.overflowMode = TextOverflowModes.Ellipsis;
                     meaningLabel.alignment = TextAlignmentOptions.TopLeft;
-                    string romajiText = string.IsNullOrEmpty(v.romaji) ? "" : v.romaji;
-                    string englishText = string.IsNullOrEmpty(v.translation) ? (info.objectName ?? "") : v.translation;
-                    meaningLabel.text = $"{romajiText} <color=#94A3B8>•</color> {englishText}";
+                    meaningLabel.color = new Color(0.118f, 0.388f, 0.914f, 1f);
+                    string romajiText = string.IsNullOrEmpty(v.romaji) ? "" : v.romaji.Trim().ToLowerInvariant();
+                    string englishText = string.IsNullOrEmpty(v.translation) ? (info.objectName ?? "") : v.translation.Trim();
+                    meaningLabel.text = string.IsNullOrEmpty(romajiText)
+                        ? englishText
+                        : $"{romajiText} \u2022 {englishText}";
                 }
 
-                // Sisi Belakang (Contoh Kalimat)
+                // Sisi Belakang (Contoh Kalimat JP rata kiri atas + Romaji & arti miring di bawahnya)
                 if (backKanjiLabel != null)
                 {
-                    backKanjiLabel.fontSize = 23f;
-                    backKanjiLabel.enableAutoSizing = true;
-                    backKanjiLabel.fontSizeMin = 15f;
-                    backKanjiLabel.fontSizeMax = 23f;
-                    backKanjiLabel.textWrappingMode = TextWrappingModes.NoWrap;
-                    backKanjiLabel.overflowMode = TextOverflowModes.Ellipsis;
-                    backKanjiLabel.alignment = TextAlignmentOptions.Center;
-                    backKanjiLabel.text = $"<b>{v.japaneseWord}</b>";
+                    backKanjiLabel.gameObject.SetActive(false);
                 }
+
+                if (backFace != null)
+                {
+                    Transform flipHint = backFace.transform.Find("BackFlipHint");
+                    if (flipHint != null) flipHint.gameObject.SetActive(false);
+                }
+
+                SplitExampleSentence(v.exampleSentence, v.romaji, v.translation, out string jpPart, out string enPart);
 
                 if (backSentenceJapanese != null)
                 {
-                    backSentenceJapanese.fontSize = 15.5f;
+                    backSentenceJapanese.fontStyle = FontStyles.Normal;
+                    backSentenceJapanese.fontSize = 18.5f;
                     backSentenceJapanese.enableAutoSizing = true;
-                    backSentenceJapanese.fontSizeMin = 10.5f;
-                    backSentenceJapanese.fontSizeMax = 15.5f;
-                    backSentenceJapanese.lineSpacing = -2f;
+                    backSentenceJapanese.fontSizeMin = 12f;
+                    backSentenceJapanese.fontSizeMax = 18.5f;
+                    backSentenceJapanese.lineSpacing = 6f;
                     backSentenceJapanese.textWrappingMode = TextWrappingModes.Normal;
                     backSentenceJapanese.overflowMode = TextOverflowModes.Ellipsis;
-                    backSentenceJapanese.alignment = TextAlignmentOptions.Center;
-                    backSentenceJapanese.text = string.IsNullOrEmpty(v.exampleSentence) ? "「例文準備中」" : v.exampleSentence;
+                    backSentenceJapanese.alignment = TextAlignmentOptions.TopLeft;
+                    backSentenceJapanese.color = new Color(0.14f, 0.12f, 0.12f, 1f);
+                    backSentenceJapanese.text = jpPart;
                 }
 
                 if (backSentenceEnglish != null)
                 {
-                    backSentenceEnglish.fontSize = 13.5f;
+                    backSentenceEnglish.fontStyle = FontStyles.Italic;
+                    backSentenceEnglish.fontSize = 14.5f;
                     backSentenceEnglish.enableAutoSizing = true;
-                    backSentenceEnglish.fontSizeMin = 9.5f;
-                    backSentenceEnglish.fontSizeMax = 13.5f;
-                    backSentenceEnglish.lineSpacing = -2f;
+                    backSentenceEnglish.fontSizeMin = 10f;
+                    backSentenceEnglish.fontSizeMax = 14.5f;
+                    backSentenceEnglish.lineSpacing = 4f;
                     backSentenceEnglish.textWrappingMode = TextWrappingModes.Normal;
                     backSentenceEnglish.overflowMode = TextOverflowModes.Ellipsis;
-                    backSentenceEnglish.alignment = TextAlignmentOptions.Center;
-                    string english = string.IsNullOrEmpty(v.translation) ? "" : $"Meaning: {v.translation}";
-                    backSentenceEnglish.text = english;
+                    backSentenceEnglish.alignment = TextAlignmentOptions.TopLeft;
+                    backSentenceEnglish.color = new Color(0.36f, 0.34f, 0.33f, 1f);
+                    backSentenceEnglish.text = enPart;
+                    backSentenceEnglish.gameObject.SetActive(!string.IsNullOrEmpty(enPart));
                 }
 
                 if (backSentenceJapanese != null && backSentenceJapanese.transform.parent is RectTransform sentRt)
@@ -251,8 +259,18 @@ namespace Utsuru.DictionaryUI
             }
             else
             {
-                if (kanjiLabel != null) kanjiLabel.text = record != null ? record.objectName : "—";
-                if (meaningLabel != null) meaningLabel.text = "Photo";
+                if (kanjiLabel != null)
+                {
+                    kanjiLabel.color = new Color(0.12f, 0.10f, 0.10f, 1f);
+                    kanjiLabel.text = record != null ? $"<b>{record.objectName}</b>" : "—";
+                }
+                if (meaningLabel != null)
+                {
+                    meaningLabel.fontStyle = FontStyles.Bold;
+                    meaningLabel.color = new Color(0.118f, 0.388f, 0.914f, 1f);
+                    meaningLabel.text = "Photo";
+                }
+                if (backKanjiLabel != null) backKanjiLabel.gameObject.SetActive(false);
             }
 
             // 4. Update status tombol Like & Favorite
@@ -302,6 +320,37 @@ namespace Utsuru.DictionaryUI
             {
                 favoriteIcon.sprite = isFav ? favoriteOnSprite : favoriteOffSprite;
             }
+        }
+
+        private static void SplitExampleSentence(string raw, string romaji, string translation, out string jpPart, out string enPart)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                jpPart = "「例文準備中」";
+                string fallbackRomaji = string.IsNullOrWhiteSpace(romaji) ? "" : romaji.Trim().ToLowerInvariant();
+                string fallbackMeaning = string.IsNullOrWhiteSpace(translation) ? "" : translation.Trim();
+                enPart = (!string.IsNullOrEmpty(fallbackRomaji) && !string.IsNullOrEmpty(fallbackMeaning))
+                    ? $"({fallbackRomaji}) — {fallbackMeaning}"
+                    : fallbackMeaning;
+                return;
+            }
+
+            string normalized = raw.Replace("\r\n", "\n").Trim();
+            int newlineIdx = normalized.IndexOf('\n');
+            if (newlineIdx >= 0)
+            {
+                jpPart = normalized.Substring(0, newlineIdx).Trim();
+                enPart = normalized.Substring(newlineIdx + 1).Trim();
+                if (string.IsNullOrEmpty(jpPart)) jpPart = "「例文準備中」";
+                return;
+            }
+
+            jpPart = normalized;
+            string r = string.IsNullOrWhiteSpace(romaji) ? "" : romaji.Trim().ToLowerInvariant();
+            string m = string.IsNullOrWhiteSpace(translation) ? "" : translation.Trim();
+            enPart = (!string.IsNullOrEmpty(r) && !string.IsNullOrEmpty(m))
+                ? $"({r}) — {m}"
+                : m;
         }
 
         public static void ApplyAspectCropUV(RawImage rawImg, Texture tex)

@@ -93,8 +93,12 @@ public class PauseMenuManager : MonoBehaviour
 
         if (escPressed)
         {
-            // Jangan buka pause menu jika pemain sedang berada di dalam dialog NPC atau menu Achievements
-            if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+            // Jangan buka pause menu jika pemain sedang berada di dalam dialog NPC, baru menutup dialog/polaroid frame ini, atau menu lain terbuka
+            if (DialogueManager.Instance != null &&
+                (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame))
+                return;
+
+            if (Utsuru.Capture.PolaroidCardUI.WasAnyClosedThisFrame)
                 return;
 
             if (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
@@ -189,17 +193,21 @@ public class PauseMenuManager : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        if (playerController != null)
-            playerController.enabled = true;
-
-        if (playerInputs != null)
+        bool dialogueActive = DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive;
+        if (!dialogueActive)
         {
-            playerInputs.cursorLocked = true;
-            playerInputs.cursorInputForLook = true;
-        }
+            if (playerController != null)
+                playerController.enabled = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+            if (playerInputs != null)
+            {
+                playerInputs.cursorLocked = true;
+                playerInputs.cursorInputForLook = true;
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
         if (pausePanel != null && pausePanel.activeSelf)
         {

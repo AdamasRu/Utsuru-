@@ -1,5 +1,8 @@
 using System;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Utsuru.Capture
 {
@@ -75,6 +78,24 @@ namespace Utsuru.Capture
             if (dictionary == null) dictionary = GetComponent<DictionaryManager>() ?? FindFirstObjectByType<DictionaryManager>();
             if (points == null) points = GetComponent<PointRewardSystem>() ?? FindFirstObjectByType<PointRewardSystem>();
             if (hud == null) hud = GetComponent<CameraHUD>() ?? FindFirstObjectByType<CameraHUD>();
+
+            EnsureAudioReady();
+        }
+
+        private void EnsureAudioReady()
+        {
+            if (sfxSource == null)
+            {
+                sfxSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+            }
+            sfxSource.playOnAwake = false;
+            sfxSource.loop = false;
+            sfxSource.ignoreListenerPause = true;
+
+#if UNITY_EDITOR
+            if (shutterClip == null)
+                shutterClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/shutter.mp3");
+#endif
         }
 
         private void OnDestroy()
@@ -128,6 +149,7 @@ namespace Utsuru.Capture
             Texture2D snapshot = TakeSnapshot();
             detector.SuppressHighlight(false);
 
+            EnsureAudioReady();
             if (sfxSource != null && shutterClip != null) sfxSource.PlayOneShot(shutterClip);
             if (hud != null)
             {

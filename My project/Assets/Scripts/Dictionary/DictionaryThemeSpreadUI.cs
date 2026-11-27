@@ -363,7 +363,7 @@ namespace Utsuru.DictionaryUI
                 storeHintButton.gameObject.SetActive(!isOwned);
                 if (!isOwned && storeHintButtonText != null)
                 {
-                    storeHintButtonText.text = $"Open Store (F)  •  {def.pricePoints} Points";
+                    storeHintButtonText.text = $"Open Store (T)  •  {def.pricePoints} Points";
                 }
             }
 

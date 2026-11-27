@@ -168,7 +168,7 @@ namespace Utsuru.DictionaryUI.Editor
                 tabRt.anchorMax = new Vector2(1f, 1f);
                 tabRt.pivot = new Vector2(0.5f, 1f);
                 tabRt.sizeDelta = new Vector2(86f, 149f);
-                tabRt.anchoredPosition = new Vector2(-470f, -29.36f);
+                tabRt.anchoredPosition = new Vector2(-380f, -29.36f);
                 tabRt.localScale = new Vector3(0.9f, 0.9f, 1f);
 
                 Image tabImg = tabGo.AddComponent<Image>();
@@ -303,7 +303,7 @@ namespace Utsuru.DictionaryUI.Editor
             storeHintTmp.fontStyle = FontStyles.Bold;
             storeHintTmp.alignment = TextAlignmentOptions.Center;
             storeHintTmp.color = Color.white;
-            storeHintTmp.text = "Open Store (F)  •  300 Points";
+            storeHintTmp.text = "Open Store (T)  •  300 Points";
             storeHintGo.SetActive(false);
 
             // E. Feedback Notice di bawah tombol

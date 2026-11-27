@@ -73,9 +73,6 @@ namespace Utsuru.DictionaryUI
                 }
             }
 
-            if (translationFooterText != null)
-                AddAnimSubItem(translationFooterText.gameObject);
-
             isSubItemsCached = true;
         }
 
@@ -540,21 +537,11 @@ namespace Utsuru.DictionaryUI
                 }
             }
 
-            // 4. Footer Terjemahan
+            // 4. Footer Terjemahan selalu disembunyikan agar tidak bertabrakan dengan kartu pilihan
             if (slot.translationFooterText != null)
             {
-                if (q.isAnswered && q.isCorrect)
-                {
-                    string jp = q.targetObject != null && q.targetObject.vocabulary != null ? q.targetObject.vocabulary.japaneseWord : "";
-                    string tr = q.targetObject != null && q.targetObject.vocabulary != null ? q.targetObject.vocabulary.translation : "";
-                    slot.translationFooterText.text = $"{jp} = {tr}";
-                    slot.translationFooterText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    slot.translationFooterText.text = "";
-                    slot.translationFooterText.gameObject.SetActive(false);
-                }
+                slot.translationFooterText.text = "";
+                slot.translationFooterText.gameObject.SetActive(false);
             }
         }
 
@@ -601,14 +588,6 @@ namespace Utsuru.DictionaryUI
                 correctAnswersCount++;
                 SetButtonVisual(slot, choiceIndex, cardCorrectSprite, showCheckmark: true);
 
-                if (slot.translationFooterText != null)
-                {
-                    string jp = q.targetObject != null && q.targetObject.vocabulary != null ? q.targetObject.vocabulary.japaneseWord : "";
-                    string tr = q.targetObject != null && q.targetObject.vocabulary != null ? q.targetObject.vocabulary.translation : "";
-                    slot.translationFooterText.text = $"{jp} = {tr}";
-                    slot.translationFooterText.gameObject.SetActive(true);
-                }
-
                 if (pointRewardSystem != null)
                 {
                     pointRewardSystem.EarnPoints(PointsPerCorrectAnswer);
@@ -618,12 +597,12 @@ namespace Utsuru.DictionaryUI
             {
                 // Jawaban salah
                 SetButtonVisual(slot, choiceIndex, cardWrongSprite, showCheckmark: false);
+            }
 
-                if (slot.translationFooterText != null)
-                {
-                    slot.translationFooterText.text = "";
-                    slot.translationFooterText.gameObject.SetActive(false);
-                }
+            if (slot.translationFooterText != null)
+            {
+                slot.translationFooterText.text = "";
+                slot.translationFooterText.gameObject.SetActive(false);
             }
 
             UpdateNavigationButtons();
@@ -827,20 +806,30 @@ namespace Utsuru.DictionaryUI
                 resultScoreText.text = $"Score: {correctAnswersCount} / {total}";
 
             if (resultPercentageText != null)
+            {
                 resultPercentageText.text = $"{Mathf.RoundToInt(percent)}%";
+                if (percent >= 75f)
+                    resultPercentageText.color = new Color(0.11f, 0.64f, 0.35f, 1f);
+                else if (percent >= 50f)
+                    resultPercentageText.color = new Color(0.85f, 0.51f, 0.09f, 1f);
+                else
+                    resultPercentageText.color = new Color(0.79f, 0.32f, 0.24f, 1f);
+            }
 
             if (resultTitleText != null)
             {
-                if (percent >= 100f) resultTitleText.text = "Outstanding! / 完璧です！";
-                else if (percent >= 80f) resultTitleText.text = "Great Job! / よくできました！";
-                else if (percent >= 60f) resultTitleText.text = "Good Effort! / 頑張りました！";
-                else resultTitleText.text = "Keep Practicing! / もう一度挑戦！";
+                if (percent >= 100f) resultTitleText.text = "Outstanding!\n完璧です！";
+                else if (percent >= 80f) resultTitleText.text = "Great Job!\nよくできました！";
+                else if (percent >= 60f) resultTitleText.text = "Good Effort!\n頑張りました！";
+                else resultTitleText.text = "Keep Practicing!\nもう一度挑戦！";
             }
 
             if (resultPointsRewardText != null)
             {
                 int pointsEarned = correctAnswersCount * PointsPerCorrectAnswer;
-                resultPointsRewardText.text = $"+{pointsEarned} Points Awarded!";
+                resultPointsRewardText.text = pointsEarned > 0
+                    ? $"+{pointsEarned} Points Awarded!"
+                    : "0 Points Awarded";
             }
 
             if (bookSpread != null)

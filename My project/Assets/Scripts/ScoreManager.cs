@@ -11,7 +11,9 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
 
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private GameObject scoreBadgeRoot;
     [SerializeField] private PointRewardSystem pointRewardSystem;
+    [SerializeField] private string scoreFormat = "{0}";
 
     // Nilai fallback in-memory hanya jika PointRewardSystem tidak ditemukan sama sekali di scene
     private int fallbackScore = 0;
@@ -34,6 +36,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         FindAndBindPointSystem();
+        ResolveScoreBadgeRoot();
     }
 
     private void Start()
@@ -42,7 +45,19 @@ public class ScoreManager : MonoBehaviour
         {
             FindAndBindPointSystem();
         }
+        ResolveScoreBadgeRoot();
+        if (scoreBadgeRoot != null && !scoreBadgeRoot.activeSelf)
+        {
+            scoreBadgeRoot.SetActive(true);
+        }
         UpdateScoreUI();
+    }
+
+    private void ResolveScoreBadgeRoot()
+    {
+        if (scoreBadgeRoot != null || scoreText == null) return;
+        Transform parent = scoreText.transform.parent;
+        scoreBadgeRoot = (parent != null && parent.name == "ScoreBadge") ? parent.gameObject : scoreText.gameObject;
     }
 
     private void OnDestroy()
@@ -127,7 +142,9 @@ public class ScoreManager : MonoBehaviour
         int displayValue = scoreToDisplay >= 0 ? scoreToDisplay : currentScore;
         if (scoreText != null)
         {
-            scoreText.text = "Skor: " + displayValue;
+            scoreText.text = string.IsNullOrEmpty(scoreFormat)
+                ? displayValue.ToString()
+                : string.Format(scoreFormat, displayValue);
         }
     }
 }

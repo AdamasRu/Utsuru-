@@ -1,9 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
 using StarterAssets;
 using UnityEngine.InputSystem;
+using Utsuru.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Utsuru.Capture
 {
@@ -52,6 +57,19 @@ namespace Utsuru.Capture
         [Tooltip("Hint dictionary di HUD yang disembunyikan saat mode kamera aktif.")]
         [SerializeField] private GameObject dictionaryHintObject;
 
+        [Tooltip("Hint achievement di HUD yang disembunyikan saat mode kamera aktif.")]
+        [SerializeField] private GameObject achievementHintObject;
+
+        [Tooltip("Hint store di HUD yang disembunyikan saat mode kamera aktif.")]
+        [SerializeField] private GameObject storeHintObject;
+
+        [Header("Audio Kamera")]
+        [SerializeField] private AudioSource sfxSource;
+        [SerializeField] private AudioClip openCameraClip;
+        [SerializeField] private AudioClip closeCameraClip;
+        [Range(0f, 1f)]
+        [SerializeField] private float cameraSfxVolume = 1f;
+
         public float MinFov => minFov;
         public float MaxFov => maxFov;
         public float DefaultFov => defaultFov;
@@ -68,6 +86,9 @@ namespace Utsuru.Capture
         private float currentCameraFov = 30f;
         private bool controlsLocked;
         private bool isUpdatingSliderInternally;
+        private bool viewfinderHiddenForOverlay;
+        private Coroutine viewfinderFadeCoroutine;
+        private const float ViewfinderFadeDuration = 0.16f;
 
         private void Awake()
         {
@@ -108,7 +129,11 @@ namespace Utsuru.Capture
             {
                 viewfinderRoot = GameObject.Find("ViewfinderRoot");
             }
-            if (viewfinderRoot != null) viewfinderRoot.SetActive(false);
+            if (viewfinderRoot != null)
+            {
+                UIPanelAnimator.EnsureCanvasGroup(viewfinderRoot);
+                SetViewfinderVisible(false, instant: true);
+            }
 
             if (cameraHintObject == null)
             {
@@ -117,6 +142,14 @@ namespace Utsuru.Capture
             if (dictionaryHintObject == null)
             {
                 dictionaryHintObject = GameObject.Find("DictionaryHint") ?? GameObject.Find("Camera Mechanic/DictionaryHint");
+            }
+            if (achievementHintObject == null)
+            {
+                achievementHintObject = GameObject.Find("AchievementHint") ?? GameObject.Find("Camera Mechanic/AchievementHint");
+            }
+            if (storeHintObject == null)
+            {
+                storeHintObject = GameObject.Find("StoreHint") ?? GameObject.Find("Camera Mechanic/StoreHint");
             }
 
             // Auto-populate playerControlBehaviours jika belum di-assign di Inspector
@@ -141,6 +174,8 @@ namespace Utsuru.Capture
                 zoomSlider.onValueChanged.AddListener(OnSliderValueChanged);
                 SyncSliderWithFov(currentCameraFov);
             }
+
+            EnsureAudioReady();
         }
 
         private void Start()
@@ -161,10 +196,13 @@ namespace Utsuru.Capture
 
         private void Update()
         {
-            if (!controlsLocked && CameraInput.ToggleCameraPressed())
+            bool dialogueBlocking = DialogueManager.Instance != null &&
+                                    (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame);
+
+            if (!controlsLocked && !dialogueBlocking && !PolaroidCardUI.WasAnyClosedThisFrame && CameraInput.ToggleCameraPressed())
                 SetCameraActive(!IsCameraActive);
 
-            if (IsCameraActive && !controlsLocked)
+            if (IsCameraActive && !controlsLocked && !dialogueBlocking)
             {
                 float scroll = CameraInput.GetMouseScrollDelta();
                 if (Mathf.Abs(scroll) > 0.01f)
@@ -249,6 +287,7 @@ namespace Utsuru.Capture
             if (controlsLocked || IsCameraActive == active) return;
 
             IsCameraActive = active;
+            viewfinderHiddenForOverlay = false;
             if (active)
             {
                 currentCameraFov = defaultFov;
@@ -256,18 +295,109 @@ namespace Utsuru.Capture
             }
 
             Debug.Log($"[CameraModeController] Mode OpenCamera {(active ? "AKTIF" : "MATI")}");
-            if (viewfinderRoot != null) viewfinderRoot.SetActive(active);
+            PlayCameraSfx(active ? openCameraClip : closeCameraClip);
+            SetViewfinderVisible(active, instant: false);
             if (cameraHintObject != null) cameraHintObject.SetActive(!active);
             if (dictionaryHintObject != null) dictionaryHintObject.SetActive(!active);
+            if (achievementHintObject != null) achievementHintObject.SetActive(!active);
+            if (storeHintObject != null) storeHintObject.SetActive(!active);
             OnCameraModeChanged?.Invoke(active);
         }
 
         /// <summary>
-        /// Dipakai popup Polaroid dan Dictionary: mengunci kontrol player dan memunculkan kursor,
+        /// Menyembunyikan / memunculkan kembali ViewfinderRoot secara halus saat overlay (mis. Polaroid) tampil.
+        /// Status Mode Kamera tetap terjaga agar zoom FOV dan hint HUD tidak berubah.
+        /// </summary>
+        public void SetViewfinderOverlayHidden(bool hidden)
+        {
+            viewfinderHiddenForOverlay = hidden;
+            if (!IsCameraActive) return;
+
+            SetViewfinderVisible(!hidden, instant: false);
+        }
+
+        private void SetViewfinderVisible(bool visible, bool instant)
+        {
+            if (viewfinderFadeCoroutine != null)
+            {
+                StopCoroutine(viewfinderFadeCoroutine);
+                viewfinderFadeCoroutine = null;
+            }
+
+            if (viewfinderRoot == null) return;
+
+            CanvasGroup cg = UIPanelAnimator.EnsureCanvasGroup(viewfinderRoot);
+            if (instant || !gameObject.activeInHierarchy)
+            {
+                cg.alpha = visible ? 1f : 0f;
+                cg.interactable = visible;
+                cg.blocksRaycasts = visible;
+                viewfinderRoot.SetActive(visible);
+                return;
+            }
+
+            viewfinderFadeCoroutine = StartCoroutine(FadeViewfinderRoutine(visible));
+        }
+
+        private IEnumerator FadeViewfinderRoutine(bool show)
+        {
+            CanvasGroup cg = UIPanelAnimator.EnsureCanvasGroup(viewfinderRoot);
+            float startAlpha = viewfinderRoot.activeSelf ? cg.alpha : 0f;
+            float targetAlpha = show ? 1f : 0f;
+
+            if (show)
+            {
+                if (!viewfinderRoot.activeSelf)
+                {
+                    cg.alpha = 0f;
+                    startAlpha = 0f;
+                    viewfinderRoot.SetActive(true);
+                }
+                cg.interactable = true;
+                cg.blocksRaycasts = true;
+            }
+            else
+            {
+                cg.interactable = false;
+                cg.blocksRaycasts = false;
+                if (!viewfinderRoot.activeSelf)
+                {
+                    cg.alpha = 0f;
+                    viewfinderFadeCoroutine = null;
+                    yield break;
+                }
+            }
+
+            float elapsed = 0f;
+            while (elapsed < ViewfinderFadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / ViewfinderFadeDuration);
+                float smooth = t * t * (3f - 2f * t);
+                cg.alpha = Mathf.Lerp(startAlpha, targetAlpha, smooth);
+                yield return null;
+            }
+
+            cg.alpha = targetAlpha;
+            if (!show)
+            {
+                viewfinderRoot.SetActive(false);
+            }
+
+            viewfinderFadeCoroutine = null;
+        }
+
+        /// <summary>
+        /// Dipakai popup Polaroid, Dictionary, dan Dialog NPC: mengunci kontrol player dan memunculkan kursor,
         /// lalu mengembalikannya saat popup/menu ditutup.
         /// </summary>
         public void SetControlsLocked(bool locked)
         {
+            if (!locked && DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+            {
+                locked = true;
+            }
+
             controlsLocked = locked;
 
             // 1. Nonaktifkan / aktifkan behaviour kontrol player (FirstPersonController, PlayerInput)
@@ -316,6 +446,34 @@ namespace Utsuru.Capture
             // 3. Atur visibilitas kursor
             Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = locked;
+        }
+
+        private void EnsureAudioReady()
+        {
+            if (sfxSource == null)
+            {
+                sfxSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+            }
+            sfxSource.playOnAwake = false;
+            sfxSource.loop = false;
+            sfxSource.ignoreListenerPause = true;
+
+#if UNITY_EDITOR
+            if (openCameraClip == null)
+                openCameraClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/open.wav");
+            if (closeCameraClip == null)
+                closeCameraClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/close.wav");
+#endif
+        }
+
+        private void PlayCameraSfx(AudioClip clip)
+        {
+            if (clip == null) return;
+            EnsureAudioReady();
+            if (sfxSource != null)
+            {
+                sfxSource.PlayOneShot(clip, cameraSfxVolume);
+            }
         }
     }
 }

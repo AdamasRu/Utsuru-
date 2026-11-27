@@ -14,7 +14,6 @@ namespace Utsuru.DictionaryUI
         Quiz,
         Hiragana,
         Module,
-        Flashcard,
         Theme
     }
 
@@ -40,6 +39,9 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private TextMeshProUGUI leftPageNumberText;
         [SerializeField] private TextMeshProUGUI rightPageNumberText;
 
+        [Header("Indikator Progres Sampul (Objek Ditemukan / Total)")]
+        [SerializeField] private TextMeshProUGUI discoveryProgressText;
+
         [Header("Panels & Placeholder")]
         [SerializeField] private GameObject photoSpreadRoot;
         [SerializeField] private GameObject placeholderRoot;
@@ -59,10 +61,6 @@ namespace Utsuru.DictionaryUI
         [Header("Quiz Spread (Tab Quiz Challenge)")]
         [SerializeField] private GameObject quizSpreadRoot;
         [SerializeField] private DictionaryQuizSpreadUI quizSpreadUI;
-
-        [Header("Flashcard Spread (Tab Flashcard)")]
-        [SerializeField] private GameObject flashcardSpreadRoot;
-        [SerializeField] private DictionaryFlashcardSpreadUI flashcardSpreadUI;
 
         [Header("Theme Spread (Tab Theme)")]
         [SerializeField] private GameObject themeSpreadRoot;
@@ -105,6 +103,8 @@ namespace Utsuru.DictionaryUI
             if (dictionaryManager == null)
                 dictionaryManager = FindFirstObjectByType<DictionaryManager>();
 
+            ResolveDiscoveryProgressText();
+
             if (leftPageClickArea != null)
                 leftPageClickArea.onClick.AddListener(PreviousSpread);
 
@@ -112,8 +112,34 @@ namespace Utsuru.DictionaryUI
                 rightPageClickArea.onClick.AddListener(NextSpread);
         }
 
+        private void OnEnable()
+        {
+            if (dictionaryManager == null)
+                dictionaryManager = FindFirstObjectByType<DictionaryManager>();
+
+            if (dictionaryManager != null)
+            {
+                dictionaryManager.OnDictionaryChanged -= RefreshDiscoveryProgress;
+                dictionaryManager.OnDictionaryChanged += RefreshDiscoveryProgress;
+            }
+
+            RefreshDiscoveryProgress();
+        }
+
+        private void OnDisable()
+        {
+            if (dictionaryManager != null)
+            {
+                dictionaryManager.OnDictionaryChanged -= RefreshDiscoveryProgress;
+            }
+        }
+
         private void OnDestroy()
         {
+            if (dictionaryManager != null)
+            {
+                dictionaryManager.OnDictionaryChanged -= RefreshDiscoveryProgress;
+            }
             ClearTextureCache();
         }
 
@@ -328,13 +354,14 @@ namespace Utsuru.DictionaryUI
             if (dictionaryManager == null)
                 dictionaryManager = FindFirstObjectByType<DictionaryManager>();
 
+            RefreshDiscoveryProgress();
+
             // 1. Tangani mode Hiragana / Katakana (Tabel Native Lengkap Hiragana & Katakana)
             if (currentMode == DictionaryBookMode.Hiragana)
             {
                 if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
-                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
                 if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
@@ -351,7 +378,6 @@ namespace Utsuru.DictionaryUI
                 if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
-                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
                 if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
@@ -370,7 +396,6 @@ namespace Utsuru.DictionaryUI
                 if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
-                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
                 if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
@@ -395,38 +420,13 @@ namespace Utsuru.DictionaryUI
                 return;
             }
 
-            // 4. Tangani mode Flashcard (PBO CRUD Study Deck)
-            if (currentMode == DictionaryBookMode.Flashcard)
-            {
-                if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
-                if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
-                if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
-                if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
-                if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
-                if (placeholderRoot != null) placeholderRoot.SetActive(false);
-                if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
-
-                if (flashcardSpreadRoot != null)
-                {
-                    flashcardSpreadRoot.SetActive(true);
-                    if (flashcardSpreadUI != null) flashcardSpreadUI.StartOrRefresh();
-                }
-
-                if (leftPageNumberText != null) leftPageNumberText.text = "FLASHCARD";
-                if (rightPageNumberText != null) rightPageNumberText.text = "STUDY";
-                if (leftPageClickArea != null) leftPageClickArea.interactable = false;
-                if (rightPageClickArea != null) rightPageClickArea.interactable = false;
-                return;
-            }
-
-            // 4b. Tangani mode Theme (Preview & Apply Tema Buku per Slide)
+            // 4. Tangani mode Theme (Preview & Apply Tema Buku per Slide)
             if (currentMode == DictionaryBookMode.Theme)
             {
                 if (photoSpreadRoot != null) photoSpreadRoot.SetActive(false);
                 if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
                 if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
                 if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
-                if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
                 if (placeholderRoot != null) placeholderRoot.SetActive(false);
                 if (emptyStateNotice != null) emptyStateNotice.SetActive(false);
 
@@ -452,7 +452,6 @@ namespace Utsuru.DictionaryUI
             if (kanaSpreadRoot != null) kanaSpreadRoot.SetActive(false);
             if (moduleSpreadRoot != null) moduleSpreadRoot.SetActive(false);
             if (quizSpreadRoot != null) quizSpreadRoot.SetActive(false);
-            if (flashcardSpreadRoot != null) flashcardSpreadRoot.SetActive(false);
             if (themeSpreadRoot != null) themeSpreadRoot.SetActive(false);
             if (photoSpreadRoot != null) photoSpreadRoot.SetActive(true);
             if (placeholderRoot != null) placeholderRoot.SetActive(false);
@@ -556,7 +555,7 @@ namespace Utsuru.DictionaryUI
         private int GetTotalSpreads()
         {
             if (currentMode == DictionaryBookMode.Hiragana) return 3;
-            if (currentMode == DictionaryBookMode.Module || currentMode == DictionaryBookMode.Quiz || currentMode == DictionaryBookMode.Flashcard || currentMode == DictionaryBookMode.Theme) return 1;
+            if (currentMode == DictionaryBookMode.Module || currentMode == DictionaryBookMode.Quiz || currentMode == DictionaryBookMode.Theme) return 1;
             int total = currentFilteredPhotos.Count;
             return Mathf.Max(1, Mathf.CeilToInt(total / 8f));
         }
@@ -666,6 +665,81 @@ namespace Utsuru.DictionaryUI
                 loadedTextures[relativePath] = tex;
             }
             return tex;
+        }
+
+        private void ResolveDiscoveryProgressText()
+        {
+            if (discoveryProgressText != null || transform.parent == null) return;
+            Transform badgeText = transform.parent.Find("DiscoveryProgressBadge/ProgressCountText");
+            if (badgeText != null)
+            {
+                discoveryProgressText = badgeText.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        public void RefreshDiscoveryProgress()
+        {
+            ResolveDiscoveryProgressText();
+            if (discoveryProgressText == null) return;
+
+            int totalCount = 72;
+            int discoveredCount = 0;
+
+            if (dictionaryManager != null)
+            {
+                IReadOnlyList<ObjectInfo> catalog = dictionaryManager.GetAllCatalogObjects();
+                HashSet<string> validCatalogIds = null;
+                if (catalog != null && catalog.Count > 0)
+                {
+                    validCatalogIds = new HashSet<string>(System.StringComparer.Ordinal);
+                    for (int i = 0; i < catalog.Count; i++)
+                    {
+                        if (catalog[i] != null && !string.IsNullOrEmpty(catalog[i].objectId))
+                        {
+                            validCatalogIds.Add(catalog[i].objectId);
+                        }
+                    }
+                    if (validCatalogIds.Count > 0)
+                    {
+                        totalCount = validCatalogIds.Count;
+                    }
+                }
+
+                var uniqueDiscovered = new HashSet<string>(System.StringComparer.Ordinal);
+                if (dictionaryManager.DiscoveredObjectIds != null)
+                {
+                    for (int i = 0; i < dictionaryManager.DiscoveredObjectIds.Count; i++)
+                    {
+                        string id = dictionaryManager.DiscoveredObjectIds[i];
+                        if (!string.IsNullOrEmpty(id) && (validCatalogIds == null || validCatalogIds.Contains(id)))
+                        {
+                            uniqueDiscovered.Add(id);
+                        }
+                    }
+                }
+                if (dictionaryManager.Photos != null)
+                {
+                    for (int i = 0; i < dictionaryManager.Photos.Count; i++)
+                    {
+                        PhotoRecord p = dictionaryManager.Photos[i];
+                        if (p != null && !string.IsNullOrEmpty(p.objectId) && (validCatalogIds == null || validCatalogIds.Contains(p.objectId)))
+                        {
+                            uniqueDiscovered.Add(p.objectId);
+                        }
+                    }
+                }
+
+                discoveredCount = Mathf.Clamp(uniqueDiscovered.Count, 0, totalCount);
+            }
+
+            if (discoveredCount >= totalCount && totalCount > 0)
+            {
+                discoveryProgressText.text = $"<color=#FFE07D><b>{discoveredCount}</b></color> <color=#F7D57E><size=80%>/ {totalCount}</size></color>";
+            }
+            else
+            {
+                discoveryProgressText.text = $"<color=#FFF8EE><b>{discoveredCount}</b></color> <color=#DFC6AE><size=80%>/ {totalCount}</size></color>";
+            }
         }
 
         private void ClearTextureCache()

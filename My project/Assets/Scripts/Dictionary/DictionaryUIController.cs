@@ -21,7 +21,7 @@ namespace Utsuru.DictionaryUI
 
         [Header("Pengaturan Transisi")]
         [SerializeField] private float fadeDuration = 0.25f;
-        [SerializeField] private KeyCode toggleKey = KeyCode.B;
+        [SerializeField] private KeyCode toggleKey = KeyCode.Tab;
 
         [Header("Tab Bookmark Atas")]
         [SerializeField] private Button tabAlbumButton;
@@ -30,7 +30,6 @@ namespace Utsuru.DictionaryUI
         [SerializeField] private Button tabQuizButton;
         [SerializeField] private Button tabHiraganaButton;
         [SerializeField] private Button tabModuleButton;
-        [SerializeField] private Button tabFlashcardButton;
         [SerializeField] private Button tabThemeButton;
         [SerializeField] private Button tabExitButton;
 
@@ -53,7 +52,6 @@ namespace Utsuru.DictionaryUI
             if (tabQuizButton != null) tabQuizButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Quiz));
             if (tabHiraganaButton != null) tabHiraganaButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Hiragana));
             if (tabModuleButton != null) tabModuleButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Module));
-            if (tabFlashcardButton != null) tabFlashcardButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Flashcard));
             if (tabThemeButton != null) tabThemeButton.onClick.AddListener(() => SelectTab(DictionaryBookMode.Theme));
             if (tabExitButton != null) tabExitButton.onClick.AddListener(Close);
 
@@ -64,30 +62,63 @@ namespace Utsuru.DictionaryUI
 
         private void Update()
         {
-            if (!IsOpen && Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
-            {
+            if (IsTypingInInputField())
                 return;
-            }
-            if (!IsOpen && Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
-            {
-                return;
-            }
 
-            if (IsTogglePressed())
+            if (IsOpen)
             {
-                Toggle();
+                if (IsTogglePressed() || IsEscapePressed())
+                {
+                    Close();
+                }
             }
-            else if (IsOpen && IsEscapePressed())
+            else if (IsTogglePressed() && CanOpenDictionary())
             {
-                Close();
+                Open();
             }
+        }
+
+        private bool CanOpenDictionary()
+        {
+            if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsPaused)
+                return false;
+
+            if (DialogueManager.Instance != null &&
+                (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame))
+                return false;
+
+            if (Utsuru.Achievements.AchievementUIController.Instance != null &&
+                Utsuru.Achievements.AchievementUIController.Instance.IsOpen)
+                return false;
+
+            if (Utsuru.Store.StoreUIController.Instance != null &&
+                Utsuru.Store.StoreUIController.Instance.IsOpen)
+                return false;
+
+            var polaroid = FindFirstObjectByType<PolaroidCardUI>();
+            if (polaroid != null && polaroid.IsOpen)
+                return false;
+
+            return true;
+        }
+
+        private bool IsTypingInInputField()
+        {
+            var es = UnityEngine.EventSystems.EventSystem.current;
+            if (es == null || es.currentSelectedGameObject == null) return false;
+            var input = es.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>();
+            return input != null && input.isFocused;
         }
 
         private bool IsTogglePressed()
         {
 #if ENABLE_INPUT_SYSTEM
             var kb = UnityEngine.InputSystem.Keyboard.current;
-            if (kb != null && kb.bKey.wasPressedThisFrame) return true;
+            if (kb != null)
+            {
+                if (toggleKey == KeyCode.Tab && kb.tabKey.wasPressedThisFrame) return true;
+                if (toggleKey == KeyCode.B && kb.bKey.wasPressedThisFrame) return true;
+            }
 #endif
             try
             {
@@ -114,14 +145,13 @@ namespace Utsuru.DictionaryUI
         public void Toggle()
         {
             if (IsOpen) Close();
-            else Open();
+            else if (CanOpenDictionary()) Open();
         }
 
         public void Open(DictionaryBookMode startingTab = DictionaryBookMode.Album)
         {
             if (IsOpen) return;
-            if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
-                return;
+            if (!CanOpenDictionary()) return;
 
             if (themeApplier == null)
                 themeApplier = GetComponent<DictionaryThemeApplier>() ?? FindFirstObjectByType<DictionaryThemeApplier>(FindObjectsInactive.Include);
@@ -167,6 +197,7 @@ namespace Utsuru.DictionaryUI
                 if (viewRoot != null) viewRoot.SetActive(false);
 
                 bool otherModalOpen =
+                    (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive) ||
                     (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen) ||
                     (Utsuru.Achievements.AchievementUIController.Instance != null && Utsuru.Achievements.AchievementUIController.Instance.IsOpen);
 
@@ -214,7 +245,6 @@ namespace Utsuru.DictionaryUI
             SetTabHighlight(tabQuizButton, currentTab == DictionaryBookMode.Quiz);
             SetTabHighlight(tabHiraganaButton, currentTab == DictionaryBookMode.Hiragana);
             SetTabHighlight(tabModuleButton, currentTab == DictionaryBookMode.Module);
-            SetTabHighlight(tabFlashcardButton, currentTab == DictionaryBookMode.Flashcard);
             SetTabHighlight(tabThemeButton, currentTab == DictionaryBookMode.Theme);
         }
 

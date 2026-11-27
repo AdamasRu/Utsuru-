@@ -19,6 +19,7 @@ namespace Utsuru.DictionaryUI.Editor
             var bgDictSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/BG_dictionary.png");
             var bookPlainSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Plain.png")
                 ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_Purple.png");
+            var coverCounterPillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Book/Book_CoverCounterPill.png");
 
             var bmAlbumSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_home.png");
             var bmLikeSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/Dictionary/Button/btn_like.png");
@@ -120,10 +121,9 @@ namespace Utsuru.DictionaryUI.Editor
             Button tabFav = CreateTabButton("Tab_Favorite", tabsGo.transform, bmFavoriteSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(255.35f, -29.36f), 0.9f);
             Button tabQuiz = CreateTabButton("Tab_Quiz", tabsGo.transform, bmQuizSprite, new Vector2(86f, 119f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(345.35f, -29.36f), 0.9f);
 
-            // Tab Kanan: Top-Right (Scale 0.9) - 3 Tab (Hiragana, Module, Flashcard) + Exit
+            // Tab Kanan: Top-Right (Scale 0.9) - 2 Tab (Hiragana, Module) + Theme + Exit
             Button tabHiragana = CreateTabButton("Tab_Hiragana", tabsGo.transform, bmHiraganaSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-200f, -29.36f), 0.9f);
             Button tabModule = CreateTabButton("Tab_Module", tabsGo.transform, bmModuleSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-290f, -29.36f), 0.9f);
-            Button tabFlashcard = CreateTabButton("Tab_Flashcard", tabsGo.transform, bmHiraganaSprite, new Vector2(86f, 119f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-380f, -29.36f), 0.9f);
             Button tabExit = CreateTabButton("Tab_Exit", tabsGo.transform, bmExitSprite, new Vector2(84f, 85f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-45.45f, -84f), 0.9f);
 
             // 6.4 BookSpread (Area Isi Buku 2 Halaman)
@@ -323,6 +323,55 @@ namespace Utsuru.DictionaryUI.Editor
 
             placeGo.SetActive(false);
 
+            // 6.5 Bottom Spine Discovery Counter Clasp Badge (X / 72)
+            GameObject progressBadgeGo = CreateUIObject("DiscoveryProgressBadge", bookGo.transform);
+            RectTransform progressBadgeRt = progressBadgeGo.GetComponent<RectTransform>();
+            progressBadgeRt.anchorMin = new Vector2(0.5f, 0f);
+            progressBadgeRt.anchorMax = new Vector2(0.5f, 0f);
+            progressBadgeRt.pivot = new Vector2(0.5f, 0.5f);
+            progressBadgeRt.sizeDelta = new Vector2(224f, 62f);
+            progressBadgeRt.anchoredPosition = new Vector2(-17f, 64f);
+            var progressBadgeImg = progressBadgeGo.AddComponent<Image>();
+            progressBadgeImg.sprite = coverCounterPillSprite;
+            progressBadgeImg.type = Image.Type.Sliced;
+            progressBadgeImg.color = Color.white;
+            progressBadgeImg.raycastTarget = false;
+
+            GameObject progressHdrGo = CreateUIObject("ProgressHeaderText", progressBadgeGo.transform);
+            RectTransform progressHdrRt = progressHdrGo.GetComponent<RectTransform>();
+            progressHdrRt.anchorMin = new Vector2(0f, 0.5f);
+            progressHdrRt.anchorMax = new Vector2(1f, 1f);
+            progressHdrRt.offsetMin = new Vector2(16f, -3f);
+            progressHdrRt.offsetMax = new Vector2(-16f, -7f);
+            var progressHdrTmp = progressHdrGo.AddComponent<TextMeshProUGUI>();
+            progressHdrTmp.font = nunitoFont;
+            progressHdrTmp.fontStyle = FontStyles.Bold;
+            progressHdrTmp.fontSize = 10.5f;
+            progressHdrTmp.characterSpacing = 14f;
+            progressHdrTmp.alignment = TextAlignmentOptions.Center;
+            progressHdrTmp.color = new Color(0.92f, 0.83f, 0.75f, 0.92f);
+            progressHdrTmp.text = "DISCOVERED";
+            progressHdrTmp.raycastTarget = false;
+
+            GameObject progressCntGo = CreateUIObject("ProgressCountText", progressBadgeGo.transform);
+            RectTransform progressCntRt = progressCntGo.GetComponent<RectTransform>();
+            progressCntRt.anchorMin = new Vector2(0f, 0f);
+            progressCntRt.anchorMax = new Vector2(1f, 0.65f);
+            progressCntRt.offsetMin = new Vector2(16f, 6f);
+            progressCntRt.offsetMax = new Vector2(-16f, -2f);
+            var progressCntTmp = progressCntGo.AddComponent<TextMeshProUGUI>();
+            progressCntTmp.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-ExtraBold SDF.asset") ?? nunitoFont;
+            progressCntTmp.fontStyle = FontStyles.Bold;
+            progressCntTmp.fontSize = 24f;
+            progressCntTmp.enableAutoSizing = true;
+            progressCntTmp.fontSizeMin = 16f;
+            progressCntTmp.fontSizeMax = 24f;
+            progressCntTmp.textWrappingMode = TextWrappingModes.NoWrap;
+            progressCntTmp.alignment = TextAlignmentOptions.Center;
+            progressCntTmp.color = Color.white;
+            progressCntTmp.text = "<color=#FFF8EE><b>0</b></color> <color=#DFC6AE><size=80%>/ 72</size></color>";
+            progressCntTmp.raycastTarget = false;
+
             // Wire DictionaryBookSpreadUI fields via SerializedObject
             var spreadSo = new SerializedObject(bookSpread);
             var slotsProp = spreadSo.FindProperty("polaroidSlots");
@@ -335,6 +384,7 @@ namespace Utsuru.DictionaryUI.Editor
             spreadSo.FindProperty("rightPageClickArea").objectReferenceValue = rightClickBtn;
             spreadSo.FindProperty("leftPageNumberText").objectReferenceValue = leftNumTmp;
             spreadSo.FindProperty("rightPageNumberText").objectReferenceValue = rightNumTmp;
+            spreadSo.FindProperty("discoveryProgressText").objectReferenceValue = progressCntTmp;
             spreadSo.FindProperty("photoSpreadRoot").objectReferenceValue = photoSpreadRoot;
             spreadSo.FindProperty("placeholderRoot").objectReferenceValue = placeGo;
             spreadSo.FindProperty("placeholderTitleText").objectReferenceValue = placeTitleTmp;
@@ -358,7 +408,6 @@ namespace Utsuru.DictionaryUI.Editor
             ctrlSo.FindProperty("tabQuizButton").objectReferenceValue = tabQuiz;
             ctrlSo.FindProperty("tabHiraganaButton").objectReferenceValue = tabHiragana;
             ctrlSo.FindProperty("tabModuleButton").objectReferenceValue = tabModule;
-            ctrlSo.FindProperty("tabFlashcardButton").objectReferenceValue = tabFlashcard;
             ctrlSo.FindProperty("tabExitButton").objectReferenceValue = tabExit;
             ctrlSo.FindProperty("bookSpread").objectReferenceValue = bookSpread;
             ctrlSo.ApplyModifiedPropertiesWithoutUndo();
@@ -634,50 +683,50 @@ namespace Utsuru.DictionaryUI.Editor
             photoRaw.color = Color.white;
             photoRaw.raycastTarget = false;
 
-            // Kanji & Furigana Label (NoWrap + auto-fit agar tidak pernah mematahkan kata & meluber)
+            // Kanji & Furigana Label (NoWrap + auto-fit agar sejajar persis dengan foto & tampak rapi 1 baris)
             GameObject kanjiGo = CreateUIObject("KanjiLabel", frontGo.transform);
             RectTransform kanjiRt = kanjiGo.GetComponent<RectTransform>();
             kanjiRt.anchorMin = new Vector2(0.5f, 1f);
             kanjiRt.anchorMax = new Vector2(0.5f, 1f);
             kanjiRt.pivot = new Vector2(0f, 1f);
-            kanjiRt.sizeDelta = new Vector2(244f, 50f);
-            kanjiRt.anchoredPosition = new Vector2(-111f, -194f);
+            kanjiRt.sizeDelta = new Vector2(244f, 38f);
+            kanjiRt.anchoredPosition = new Vector2(-122f, -195f);
             var kanjiTmp = kanjiGo.AddComponent<TextMeshProUGUI>();
             kanjiTmp.font = zenFont;
-            kanjiTmp.fontSize = 20f;
+            kanjiTmp.fontSize = 24f;
             kanjiTmp.enableAutoSizing = true;
-            kanjiTmp.fontSizeMin = 12f;
-            kanjiTmp.fontSizeMax = 20f;
-            kanjiTmp.lineSpacing = -6f;
+            kanjiTmp.fontSizeMin = 10.5f;
+            kanjiTmp.fontSizeMax = 24f;
+            kanjiTmp.lineSpacing = 0f;
             kanjiTmp.textWrappingMode = TextWrappingModes.NoWrap;
             kanjiTmp.overflowMode = TextOverflowModes.Ellipsis;
-            kanjiTmp.alignment = TextAlignmentOptions.TopLeft;
-            kanjiTmp.fontStyle = FontStyles.Bold;
-            kanjiTmp.color = new Color(0.15f, 0.12f, 0.12f);
-            kanjiTmp.text = "<b>道</b> <size=74%>(みち)</size>";
+            kanjiTmp.alignment = TextAlignmentOptions.MidlineLeft;
+            kanjiTmp.fontStyle = FontStyles.Normal;
+            kanjiTmp.color = new Color(0.12f, 0.10f, 0.10f, 1f);
+            kanjiTmp.text = "<b>桜</b> <size=64%><color=#5B5555>(さくら)</color></size>";
             kanjiTmp.raycastTarget = false;
 
-            // Meaning & Romaji Label (Nunito, terpisah bersih di atas tombol Like/Favorite)
+            // Meaning & Romaji Label (Biru tegas rata kiri di bawah Kanji)
             GameObject meanGo = CreateUIObject("MeaningLabel", frontGo.transform);
             RectTransform meanRt = meanGo.GetComponent<RectTransform>();
             meanRt.anchorMin = new Vector2(0.5f, 1f);
             meanRt.anchorMax = new Vector2(0.5f, 1f);
             meanRt.pivot = new Vector2(0f, 1f);
-            meanRt.sizeDelta = new Vector2(244f, 52f);
-            meanRt.anchoredPosition = new Vector2(-111f, -248f);
+            meanRt.sizeDelta = new Vector2(244f, 44f);
+            meanRt.anchoredPosition = new Vector2(-122f, -234f);
             var meanTmp = meanGo.AddComponent<TextMeshProUGUI>();
             meanTmp.font = nunitoFont;
-            meanTmp.fontSize = 16f;
+            meanTmp.fontSize = 14.5f;
             meanTmp.enableAutoSizing = true;
-            meanTmp.fontSizeMin = 10.5f;
-            meanTmp.fontSizeMax = 16f;
-            meanTmp.lineSpacing = -4f;
+            meanTmp.fontSizeMin = 9.5f;
+            meanTmp.fontSizeMax = 14.5f;
+            meanTmp.lineSpacing = 2f;
             meanTmp.overflowMode = TextOverflowModes.Ellipsis;
             meanTmp.alignment = TextAlignmentOptions.TopLeft;
             meanTmp.fontStyle = FontStyles.Bold;
-            meanTmp.color = new Color(0.15f, 0.42f, 0.92f); // Vibrant blue
+            meanTmp.color = new Color(0.118f, 0.388f, 0.914f, 1f);
             meanTmp.textWrappingMode = TextWrappingModes.Normal;
-            meanTmp.text = "michi • Street / Road";
+            meanTmp.text = "sakura • Cherry Blossom";
             meanTmp.raycastTarget = false;
 
             // Tombol Like (Hati) di pojok kanan bawah (aman di atas border bawah kertas Polaroid)
@@ -729,7 +778,7 @@ namespace Utsuru.DictionaryUI.Editor
             var backClickBtn = backClickGo.AddComponent<Button>();
             backClickBtn.transition = Selectable.Transition.None;
 
-            // Judul Kata Belakang
+            // Judul Kata Belakang (disembunyikan agar tampilan belakang persis kartu catatan kalimat bersih)
             GameObject backTitleGo = CreateUIObject("BackKanjiLabel", backGo.transform);
             RectTransform backTitleRt = backTitleGo.GetComponent<RectTransform>();
             backTitleRt.anchorMin = new Vector2(0.5f, 1f);
@@ -750,60 +799,63 @@ namespace Utsuru.DictionaryUI.Editor
             backTitleTmp.color = new Color(0.2f, 0.16f, 0.18f);
             backTitleTmp.text = "道";
             backTitleTmp.raycastTarget = false;
+            backTitleGo.SetActive(false);
 
-            // Kotak Contoh Kalimat (VerticalLayoutGroup agar JP dan EN tidak pernah bertabrakan)
+            // Kotak Contoh Kalimat (Rata kiri atas agar persis seperti kartu catatan polaroid)
             GameObject sentBoxGo = CreateUIObject("SentenceContainer", backGo.transform);
             RectTransform sentBoxRt = sentBoxGo.GetComponent<RectTransform>();
             sentBoxRt.anchorMin = new Vector2(0.5f, 1f);
             sentBoxRt.anchorMax = new Vector2(0.5f, 1f);
             sentBoxRt.pivot = new Vector2(0.5f, 1f);
-            sentBoxRt.sizeDelta = new Vector2(244f, 212f);
-            sentBoxRt.anchoredPosition = new Vector2(0f, -66f);
+            sentBoxRt.sizeDelta = new Vector2(236f, 265f);
+            sentBoxRt.anchoredPosition = new Vector2(0f, -34f);
 
             var sentVlg = sentBoxGo.AddComponent<VerticalLayoutGroup>();
-            sentVlg.padding = new RectOffset(10, 10, 8, 8);
-            sentVlg.spacing = 8f;
-            sentVlg.childAlignment = TextAnchor.MiddleCenter;
+            sentVlg.padding = new RectOffset(6, 6, 4, 4);
+            sentVlg.spacing = 12f;
+            sentVlg.childAlignment = TextAnchor.UpperLeft;
             sentVlg.childControlWidth = true;
             sentVlg.childControlHeight = true;
             sentVlg.childForceExpandWidth = true;
-            sentVlg.childForceExpandHeight = true;
+            sentVlg.childForceExpandHeight = false;
 
             GameObject sentJpGo = CreateUIObject("SentenceJapanese", sentBoxGo.transform);
             var sentJpLe = sentJpGo.AddComponent<LayoutElement>();
-            sentJpLe.flexibleHeight = 1.25f;
+            sentJpLe.flexibleHeight = 0f;
             var sentJpTmp = sentJpGo.AddComponent<TextMeshProUGUI>();
             sentJpTmp.font = zenFont;
-            sentJpTmp.fontSize = 15.5f;
+            sentJpTmp.fontStyle = FontStyles.Normal;
+            sentJpTmp.fontSize = 18.5f;
             sentJpTmp.enableAutoSizing = true;
-            sentJpTmp.fontSizeMin = 10.5f;
-            sentJpTmp.fontSizeMax = 15.5f;
-            sentJpTmp.lineSpacing = -2f;
+            sentJpTmp.fontSizeMin = 12f;
+            sentJpTmp.fontSizeMax = 18.5f;
+            sentJpTmp.lineSpacing = 6f;
             sentJpTmp.overflowMode = TextOverflowModes.Ellipsis;
-            sentJpTmp.alignment = TextAlignmentOptions.Center;
-            sentJpTmp.color = new Color(0.12f, 0.16f, 0.22f);
+            sentJpTmp.alignment = TextAlignmentOptions.TopLeft;
+            sentJpTmp.color = new Color(0.14f, 0.12f, 0.12f, 1f);
             sentJpTmp.textWrappingMode = TextWrappingModes.Normal;
-            sentJpTmp.text = "「この道をまっすぐ行きます。」";
+            sentJpTmp.text = "「この道をまっすぐ\n　行きます。」";
             sentJpTmp.raycastTarget = false;
 
             GameObject sentEngGo = CreateUIObject("SentenceEnglish", sentBoxGo.transform);
             var sentEngLe = sentEngGo.AddComponent<LayoutElement>();
-            sentEngLe.flexibleHeight = 1f;
+            sentEngLe.flexibleHeight = 0f;
             var sentEngTmp = sentEngGo.AddComponent<TextMeshProUGUI>();
             sentEngTmp.font = nunitoFont;
-            sentEngTmp.fontSize = 13.5f;
+            sentEngTmp.fontStyle = FontStyles.Italic;
+            sentEngTmp.fontSize = 14.5f;
             sentEngTmp.enableAutoSizing = true;
-            sentEngTmp.fontSizeMin = 9.5f;
-            sentEngTmp.fontSizeMax = 13.5f;
-            sentEngTmp.lineSpacing = -2f;
+            sentEngTmp.fontSizeMin = 10f;
+            sentEngTmp.fontSizeMax = 14.5f;
+            sentEngTmp.lineSpacing = 4f;
             sentEngTmp.overflowMode = TextOverflowModes.Ellipsis;
-            sentEngTmp.alignment = TextAlignmentOptions.Center;
-            sentEngTmp.color = new Color(0.35f, 0.4f, 0.48f);
+            sentEngTmp.alignment = TextAlignmentOptions.TopLeft;
+            sentEngTmp.color = new Color(0.36f, 0.34f, 0.33f, 1f);
             sentEngTmp.textWrappingMode = TextWrappingModes.Normal;
-            sentEngTmp.text = "<i>(Kono michi o massugu ikimasu)</i>\nGo straight along this street.";
+            sentEngTmp.text = "(Kono michi o massugu ikimasu) — Go straight along this street.";
             sentEngTmp.raycastTarget = false;
 
-            // Teks petunjuk balik (aman di dalam area putih Polaroid, di atas shadow bawah y=20)
+            // Hint balik disembunyikan agar sisi belakang tetap bersih
             GameObject hintGo = CreateUIObject("BackFlipHint", backGo.transform);
             RectTransform hintRt = hintGo.GetComponent<RectTransform>();
             hintRt.anchorMin = new Vector2(0.5f, 0f);
@@ -818,6 +870,7 @@ namespace Utsuru.DictionaryUI.Editor
             hintTmp.color = new Color(0.45f, 0.50f, 0.58f);
             hintTmp.text = "tap to flip card";
             hintTmp.raycastTarget = false;
+            hintGo.SetActive(false);
 
             backGo.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
             backGo.SetActive(false); // Sisi belakang awalnya tersembunyi

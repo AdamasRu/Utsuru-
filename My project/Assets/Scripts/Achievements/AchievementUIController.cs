@@ -154,7 +154,8 @@ namespace Utsuru.Achievements
             if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsPaused)
                 return false;
 
-            if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+            if (DialogueManager.Instance != null &&
+                (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame))
                 return false;
 
             if (Utsuru.Store.StoreUIController.Instance != null && Utsuru.Store.StoreUIController.Instance.IsOpen)
@@ -182,6 +183,7 @@ namespace Utsuru.Achievements
         public void Open()
         {
             if (IsOpen) return;
+            if (!CanOpenAchievements()) return;
 
             if (achievementManager == null)
                 achievementManager = AchievementManager.EnsureInstance();
@@ -235,15 +237,16 @@ namespace Utsuru.Achievements
 
                 Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
 
+                bool dialogueActive = DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive;
                 if (CameraCaptureSystem.Instance != null)
-                    CameraCaptureSystem.Instance.InputBlocked = false;
+                    CameraCaptureSystem.Instance.InputBlocked = dialogueActive;
 
                 var cameraMode = CameraModeController.Instance ?? FindFirstObjectByType<CameraModeController>();
                 if (cameraMode != null)
                 {
-                    cameraMode.SetControlsLocked(false);
+                    cameraMode.SetControlsLocked(dialogueActive);
                 }
-                else
+                else if (!dialogueActive)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;

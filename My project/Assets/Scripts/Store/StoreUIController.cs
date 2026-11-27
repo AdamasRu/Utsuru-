@@ -13,7 +13,7 @@ namespace Utsuru.Store
 {
     /// <summary>
     /// Controller modal Store Tema Kamus (DPPL.UTSURU.012 / Layout007).
-    /// Dibuka/tutup dengan tombol 'F' (dan ditutup via tombol 'Close' atau 'Esc').
+    /// Dibuka/tutup dengan tombol 'T' (dan ditutup via tombol 'Close' atau 'Esc').
     /// Menangkap dan mem-blur latar gameplay 3D saat aktif.
     /// </summary>
     public class StoreUIController : MonoBehaviour
@@ -46,7 +46,7 @@ namespace Utsuru.Store
         [SerializeField] private List<StoreThemeCardUI> themeCards = new List<StoreThemeCardUI>();
         [SerializeField] private List<ThemePreviewBinding> themePreviews = new List<ThemePreviewBinding>();
         [SerializeField] private Button closeButton;
-        [SerializeField] private KeyCode toggleKey = KeyCode.F;
+        [SerializeField] private KeyCode toggleKey = KeyCode.T;
 
         [Header("Feedback Toast")]
         [SerializeField] private GameObject feedbackBanner;
@@ -146,7 +146,11 @@ namespace Utsuru.Store
         {
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
-            if (kb != null && kb.fKey.wasPressedThisFrame) return true;
+            if (kb != null)
+            {
+                if (toggleKey == KeyCode.T && kb.tKey.wasPressedThisFrame) return true;
+                if (toggleKey == KeyCode.F && kb.fKey.wasPressedThisFrame) return true;
+            }
 #endif
             try
             {
@@ -175,7 +179,8 @@ namespace Utsuru.Store
             if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsPaused)
                 return false;
 
-            if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+            if (DialogueManager.Instance != null &&
+                (DialogueManager.Instance.IsDialogueActive || DialogueManager.Instance.WasClosedThisFrame))
                 return false;
 
             if (Utsuru.Achievements.AchievementUIController.Instance != null &&
@@ -204,6 +209,7 @@ namespace Utsuru.Store
         public void Open()
         {
             if (IsOpen) return;
+            if (!CanOpenStore()) return;
 
             if (themeManager == null)
                 themeManager = StoreThemeManager.EnsureInstance();
@@ -263,15 +269,16 @@ namespace Utsuru.Store
 
                 Time.timeScale = prevTimeScale > 0f ? prevTimeScale : 1f;
 
+                bool dialogueActive = DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive;
                 if (CameraCaptureSystem.Instance != null)
-                    CameraCaptureSystem.Instance.InputBlocked = false;
+                    CameraCaptureSystem.Instance.InputBlocked = dialogueActive;
 
                 var cameraMode = CameraModeController.Instance ?? FindFirstObjectByType<CameraModeController>();
                 if (cameraMode != null)
                 {
-                    cameraMode.SetControlsLocked(false);
+                    cameraMode.SetControlsLocked(dialogueActive);
                 }
-                else
+                else if (!dialogueActive)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;

@@ -170,14 +170,14 @@ namespace Utsuru.Sound
 
             if (_dictController != null)
             {
-                // 1. Tab Bookmark Atas (Album, Like, Favorite, Quiz, Hiragana, Module, Flashcard, Exit)
+                // 1. Tab Bookmark Atas (Album, Like, Favorite, Quiz, Hiragana, Module, Theme, Exit)
                 BindButton(_dictController, "tabAlbumButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabLikeButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabFavoriteButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabQuizButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabHiraganaButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabModuleButton", () => PlaySound(UISoundType.TabSwitch));
-                BindButton(_dictController, "tabFlashcardButton", () => PlaySound(UISoundType.TabSwitch));
+                BindButton(_dictController, "tabThemeButton", () => PlaySound(UISoundType.TabSwitch));
                 BindButton(_dictController, "tabExitButton", () =>
                 {
                     _justPlayedClose = true;
@@ -230,18 +230,7 @@ namespace Utsuru.Sound
                 BindButton(vocabTab, "nextPageButton", () => PlaySound(UISoundType.PageTurn));
             }
 
-            // 5. Filter & Flip di Tab Flashcard
-            var flashcardSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryFlashcardSpreadUI>();
-            if (flashcardSpread != null)
-            {
-                BindButton(flashcardSpread, "filterAllButton", () => PlaySound(UISoundType.TabSwitch));
-                BindButton(flashcardSpread, "filterLearningButton", () => PlaySound(UISoundType.TabSwitch));
-                BindButton(flashcardSpread, "filterMasteredButton", () => PlaySound(UISoundType.TabSwitch));
-                BindButton(flashcardSpread, "flipToBackButton", () => PlaySound(UISoundType.CardFlip));
-                BindButton(flashcardSpread, "flipToFrontButton", () => PlaySound(UISoundType.CardFlip));
-            }
-
-            // 6. Sub-tab Lembar Kana
+            // 5. Sub-tab Lembar Kana
             var kanaSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryKanaSpreadUI>();
             if (kanaSpread != null)
             {

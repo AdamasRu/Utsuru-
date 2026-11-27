@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utsuru.UI;
 
 namespace Utsuru.Capture
 {
@@ -62,10 +64,15 @@ namespace Utsuru.Capture
         /// <summary>Dipicu saat BtnSimpan ditekan, setelah foto masuk ke Dictionary.</summary>
         public event Action<PhotoRecord> OnPhotoSaved;
 
-        public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
+        private static int lastClosedFrame = -1;
+        public static bool WasAnyClosedThisFrame => Time.frameCount == lastClosedFrame;
+
+        public bool IsOpen => panelRoot != null && panelRoot.activeSelf && !isClosing;
 
         private PhotoCaptureResult current;
         private bool testMode;
+        private bool isClosing;
+        private Coroutine panelTransitionCoroutine;
 
         private void Awake()
         {
@@ -87,7 +94,7 @@ namespace Utsuru.Capture
 
         private void Update()
         {
-            if (panelRoot != null && panelRoot.activeSelf)
+            if (IsOpen)
             {
 #if ENABLE_INPUT_SYSTEM
                 var kb = UnityEngine.InputSystem.Keyboard.current;
@@ -128,6 +135,13 @@ namespace Utsuru.Capture
 
         public void Show(PhotoCaptureResult result)
         {
+            if (panelTransitionCoroutine != null)
+            {
+                StopCoroutine(panelTransitionCoroutine);
+                panelTransitionCoroutine = null;
+            }
+            isClosing = false;
+
             current = result;
             VocabularyEntry vocab = result.Vocabulary;
 
@@ -237,6 +251,7 @@ namespace Utsuru.Capture
             if (captureSystem != null) captureSystem.InputBlocked = true;
             if (cameraMode != null)
             {
+                cameraMode.SetViewfinderOverlayHidden(true);
                 cameraMode.SetControlsLocked(true);
             }
             else
@@ -245,7 +260,25 @@ namespace Utsuru.Capture
                 Cursor.visible = true;
             }
 
-            if (panelRoot != null) panelRoot.SetActive(true);
+            if (panelRoot != null)
+            {
+                UIPanelAnimator.ResetPanelVisuals(panelRoot, 0f);
+                panelRoot.SetActive(true);
+                if (gameObject.activeInHierarchy)
+                {
+                    panelTransitionCoroutine = StartCoroutine(PlayShowRoutine());
+                }
+                else
+                {
+                    UIPanelAnimator.ResetPanelVisuals(panelRoot, 1f);
+                }
+            }
+        }
+
+        private IEnumerator PlayShowRoutine()
+        {
+            yield return UIPanelAnimator.PlayPanelEntranceRoutine(panelRoot, 0.20f);
+            panelTransitionCoroutine = null;
         }
 
         private static void ApplyAspectCropUV(RawImage rawImg, Texture tex)
@@ -379,7 +412,7 @@ namespace Utsuru.Capture
         // BtnSimpan: insert ke tbl_photo dengan album aktif, tutup pop-up, kembali ke mode kamera.
         private void Save()
         {
-            if (current == null) return;
+            if (isClosing || current == null) return;
 
             // Mode tes: tidak ada yang ditulis ke disk maupun Dictionary.
             if (testMode)
@@ -425,8 +458,48 @@ namespace Utsuru.Capture
         // BtnTutup: foto dibuang, kosakata tetap Discovered (sudah dicatat saat shutter).
         public void Close()
         {
-            if (panelRoot != null) panelRoot.SetActive(false);
+            if (isClosing) return;
+            isClosing = true;
+            lastClosedFrame = Time.frameCount;
 
+            if (panelTransitionCoroutine != null)
+            {
+                StopCoroutine(panelTransitionCoroutine);
+                panelTransitionCoroutine = null;
+            }
+
+            if (cameraMode != null)
+            {
+                cameraMode.SetViewfinderOverlayHidden(false);
+            }
+
+            if (panelRoot != null && panelRoot.activeSelf && gameObject.activeInHierarchy)
+            {
+                CanvasGroup cg = UIPanelAnimator.EnsureCanvasGroup(panelRoot);
+                cg.interactable = false;
+                cg.blocksRaycasts = false;
+                panelTransitionCoroutine = StartCoroutine(PlayCloseRoutine());
+                return;
+            }
+
+            if (panelRoot != null) panelRoot.SetActive(false);
+            CompleteCloseCleanup();
+        }
+
+        private IEnumerator PlayCloseRoutine()
+        {
+            yield return UIPanelAnimator.PlayPanelExitRoutine(panelRoot, 0.16f);
+            if (panelRoot != null)
+            {
+                UIPanelAnimator.ResetPanelVisuals(panelRoot, 1f);
+                panelRoot.SetActive(false);
+            }
+            panelTransitionCoroutine = null;
+            CompleteCloseCleanup();
+        }
+
+        private void CompleteCloseCleanup()
+        {
             if (current != null && current.Snapshot != null)
             {
                 if (Application.isPlaying) Destroy(current.Snapshot);
@@ -434,13 +507,15 @@ namespace Utsuru.Capture
             }
             current = null;
             testMode = false;
+            isClosing = false;
 
-            if (captureSystem != null) captureSystem.InputBlocked = false;
+            bool dialogueActive = DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive;
+            if (captureSystem != null) captureSystem.InputBlocked = dialogueActive;
             if (cameraMode != null)
             {
-                cameraMode.SetControlsLocked(false);
+                cameraMode.SetControlsLocked(dialogueActive);
             }
-            else
+            else if (!dialogueActive)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;

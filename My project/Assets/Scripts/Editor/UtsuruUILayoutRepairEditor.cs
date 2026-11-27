@@ -1,10 +1,13 @@
 #if UNITY_EDITOR
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Utsuru.Capture;
+using Utsuru.Store;
 
 namespace Utsuru.DictionaryUI.Editor
 {
@@ -220,15 +223,15 @@ namespace Utsuru.DictionaryUI.Editor
             RepairModuleSpread(spread.Find("ModuleSpreadRoot"), zenFont, nunitoFont, pillSprite);
             RepairKanaSpread(spread.Find("KanaSpreadRoot"), zenFont, nunitoFont, pillSprite);
             RepairQuizSpread(spread.Find("QuizSpreadRoot"), zenFont, nunitoFont, pillSprite);
-            RepairFlashcardSpread(canvasRoot.Find("Dictionary/DictionaryView"), spread.Find("FlashcardSpreadRoot"), zenFont, nunitoFont, pillSprite);
             FixAllPillAndButtonImages(spread, pillSprite);
 
             return true;
         }
 
-        private static void RepairPhotoSpread(Transform photoRoot, TMP_FontAsset zenFont, TMP_FontAsset nunitoFont)
+        internal static bool RepairPhotoSpread(Transform photoRoot, TMP_FontAsset zenFont, TMP_FontAsset nunitoFont)
         {
-            if (photoRoot == null) return;
+            if (photoRoot == null) return false;
+            bool anyChanged = false;
             foreach (var card in photoRoot.GetComponentsInChildren<DictionaryPolaroidCardUI>(true))
             {
                 Transform container = card.transform.Find("CardContainer") ?? card.transform.Find("PolaroidCard");
@@ -241,25 +244,33 @@ namespace Utsuru.DictionaryUI.Editor
                     SetRect(front.Find("PhotoFrame"), new Vector2(244f, 166f), new Vector2(0f, -20f));
 
                     Transform kanji = front.Find("KanjiLabel");
-                    SetRect(kanji, new Vector2(244f, 50f), new Vector2(-111f, -194f));
-                    var kTmp = SetTmp(kanji, zenFont, 20f, true, 12f, 20f);
+                    SetRect(kanji, new Vector2(244f, 38f), new Vector2(-122f, -195f));
+                    var kTmp = SetTmp(kanji, zenFont, 24f, true, 10.5f, 24f);
                     if (kTmp != null)
                     {
-                        kTmp.lineSpacing = -6f;
+                        kTmp.fontStyle = FontStyles.Normal;
+                        kTmp.lineSpacing = 0f;
                         kTmp.textWrappingMode = TextWrappingModes.NoWrap;
                         kTmp.overflowMode = TextOverflowModes.Ellipsis;
-                        kTmp.alignment = TextAlignmentOptions.TopLeft;
+                        kTmp.alignment = TextAlignmentOptions.MidlineLeft;
+                        kTmp.color = new Color(0.12f, 0.10f, 0.10f, 1f);
+                        EditorUtility.SetDirty(kTmp);
+                        anyChanged = true;
                     }
 
                     Transform mean = front.Find("MeaningLabel");
-                    SetRect(mean, new Vector2(244f, 52f), new Vector2(-111f, -248f));
-                    var mTmp = SetTmp(mean, nunitoFont, 16f, true, 10.5f, 16f);
+                    SetRect(mean, new Vector2(244f, 44f), new Vector2(-122f, -234f));
+                    var mTmp = SetTmp(mean, nunitoFont, 14.5f, true, 9.5f, 14.5f);
                     if (mTmp != null)
                     {
-                        mTmp.lineSpacing = -4f;
+                        mTmp.fontStyle = FontStyles.Bold;
+                        mTmp.lineSpacing = 2f;
                         mTmp.textWrappingMode = TextWrappingModes.Normal;
                         mTmp.overflowMode = TextOverflowModes.Ellipsis;
                         mTmp.alignment = TextAlignmentOptions.TopLeft;
+                        mTmp.color = new Color(0.118f, 0.388f, 0.914f, 1f);
+                        EditorUtility.SetDirty(mTmp);
+                        anyChanged = true;
                     }
 
                     SetRect(front.Find("Btn_Like"), new Vector2(26f, 26f), new Vector2(-77f, 56.6f));
@@ -272,13 +283,11 @@ namespace Utsuru.DictionaryUI.Editor
                     SetPreserveAspect(back, true);
 
                     Transform backKanji = back.Find("BackKanjiLabel");
-                    SetRect(backKanji, new Vector2(244f, 42f), new Vector2(0f, -22f));
-                    var bkTmp = SetTmp(backKanji, zenFont, 23f, true, 15f, 23f);
-                    if (bkTmp != null)
+                    if (backKanji != null && backKanji.gameObject.activeSelf)
                     {
-                        bkTmp.textWrappingMode = TextWrappingModes.NoWrap;
-                        bkTmp.overflowMode = TextOverflowModes.Ellipsis;
-                        bkTmp.alignment = TextAlignmentOptions.Center;
+                        backKanji.gameObject.SetActive(false);
+                        EditorUtility.SetDirty(backKanji.gameObject);
+                        anyChanged = true;
                     }
 
                     Transform sentBox = back.Find("SentenceContainer");
@@ -288,30 +297,34 @@ namespace Utsuru.DictionaryUI.Editor
                         sentRt.anchorMin = new Vector2(0.5f, 1f);
                         sentRt.anchorMax = new Vector2(0.5f, 1f);
                         sentRt.pivot = new Vector2(0.5f, 1f);
-                        sentRt.sizeDelta = new Vector2(244f, 212f);
-                        sentRt.anchoredPosition = new Vector2(0f, -66f);
+                        sentRt.sizeDelta = new Vector2(236f, 265f);
+                        sentRt.anchoredPosition = new Vector2(0f, -34f);
 
                         var vlg = sentBox.GetComponent<VerticalLayoutGroup>() ?? sentBox.gameObject.AddComponent<VerticalLayoutGroup>();
-                        vlg.padding = new RectOffset(10, 10, 8, 8);
-                        vlg.spacing = 8f;
-                        vlg.childAlignment = TextAnchor.MiddleCenter;
+                        vlg.padding = new RectOffset(6, 6, 4, 4);
+                        vlg.spacing = 12f;
+                        vlg.childAlignment = TextAnchor.UpperLeft;
                         vlg.childControlWidth = true;
                         vlg.childControlHeight = true;
                         vlg.childForceExpandWidth = true;
-                        vlg.childForceExpandHeight = true;
+                        vlg.childForceExpandHeight = false;
 
                         Transform jp = sentBox.Find("SentenceJapanese");
                         if (jp != null)
                         {
                             var le = jp.GetComponent<LayoutElement>() ?? jp.gameObject.AddComponent<LayoutElement>();
-                            le.flexibleHeight = 1.25f;
-                            var tmp = SetTmp(jp, zenFont, 15.5f, true, 10.5f, 15.5f);
+                            le.flexibleHeight = 0f;
+                            var tmp = SetTmp(jp, zenFont, 18.5f, true, 12f, 18.5f);
                             if (tmp != null)
                             {
-                                tmp.lineSpacing = -2f;
+                                tmp.fontStyle = FontStyles.Normal;
+                                tmp.lineSpacing = 6f;
                                 tmp.textWrappingMode = TextWrappingModes.Normal;
                                 tmp.overflowMode = TextOverflowModes.Ellipsis;
-                                tmp.alignment = TextAlignmentOptions.Center;
+                                tmp.alignment = TextAlignmentOptions.TopLeft;
+                                tmp.color = new Color(0.14f, 0.12f, 0.12f, 1f);
+                                EditorUtility.SetDirty(tmp);
+                                anyChanged = true;
                             }
                         }
 
@@ -319,14 +332,18 @@ namespace Utsuru.DictionaryUI.Editor
                         if (en != null)
                         {
                             var le = en.GetComponent<LayoutElement>() ?? en.gameObject.AddComponent<LayoutElement>();
-                            le.flexibleHeight = 1f;
-                            var tmp = SetTmp(en, nunitoFont, 13.5f, true, 9.5f, 13.5f);
+                            le.flexibleHeight = 0f;
+                            var tmp = SetTmp(en, nunitoFont, 14.5f, true, 10f, 14.5f);
                             if (tmp != null)
                             {
-                                tmp.lineSpacing = -2f;
+                                tmp.fontStyle = FontStyles.Italic;
+                                tmp.lineSpacing = 4f;
                                 tmp.textWrappingMode = TextWrappingModes.Normal;
                                 tmp.overflowMode = TextOverflowModes.Ellipsis;
-                                tmp.alignment = TextAlignmentOptions.Center;
+                                tmp.alignment = TextAlignmentOptions.TopLeft;
+                                tmp.color = new Color(0.36f, 0.34f, 0.33f, 1f);
+                                EditorUtility.SetDirty(tmp);
+                                anyChanged = true;
                             }
                         }
 
@@ -334,13 +351,17 @@ namespace Utsuru.DictionaryUI.Editor
                     }
 
                     Transform hint = back.Find("BackFlipHint");
-                    SetRect(hint, new Vector2(244f, 22f), new Vector2(0f, 30f));
-                    var hTmp = SetTmp(hint, nunitoFont, 12f, false, 12f, 12f);
-                    if (hTmp != null) hTmp.color = new Color(0.45f, 0.50f, 0.58f);
+                    if (hint != null && hint.gameObject.activeSelf)
+                    {
+                        hint.gameObject.SetActive(false);
+                        EditorUtility.SetDirty(hint.gameObject);
+                        anyChanged = true;
+                    }
                 }
 
                 EditorUtility.SetDirty(card.gameObject);
             }
+            return anyChanged;
         }
 
         private static void RepairModuleSpread(Transform modRoot, TMP_FontAsset zenFont, TMP_FontAsset nunitoFont, Sprite pillSprite)
@@ -641,102 +662,6 @@ namespace Utsuru.DictionaryUI.Editor
             EditorUtility.SetDirty(quizRoot.gameObject);
         }
 
-        private static void RepairFlashcardSpread(Transform dictView, Transform flashRoot, TMP_FontAsset zenFont, TMP_FontAsset nunitoFont, Sprite pillSprite)
-        {
-            if (flashRoot == null) return;
-            Transform left = flashRoot.Find("LeftFlashcardPage");
-            if (left != null)
-            {
-                SetTmp(left.Find("PageTitle"), zenFont, 28f, true, 20f, 28f);
-                SetTmp(left.Find("PageSubtitle"), nunitoFont, 16.5f, false, 16.5f, 16.5f);
-
-                Transform summary = left.Find("DeckSummary");
-                SetSlicedPpu(summary, 0.85f, pillSprite);
-                if (summary != null) SetTmp(summary.Find("Text"), zenFont, 17f, false, 17f, 17f);
-
-                Transform filterRow = left.Find("FilterRow");
-                if (filterRow != null)
-                {
-                    for (int i = 0; i < filterRow.childCount; i++)
-                    {
-                        Transform b = filterRow.GetChild(i);
-                        SetSlicedPpu(b, 2.0f);
-                        var t = SetTmp(b.Find("Text"), zenFont, 16.5f, false, 16.5f, 16.5f);
-                        if (t != null) t.textWrappingMode = TextWrappingModes.NoWrap;
-                    }
-                }
-
-                Transform actionRow = left.Find("ActionRow");
-                if (actionRow != null)
-                {
-                    for (int i = 0; i < actionRow.childCount; i++)
-                    {
-                        Transform b = actionRow.GetChild(i);
-                        SetSlicedPpu(b, 1.85f);
-                        var t = SetTmp(b.Find("Text"), zenFont, 17.5f, false, 17.5f, 17.5f);
-                        if (t != null) t.textWrappingMode = TextWrappingModes.NoWrap;
-                    }
-                }
-
-                Transform itemTmpl = left.Find("CardScrollView/Viewport/Content/FlashcardItemTemplate");
-                if (itemTmpl != null)
-                {
-                    var t1 = SetTmp(itemTmpl.Find("TitleText"), zenFont, 19f, true, 13f, 19f);
-                    if (t1 != null) t1.overflowMode = TextOverflowModes.Ellipsis;
-                    var t2 = SetTmp(itemTmpl.Find("TransText"), nunitoFont, 15f, true, 11f, 15f);
-                    if (t2 != null) t2.overflowMode = TextOverflowModes.Ellipsis;
-                    Transform sb = itemTmpl.Find("StatusBadge");
-                    SetSlicedPpu(sb, 1.25f, pillSprite);
-                    if (sb != null) SetTmp(sb.Find("Text"), zenFont, 14f, false, 14f, 14f);
-                }
-            }
-
-            Transform right = flashRoot.Find("RightFlashcardPage");
-            if (right != null)
-            {
-                SetTmp(right.Find("PageTitle"), zenFont, 28f, true, 20f, 28f);
-                SetTmp(right.Find("PageSubtitle"), nunitoFont, 16.5f, false, 16.5f, 16.5f);
-
-                Transform catBadge = right.Find("StudyCardContainer/FlipCardRoot/FrontSide/CategoryBadge");
-                SetSlicedPpu(catBadge, 0.9f, pillSprite);
-                if (catBadge != null) SetTmp(catBadge.Find("Text"), nunitoFont, 16.5f, true, 12f, 16.5f);
-
-                foreach (string rowPath in new[]
-                {
-                    "StudyCardContainer/FlipCardRoot/FrontSide/FrontActionRow",
-                    "StudyCardContainer/FlipCardRoot/BackSide/BackActionRow",
-                    "StudyCardContainer/ReviewRow",
-                    "StudyCardContainer/ManageRow"
-                })
-                {
-                    Transform row = right.Find(rowPath);
-                    if (row == null) continue;
-                    for (int i = 0; i < row.childCount; i++)
-                    {
-                        Transform b = row.GetChild(i);
-                        SetSlicedPpu(b, 1.85f);
-                        var t = SetTmp(b.Find("Text"), zenFont, 17.5f, false, 17.5f, 17.5f);
-                        if (t != null) t.textWrappingMode = TextWrappingModes.NoWrap;
-                    }
-                }
-            }
-
-            if (dictView != null)
-            {
-                Transform btnRow = dictView.Find("FlashcardFormModal/ModalBox/ButtonRow");
-                if (btnRow != null)
-                {
-                    for (int i = 0; i < btnRow.childCount; i++)
-                    {
-                        Transform b = btnRow.GetChild(i);
-                        SetSlicedPpu(b, 1.85f);
-                        SetTmp(b.Find("Text"), zenFont, 17.5f, false, 17.5f, 17.5f);
-                    }
-                }
-            }
-            EditorUtility.SetDirty(flashRoot.gameObject);
-        }
-
         private static void FixAllPillAndButtonImages(Transform spread, Sprite pillSprite)
         {
             if (spread == null) return;
@@ -813,6 +738,912 @@ namespace Utsuru.DictionaryUI.Editor
                 tmp.fontSizeMax = max;
             }
             return tmp;
+        }
+    }
+
+    /// <summary>
+    /// Automatically configures HUD hint pills in Day_Showcase.unity:
+    /// - CameraHint (C) at bottom-left
+    /// - ScoreBadge (Assets/UI/Score.png) + ScoreText at top-left
+    /// - StoreHint (T), AchievementHint (Q), DictionaryHint (Tab) aligned top-right (left-to-right: T, Q, Tab)
+    /// - Dictionary toggle key -> Tab, Store toggle key -> T
+    /// - Wired into CameraModeController so all HUD hints hide cleanly in Camera Mode.
+    /// </summary>
+    [InitializeOnLoad]
+    public static class UtsuruHudButtonsSetupEditor
+    {
+        private const string DayShowcaseScenePath = "Assets/Japanese_Street/Scenes/Day_Showcase.unity";
+        private const string PrefKey = "Utsuru_HudButtonsSetup_Version";
+        private const string TargetVersion = "v9_20261127";
+
+        private const string AchievementBtnAssetPath = "Assets/UI/achievment btn.png";
+        private const string StoreBtnAssetPath = "Assets/UI/Store/store button.png";
+        private const string DictionaryBtnAssetPath = "Assets/UI/Camera/dictionary_hint.png";
+        private const string CameraBtnAssetPath = "Assets/UI/Camera/camera_hint.png";
+        private const string ScoreBgAssetPath = "Assets/UI/Score.png";
+        private const string CoverCounterPillAssetPath = "Assets/UI/Dictionary/Book/Book_CoverCounterPill.png";
+
+        static UtsuruHudButtonsSetupEditor()
+        {
+            EditorSceneManager.sceneOpened += OnSceneOpened;
+            EditorApplication.delayCall += EnsureSetupOnEditorLoad;
+        }
+
+        private static void OnSceneOpened(Scene scene, OpenSceneMode mode)
+        {
+            if (Application.isPlaying) return;
+            if (scene.path == DayShowcaseScenePath)
+            {
+                EnsureSetupIfNeeded(force: false, saveScene: !scene.isDirty);
+            }
+        }
+
+        private static void EnsureSetupOnEditorLoad()
+        {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
+
+            Scene active = EditorSceneManager.GetActiveScene();
+            if (!active.IsValid()) return;
+
+            if (active.path == DayShowcaseScenePath)
+            {
+                EnsureSetupIfNeeded(force: false, saveScene: !active.isDirty);
+                return;
+            }
+
+            if (EditorPrefs.GetString(PrefKey, string.Empty) != TargetVersion && !active.isDirty)
+            {
+                string prevPath = active.path;
+                Scene dayScene = EditorSceneManager.OpenScene(DayShowcaseScenePath, OpenSceneMode.Single);
+                if (EnsureSetupInternal(dayScene, saveScene: true))
+                {
+                    EditorPrefs.SetString(PrefKey, TargetVersion);
+                }
+                if (!string.IsNullOrEmpty(prevPath))
+                {
+                    EditorSceneManager.OpenScene(prevPath, OpenSceneMode.Single);
+                }
+            }
+        }
+
+        [MenuItem("Tools/Utsuru/Setup HUD Hint Buttons (Tab, Q, T)")]
+        public static void SetupMenu()
+        {
+            Scene active = EditorSceneManager.GetActiveScene();
+            if (!active.IsValid() || active.path != DayShowcaseScenePath)
+            {
+                if (active.isDirty && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                    return;
+                active = EditorSceneManager.OpenScene(DayShowcaseScenePath, OpenSceneMode.Single);
+            }
+
+            if (EnsureSetupInternal(active, saveScene: true))
+            {
+                EditorPrefs.SetString(PrefKey, TargetVersion);
+            }
+        }
+
+        private static void EnsureSetupIfNeeded(bool force, bool saveScene)
+        {
+            Scene active = EditorSceneManager.GetActiveScene();
+            if (!active.IsValid() || active.path != DayShowcaseScenePath) return;
+
+            bool needsSetup = force || EditorPrefs.GetString(PrefKey, string.Empty) != TargetVersion;
+            if (!needsSetup)
+            {
+                Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+                if (canvas != null)
+                {
+                    Transform camMech = canvas.transform.Find("Camera Mechanic");
+                    if (camMech != null && (camMech.Find("AchievementHint") == null || camMech.Find("StoreHint") == null))
+                    {
+                        needsSetup = true;
+                    }
+                    if (canvas.transform.Find("ScoreBadge") == null)
+                    {
+                        needsSetup = true;
+                    }
+                    if (canvas.transform.Find("Dictionary/DictionaryView/BookContainer/DiscoveryProgressBadge") == null)
+                    {
+                        needsSetup = true;
+                    }
+                    if (canvas.transform.Find("Dictionary/DictionaryView/BookContainer/TopTabs/Tab_Flashcard") != null ||
+                        canvas.transform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/FlashcardSpreadRoot") != null ||
+                        canvas.transform.Find("Dictionary/DictionaryView/FlashcardFormModal") != null)
+                    {
+                        needsSetup = true;
+                    }
+                    Transform dictObj = canvas.transform.Find("Dictionary");
+                    if (dictObj != null && GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(dictObj.gameObject) > 0)
+                    {
+                        needsSetup = true;
+                    }
+                }
+            }
+
+            if (!needsSetup) return;
+
+            if (EnsureSetupInternal(active, saveScene))
+            {
+                EditorPrefs.SetString(PrefKey, TargetVersion);
+            }
+        }
+
+        private static bool EnsureSetupInternal(Scene scene, bool saveScene)
+        {
+            bool changed = false;
+
+            // 1. DictionaryUIController.toggleKey -> KeyCode.Tab
+            DictionaryUIController dictCtrl = Object.FindFirstObjectByType<DictionaryUIController>(FindObjectsInactive.Include);
+            if (dictCtrl != null)
+            {
+                SerializedObject so = new SerializedObject(dictCtrl);
+                SerializedProperty prop = so.FindProperty("toggleKey");
+                if (prop != null && prop.intValue != (int)KeyCode.Tab)
+                {
+                    prop.intValue = (int)KeyCode.Tab;
+                    so.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(dictCtrl);
+                    changed = true;
+                }
+            }
+
+            // 2. StoreUIController.toggleKey -> KeyCode.T
+            StoreUIController storeCtrl = Object.FindFirstObjectByType<StoreUIController>(FindObjectsInactive.Include);
+            if (storeCtrl != null)
+            {
+                SerializedObject so = new SerializedObject(storeCtrl);
+                SerializedProperty prop = so.FindProperty("toggleKey");
+                if (prop != null && prop.intValue != (int)KeyCode.T)
+                {
+                    prop.intValue = (int)KeyCode.T;
+                    so.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(storeCtrl);
+                    changed = true;
+                }
+            }
+
+            // 3. Ensure AchievementHint & StoreHint under Canvas/Camera Mechanic
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+            {
+                Transform camMech = canvas.transform.Find("Camera Mechanic");
+                if (camMech != null)
+                {
+                    Sprite achSprite = LoadSpriteAsset(AchievementBtnAssetPath);
+                    Sprite storeSprite = LoadSpriteAsset(StoreBtnAssetPath);
+                    Sprite dictSprite = LoadSpriteAsset(DictionaryBtnAssetPath);
+                    Sprite camSprite = LoadSpriteAsset(CameraBtnAssetPath);
+
+                    // Bottom-left: Camera [C]
+                    GameObject camHint = EnsureHintObject(
+                        camMech,
+                        "CameraHint",
+                        camSprite,
+                        Vector2.zero,
+                        Vector2.zero,
+                        Vector2.zero,
+                        new Vector2(37.5f, 30f),
+                        new Vector2(394f, 124f),
+                        ref changed
+                    );
+
+                    // Top-right row (left-to-right: Store [T], Achievement [Q], Dictionary [Tab])
+                    GameObject storeHint = EnsureHintObject(
+                        camMech,
+                        "StoreHint",
+                        storeSprite,
+                        Vector2.one,
+                        Vector2.one,
+                        Vector2.one,
+                        new Vector2(-312f, -5f),
+                        new Vector2(196f, 141f),
+                        ref changed
+                    );
+
+                    GameObject achHint = EnsureHintObject(
+                        camMech,
+                        "AchievementHint",
+                        achSprite,
+                        Vector2.one,
+                        Vector2.one,
+                        Vector2.one,
+                        new Vector2(-161f, -4f),
+                        new Vector2(198f, 142f),
+                        ref changed
+                    );
+
+                    GameObject dictHint = EnsureHintObject(
+                        camMech,
+                        "DictionaryHint",
+                        dictSprite,
+                        Vector2.one,
+                        Vector2.one,
+                        Vector2.one,
+                        new Vector2(3f, -6f),
+                        new Vector2(209f, 132f),
+                        ref changed
+                    );
+
+                    if (camHint != null)
+                    {
+                        int baseIdx = camHint.transform.GetSiblingIndex();
+                        if (storeHint != null && storeHint.transform.GetSiblingIndex() != baseIdx + 1)
+                        {
+                            storeHint.transform.SetSiblingIndex(baseIdx + 1);
+                            changed = true;
+                        }
+                        if (achHint != null && achHint.transform.GetSiblingIndex() != baseIdx + 2)
+                        {
+                            achHint.transform.SetSiblingIndex(baseIdx + 2);
+                            changed = true;
+                        }
+                        if (dictHint != null && dictHint.transform.GetSiblingIndex() != baseIdx + 3)
+                        {
+                            dictHint.transform.SetSiblingIndex(baseIdx + 3);
+                            changed = true;
+                        }
+                    }
+
+                    CameraModeController camMode = Object.FindFirstObjectByType<CameraModeController>(FindObjectsInactive.Include);
+                    if (camMode != null)
+                    {
+                        SerializedObject camSo = new SerializedObject(camMode);
+                        changed |= AssignObjectPropIfDifferent(camSo.FindProperty("cameraHintObject"), camHint);
+                        changed |= AssignObjectPropIfDifferent(camSo.FindProperty("dictionaryHintObject"), dictHint);
+                        changed |= AssignObjectPropIfDifferent(camSo.FindProperty("achievementHintObject"), achHint);
+                        changed |= AssignObjectPropIfDifferent(camSo.FindProperty("storeHintObject"), storeHint);
+                        if (camSo.ApplyModifiedProperties())
+                        {
+                            EditorUtility.SetDirty(camMode);
+                            changed = true;
+                        }
+                    }
+                }
+
+                // Top-left ScoreBadge using Assets/UI/Score.png + ScoreText centered in right area of pill
+                EnsureTopLeftScoreBadge(canvas.transform, ref changed);
+
+                // Dictionary bottom-center cover clasp pill (X / 72) + Polaroid card typography
+                EnsureDictionaryCoverProgressBadge(canvas.transform, ref changed);
+                Transform photoSpread = canvas.transform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/PhotoSpreadRoot");
+                if (photoSpread != null)
+                {
+                    TMP_FontAsset zenFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/ZenMaruGothic-Bold SDF.asset");
+                    TMP_FontAsset nunitoFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+                    changed |= UtsuruUILayoutRepairEditor.RepairPhotoSpread(photoSpread, zenFont, nunitoFont);
+                }
+
+                // Hapus fitur Flashcard dari scene + perbaiki layout hasil Quiz (kiri hasil, kanan logo Utsuru)
+                RemoveFlashcardFeatureFromScene(canvas.transform, ref changed);
+                EnsureQuizTranslationHiddenAndResultLayout(canvas.transform, ref changed);
+                EnsureCameraAudioClips(ref changed);
+                EnsureGlobalButtonSoundPrefab();
+                EnsureBgmManagerPrefab();
+
+                Transform storeHintTxt = canvas.transform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/ThemeSpreadRoot/RightThemePage/BtnOpenStoreHint/Text");
+                if (storeHintTxt != null)
+                {
+                    var tmp = storeHintTxt.GetComponent<TMP_Text>();
+                    if (tmp != null && tmp.text.Contains("Open Store (F)"))
+                    {
+                        tmp.text = tmp.text.Replace("Open Store (F)", "Open Store (T)");
+                        EditorUtility.SetDirty(tmp);
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed)
+            {
+                Canvas.ForceUpdateCanvases();
+                EditorSceneManager.MarkSceneDirty(scene);
+                if (saveScene)
+                {
+                    EditorSceneManager.SaveScene(scene);
+                    Debug.Log("[UtsuruHudButtonsSetupEditor] HUD buttons (Tab Dictionary, Q Achievement, T Store) configured and Day_Showcase saved.");
+                }
+                else
+                {
+                    Debug.Log("[UtsuruHudButtonsSetupEditor] HUD buttons (Tab Dictionary, Q Achievement, T Store) configured in Day_Showcase.");
+                }
+            }
+
+            return true;
+        }
+
+        private static void EnsureBgmManagerPrefab()
+        {
+            const string prefabPath = "Assets/Resources/Audio/BGMManager.prefab";
+            const string menuClipPath = "Assets/Sounds/BGM_MainMenu.mp3";
+            const string gameClipPath = "Assets/Sounds/BGM_InGame.mp3";
+
+            AudioClip menuClip = AssetDatabase.LoadAssetAtPath<AudioClip>(menuClipPath);
+            AudioClip gameClip = AssetDatabase.LoadAssetAtPath<AudioClip>(gameClipPath);
+            if (menuClip == null && gameClip == null) return;
+
+            GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (existingPrefab != null)
+            {
+                var existingMgr = existingPrefab.GetComponent<Utsuru.Sound.BGMManager>();
+                if (existingMgr != null)
+                {
+                    SerializedObject exSo = new SerializedObject(existingMgr);
+                    if (exSo.FindProperty("mainMenuBgm")?.objectReferenceValue == menuClip &&
+                        exSo.FindProperty("inGameBgm")?.objectReferenceValue == gameClip)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+                AssetDatabase.CreateFolder("Assets", "Resources");
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Audio"))
+                AssetDatabase.CreateFolder("Assets/Resources", "Audio");
+
+            GameObject tempGo = new GameObject("BGMManager");
+            AudioSource srcA = tempGo.AddComponent<AudioSource>();
+            AudioSource srcB = tempGo.AddComponent<AudioSource>();
+            srcA.playOnAwake = srcB.playOnAwake = false;
+            srcA.loop = srcB.loop = true;
+            srcA.ignoreListenerPause = srcB.ignoreListenerPause = true;
+
+            var mgr = tempGo.AddComponent<Utsuru.Sound.BGMManager>();
+            mgr.SetBgmClipsEditor(menuClip, gameClip, srcA, srcB);
+
+            PrefabUtility.SaveAsPrefabAsset(tempGo, prefabPath);
+            Object.DestroyImmediate(tempGo);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void EnsureGlobalButtonSoundPrefab()
+        {
+            const string prefabPath = "Assets/Resources/Audio/GlobalButtonSoundManager.prefab";
+            const string clipPath = "Assets/Sounds/chisper-ui-click-wooden-634791.mp3";
+
+            AudioClip clickClip = AssetDatabase.LoadAssetAtPath<AudioClip>(clipPath);
+            if (clickClip == null) return;
+
+            GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (existingPrefab != null)
+            {
+                var existingMgr = existingPrefab.GetComponent<Utsuru.Sound.GlobalButtonSoundManager>();
+                if (existingMgr != null)
+                {
+                    SerializedObject exSo = new SerializedObject(existingMgr);
+                    if (exSo.FindProperty("buttonClickClip")?.objectReferenceValue == clickClip)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+                AssetDatabase.CreateFolder("Assets", "Resources");
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Audio"))
+                AssetDatabase.CreateFolder("Assets/Resources", "Audio");
+
+            GameObject tempGo = new GameObject("GlobalButtonSoundManager");
+            AudioSource src = tempGo.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.loop = false;
+            src.ignoreListenerPause = true;
+
+            var mgr = tempGo.AddComponent<Utsuru.Sound.GlobalButtonSoundManager>();
+            mgr.SetClickClipEditor(clickClip, src);
+
+            PrefabUtility.SaveAsPrefabAsset(tempGo, prefabPath);
+            Object.DestroyImmediate(tempGo);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void EnsureCameraAudioClips(ref bool changed)
+        {
+            AudioClip openClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/open.wav");
+            AudioClip closeClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/close.wav");
+            AudioClip shutterClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/Camera/shutter.mp3");
+
+            CameraModeController camMode = Object.FindFirstObjectByType<CameraModeController>(FindObjectsInactive.Include);
+            if (camMode != null)
+            {
+                AudioSource modeSource = camMode.GetComponent<AudioSource>();
+                if (modeSource == null)
+                {
+                    modeSource = Undo.AddComponent<AudioSource>(camMode.gameObject);
+                    modeSource.playOnAwake = false;
+                    modeSource.loop = false;
+                    modeSource.ignoreListenerPause = true;
+                    changed = true;
+                }
+
+                SerializedObject cmSo = new SerializedObject(camMode);
+                bool cmChanged = false;
+                cmChanged |= AssignObjectPropIfDifferent(cmSo.FindProperty("sfxSource"), modeSource);
+                cmChanged |= AssignObjectPropIfDifferent(cmSo.FindProperty("openCameraClip"), openClip);
+                cmChanged |= AssignObjectPropIfDifferent(cmSo.FindProperty("closeCameraClip"), closeClip);
+
+                if (cmChanged && cmSo.ApplyModifiedProperties())
+                {
+                    EditorUtility.SetDirty(camMode);
+                    changed = true;
+                }
+            }
+
+            CameraCaptureSystem captureSys = Object.FindFirstObjectByType<CameraCaptureSystem>(FindObjectsInactive.Include);
+            if (captureSys != null)
+            {
+                AudioSource capSource = captureSys.GetComponent<AudioSource>();
+                if (capSource == null)
+                {
+                    capSource = Undo.AddComponent<AudioSource>(captureSys.gameObject);
+                    capSource.playOnAwake = false;
+                    capSource.loop = false;
+                    capSource.ignoreListenerPause = true;
+                    changed = true;
+                }
+
+                SerializedObject capSo = new SerializedObject(captureSys);
+                bool capChanged = false;
+                capChanged |= AssignObjectPropIfDifferent(capSo.FindProperty("sfxSource"), capSource);
+                capChanged |= AssignObjectPropIfDifferent(capSo.FindProperty("shutterClip"), shutterClip);
+                if (capChanged && capSo.ApplyModifiedProperties())
+                {
+                    EditorUtility.SetDirty(captureSys);
+                    changed = true;
+                }
+            }
+        }
+
+        private static void RemoveFlashcardFeatureFromScene(Transform canvasTransform, ref bool changed)
+        {
+            if (canvasTransform == null) return;
+            Transform dictTr = canvasTransform.Find("Dictionary");
+            if (dictTr == null) return;
+
+            int missingRemoved = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(dictTr.gameObject);
+            if (missingRemoved > 0)
+            {
+                EditorUtility.SetDirty(dictTr.gameObject);
+                changed = true;
+            }
+
+            string[] flashcardPaths =
+            {
+                "Dictionary/DictionaryView/BookContainer/TopTabs/Tab_Flashcard",
+                "Dictionary/DictionaryView/BookContainer/BookSpread/FlashcardSpreadRoot",
+                "Dictionary/DictionaryView/FlashcardFormModal"
+            };
+
+            foreach (string path in flashcardPaths)
+            {
+                Transform target = canvasTransform.Find(path);
+                if (target != null)
+                {
+                    Undo.DestroyObjectImmediate(target.gameObject);
+                    changed = true;
+                }
+            }
+
+            Transform tabTheme = canvasTransform.Find("Dictionary/DictionaryView/BookContainer/TopTabs/Tab_Theme");
+            if (tabTheme != null && tabTheme.TryGetComponent<RectTransform>(out var themeRt))
+            {
+                Vector2 targetPos = new Vector2(-380f, -29.36f);
+                if (Vector2.Distance(themeRt.anchoredPosition, targetPos) > 1f)
+                {
+                    themeRt.anchoredPosition = targetPos;
+                    EditorUtility.SetDirty(themeRt);
+                    changed = true;
+                }
+            }
+        }
+
+        private static void EnsureQuizTranslationHiddenAndResultLayout(Transform canvasTransform, ref bool changed)
+        {
+            if (canvasTransform == null) return;
+            Transform quizRoot = canvasTransform.Find("Dictionary/DictionaryView/BookContainer/BookSpread/QuizSpreadRoot");
+            if (quizRoot == null) return;
+
+            foreach (string footerPath in new[] { "ActiveQuizRoot/LeftQuizPage/TranslationFooter", "ActiveQuizRoot/RightQuizPage/TranslationFooter" })
+            {
+                Transform footer = quizRoot.Find(footerPath);
+                if (footer != null)
+                {
+                    var tmp = footer.GetComponent<TextMeshProUGUI>();
+                    if (tmp != null && !string.IsNullOrEmpty(tmp.text))
+                    {
+                        tmp.text = "";
+                        EditorUtility.SetDirty(tmp);
+                        changed = true;
+                    }
+                    if (footer.gameObject.activeSelf)
+                    {
+                        footer.gameObject.SetActive(false);
+                        EditorUtility.SetDirty(footer.gameObject);
+                        changed = true;
+                    }
+                }
+            }
+
+            // Jangan menimpa ResultSummaryRoot yang sudah ada / sudah disesuaikan manual di scene
+            if (quizRoot.Find("ResultSummaryRoot") == null)
+            {
+                DictionaryQuizSpreadUI quizUI = quizRoot.GetComponent<DictionaryQuizSpreadUI>();
+                if (quizUI != null && DictionaryQuizUIBuilder.RebuildResultSummaryOnExistingQuiz(quizUI))
+                {
+                    changed = true;
+                }
+            }
+        }
+
+        private static void EnsureDictionaryCoverProgressBadge(Transform canvasTransform, ref bool changed)
+        {
+            if (canvasTransform == null) return;
+            Transform bookContainer = canvasTransform.Find("Dictionary/DictionaryView/BookContainer");
+            if (bookContainer == null) return;
+
+            var importer = AssetImporter.GetAtPath(CoverCounterPillAssetPath) as TextureImporter;
+            if (importer != null)
+            {
+                bool impChanged = false;
+                Vector4 targetBorder = new Vector4(44f, 20f, 44f, 20f);
+                if (importer.textureType != TextureImporterType.Sprite) { importer.textureType = TextureImporterType.Sprite; impChanged = true; }
+                if (importer.spriteImportMode != SpriteImportMode.Single) { importer.spriteImportMode = SpriteImportMode.Single; impChanged = true; }
+                if (!importer.alphaIsTransparency) { importer.alphaIsTransparency = true; impChanged = true; }
+                if (importer.mipmapEnabled) { importer.mipmapEnabled = false; impChanged = true; }
+                if (importer.spriteBorder != targetBorder) { importer.spriteBorder = targetBorder; impChanged = true; }
+                if (impChanged) importer.SaveAndReimport();
+            }
+
+            Transform badgeTr = bookContainer.Find("DiscoveryProgressBadge");
+            if (badgeTr != null)
+            {
+                // Pertahankan layout & posisi manual yang sudah disesuaikan di scene
+                return;
+            }
+
+            GameObject badgeGo = new GameObject("DiscoveryProgressBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            badgeGo.layer = bookContainer.gameObject.layer != 0 ? bookContainer.gameObject.layer : 5;
+            badgeGo.transform.SetParent(bookContainer, false);
+            Undo.RegisterCreatedObjectUndo(badgeGo, "Create DiscoveryProgressBadge");
+            changed = true;
+
+            if (badgeGo.transform.GetSiblingIndex() != bookContainer.childCount - 1)
+            {
+                badgeGo.transform.SetAsLastSibling();
+                changed = true;
+            }
+
+            RectTransform badgeRt = badgeGo.GetComponent<RectTransform>();
+            if (badgeRt != null)
+            {
+                Vector2 bottomCenter = new Vector2(0.5f, 0f);
+                Vector2 center = new Vector2(0.5f, 0.5f);
+                Vector2 targetPos = new Vector2(-17f, 64f);
+                Vector2 targetSize = new Vector2(224f, 62f);
+
+                if (badgeRt.anchorMin != bottomCenter) { badgeRt.anchorMin = bottomCenter; changed = true; }
+                if (badgeRt.anchorMax != bottomCenter) { badgeRt.anchorMax = bottomCenter; changed = true; }
+                if (badgeRt.pivot != center) { badgeRt.pivot = center; changed = true; }
+                if (badgeRt.anchoredPosition != targetPos) { badgeRt.anchoredPosition = targetPos; changed = true; }
+                if (badgeRt.sizeDelta != targetSize) { badgeRt.sizeDelta = targetSize; changed = true; }
+                if (badgeRt.localScale != Vector3.one) { badgeRt.localScale = Vector3.one; changed = true; }
+            }
+
+            Sprite pillSprite = LoadSpriteAsset(CoverCounterPillAssetPath);
+            Image badgeImg = badgeGo.GetComponent<Image>() ?? badgeGo.AddComponent<Image>();
+            if (pillSprite != null && badgeImg.sprite != pillSprite) { badgeImg.sprite = pillSprite; changed = true; }
+            if (badgeImg.type != Image.Type.Sliced) { badgeImg.type = Image.Type.Sliced; changed = true; }
+            if (badgeImg.raycastTarget) { badgeImg.raycastTarget = false; changed = true; }
+            if (badgeImg.color != Color.white) { badgeImg.color = Color.white; changed = true; }
+
+            TMP_FontAsset nunitoFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+            TMP_FontAsset balooFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-ExtraBold SDF.asset") ?? nunitoFont;
+
+            // Top eyebrow label ("DISCOVERED")
+            Transform hdrTr = badgeGo.transform.Find("ProgressHeaderText");
+            GameObject hdrGo;
+            if (hdrTr == null)
+            {
+                hdrGo = new GameObject("ProgressHeaderText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+                hdrGo.layer = badgeGo.layer;
+                hdrGo.transform.SetParent(badgeGo.transform, false);
+                Undo.RegisterCreatedObjectUndo(hdrGo, "Create ProgressHeaderText");
+                changed = true;
+            }
+            else
+            {
+                hdrGo = hdrTr.gameObject;
+            }
+
+            RectTransform hdrRt = hdrGo.GetComponent<RectTransform>();
+            if (hdrRt != null)
+            {
+                Vector2 minA = new Vector2(0f, 0.5f);
+                Vector2 maxA = new Vector2(1f, 1f);
+                Vector2 offMin = new Vector2(16f, -3f);
+                Vector2 offMax = new Vector2(-16f, -7f);
+                if (hdrRt.anchorMin != minA) { hdrRt.anchorMin = minA; changed = true; }
+                if (hdrRt.anchorMax != maxA) { hdrRt.anchorMax = maxA; changed = true; }
+                if (hdrRt.offsetMin != offMin) { hdrRt.offsetMin = offMin; changed = true; }
+                if (hdrRt.offsetMax != offMax) { hdrRt.offsetMax = offMax; changed = true; }
+            }
+
+            TextMeshProUGUI hdrTmp = hdrGo.GetComponent<TextMeshProUGUI>();
+            if (hdrTmp != null)
+            {
+                if (nunitoFont != null && hdrTmp.font != nunitoFont) { hdrTmp.font = nunitoFont; changed = true; }
+                if (hdrTmp.fontStyle != FontStyles.Bold) { hdrTmp.fontStyle = FontStyles.Bold; changed = true; }
+                if (!Mathf.Approximately(hdrTmp.fontSize, 10.5f)) { hdrTmp.fontSize = 10.5f; changed = true; }
+                if (!Mathf.Approximately(hdrTmp.characterSpacing, 14f)) { hdrTmp.characterSpacing = 14f; changed = true; }
+                if (hdrTmp.alignment != TextAlignmentOptions.Center) { hdrTmp.alignment = TextAlignmentOptions.Center; changed = true; }
+                Color hdrColor = new Color(0.92f, 0.83f, 0.75f, 0.92f);
+                if (hdrTmp.color != hdrColor) { hdrTmp.color = hdrColor; changed = true; }
+                if (hdrTmp.text != "DISCOVERED") { hdrTmp.text = "DISCOVERED"; changed = true; }
+                if (hdrTmp.raycastTarget) { hdrTmp.raycastTarget = false; changed = true; }
+            }
+
+            // Main counter ("0 / 72")
+            Transform cntTr = badgeGo.transform.Find("ProgressCountText");
+            GameObject cntGo;
+            if (cntTr == null)
+            {
+                cntGo = new GameObject("ProgressCountText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+                cntGo.layer = badgeGo.layer;
+                cntGo.transform.SetParent(badgeGo.transform, false);
+                Undo.RegisterCreatedObjectUndo(cntGo, "Create ProgressCountText");
+                changed = true;
+            }
+            else
+            {
+                cntGo = cntTr.gameObject;
+            }
+
+            RectTransform cntRt = cntGo.GetComponent<RectTransform>();
+            if (cntRt != null)
+            {
+                Vector2 minA = new Vector2(0f, 0f);
+                Vector2 maxA = new Vector2(1f, 0.65f);
+                Vector2 offMin = new Vector2(16f, 6f);
+                Vector2 offMax = new Vector2(-16f, -2f);
+                if (cntRt.anchorMin != minA) { cntRt.anchorMin = minA; changed = true; }
+                if (cntRt.anchorMax != maxA) { cntRt.anchorMax = maxA; changed = true; }
+                if (cntRt.offsetMin != offMin) { cntRt.offsetMin = offMin; changed = true; }
+                if (cntRt.offsetMax != offMax) { cntRt.offsetMax = offMax; changed = true; }
+            }
+
+            TextMeshProUGUI cntTmp = cntGo.GetComponent<TextMeshProUGUI>();
+            if (cntTmp != null)
+            {
+                if (balooFont != null && cntTmp.font != balooFont) { cntTmp.font = balooFont; changed = true; }
+                if (cntTmp.fontStyle != FontStyles.Bold) { cntTmp.fontStyle = FontStyles.Bold; changed = true; }
+                if (!Mathf.Approximately(cntTmp.fontSize, 24f)) { cntTmp.fontSize = 24f; changed = true; }
+                if (!cntTmp.enableAutoSizing) { cntTmp.enableAutoSizing = true; changed = true; }
+                if (!Mathf.Approximately(cntTmp.fontSizeMin, 16f)) { cntTmp.fontSizeMin = 16f; changed = true; }
+                if (!Mathf.Approximately(cntTmp.fontSizeMax, 24f)) { cntTmp.fontSizeMax = 24f; changed = true; }
+                if (cntTmp.textWrappingMode != TextWrappingModes.NoWrap) { cntTmp.textWrappingMode = TextWrappingModes.NoWrap; changed = true; }
+                if (cntTmp.alignment != TextAlignmentOptions.Center) { cntTmp.alignment = TextAlignmentOptions.Center; changed = true; }
+                if (cntTmp.color != Color.white) { cntTmp.color = Color.white; changed = true; }
+                const string defaultText = "<color=#FFF8EE><b>0</b></color> <color=#DFC6AE><size=80%>/ 72</size></color>";
+                if (string.IsNullOrEmpty(cntTmp.text)) { cntTmp.text = defaultText; changed = true; }
+                if (cntTmp.raycastTarget) { cntTmp.raycastTarget = false; changed = true; }
+            }
+
+            DictionaryBookSpreadUI bookSpread = bookContainer.GetComponentInChildren<DictionaryBookSpreadUI>(true);
+            if (bookSpread != null && cntTmp != null)
+            {
+                SerializedObject bsSo = new SerializedObject(bookSpread);
+                if (AssignObjectPropIfDifferent(bsSo.FindProperty("discoveryProgressText"), cntTmp) && bsSo.ApplyModifiedProperties())
+                {
+                    EditorUtility.SetDirty(bookSpread);
+                    changed = true;
+                }
+            }
+
+            if (!badgeGo.activeSelf) { badgeGo.SetActive(true); changed = true; }
+            EditorUtility.SetDirty(badgeGo);
+        }
+
+        private static void EnsureTopLeftScoreBadge(Transform canvasTransform, ref bool changed)
+        {
+            if (canvasTransform == null) return;
+
+            Transform existingScoreText = canvasTransform.Find("ScoreText");
+            Transform badgeTr = canvasTransform.Find("ScoreBadge");
+            GameObject badgeGo;
+            if (badgeTr == null)
+            {
+                badgeGo = new GameObject("ScoreBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                badgeGo.layer = canvasTransform.gameObject.layer != 0 ? canvasTransform.gameObject.layer : 5;
+                badgeGo.transform.SetParent(canvasTransform, false);
+                badgeGo.transform.SetSiblingIndex(0);
+                Undo.RegisterCreatedObjectUndo(badgeGo, "Create ScoreBadge");
+                changed = true;
+            }
+            else
+            {
+                badgeGo = badgeTr.gameObject;
+                if (badgeGo.transform.GetSiblingIndex() != 0)
+                {
+                    badgeGo.transform.SetSiblingIndex(0);
+                    changed = true;
+                }
+            }
+
+            RectTransform badgeRt = badgeGo.GetComponent<RectTransform>();
+            if (badgeRt != null)
+            {
+                Vector2 topLeft = new Vector2(0f, 1f);
+                Vector2 targetPos = new Vector2(34f, -22f);
+                Vector2 targetSize = new Vector2(226f, 85f);
+
+                if (badgeRt.anchorMin != topLeft) { badgeRt.anchorMin = topLeft; changed = true; }
+                if (badgeRt.anchorMax != topLeft) { badgeRt.anchorMax = topLeft; changed = true; }
+                if (badgeRt.pivot != topLeft) { badgeRt.pivot = topLeft; changed = true; }
+                if (badgeRt.anchoredPosition != targetPos) { badgeRt.anchoredPosition = targetPos; changed = true; }
+                if (badgeRt.sizeDelta != targetSize) { badgeRt.sizeDelta = targetSize; changed = true; }
+                if (badgeRt.localScale != Vector3.one) { badgeRt.localScale = Vector3.one; changed = true; }
+            }
+
+            Sprite scoreSprite = LoadSpriteAsset(ScoreBgAssetPath);
+            Image badgeImg = badgeGo.GetComponent<Image>() ?? badgeGo.AddComponent<Image>();
+            if (scoreSprite != null && badgeImg.sprite != scoreSprite)
+            {
+                badgeImg.sprite = scoreSprite;
+                changed = true;
+            }
+            if (badgeImg.type != Image.Type.Simple) { badgeImg.type = Image.Type.Simple; changed = true; }
+            if (!badgeImg.preserveAspect) { badgeImg.preserveAspect = true; changed = true; }
+            if (badgeImg.raycastTarget) { badgeImg.raycastTarget = false; changed = true; }
+            if (badgeImg.color != Color.white) { badgeImg.color = Color.white; changed = true; }
+
+            Transform scoreTr = badgeGo.transform.Find("ScoreText") ?? existingScoreText;
+            GameObject scoreGo;
+            if (scoreTr == null)
+            {
+                scoreGo = new GameObject("ScoreText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+                scoreGo.layer = badgeGo.layer;
+                scoreGo.transform.SetParent(badgeGo.transform, false);
+                Undo.RegisterCreatedObjectUndo(scoreGo, "Create ScoreText");
+                changed = true;
+            }
+            else
+            {
+                scoreGo = scoreTr.gameObject;
+                if (scoreTr.parent != badgeGo.transform)
+                {
+                    scoreTr.SetParent(badgeGo.transform, false);
+                    changed = true;
+                }
+            }
+
+            RectTransform scoreRt = scoreGo.GetComponent<RectTransform>();
+            if (scoreRt != null)
+            {
+                Vector2 minAnchor = new Vector2(0.38f, 0.14f);
+                Vector2 maxAnchor = new Vector2(0.92f, 0.94f);
+                Vector2 center = new Vector2(0.5f, 0.5f);
+
+                if (scoreRt.anchorMin != minAnchor) { scoreRt.anchorMin = minAnchor; changed = true; }
+                if (scoreRt.anchorMax != maxAnchor) { scoreRt.anchorMax = maxAnchor; changed = true; }
+                if (scoreRt.pivot != center) { scoreRt.pivot = center; changed = true; }
+                if (scoreRt.anchoredPosition != Vector2.zero) { scoreRt.anchoredPosition = Vector2.zero; changed = true; }
+                if (scoreRt.sizeDelta != Vector2.zero) { scoreRt.sizeDelta = Vector2.zero; changed = true; }
+                if (scoreRt.localScale != Vector3.one) { scoreRt.localScale = Vector3.one; changed = true; }
+            }
+
+            TextMeshProUGUI scoreTmp = scoreGo.GetComponent<TextMeshProUGUI>();
+            if (scoreTmp != null)
+            {
+                TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-ExtraBold SDF.asset")
+                    ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+                if (font != null && scoreTmp.font != font)
+                {
+                    scoreTmp.font = font;
+                    changed = true;
+                }
+                if (scoreTmp.alignment != TextAlignmentOptions.Center) { scoreTmp.alignment = TextAlignmentOptions.Center; changed = true; }
+                if (!Mathf.Approximately(scoreTmp.fontSize, 34f)) { scoreTmp.fontSize = 34f; changed = true; }
+                if (!scoreTmp.enableAutoSizing) { scoreTmp.enableAutoSizing = true; changed = true; }
+                if (!Mathf.Approximately(scoreTmp.fontSizeMin, 18f)) { scoreTmp.fontSizeMin = 18f; changed = true; }
+                if (!Mathf.Approximately(scoreTmp.fontSizeMax, 34f)) { scoreTmp.fontSizeMax = 34f; changed = true; }
+                Color targetColor = new Color(1f, 0.97f, 0.90f, 1f);
+                if (scoreTmp.color != targetColor) { scoreTmp.color = targetColor; changed = true; }
+                if (scoreTmp.raycastTarget) { scoreTmp.raycastTarget = false; changed = true; }
+                if (scoreTmp.text.StartsWith("Skor:")) { scoreTmp.text = "0"; changed = true; }
+            }
+
+            ScoreManager scoreMgr = Object.FindFirstObjectByType<ScoreManager>(FindObjectsInactive.Include);
+            if (scoreMgr != null && scoreTmp != null)
+            {
+                SerializedObject smSo = new SerializedObject(scoreMgr);
+                bool smChanged = AssignObjectPropIfDifferent(smSo.FindProperty("scoreText"), scoreTmp);
+                smChanged |= AssignObjectPropIfDifferent(smSo.FindProperty("scoreBadgeRoot"), badgeGo);
+                SerializedProperty fmtProp = smSo.FindProperty("scoreFormat");
+                if (fmtProp != null && fmtProp.stringValue != "{0}")
+                {
+                    fmtProp.stringValue = "{0}";
+                    smChanged = true;
+                }
+                if (smChanged && smSo.ApplyModifiedProperties())
+                {
+                    EditorUtility.SetDirty(scoreMgr);
+                    changed = true;
+                }
+            }
+
+            if (!badgeGo.activeSelf) { badgeGo.SetActive(true); changed = true; }
+            EditorUtility.SetDirty(badgeGo);
+            EditorUtility.SetDirty(scoreGo);
+        }
+
+        private static GameObject EnsureHintObject(
+            Transform parent,
+            string objectName,
+            Sprite sprite,
+            Vector2 anchorMin,
+            Vector2 anchorMax,
+            Vector2 pivot,
+            Vector2 anchoredPosition,
+            Vector2 sizeDelta,
+            ref bool changed)
+        {
+            Transform existing = parent.Find(objectName);
+            GameObject go;
+            if (existing == null)
+            {
+                go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                go.layer = parent.gameObject.layer != 0 ? parent.gameObject.layer : 5;
+                go.transform.SetParent(parent, false);
+                Undo.RegisterCreatedObjectUndo(go, $"Create {objectName}");
+                changed = true;
+            }
+            else
+            {
+                go = existing.gameObject;
+            }
+
+            RectTransform rt = go.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                if (rt.anchorMin != anchorMin) { rt.anchorMin = anchorMin; changed = true; }
+                if (rt.anchorMax != anchorMax) { rt.anchorMax = anchorMax; changed = true; }
+                if (rt.pivot != pivot) { rt.pivot = pivot; changed = true; }
+                if (rt.anchoredPosition != anchoredPosition) { rt.anchoredPosition = anchoredPosition; changed = true; }
+                if (rt.sizeDelta != sizeDelta) { rt.sizeDelta = sizeDelta; changed = true; }
+                if (rt.localScale != Vector3.one) { rt.localScale = Vector3.one; changed = true; }
+            }
+
+            Image img = go.GetComponent<Image>() ?? go.AddComponent<Image>();
+            if (sprite != null && img.sprite != sprite)
+            {
+                img.sprite = sprite;
+                changed = true;
+            }
+            if (img.type != Image.Type.Simple) { img.type = Image.Type.Simple; changed = true; }
+            if (!img.preserveAspect) { img.preserveAspect = true; changed = true; }
+            if (img.raycastTarget) { img.raycastTarget = false; changed = true; }
+            if (img.color != Color.white) { img.color = Color.white; changed = true; }
+
+            if (!go.activeSelf) { go.SetActive(true); changed = true; }
+            EditorUtility.SetDirty(go);
+            return go;
+        }
+
+        private static bool AssignObjectPropIfDifferent(SerializedProperty prop, Object value)
+        {
+            if (prop == null || value == null) return false;
+            if (prop.objectReferenceValue == value) return false;
+            prop.objectReferenceValue = value;
+            return true;
+        }
+
+        private static Sprite LoadSpriteAsset(string assetPath)
+        {
+            Sprite direct = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+            if (direct != null) return direct;
+            return AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<Sprite>().FirstOrDefault();
         }
     }
 }

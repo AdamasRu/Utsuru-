@@ -1,3 +1,4 @@
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -153,88 +154,21 @@ namespace Utsuru.DictionaryUI.Editor
             demoBtnTmp.text = "Coba Mode Latihan (Demo) >";
 
             // ==========================================
-            // SUB-ROOT 3: RESULT SUMMARY ROOT
+            // SUB-ROOT 3: RESULT SUMMARY ROOT (Kiri Hasil Quiz, Kanan Logo Utsuru)
             // ==========================================
-            GameObject resultRoot = CreateUIObject("ResultSummaryRoot", quizRoot.transform);
-            SetStretch(resultRoot.GetComponent<RectTransform>());
-            resultRoot.SetActive(false);
-
-            GameObject summaryCardGo = CreateUIObject("SummaryCard", resultRoot.transform);
-            RectTransform summaryCardRt = summaryCardGo.GetComponent<RectTransform>();
-            summaryCardRt.anchorMin = new Vector2(0.5f, 0.5f);
-            summaryCardRt.anchorMax = new Vector2(0.5f, 0.5f);
-            summaryCardRt.pivot = new Vector2(0.5f, 0.5f);
-            summaryCardRt.sizeDelta = new Vector2(620f, 420f);
-
-            var sumCardImg = summaryCardGo.AddComponent<Image>();
-            sumCardImg.sprite = cardChoice2Sprite;
-            sumCardImg.type = Image.Type.Sliced;
-            sumCardImg.color = Color.white;
-
-            var sumVlg = summaryCardGo.AddComponent<VerticalLayoutGroup>();
-            sumVlg.padding = new RectOffset(40, 40, 32, 32);
-            sumVlg.spacing = 14f;
-            sumVlg.childAlignment = TextAnchor.MiddleCenter;
-            sumVlg.childControlWidth = true;
-            sumVlg.childControlHeight = false;
-            sumVlg.childForceExpandWidth = true;
-            sumVlg.childForceExpandHeight = false;
-
-            GameObject resTitleGo = CreateUIObject("Title", summaryCardGo.transform);
-            var resTitleTmp = resTitleGo.AddComponent<TextMeshProUGUI>();
-            resTitleTmp.font = zenFont;
-            resTitleTmp.fontSize = 30f;
-            resTitleTmp.fontStyle = FontStyles.Bold;
-            resTitleTmp.alignment = TextAlignmentOptions.Center;
-            resTitleTmp.color = new Color(0.24f, 0.16f, 0.13f);
-            resTitleTmp.text = "Outstanding! / 完璧です！";
-
-            GameObject resScoreGo = CreateUIObject("ScoreText", summaryCardGo.transform);
-            var resScoreTmp = resScoreGo.AddComponent<TextMeshProUGUI>();
-            resScoreTmp.font = zenFont;
-            resScoreTmp.fontSize = 24f;
-            resScoreTmp.alignment = TextAlignmentOptions.Center;
-            resScoreTmp.color = new Color(0.35f, 0.30f, 0.28f);
-            resScoreTmp.text = "Score: 4 / 4";
-
-            GameObject resPctGo = CreateUIObject("PercentageText", summaryCardGo.transform);
-            var resPctTmp = resPctGo.AddComponent<TextMeshProUGUI>();
-            resPctTmp.font = zenFont;
-            resPctTmp.fontSize = 44f;
-            resPctTmp.fontStyle = FontStyles.Bold;
-            resPctTmp.alignment = TextAlignmentOptions.Center;
-            resPctTmp.color = new Color(0.18f, 0.68f, 0.38f);
-            resPctTmp.text = "100%";
-
-            GameObject resPtsGo = CreateUIObject("PointsText", summaryCardGo.transform);
-            var resPtsTmp = resPtsGo.AddComponent<TextMeshProUGUI>();
-            resPtsTmp.font = nunitoFont;
-            resPtsTmp.fontSize = 22f;
-            resPtsTmp.fontStyle = FontStyles.Bold;
-            resPtsTmp.alignment = TextAlignmentOptions.Center;
-            resPtsTmp.color = new Color(0.85f, 0.55f, 0.15f);
-            resPtsTmp.text = "+40 Points Awarded!";
-
-            GameObject playAgainBtnGo = CreateUIObject("PlayAgainButton", summaryCardGo.transform);
-            var playAgainRt = playAgainBtnGo.GetComponent<RectTransform>();
-            playAgainRt.sizeDelta = new Vector2(280f, 52f);
-            var playAgainImg = playAgainBtnGo.AddComponent<Image>();
-            playAgainImg.sprite = pillHeaderSprite;
-            playAgainImg.type = Image.Type.Sliced;
-            playAgainImg.color = new Color(0.24f, 0.16f, 0.13f);
-
-            var playAgainBtn = playAgainBtnGo.AddComponent<Button>();
-            playAgainBtn.targetGraphic = playAgainImg;
-
-            GameObject playAgainTextGo = CreateUIObject("Text", playAgainBtnGo.transform);
-            SetStretch(playAgainTextGo.GetComponent<RectTransform>());
-            var playAgainTmp = playAgainTextGo.AddComponent<TextMeshProUGUI>();
-            playAgainTmp.font = zenFont;
-            playAgainTmp.fontSize = 20f;
-            playAgainTmp.fontStyle = FontStyles.Bold;
-            playAgainTmp.alignment = TextAlignmentOptions.Center;
-            playAgainTmp.color = Color.white;
-            playAgainTmp.text = "Play Again / Main Lagi ↺";
+            GameObject resultRoot = BuildResultSummaryRoot(
+                quizRoot.transform,
+                pillHeaderSprite,
+                cardChoice2Sprite ?? LoadSpriteAsset("Assets/UI/Card_Choice2_Bg.png"),
+                pillBgSprite,
+                LoadSpriteAsset("Assets/UI/logoutsuru.png"),
+                zenFont,
+                nunitoFont,
+                out TextMeshProUGUI resTitleTmp,
+                out TextMeshProUGUI resScoreTmp,
+                out TextMeshProUGUI resPctTmp,
+                out TextMeshProUGUI resPtsTmp,
+                out Button playAgainBtn);
 
             // ==========================================
             // SERIALIZE KE SCRIPT DICTIONARYQUIZSPREADUI
@@ -469,7 +403,7 @@ namespace Utsuru.DictionaryUI.Editor
                 slot.choiceCheckmarkObjects[i] = checkGo;
             }
 
-            // 5. Footer Terjemahan ("桜 = Cherry Blossom")
+            // 5. Footer Terjemahan dinonaktifkan agar tidak bertabrakan dengan opsi jawaban
             GameObject footerGo = CreateUIObject("TranslationFooter", pageParent);
             RectTransform footerRt = footerGo.GetComponent<RectTransform>();
             footerRt.anchorMin = new Vector2(0.5f, 1f);
@@ -484,11 +418,238 @@ namespace Utsuru.DictionaryUI.Editor
             footerTmp.fontStyle = FontStyles.Bold;
             footerTmp.alignment = TextAlignmentOptions.Center;
             footerTmp.color = new Color(0.24f, 0.16f, 0.13f);
-            footerTmp.text = "桜 = Cherry Blossom";
+            footerTmp.text = "";
             footerGo.SetActive(false);
             slot.translationFooterText = footerTmp;
 
             return slot;
+        }
+
+        public static bool RebuildResultSummaryOnExistingQuiz(DictionaryQuizSpreadUI quizUI)
+        {
+            if (quizUI == null) return false;
+
+            Transform oldResult = quizUI.transform.Find("ResultSummaryRoot");
+            bool wasActive = oldResult != null && oldResult.gameObject.activeSelf;
+            if (oldResult != null)
+            {
+                Undo.DestroyObjectImmediate(oldResult.gameObject);
+            }
+
+            var zenFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/ZenMaruGothic-Bold SDF.asset");
+            var nunitoFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Nunito-Bold SDF.asset");
+            var pillHeaderSprite = LoadSpriteAsset("Assets/UI/Quiz/Pill_Header.png");
+            var cardChoice2Sprite = LoadSpriteAsset("Assets/UI/Card_Choice2_Bg.png");
+            var pillBgSprite = LoadSpriteAsset("Assets/UI/Polaroid/Category Pill.png");
+            var utsuruLogoSprite = LoadSpriteAsset("Assets/UI/logoutsuru.png");
+
+            GameObject resultRoot = BuildResultSummaryRoot(
+                quizUI.transform,
+                pillHeaderSprite,
+                cardChoice2Sprite,
+                pillBgSprite,
+                utsuruLogoSprite,
+                zenFont,
+                nunitoFont,
+                out TextMeshProUGUI resTitleTmp,
+                out TextMeshProUGUI resScoreTmp,
+                out TextMeshProUGUI resPctTmp,
+                out TextMeshProUGUI resPtsTmp,
+                out Button playAgainBtn);
+
+            resultRoot.SetActive(wasActive);
+
+            var so = new SerializedObject(quizUI);
+            so.FindProperty("resultSummaryRoot").objectReferenceValue = resultRoot;
+            so.FindProperty("resultTitleText").objectReferenceValue = resTitleTmp;
+            so.FindProperty("resultScoreText").objectReferenceValue = resScoreTmp;
+            so.FindProperty("resultPercentageText").objectReferenceValue = resPctTmp;
+            so.FindProperty("resultPointsRewardText").objectReferenceValue = resPtsTmp;
+            so.FindProperty("playAgainButton").objectReferenceValue = playAgainBtn;
+            so.ApplyModifiedProperties();
+
+            EditorUtility.SetDirty(quizUI);
+            EditorUtility.SetDirty(resultRoot);
+            return true;
+        }
+
+        private static GameObject BuildResultSummaryRoot(
+            Transform quizRootTransform,
+            Sprite pillHeaderSprite,
+            Sprite cardChoice2Sprite,
+            Sprite pillBgSprite,
+            Sprite utsuruLogoSprite,
+            TMP_FontAsset zenFont,
+            TMP_FontAsset nunitoFont,
+            out TextMeshProUGUI resTitleTmp,
+            out TextMeshProUGUI resScoreTmp,
+            out TextMeshProUGUI resPctTmp,
+            out TextMeshProUGUI resPtsTmp,
+            out Button playAgainBtn)
+        {
+            TMP_FontAsset balooExtraBold = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Baloo_2/static/Baloo2-ExtraBold SDF.asset") ?? zenFont;
+
+            GameObject resultRoot = CreateUIObject("ResultSummaryRoot", quizRootTransform);
+            SetStretch(resultRoot.GetComponent<RectTransform>());
+            resultRoot.SetActive(false);
+
+            // ---------------- LEFT PAGE: Quiz Summary ----------------
+            GameObject leftResultPage = CreateUIObject("LeftResultPage", resultRoot.transform);
+            SetPageTransform(leftResultPage.GetComponent<RectTransform>(), isLeft: true);
+
+            GameObject headerBadgeGo = CreateUIObject("ResultHeaderBadge", leftResultPage.transform);
+            RectTransform headerBadgeRt = headerBadgeGo.GetComponent<RectTransform>();
+            headerBadgeRt.anchorMin = new Vector2(0.5f, 1f);
+            headerBadgeRt.anchorMax = new Vector2(0.5f, 1f);
+            headerBadgeRt.pivot = new Vector2(0.5f, 1f);
+            headerBadgeRt.sizeDelta = new Vector2(496f, 63f);
+            headerBadgeRt.anchoredPosition = new Vector2(0f, -49.56f);
+
+            var headerImg = headerBadgeGo.AddComponent<Image>();
+            headerImg.sprite = pillHeaderSprite;
+            headerImg.type = Image.Type.Sliced;
+            headerImg.color = Color.white;
+
+            GameObject headerTextGo = CreateUIObject("Text", headerBadgeGo.transform);
+            SetStretch(headerTextGo.GetComponent<RectTransform>());
+            var headerTmp = headerTextGo.AddComponent<TextMeshProUGUI>();
+            headerTmp.font = zenFont;
+            headerTmp.fontSize = 28f;
+            headerTmp.fontStyle = FontStyles.Bold;
+            headerTmp.alignment = TextAlignmentOptions.Center;
+            headerTmp.color = Color.white;
+            headerTmp.text = "Quiz Complete!";
+
+            GameObject summaryCardGo = CreateUIObject("SummaryCard", leftResultPage.transform);
+            RectTransform summaryCardRt = summaryCardGo.GetComponent<RectTransform>();
+            summaryCardRt.anchorMin = new Vector2(0.5f, 0.5f);
+            summaryCardRt.anchorMax = new Vector2(0.5f, 0.5f);
+            summaryCardRt.pivot = new Vector2(0.5f, 0.5f);
+            summaryCardRt.sizeDelta = new Vector2(530f, 520f);
+            summaryCardRt.anchoredPosition = new Vector2(0f, -34f);
+
+            var sumCardImg = summaryCardGo.AddComponent<Image>();
+            sumCardImg.sprite = cardChoice2Sprite;
+            sumCardImg.type = Image.Type.Sliced;
+            sumCardImg.color = Color.white;
+
+            var sumVlg = summaryCardGo.AddComponent<VerticalLayoutGroup>();
+            sumVlg.padding = new RectOffset(40, 40, 38, 36);
+            sumVlg.spacing = 18f;
+            sumVlg.childAlignment = TextAnchor.MiddleCenter;
+            sumVlg.childControlWidth = true;
+            sumVlg.childControlHeight = true;
+            sumVlg.childForceExpandWidth = false;
+            sumVlg.childForceExpandHeight = false;
+
+            GameObject resTitleGo = CreateUIObject("Title", summaryCardGo.transform);
+            var resTitleLe = resTitleGo.AddComponent<LayoutElement>();
+            resTitleLe.preferredWidth = 450f;
+            resTitleLe.preferredHeight = 68f;
+            resTitleTmp = resTitleGo.AddComponent<TextMeshProUGUI>();
+            resTitleTmp.font = zenFont;
+            resTitleTmp.fontSize = 28f;
+            resTitleTmp.enableAutoSizing = true;
+            resTitleTmp.fontSizeMin = 20f;
+            resTitleTmp.fontSizeMax = 28f;
+            resTitleTmp.fontStyle = FontStyles.Bold;
+            resTitleTmp.alignment = TextAlignmentOptions.Center;
+            resTitleTmp.lineSpacing = 4f;
+            resTitleTmp.color = new Color(0.24f, 0.16f, 0.13f);
+            resTitleTmp.text = "Outstanding!\n完璧です！";
+
+            GameObject resPctGo = CreateUIObject("PercentageText", summaryCardGo.transform);
+            var resPctLe = resPctGo.AddComponent<LayoutElement>();
+            resPctLe.preferredWidth = 450f;
+            resPctLe.preferredHeight = 86f;
+            resPctTmp = resPctGo.AddComponent<TextMeshProUGUI>();
+            resPctTmp.font = balooExtraBold;
+            resPctTmp.fontSize = 62f;
+            resPctTmp.fontStyle = FontStyles.Bold;
+            resPctTmp.alignment = TextAlignmentOptions.Center;
+            resPctTmp.color = new Color(0.11f, 0.64f, 0.35f);
+            resPctTmp.text = "100%";
+
+            GameObject resScoreGo = CreateUIObject("ScoreText", summaryCardGo.transform);
+            var resScoreLe = resScoreGo.AddComponent<LayoutElement>();
+            resScoreLe.preferredWidth = 450f;
+            resScoreLe.preferredHeight = 36f;
+            resScoreTmp = resScoreGo.AddComponent<TextMeshProUGUI>();
+            resScoreTmp.font = nunitoFont ?? zenFont;
+            resScoreTmp.fontSize = 23f;
+            resScoreTmp.fontStyle = FontStyles.Bold;
+            resScoreTmp.alignment = TextAlignmentOptions.Center;
+            resScoreTmp.color = new Color(0.35f, 0.30f, 0.28f);
+            resScoreTmp.text = "Score: 4 / 4";
+
+            GameObject pointsBadgeGo = CreateUIObject("PointsBadge", summaryCardGo.transform);
+            var pointsBadgeLe = pointsBadgeGo.AddComponent<LayoutElement>();
+            pointsBadgeLe.preferredWidth = 340f;
+            pointsBadgeLe.preferredHeight = 46f;
+            var pointsBadgeImg = pointsBadgeGo.AddComponent<Image>();
+            pointsBadgeImg.sprite = pillBgSprite;
+            pointsBadgeImg.type = Image.Type.Sliced;
+            pointsBadgeImg.pixelsPerUnitMultiplier = 0.85f;
+            pointsBadgeImg.color = new Color(1f, 0.95f, 0.84f, 1f);
+
+            GameObject resPtsGo = CreateUIObject("PointsText", pointsBadgeGo.transform);
+            SetStretch(resPtsGo.GetComponent<RectTransform>());
+            resPtsTmp = resPtsGo.AddComponent<TextMeshProUGUI>();
+            resPtsTmp.font = nunitoFont ?? zenFont;
+            resPtsTmp.fontSize = 19.5f;
+            resPtsTmp.fontStyle = FontStyles.Bold;
+            resPtsTmp.alignment = TextAlignmentOptions.Center;
+            resPtsTmp.color = new Color(0.66f, 0.35f, 0.05f);
+            resPtsTmp.text = "+40 Points Awarded!";
+
+            GameObject playAgainBtnGo = CreateUIObject("PlayAgainButton", summaryCardGo.transform);
+            var playAgainLe = playAgainBtnGo.AddComponent<LayoutElement>();
+            playAgainLe.preferredWidth = 310f;
+            playAgainLe.preferredHeight = 58f;
+            var playAgainImg = playAgainBtnGo.AddComponent<Image>();
+            playAgainImg.sprite = pillHeaderSprite;
+            playAgainImg.type = Image.Type.Sliced;
+            playAgainImg.color = new Color(0.24f, 0.16f, 0.13f);
+
+            playAgainBtn = playAgainBtnGo.AddComponent<Button>();
+            playAgainBtn.targetGraphic = playAgainImg;
+
+            GameObject playAgainTextGo = CreateUIObject("Text", playAgainBtnGo.transform);
+            SetStretch(playAgainTextGo.GetComponent<RectTransform>());
+            var playAgainTmp = playAgainTextGo.AddComponent<TextMeshProUGUI>();
+            playAgainTmp.font = zenFont;
+            playAgainTmp.fontSize = 20f;
+            playAgainTmp.fontStyle = FontStyles.Bold;
+            playAgainTmp.alignment = TextAlignmentOptions.Center;
+            playAgainTmp.color = Color.white;
+            playAgainTmp.text = "Play Again";
+
+            // ---------------- RIGHT PAGE: Utsuru Logo ----------------
+            GameObject rightResultPage = CreateUIObject("RightResultPage", resultRoot.transform);
+            SetPageTransform(rightResultPage.GetComponent<RectTransform>(), isLeft: false);
+
+            GameObject logoGo = CreateUIObject("UtsuruLogo", rightResultPage.transform);
+            RectTransform logoRt = logoGo.GetComponent<RectTransform>();
+            logoRt.anchorMin = new Vector2(0.5f, 0.5f);
+            logoRt.anchorMax = new Vector2(0.5f, 0.5f);
+            logoRt.pivot = new Vector2(0.5f, 0.5f);
+            logoRt.sizeDelta = new Vector2(480f, 260f);
+            logoRt.anchoredPosition = new Vector2(-10f, 15f);
+
+            var logoImg = logoGo.AddComponent<Image>();
+            logoImg.sprite = utsuruLogoSprite;
+            logoImg.preserveAspect = true;
+            logoImg.color = Color.white;
+            logoImg.raycastTarget = false;
+
+            return resultRoot;
+        }
+
+        private static Sprite LoadSpriteAsset(string assetPath)
+        {
+            Sprite direct = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+            if (direct != null) return direct;
+            return AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<Sprite>().FirstOrDefault();
         }
 
         private static void SerializeSlot(SerializedProperty slotProp, QuizPageSlotUI slot)

@@ -350,6 +350,7 @@ public class SettingsManager : MonoBehaviour
         curMusicVol = Mathf.Round(val);
         if (musicVolValueText != null) musicVolValueText.text = curMusicVol.ToString("0");
         PlayerPrefs.SetFloat("Setting_MusicVol", curMusicVol);
+        Utsuru.Sound.BGMManager.Instance?.RefreshVolume();
     }
 
     private void OnVoiceVolChanged(float val)
@@ -419,6 +420,7 @@ public class SettingsManager : MonoBehaviour
     {
         // 1. Audio
         AudioListener.volume = curMasterVol / 100f;
+        Utsuru.Sound.BGMManager.Instance?.RefreshVolume();
         if (DialogueManager.Instance != null && DialogueManager.Instance.VoiceAudioSource != null)
         {
             DialogueManager.Instance.VoiceAudioSource.volume = curVoiceVol / 100f;
