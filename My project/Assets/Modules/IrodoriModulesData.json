@@ -1,0 +1,1874 @@
+{
+  "version": "1.0",
+  "title": "Utsuru Irodori Starter A1 Learning Database",
+  "description": "Irodori Starter A1 Japanese curriculum database for Utsuru Dictionary Learn (DPPL.FR05 & UI-05)",
+  "totalChapters": 8,
+  "totalMaterials": 35,
+  "hiraganaKatakana": [
+    {
+      "id": "AK-01",
+      "title": "Hiragana (ひらがな)",
+      "subtitle": "46 Basic Characters, Dakuon & Combinations",
+      "priority": "P0",
+      "description": "The primary foundation: character rows, simple reading, font nuances, long vowels, and small tsu (sokuon). Essential foundation for beginners.",
+      "spreadIndex": 0,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "label": "46 Basic Characters Table (Gojuuon)",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-01_PDF_057.png"
+        },
+        {
+          "pageNumber": 2,
+          "label": "Dakuon, Handakuon & Youon",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-01_PDF_058.png"
+        },
+        {
+          "pageNumber": 3,
+          "label": "Long Vowels & Double Consonants Rules",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-01_PDF_059.png"
+        }
+      ]
+    },
+    {
+      "id": "AK-02",
+      "title": "Katakana (カタカナ)",
+      "subtitle": "Foreign Loanword Script & Long Vowels",
+      "priority": "P0",
+      "description": "Katakana characters, extended modern combinations for loanwords, and reading practice with chōonpu and small tsu.",
+      "spreadIndex": 1,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "label": "46 Basic Katakana Table",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-02_PDF_076.png"
+        },
+        {
+          "pageNumber": 2,
+          "label": "Special Foreign Combinations (ティ, シェ, ファ)",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-02_PDF_077.png"
+        },
+        {
+          "pageNumber": 3,
+          "label": "Loanword Reading Practice & Long Vowels (ー)",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/AK-02_PDF_078.png"
+        }
+      ]
+    },
+    {
+      "id": "AK-03",
+      "title": "Japanese Writing Systems (日本の文字)",
+      "subtitle": "The Roles of Kanji, Hiragana, Katakana, and Romaji",
+      "priority": "P1",
+      "description": "Overview of how the 4 writing systems work together in real-world Japanese texts.",
+      "spreadIndex": 2,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "label": "Visual Examples of the 4 Writing Systems",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/AK-03_01_PDF_98.jpg"
+        }
+      ]
+    },
+    {
+      "id": "EX-06",
+      "title": "Basic Kanji Words (かんじ)",
+      "subtitle": "Beginner N5 Kanji Reference Catalog",
+      "priority": "P2",
+      "description": "Everyday basic kanji characters and vocabulary for beginner learners.",
+      "spreadIndex": 3,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "label": "Kanji Words Reference Part 1",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/EX-06_PDF_093.png"
+        },
+        {
+          "pageNumber": 2,
+          "label": "Kanji Words Reference Part 2",
+          "imagePath": "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/vector_page_reproductions/EX-06_PDF_414.png"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "chapterId": 1,
+      "chapterTitle": "Chapter 1: Greetings & Survival Phrases",
+      "chapterSubtitle": "はじめての日本語 • Greetings & Survival Phrases",
+      "moduleCount": 8,
+      "modules": [
+        {
+          "id": "FR-01",
+          "title": "Greetings by time of day",
+          "priority": "P0",
+          "description": "Choose greetings when meeting people: Ohayou gozaimasu, Ohayou, Konnichiwa, Konbanwa. Distinguish between polite and casual settings.",
+          "sourcePage": "入門 L1-1 s.d. L1-3",
+          "pdfPage": 44,
+          "panelImages": [
+            {
+              "panelName": "Ohayou, Konnichiwa, Konbanwa - tiga ilustrasi dialog",
+              "fileName": "FR-01_01_PDF_44.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-01_01_PDF_44.jpg",
+              "pdfPage": 44,
+              "sourceLabel": "入門 L1-1 s.d. L1-3"
+            }
+          ],
+          "granularAssetTotal": 7,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_795.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_796.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_797.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_805.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_806.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_807.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A01",
+              "lesson": 1,
+              "actNum": 1,
+              "japanesePhrase": "こんにちは",
+              "indonesianTitle": "Meeting greetings",
+              "explanation": "Choosing greetings according to the time and situation. Differentiates between morning, daytime, and evening greetings, and introduces polite versus casual forms.",
+              "keywords": "おはようございます／おはよう／こんにちは／こんばんは"
+            }
+          ]
+        },
+        {
+          "id": "FR-02",
+          "title": "Saying farewell / ending conversations",
+          "priority": "P0",
+          "description": "Expressions when leaving someone, heading home from work, or saying goodnight depending on relationships.",
+          "sourcePage": "入門 L1-4 s.d. L1-5; L1-12",
+          "pdfPage": 47,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi situasi berpamitan dan ungkapan terkait",
+              "fileName": "FR-02_01_PDF_47.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-02_01_PDF_47.jpg",
+              "pdfPage": 47,
+              "sourceLabel": "入門 L1-4 s.d. L1-5; L1-12"
+            }
+          ],
+          "granularAssetTotal": 4,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_818.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_819.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_820.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_821.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A02",
+              "lesson": 1,
+              "actNum": 2,
+              "japanesePhrase": "お先に失礼します",
+              "indonesianTitle": "Saying farewell",
+              "explanation": "Recognizing expressions used when leaving someone, ending a conversation, heading home from work, or saying goodnight depending on relationships and situations.",
+              "keywords": "お先に失礼します／じゃあ、また／失礼します／おやすみなさい"
+            }
+          ]
+        },
+        {
+          "id": "FR-03",
+          "title": "Gratitude, apologies, and common responses",
+          "priority": "P0",
+          "description": "Expressing thanks and apologies. Understanding how Sumimasen conveys both an apology and gratitude.",
+          "sourcePage": "入門 L1-6 s.d. L1-8; L1-13; L1-18",
+          "pdfPage": 49,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi ucapan terima kasih dan permintaan maaf",
+              "fileName": "FR-03_01_PDF_49.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-03_01_PDF_49.jpg",
+              "pdfPage": 49,
+              "sourceLabel": "入門 L1-6 s.d. L1-8; L1-13; L1-18"
+            }
+          ],
+          "granularAssetTotal": 9,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_832.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_833.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_834.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_835.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_836.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_843.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A03",
+              "lesson": 1,
+              "actNum": 3,
+              "japanesePhrase": "ありがとうございます",
+              "indonesianTitle": "Thanking and apologizing",
+              "explanation": "Using expressions to thank and apologize. Learners discover that すみません conveys both an apology and gratitude when receiving helpful assistance that may inconvenience others.",
+              "keywords": "ありがとうございます／ありがとう／すみません／ごめん／どうぞ"
+            }
+          ]
+        },
+        {
+          "id": "FR-04",
+          "title": "Greeting gestures and context of sumimasen",
+          "priority": "P1",
+          "description": "Bowing and greeting etiquette, understanding subtle situational meanings of Sumimasen.",
+          "sourcePage": "入門 L1-17 s.d. L1-18",
+          "pdfPage": 60,
+          "panelImages": [
+            {
+              "panelName": "Foto gestur membungkuk",
+              "fileName": "FR-04_01_PDF_60.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-04_01_PDF_60.jpg",
+              "pdfPage": 60,
+              "sourceLabel": "入門 L1-17 s.d. L1-18"
+            },
+            {
+              "panelName": "Foto perpisahan dan lambaian tangan",
+              "fileName": "FR-04_02_PDF_60.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-04_02_PDF_60.jpg",
+              "pdfPage": 60,
+              "sourceLabel": "入門 L1-17 s.d. L1-18"
+            }
+          ],
+          "granularAssetTotal": 4,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_913.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_915.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_917.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_922.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A01",
+              "lesson": 1,
+              "actNum": 1,
+              "japanesePhrase": "こんにちは",
+              "indonesianTitle": "Meeting greetings",
+              "explanation": "Choosing greetings according to the time and situation. Differentiates between morning, daytime, and evening greetings, and introduces polite versus casual forms.",
+              "keywords": "おはようございます／おはよう／こんにちは／こんばんは"
+            }
+          ]
+        },
+        {
+          "id": "FR-05",
+          "title": "Understanding chat stickers",
+          "priority": "P1",
+          "description": "Recognizing the intent of stickers in messaging apps (morning greetings, bedtime wishes, thanks, apologies).",
+          "sourcePage": "入門 L1-9 s.d. L1-10",
+          "pdfPage": 52,
+          "panelImages": [
+            {
+              "panelName": "Contoh stiker dan dialog dalam tangkapan layar percakapan",
+              "fileName": "FR-05_01_PDF_52.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-05_01_PDF_52.jpg",
+              "pdfPage": 52,
+              "sourceLabel": "入門 L1-9 s.d. L1-10"
+            }
+          ],
+          "granularAssetTotal": 6,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_852.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_854.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_856.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_858.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_862_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_867.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L01-A04",
+              "lesson": 1,
+              "actNum": 4,
+              "japanesePhrase": "メッセージスタンプ",
+              "indonesianTitle": "Understanding chat stickers",
+              "explanation": "Recognizing the meaning of simple stickers in messaging apps, such as morning greetings, bedtime wishes, thanks, and apologies in conversational context.",
+              "keywords": "おはよう／おやすみ／ありがとう／ごめん"
+            }
+          ]
+        },
+        {
+          "id": "FR-06",
+          "title": "Asking for repetition / speaking slower",
+          "priority": "P0",
+          "description": "Politely asking someone to repeat or speak a bit slower when something wasn't caught.",
+          "sourcePage": "入門 L2-1 s.d. L2-3; L2-11 s.d. L2-13",
+          "pdfPage": 62,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi meminta pengulangan dan ungkapan terkait",
+              "fileName": "FR-06_01_PDF_62.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-06_01_PDF_62.jpg",
+              "pdfPage": 62,
+              "sourceLabel": "入門 L2-1 s.d. L2-3; L2-11 s.d. L2-13"
+            }
+          ],
+          "granularAssetTotal": 3,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_936_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_940_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_944_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L02-A01",
+              "lesson": 2,
+              "actNum": 1,
+              "japanesePhrase": "もういちど、お願いします",
+              "indonesianTitle": "Asking for repetition",
+              "explanation": "Asking others to repeat information when not understood. Also practices asking someone to speak a bit slower or clarify what they said.",
+              "keywords": "もういちど、お願いします／もう少し、ゆっくり言ってください"
+            }
+          ]
+        },
+        {
+          "id": "FR-07",
+          "title": "Asking object names in Japanese",
+          "priority": "P0",
+          "description": "Inquiring how an unknown object or word is said in Japanese, then confirming understanding.",
+          "sourcePage": "入門 L2-8 s.d. L2-10; L2-13 s.d. L2-14",
+          "pdfPage": 69,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi dialog bertanya nama benda",
+              "fileName": "FR-07_01_PDF_69.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-07_01_PDF_69.jpg",
+              "pdfPage": 69,
+              "sourceLabel": "入門 L2-8 s.d. L2-10; L2-13 s.d. L2-14"
+            }
+          ],
+          "granularAssetTotal": 6,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_998_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1002_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1009_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1013_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1017_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1021_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L02-A02",
+              "lesson": 2,
+              "actNum": 2,
+              "japanesePhrase": "日本語、できますか？",
+              "indonesianTitle": "Asking about language ability",
+              "explanation": "Asking whether someone speaks or understands a certain language, and giving simple answers about one's own ability (fluent, a little, or not yet).",
+              "keywords": "日本語、できますか？／少しできます／わかりません"
+            },
+            {
+              "activityId": "IR-A1-T01-L02-A03",
+              "lesson": 2,
+              "actNum": 3,
+              "japanesePhrase": "これは日本語で何と言いますか？",
+              "indonesianTitle": "Asking object names in Japanese",
+              "explanation": "Using unknown objects or words as context to ask how to say them in Japanese. After hearing the answer, learners can ask for repetition and confirm understanding.",
+              "keywords": "これは日本語で何と言いますか？／もういちど、お願いします"
+            }
+          ]
+        },
+        {
+          "id": "FR-08",
+          "title": "Asking about language ability",
+          "priority": "P1",
+          "description": "Asking if someone speaks a language and stating one's own basic language level.",
+          "sourcePage": "入門 L2-4 s.d. L2-7; L2-12",
+          "pdfPage": 65,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi situasi bertanya kemampuan bahasa",
+              "fileName": "FR-08_01_PDF_65.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/FR-08_01_PDF_65.jpg",
+              "pdfPage": 65,
+              "sourceLabel": "入門 L2-4 s.d. L2-7; L2-12"
+            }
+          ],
+          "granularAssetTotal": 4,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_955_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_959_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_963_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_967_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T01-L02-A02",
+              "lesson": 2,
+              "actNum": 2,
+              "japanesePhrase": "日本語、できますか？",
+              "indonesianTitle": "Asking about language ability",
+              "explanation": "Asking whether someone speaks or understands a certain language, and giving simple answers about one's own ability (fluent, a little, or not yet).",
+              "keywords": "日本語、できますか？／少しできます／わかりません"
+            },
+            {
+              "activityId": "IR-A1-T01-L02-A03",
+              "lesson": 2,
+              "actNum": 3,
+              "japanesePhrase": "これは日本語で何と言いますか？",
+              "indonesianTitle": "Asking object names in Japanese",
+              "explanation": "Using unknown objects or words as context to ask how to say them in Japanese. After hearing the answer, learners can ask for repetition and confirm understanding.",
+              "keywords": "これは日本語で何と言いますか？／もういちど、お願いします"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 2,
+      "chapterTitle": "Chapter 2: Self-Introduction & Numbers",
+      "chapterSubtitle": "私のこと • Self-Introduction & Numbers",
+      "moduleCount": 3,
+      "modules": [
+        {
+          "id": "DL-01",
+          "title": "Self-introduction and origin",
+          "priority": "P0",
+          "description": "Composing a natural introduction with name, nationality, and polite opening/closing phrases.",
+          "sourcePage": "入門 L3-1 s.d. L3-9",
+          "pdfPage": 81,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi peserta memperkenalkan nama dan negara",
+              "fileName": "DL-01_01_PDF_81.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-01_01_PDF_81.jpg",
+              "pdfPage": 81,
+              "sourceLabel": "入門 L3-1 s.d. L3-9"
+            }
+          ],
+          "granularAssetTotal": 6,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1093_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1110_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1101.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1103.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1112.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1119_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T02-L03-A01",
+              "lesson": 3,
+              "actNum": 1,
+              "japanesePhrase": "はじめまして",
+              "indonesianTitle": "First self-introduction",
+              "explanation": "Composing a simple introduction by sharing one's name, country, or hometown. Opening and closing expressions help make introductions natural.",
+              "keywords": "はじめまして。トンです。タイから来ました。よろしくお願いします。"
+            },
+            {
+              "activityId": "IR-A1-T02-L03-A03",
+              "lesson": 3,
+              "actNum": 3,
+              "japanesePhrase": "ご出身は？",
+              "indonesianTitle": "Asking about name and origin",
+              "explanation": "Asking simple questions about someone's name and hometown/nationality, and providing brief replies with appropriate politeness levels.",
+              "keywords": "お名前は？／ご出身は？／～から来ました"
+            }
+          ]
+        },
+        {
+          "id": "DL-02",
+          "title": "Names on labels and forms",
+          "priority": "P2",
+          "description": "Reading and recognizing Japanese name formats on ID badges, name tags, and basic forms.",
+          "sourcePage": "入門 L3-4; L3-10 s.d. L3-12",
+          "pdfPage": 84,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi mengisi kartu nama dan contoh name card",
+              "fileName": "DL-02_01_PDF_84.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-02_01_PDF_84.jpg",
+              "pdfPage": 84,
+              "sourceLabel": "入門 L3-4; L3-10 s.d. L3-12"
+            }
+          ],
+          "granularAssetTotal": 5,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1110_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1101.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1103.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1112.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1134_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T02-L03-A03",
+              "lesson": 3,
+              "actNum": 3,
+              "japanesePhrase": "ご出身は？",
+              "indonesianTitle": "Asking about name and origin",
+              "explanation": "Asking simple questions about someone's name and hometown/nationality, and providing brief replies with appropriate politeness levels.",
+              "keywords": "お名前は？／ご出身は？／～から来ました"
+            }
+          ]
+        },
+        {
+          "id": "DL-03",
+          "title": "Numbers 1-99 and age",
+          "priority": "P1",
+          "description": "Counting numbers 1-99 and asking/stating age with polite phrasing.",
+          "sourcePage": "入門 L4-5 s.d. L4-9",
+          "pdfPage": 105,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi percakapan keluarga dan umur",
+              "fileName": "DL-03_01_PDF_105.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-03_01_PDF_105.jpg",
+              "pdfPage": 105,
+              "sourceLabel": "入門 L4-5 s.d. L4-9"
+            },
+            {
+              "panelName": "Tabel visual angka 1-99",
+              "fileName": "DL-03_02_PDF_108.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-03_02_PDF_108.jpg",
+              "pdfPage": 108,
+              "sourceLabel": "入門 L4-5 s.d. L4-9"
+            }
+          ],
+          "granularAssetTotal": 1,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_1246_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T02-L04-A01",
+              "lesson": 4,
+              "actNum": 1,
+              "japanesePhrase": "夫と子どもです",
+              "indonesianTitle": "Introducing family members",
+              "explanation": "Understanding family introductions and relationships, such as spouse, children, parents, or siblings.",
+              "keywords": "夫と子どもです／父と母です"
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A02",
+              "lesson": 4,
+              "actNum": 2,
+              "japanesePhrase": "25歳です",
+              "indonesianTitle": "Stating age and residence",
+              "explanation": "Asking and answering questions about age and residence. Learners also recognize polite nuances when asking about someone's age.",
+              "keywords": "何歳ですか？／25歳です／どこに住んでいますか？"
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A03",
+              "lesson": 4,
+              "actNum": 3,
+              "japanesePhrase": "ペットのジョンです",
+              "indonesianTitle": "Describing people or pets in photos",
+              "explanation": "Asking simple questions about photos, such as identifying people or pets, and answering by explaining their relationship or identity.",
+              "keywords": "これ、だれですか？／ペットのジョンです"
+            },
+            {
+              "activityId": "IR-A1-T02-L04-A04",
+              "lesson": 4,
+              "actNum": 4,
+              "japanesePhrase": "友だちと海！",
+              "indonesianTitle": "Understanding short photo posts",
+              "explanation": "Reading simple social posts about friends and daily activities, utilizing photos to identify the topic and participants.",
+              "keywords": "友だち／海／写真"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 3,
+      "chapterTitle": "Chapter 3: Food, Drinks & Dining",
+      "chapterSubtitle": "好きな食べ物 • Food, Drinks & Dining",
+      "moduleCount": 4,
+      "modules": [
+        {
+          "id": "DL-04",
+          "title": "Liked and disliked foods",
+          "priority": "P1",
+          "description": "Talking about favorite foods and asking others about their food preferences.",
+          "sourcePage": "入門 L5-1 s.d. L5-7",
+          "pdfPage": 124,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi kategori makanan",
+              "fileName": "DL-04_01_PDF_124.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-04_01_PDF_124.jpg",
+              "pdfPage": 124,
+              "sourceLabel": "入門 L5-1 s.d. L5-7"
+            }
+          ],
+          "granularAssetTotal": 1,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_2393_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L05-A01",
+              "lesson": 5,
+              "actNum": 1,
+              "japanesePhrase": "魚、好きですか？",
+              "indonesianTitle": "Expressing food preferences",
+              "explanation": "Answering questions about foods one likes or dislikes, associating food names with expressions of preference.",
+              "keywords": "魚、好きですか？／魚が好きです"
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A02",
+              "lesson": 5,
+              "actNum": 2,
+              "japanesePhrase": "わさびは、ちょっと…",
+              "indonesianTitle": "Discussing Japanese food",
+              "explanation": "Asking and answering about favorite Japanese foods. Responses go beyond simple like/dislike, using nuanced phrases like ちょっと… for polite hesitation.",
+              "keywords": "わさびは、ちょっと…"
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A05",
+              "lesson": 5,
+              "actNum": 5,
+              "japanesePhrase": "今日の朝ご飯",
+              "indonesianTitle": "Describing food photos",
+              "explanation": "Writing brief descriptions for food photos, such as what is being eaten or drunk, using visual cues to convey simple details.",
+              "keywords": "今日の朝ご飯"
+            }
+          ]
+        },
+        {
+          "id": "DL-05",
+          "title": "Drinks and responding to offers",
+          "priority": "P1",
+          "description": "Understanding beverage offers and choosing a drink or declining politely.",
+          "sourcePage": "入門 L5-8 s.d. L5-11",
+          "pdfPage": 131,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi jenis minuman",
+              "fileName": "DL-05_01_PDF_131.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-05_01_PDF_131.jpg",
+              "pdfPage": 131,
+              "sourceLabel": "入門 L5-8 s.d. L5-11"
+            }
+          ],
+          "granularAssetTotal": 4,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4236.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4237.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4238.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4239.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L05-A03",
+              "lesson": 5,
+              "actNum": 3,
+              "japanesePhrase": "お茶、飲みますか？",
+              "indonesianTitle": "Responding to drink offers",
+              "explanation": "Understanding when someone offers a beverage and answering by naming the desired drink or declining politely.",
+              "keywords": "お茶、飲みますか？／何、飲みますか？"
+            }
+          ]
+        },
+        {
+          "id": "DL-06",
+          "title": "Breakfast and describing food photos",
+          "priority": "P1",
+          "description": "Describing breakfast habits and writing brief captions for food photos.",
+          "sourcePage": "入門 L5-12 s.d. L5-23",
+          "pdfPage": 135,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi makanan dan minuman untuk sarapan",
+              "fileName": "DL-06_01_PDF_135.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-06_01_PDF_135.jpg",
+              "pdfPage": 135,
+              "sourceLabel": "入門 L5-12 s.d. L5-23"
+            }
+          ],
+          "granularAssetTotal": 3,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4839_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4850.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4855.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L05-A01",
+              "lesson": 5,
+              "actNum": 1,
+              "japanesePhrase": "魚、好きですか？",
+              "indonesianTitle": "Expressing food preferences",
+              "explanation": "Answering questions about foods one likes or dislikes, associating food names with expressions of preference.",
+              "keywords": "魚、好きですか？／魚が好きです"
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A02",
+              "lesson": 5,
+              "actNum": 2,
+              "japanesePhrase": "わさびは、ちょっと…",
+              "indonesianTitle": "Discussing Japanese food",
+              "explanation": "Asking and answering about favorite Japanese foods. Responses go beyond simple like/dislike, using nuanced phrases like ちょっと… for polite hesitation.",
+              "keywords": "わさびは、ちょっと…"
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A04",
+              "lesson": 5,
+              "actNum": 4,
+              "japanesePhrase": "朝ご飯は、あまり食べません",
+              "indonesianTitle": "Sharing breakfast habits",
+              "explanation": "Asking and answering about foods and drinks typically consumed for breakfast, introducing simple ways to express frequency and habits.",
+              "keywords": "朝ご飯は、あまり食べません"
+            },
+            {
+              "activityId": "IR-A1-T03-L05-A05",
+              "lesson": 5,
+              "actNum": 5,
+              "japanesePhrase": "今日の朝ご飯",
+              "indonesianTitle": "Describing food photos",
+              "explanation": "Writing brief descriptions for food photos, such as what is being eaten or drunk, using visual cues to convey simple details.",
+              "keywords": "今日の朝ご飯"
+            }
+          ]
+        },
+        {
+          "id": "DL-07",
+          "title": "Menus, ordering food, and restaurant signs",
+          "priority": "P1",
+          "description": "Navigating fast food menus, ordering meals, and reading signboard cues.",
+          "sourcePage": "入門 L6-1 s.d. L6-19",
+          "pdfPage": 159,
+          "panelImages": [
+            {
+              "panelName": "Contoh visual menu burger dan minuman",
+              "fileName": "DL-07_01_PDF_159.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-07_01_PDF_159.jpg",
+              "pdfPage": 159,
+              "sourceLabel": "入門 L6-1 s.d. L6-19"
+            }
+          ],
+          "granularAssetTotal": 14,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4943.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4953_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4957_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4969_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4973_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_4977_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T03-L06-A01",
+              "lesson": 6,
+              "actNum": 1,
+              "japanesePhrase": "ハンバーガー店のメニュー",
+              "indonesianTitle": "Reading fast food menus",
+              "explanation": "Recognizing menu items and available options at fast food restaurants to find necessary details and place an order.",
+              "keywords": "メニュー／ハンバーガー"
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A02",
+              "lesson": 6,
+              "actNum": 2,
+              "japanesePhrase": "こちらでおめしあがりですか？",
+              "indonesianTitle": "Ordering at fast food restaurants",
+              "explanation": "Understanding staff questions about dine-in or takeout, answering clearly, and stating one's food order.",
+              "keywords": "こちらでおめしあがりですか？"
+            },
+            {
+              "activityId": "IR-A1-T03-L06-A05",
+              "lesson": 6,
+              "actNum": 5,
+              "japanesePhrase": "飲食店の看板",
+              "indonesianTitle": "Recognizing restaurant signs",
+              "explanation": "Reading outdoor signs and signboards to understand restaurant types and the dishes they serve.",
+              "keywords": "飲食店／看板"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 4,
+      "chapterTitle": "Chapter 4: Home & Living Facilities",
+      "chapterSubtitle": "私の家 • Home, Rooms & Living",
+      "moduleCount": 3,
+      "modules": [
+        {
+          "id": "DL-08",
+          "title": "Rooms, furniture, and appliances",
+          "priority": "P1",
+          "description": "Recognizing room names during house tours and identifying common furnishings.",
+          "sourcePage": "入門 L7-1 s.d. L7-7",
+          "pdfPage": 182,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi ruangan, rumah, furnitur, dan denah",
+              "fileName": "DL-08_01_PDF_182.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-08_01_PDF_182.jpg",
+              "pdfPage": 182,
+              "sourceLabel": "入門 L7-1 s.d. L7-7"
+            }
+          ],
+          "granularAssetTotal": 3,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_5903_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6117_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6121_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T04-L07-A01",
+              "lesson": 7,
+              "actNum": 1,
+              "japanesePhrase": "ここは台所です",
+              "indonesianTitle": "Recognizing house rooms",
+              "explanation": "Listening to simple explanations during a home tour, recognizing room names, and understanding basic layouts.",
+              "keywords": "ここは台所です"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A02",
+              "lesson": 7,
+              "actNum": 2,
+              "japanesePhrase": "電子レンジはありますか？",
+              "indonesianTitle": "Inquiring about home amenities",
+              "explanation": "Asking if a room or home is equipped with needed items and confirming their presence.",
+              "keywords": "電子レンジはありますか？"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A03",
+              "lesson": 7,
+              "actNum": 3,
+              "japanesePhrase": "ちょっとせまいです",
+              "indonesianTitle": "Describing home living conditions",
+              "explanation": "Giving simple answers about one's living space and describing conditions such as spacious, compact, quiet, or lively.",
+              "keywords": "ちょっとせまいです"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A05",
+              "lesson": 7,
+              "actNum": 5,
+              "japanesePhrase": "洗濯機・エアコンのボタン",
+              "indonesianTitle": "Reading appliance controls",
+              "explanation": "Recognizing labels on home appliances like washing machines or AC remotes to understand button functions.",
+              "keywords": "洗濯機／エアコン／ボタン"
+            }
+          ]
+        },
+        {
+          "id": "DL-09",
+          "title": "Home descriptions and appliance controls",
+          "priority": "P2",
+          "description": "Describing living spaces and recognizing labels on washing machines or AC remotes.",
+          "sourcePage": "入門 L7-8 s.d. L7-17",
+          "pdfPage": 189,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi perbandingan kondisi rumah dan peralatan",
+              "fileName": "DL-09_01_PDF_189.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-09_01_PDF_189.jpg",
+              "pdfPage": 189,
+              "sourceLabel": "入門 L7-8 s.d. L7-17"
+            }
+          ],
+          "granularAssetTotal": 13,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6208.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6209.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6210.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6211.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6212.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6213.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T04-L07-A01",
+              "lesson": 7,
+              "actNum": 1,
+              "japanesePhrase": "ここは台所です",
+              "indonesianTitle": "Recognizing house rooms",
+              "explanation": "Listening to simple explanations during a home tour, recognizing room names, and understanding basic layouts.",
+              "keywords": "ここは台所です"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A02",
+              "lesson": 7,
+              "actNum": 2,
+              "japanesePhrase": "電子レンジはありますか？",
+              "indonesianTitle": "Inquiring about home amenities",
+              "explanation": "Asking if a room or home is equipped with needed items and confirming their presence.",
+              "keywords": "電子レンジはありますか？"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A03",
+              "lesson": 7,
+              "actNum": 3,
+              "japanesePhrase": "ちょっとせまいです",
+              "indonesianTitle": "Describing home living conditions",
+              "explanation": "Giving simple answers about one's living space and describing conditions such as spacious, compact, quiet, or lively.",
+              "keywords": "ちょっとせまいです"
+            },
+            {
+              "activityId": "IR-A1-T04-L07-A05",
+              "lesson": 7,
+              "actNum": 5,
+              "japanesePhrase": "洗濯機・エアコンのボタン",
+              "indonesianTitle": "Reading appliance controls",
+              "explanation": "Recognizing labels on home appliances like washing machines or AC remotes to understand button functions.",
+              "keywords": "洗濯機／エアコン／ボタン"
+            }
+          ]
+        },
+        {
+          "id": "DL-10",
+          "title": "Location of people, objects, and room signs",
+          "priority": "P1",
+          "description": "Using demonstratives (here, there, over there) and recognizing door signs.",
+          "sourcePage": "入門 L8-1 s.d. L8-13",
+          "pdfPage": 215,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi ruangan dan lokasi orang",
+              "fileName": "DL-10_01_PDF_215.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-10_01_PDF_215.jpg",
+              "pdfPage": 215,
+              "sourceLabel": "入門 L8-1 s.d. L8-13"
+            }
+          ],
+          "granularAssetTotal": 18,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6412.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6413.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6414.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6415.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6419_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6429_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T04-L08-A03",
+              "lesson": 8,
+              "actNum": 3,
+              "japanesePhrase": "はさみは、そこにあります",
+              "indonesianTitle": "Asking where equipment is located",
+              "explanation": "Asking and answering where items or equipment are kept, using demonstratives like here, there, and over there.",
+              "keywords": "はさみは、そこにあります"
+            },
+            {
+              "activityId": "IR-A1-T04-L08-A04",
+              "lesson": 8,
+              "actNum": 4,
+              "japanesePhrase": "部屋の表示",
+              "indonesianTitle": "Reading room signs",
+              "explanation": "Recognizing signs on doors or entrance areas to identify the purpose or name of a room.",
+              "keywords": "部屋の表示"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 5,
+      "chapterTitle": "Chapter 5: Daily Life, Time & Routine",
+      "chapterSubtitle": "毎日の生活 • Daily Life & Routine",
+      "moduleCount": 4,
+      "modules": [
+        {
+          "id": "DL-11",
+          "title": "Routines, time, and days of the week",
+          "priority": "P1",
+          "description": "Talking about daily schedules, waking up, working, and day-of-the-week routines.",
+          "sourcePage": "入門 L9-1 s.d. L9-11; L9-16 s.d. L9-18",
+          "pdfPage": 240,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi waktu, suasana pagi-siang-malam, dan jam",
+              "fileName": "DL-11_01_PDF_240.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-11_01_PDF_240.jpg",
+              "pdfPage": 240,
+              "sourceLabel": "入門 L9-1 s.d. L9-11; L9-16 s.d. L9-18"
+            }
+          ],
+          "granularAssetTotal": 16,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6590_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6592_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6602_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6617.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6618.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6619.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T05-L09-A02",
+              "lesson": 9,
+              "actNum": 2,
+              "japanesePhrase": "1日のスケジュールを説明します",
+              "indonesianTitle": "Understanding daily schedules",
+              "explanation": "Listening to short explanations of daily activity sequences, especially work schedules and shifts.",
+              "keywords": "1日のスケジュール"
+            }
+          ]
+        },
+        {
+          "id": "DL-12",
+          "title": "Asking for help, clarification, or borrowing items",
+          "priority": "P2",
+          "description": "Workplace communication: requesting assistance, instructions, and borrowing tools.",
+          "sourcePage": "入門 L10-1 s.d. L10-14; L10-20 s.d. L10-21",
+          "pdfPage": 260,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi tindakan meminta bantuan dan meminjam",
+              "fileName": "DL-12_01_PDF_260.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-12_01_PDF_260.jpg",
+              "pdfPage": 260,
+              "sourceLabel": "入門 L10-1 s.d. L10-14; L10-20 s.d. L10-21"
+            }
+          ],
+          "granularAssetTotal": 24,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6702.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6703.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6704.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6705.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6706.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6707.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T05-L10-A01",
+              "lesson": 10,
+              "actNum": 1,
+              "japanesePhrase": "ちょっと手伝ってください",
+              "indonesianTitle": "Asking for assistance",
+              "explanation": "Understanding short, simple workplace instructions and knowing what action is being requested.",
+              "keywords": "ちょっと手伝ってください"
+            },
+            {
+              "activityId": "IR-A1-T05-L10-A04",
+              "lesson": 10,
+              "actNum": 4,
+              "japanesePhrase": "スマホの充電器、ありますか？",
+              "indonesianTitle": "Borrowing items",
+              "explanation": "Asking someone to lend an item or inquiring whether a needed tool or supply is available.",
+              "keywords": "スマホの充電器、ありますか？／貸してください"
+            }
+          ]
+        },
+        {
+          "id": "DL-13",
+          "title": "Hobbies and day-off activities",
+          "priority": "P2",
+          "description": "Sharing hobbies, leisure interests, and weekend pastimes.",
+          "sourcePage": "入門 L11-1 s.d. L11-14",
+          "pdfPage": 285,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi kategori hobi dan kegiatan",
+              "fileName": "DL-13_01_PDF_285.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-13_01_PDF_285.jpg",
+              "pdfPage": 285,
+              "sourceLabel": "入門 L11-1 s.d. L11-14"
+            }
+          ],
+          "granularAssetTotal": 29,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6921.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6924_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6929.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6932_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6936.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_6939_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T06-L11-A01",
+              "lesson": 11,
+              "actNum": 1,
+              "japanesePhrase": "趣味は何ですか？",
+              "indonesianTitle": "Sharing hobbies",
+              "explanation": "Giving simple answers when asked about personal hobbies or favorite leisure activities.",
+              "keywords": "趣味は何ですか？"
+            },
+            {
+              "activityId": "IR-A1-T06-L11-A03",
+              "lesson": 11,
+              "actNum": 3,
+              "japanesePhrase": "うちでゆっくりします",
+              "indonesianTitle": "Sharing day-off activities",
+              "explanation": "Asking and answering about what one does on days off, such as resting at home or doing other activities.",
+              "keywords": "うちでゆっくりします"
+            }
+          ]
+        },
+        {
+          "id": "DL-14",
+          "title": "Events, invitations, and replies",
+          "priority": "P1",
+          "description": "Reading event flyers, inviting friends, coordinating times, and writing replies.",
+          "sourcePage": "入門 L12-1 s.d. L12-13",
+          "pdfPage": 311,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi papan pengumuman dan poster acara",
+              "fileName": "DL-14_01_PDF_311.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-14_01_PDF_311.jpg",
+              "pdfPage": 311,
+              "sourceLabel": "入門 L12-1 s.d. L12-13"
+            },
+            {
+              "panelName": "Ilustrasi poster acara",
+              "fileName": "DL-14_02_PDF_311.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/DL-14_02_PDF_311.jpg",
+              "pdfPage": 311,
+              "sourceLabel": "入門 L12-1 s.d. L12-13"
+            }
+          ],
+          "granularAssetTotal": 23,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7127.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7141.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7156.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7155_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7168.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7188.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T06-L12-A01",
+              "lesson": 12,
+              "actNum": 1,
+              "japanesePhrase": "イベントの案内",
+              "indonesianTitle": "Reading event announcements",
+              "explanation": "Finding dates, times, and venues on event notices to grasp the essential details of an activity.",
+              "keywords": "イベントの案内"
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A02",
+              "lesson": 12,
+              "actNum": 2,
+              "japanesePhrase": "来週、夏祭りがありますね",
+              "indonesianTitle": "Discussing upcoming events",
+              "explanation": "Asking and answering whether someone will attend an upcoming event or gathering.",
+              "keywords": "来週、夏祭りがありますね"
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A03",
+              "lesson": 12,
+              "actNum": 3,
+              "japanesePhrase": "いっしょに行きましょう",
+              "indonesianTitle": "Inviting and arranging schedules",
+              "explanation": "Sharing availability, inviting someone to do an activity together, and responding to invitations.",
+              "keywords": "いっしょに行きましょう／行きませんか？"
+            },
+            {
+              "activityId": "IR-A1-T06-L12-A04",
+              "lesson": 12,
+              "actNum": 4,
+              "japanesePhrase": "誘いの返事",
+              "indonesianTitle": "Replying to invitations",
+              "explanation": "Writing brief replies to friends who send invitations, accepting or coordinating plans.",
+              "keywords": "誘いの返事"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 6,
+      "chapterTitle": "Chapter 6: City Navigation & Public Places",
+      "chapterSubtitle": "街の案内 • City Navigation & Public Places",
+      "moduleCount": 4,
+      "modules": [
+        {
+          "id": "CT-01",
+          "title": "Transportation and asking directions",
+          "priority": "P1",
+          "description": "Asking how to reach destinations and following directions or transit options.",
+          "sourcePage": "入門 L13-1 s.d. L13-17",
+          "pdfPage": 336,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi moda transportasi dan ungkapan naik kendaraan",
+              "fileName": "CT-01_01_PDF_336.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-01_01_PDF_336.jpg",
+              "pdfPage": 336,
+              "sourceLabel": "入門 L13-1 s.d. L13-17"
+            }
+          ],
+          "granularAssetTotal": 20,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7697.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7698.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7699.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7703_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7704.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_7716_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L13-A04",
+              "lesson": 13,
+              "actNum": 4,
+              "japanesePhrase": "市役所まで、どうやって行きますか？",
+              "indonesianTitle": "Asking for directions",
+              "explanation": "Asking how to reach a destination and understanding route instructions or transit options.",
+              "keywords": "どうやって行きますか？"
+            }
+          ]
+        },
+        {
+          "id": "CT-02",
+          "title": "Finding public facilities",
+          "priority": "P1",
+          "description": "Inquiring about restrooms, ATMs, train stations, and public facilities.",
+          "sourcePage": "入門 L14-1 s.d. L14-8",
+          "pdfPage": 369,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi toilet, loker, vending machine, ATM, dan fasilitas publik",
+              "fileName": "CT-02_01_PDF_369.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-02_01_PDF_369.jpg",
+              "pdfPage": 369,
+              "sourceLabel": "入門 L14-1 s.d. L14-8"
+            }
+          ],
+          "granularAssetTotal": 11,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8035.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8036.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8037.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8038.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8039.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8040.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L14-A01",
+              "lesson": 14,
+              "actNum": 1,
+              "japanesePhrase": "トイレはどこですか？",
+              "indonesianTitle": "Locating public facilities",
+              "explanation": "Asking where public amenities like restrooms or ATMs are located and understanding the directions given.",
+              "keywords": "トイレはどこですか？"
+            }
+          ]
+        },
+        {
+          "id": "CT-03",
+          "title": "Recognizing locations and reading shop signs",
+          "priority": "P1",
+          "description": "Reading storefront signs, store hours, and holiday notices.",
+          "sourcePage": "入門 L14-9 s.d. L14-14",
+          "pdfPage": 377,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi perbandingan tempat dan lingkungan",
+              "fileName": "CT-03_01_PDF_377.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-03_01_PDF_377.jpg",
+              "pdfPage": 377,
+              "sourceLabel": "入門 L14-9 s.d. L14-14"
+            }
+          ],
+          "granularAssetTotal": 17,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8181_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8182.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8183.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8184.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8185.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8186.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L14-A04",
+              "lesson": 14,
+              "actNum": 4,
+              "japanesePhrase": "街にある看板",
+              "indonesianTitle": "Reading signs and opening hours",
+              "explanation": "Reading shop and restaurant signage to find opening hours, closing times, and regular holidays.",
+              "keywords": "街にある看板"
+            }
+          ]
+        },
+        {
+          "id": "CT-04",
+          "title": "Cultural information on city facilities",
+          "priority": "P1",
+          "description": "Understanding public spaces, parks, and city etiquette.",
+          "sourcePage": "入門 L14-22 s.d. L14-26",
+          "pdfPage": 390,
+          "panelImages": [
+            {
+              "panelName": "Foto coin locker",
+              "fileName": "CT-04_01_PDF_390.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-04_01_PDF_390.jpg",
+              "pdfPage": 390,
+              "sourceLabel": "入門 L14-22 s.d. L14-26"
+            },
+            {
+              "panelName": "Foto mesin ATM / fasilitas pembayaran",
+              "fileName": "CT-04_02_PDF_390.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-04_02_PDF_390.jpg",
+              "pdfPage": 390,
+              "sourceLabel": "入門 L14-22 s.d. L14-26"
+            },
+            {
+              "panelName": "Foto vending machine",
+              "fileName": "CT-04_03_PDF_390.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-04_03_PDF_390.jpg",
+              "pdfPage": 390,
+              "sourceLabel": "入門 L14-22 s.d. L14-26"
+            }
+          ],
+          "granularAssetTotal": 15,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8236.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8238.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8240.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8241.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8245.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_8247.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T07-L14-A01",
+              "lesson": 14,
+              "actNum": 1,
+              "japanesePhrase": "トイレはどこですか？",
+              "indonesianTitle": "Locating public facilities",
+              "explanation": "Asking where public amenities like restrooms or ATMs are located and understanding the directions given.",
+              "keywords": "トイレはどこですか？"
+            },
+            {
+              "activityId": "IR-A1-T07-L14-A03",
+              "lesson": 14,
+              "actNum": 3,
+              "japanesePhrase": "ここは十条商店街です",
+              "indonesianTitle": "Sharing impressions of the city",
+              "explanation": "Expressing simple impressions during a city tour, such as bustling streets or spacious parks.",
+              "keywords": "にぎやかな通りですね／広い公園ですね"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 7,
+      "chapterTitle": "Chapter 7: Shopping, Signs & Payment",
+      "chapterSubtitle": "買い物 • Shopping, Signs & Money",
+      "moduleCount": 4,
+      "modules": [
+        {
+          "id": "CT-05",
+          "title": "Finding items in shops / floor guides",
+          "priority": "P1",
+          "description": "Locating merchandise sections using department store floor directories.",
+          "sourcePage": "入門 L15-1 s.d. L15-14",
+          "pdfPage": 395,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi jenis toko dan pusat perbelanjaan",
+              "fileName": "CT-05_01_PDF_395.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-05_01_PDF_395.jpg",
+              "pdfPage": 395,
+              "sourceLabel": "入門 L15-1 s.d. L15-14"
+            }
+          ],
+          "granularAssetTotal": 28,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9045_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9047_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9055.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9077_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9081_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9085_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L15-A01",
+              "lesson": 15,
+              "actNum": 1,
+              "japanesePhrase": "どこで買えますか？",
+              "indonesianTitle": "Asking where to buy items",
+              "explanation": "Asking where needed items can be purchased and understanding recommendations for appropriate stores.",
+              "keywords": "どこで買えますか？"
+            },
+            {
+              "activityId": "IR-A1-T08-L15-A02",
+              "lesson": 15,
+              "actNum": 2,
+              "japanesePhrase": "フロアガイド",
+              "indonesianTitle": "Reading department store floor guides",
+              "explanation": "Using shopping mall or department store floor guides to locate sections selling specific goods.",
+              "keywords": "フロアガイド"
+            }
+          ]
+        },
+        {
+          "id": "CT-06",
+          "title": "Shop signs: entrance, exit, push, pull",
+          "priority": "P1",
+          "description": "Reading entrance, exit, emergency exit, and door operating signs.",
+          "sourcePage": "入門 L15-15 s.d. L15-22",
+          "pdfPage": 409,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi interior shopping center",
+              "fileName": "CT-06_01_PDF_409.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-06_01_PDF_409.jpg",
+              "pdfPage": 409,
+              "sourceLabel": "入門 L15-15 s.d. L15-22"
+            },
+            {
+              "panelName": "Foto tanda masuk, keluar, toilet, dan pintu darurat",
+              "fileName": "CT-06_02_PDF_409.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-06_02_PDF_409.jpg",
+              "pdfPage": 409,
+              "sourceLabel": "入門 L15-15 s.d. L15-22"
+            }
+          ],
+          "granularAssetTotal": 14,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9179.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9181.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9185_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9187.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9189.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9191.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L15-A05",
+              "lesson": 15,
+              "actNum": 5,
+              "japanesePhrase": "ショッピングセンターの表示",
+              "indonesianTitle": "Understanding shopping mall signs",
+              "explanation": "Recognizing common department store signs, including entrances, exits, floor indicators, push, and pull doors.",
+              "keywords": "ショッピングセンターの表示"
+            }
+          ]
+        },
+        {
+          "id": "CT-07",
+          "title": "Prices, quantities, and payment",
+          "priority": "P2",
+          "description": "Asking prices, using item counters, and checking payment amounts.",
+          "sourcePage": "入門 L16-1 s.d. L16-25",
+          "pdfPage": 422,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi koin dan uang kertas Jepang",
+              "fileName": "CT-07_01_PDF_422.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-07_01_PDF_422.jpg",
+              "pdfPage": 422,
+              "sourceLabel": "入門 L16-1 s.d. L16-25"
+            }
+          ],
+          "granularAssetTotal": 48,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9325.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9327.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9329.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9333.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9353_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_9357_with_alpha.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L16-A01",
+              "lesson": 16,
+              "actNum": 1,
+              "japanesePhrase": "1,980円です",
+              "indonesianTitle": "Understanding item prices",
+              "explanation": "Listening to product prices and recognizing the spoken numerical amount in yen.",
+              "keywords": "1,980円です"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A02",
+              "lesson": 16,
+              "actNum": 2,
+              "japanesePhrase": "あのTシャツ、いくらですか？",
+              "indonesianTitle": "Inquiring about prices",
+              "explanation": "Asking store staff about the price of an item and understanding their response.",
+              "keywords": "あのTシャツ、いくらですか？"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A03",
+              "lesson": 16,
+              "actNum": 3,
+              "japanesePhrase": "ひき肉200gください",
+              "indonesianTitle": "Specifying quantities and counters",
+              "explanation": "Specifying how many items or ingredients to buy, including appropriate counter units or weights.",
+              "keywords": "ひき肉200gください"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A04",
+              "lesson": 16,
+              "actNum": 4,
+              "japanesePhrase": "こちら、温めますか？",
+              "indonesianTitle": "Responding to convenience store cashiers",
+              "explanation": "Understanding typical cashier questions at convenience stores, such as needing chopsticks, bags, or heating up meals.",
+              "keywords": "こちら、温めますか？"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A05",
+              "lesson": 16,
+              "actNum": 5,
+              "japanesePhrase": "割引表示",
+              "indonesianTitle": "Reading discount tags",
+              "explanation": "Recognizing markdown information and understanding discounted prices displayed on store tags.",
+              "keywords": "割引表示"
+            }
+          ]
+        },
+        {
+          "id": "CT-08",
+          "title": "Money and electronic payments",
+          "priority": "P2",
+          "description": "Understanding currency denominations and cashless/convenience store payment.",
+          "sourcePage": "入門 L16-26 s.d. L16-30",
+          "pdfPage": 450,
+          "panelImages": [
+            {
+              "panelName": "Foto mesin pembayaran elektronik",
+              "fileName": "CT-08_01_PDF_450.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-08_01_PDF_450.jpg",
+              "pdfPage": 450,
+              "sourceLabel": "入門 L16-26 s.d. L16-30"
+            },
+            {
+              "panelName": "Foto pembayaran kartu transportasi prabayar",
+              "fileName": "CT-08_02_PDF_451.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/CT-08_02_PDF_451.jpg",
+              "pdfPage": 451,
+              "sourceLabel": "入門 L16-26 s.d. L16-30"
+            }
+          ],
+          "granularAssetTotal": 15,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12190.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12192.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12196.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12200.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12206.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12207.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T08-L16-A01",
+              "lesson": 16,
+              "actNum": 1,
+              "japanesePhrase": "1,980円です",
+              "indonesianTitle": "Understanding item prices",
+              "explanation": "Listening to product prices and recognizing the spoken numerical amount in yen.",
+              "keywords": "1,980円です"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A02",
+              "lesson": 16,
+              "actNum": 2,
+              "japanesePhrase": "あのTシャツ、いくらですか？",
+              "indonesianTitle": "Inquiring about prices",
+              "explanation": "Asking store staff about the price of an item and understanding their response.",
+              "keywords": "あのTシャツ、いくらですか？"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A03",
+              "lesson": 16,
+              "actNum": 3,
+              "japanesePhrase": "ひき肉200gください",
+              "indonesianTitle": "Specifying quantities and counters",
+              "explanation": "Specifying how many items or ingredients to buy, including appropriate counter units or weights.",
+              "keywords": "ひき肉200gください"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A04",
+              "lesson": 16,
+              "actNum": 4,
+              "japanesePhrase": "こちら、温めますか？",
+              "indonesianTitle": "Responding to convenience store cashiers",
+              "explanation": "Understanding typical cashier questions at convenience stores, such as needing chopsticks, bags, or heating up meals.",
+              "keywords": "こちら、温めますか？"
+            },
+            {
+              "activityId": "IR-A1-T08-L16-A05",
+              "lesson": 16,
+              "actNum": 5,
+              "japanesePhrase": "割引表示",
+              "indonesianTitle": "Reading discount tags",
+              "explanation": "Recognizing markdown information and understanding discounted prices displayed on store tags.",
+              "keywords": "割引表示"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapterId": 8,
+      "chapterTitle": "Chapter 8: Activities, Holidays & Travel",
+      "chapterSubtitle": "休みの日 • Activities & Travel",
+      "moduleCount": 5,
+      "modules": [
+        {
+          "id": "EX-01",
+          "title": "Talking about past activities",
+          "priority": "P2",
+          "description": "Recounting activities completed over weekends or past holidays.",
+          "sourcePage": "入門 L17-1 s.d. L17-11",
+          "pdfPage": 452,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi aktivitas akhir pekan dan pengalaman",
+              "fileName": "EX-01_01_PDF_452.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-01_01_PDF_452.jpg",
+              "pdfPage": 452,
+              "sourceLabel": "入門 L17-1 s.d. L17-11"
+            }
+          ],
+          "granularAssetTotal": 29,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12248.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12249.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12250.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_13511.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12251.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12252.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L17-A01",
+              "lesson": 17,
+              "actNum": 1,
+              "japanesePhrase": "週末は何をしましたか？",
+              "indonesianTitle": "Recounting weekend activities",
+              "explanation": "Giving simple answers when asked about what you did over the weekend or days off.",
+              "keywords": "週末は何をしましたか？"
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A02",
+              "lesson": 17,
+              "actNum": 2,
+              "japanesePhrase": "楽しかったです",
+              "indonesianTitle": "Sharing impressions of past experiences",
+              "explanation": "Asking and answering about past activities while expressing opinions, such as fun, relaxing, or ordinary.",
+              "keywords": "楽しかったです"
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A03",
+              "lesson": 17,
+              "actNum": 3,
+              "japanesePhrase": "家族で水族館に行きました",
+              "indonesianTitle": "Reading activity posts",
+              "explanation": "Reading social media posts describing family outings and activities, with photos aiding comprehension.",
+              "keywords": "家族で水族館に行きました"
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A04",
+              "lesson": 17,
+              "actNum": 4,
+              "japanesePhrase": "料金表",
+              "indonesianTitle": "Reading facility pricing lists",
+              "explanation": "Reading local attraction price lists to determine admission fees and costs.",
+              "keywords": "料金表"
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A05",
+              "lesson": 17,
+              "actNum": 5,
+              "japanesePhrase": "今、家に着きました",
+              "indonesianTitle": "Messaging travel companions afterwards",
+              "explanation": "Writing brief messages to travel companions to confirm safe arrival or share thoughts after a trip.",
+              "keywords": "今、家に着きました"
+            }
+          ]
+        },
+        {
+          "id": "EX-02",
+          "title": "Reading facility tariff lists",
+          "priority": "P2",
+          "description": "Reading admission and rental price lists for parks, museums, and venues.",
+          "sourcePage": "入門 L17-12 s.d. L17-13",
+          "pdfPage": 463,
+          "panelImages": [
+            {
+              "panelName": "Foto papan tarif dan fasilitas berbayar",
+              "fileName": "EX-02_01_PDF_463.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-02_01_PDF_463.jpg",
+              "pdfPage": 463,
+              "sourceLabel": "入門 L17-12 s.d. L17-13"
+            }
+          ],
+          "granularAssetTotal": 5,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12332.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12334.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12336.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12340.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12342.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L17-A03",
+              "lesson": 17,
+              "actNum": 3,
+              "japanesePhrase": "家族で水族館に行きました",
+              "indonesianTitle": "Reading activity posts",
+              "explanation": "Reading social media posts describing family outings and activities, with photos aiding comprehension.",
+              "keywords": "家族で水族館に行きました"
+            },
+            {
+              "activityId": "IR-A1-T09-L17-A04",
+              "lesson": 17,
+              "actNum": 4,
+              "japanesePhrase": "料金表",
+              "indonesianTitle": "Reading facility pricing lists",
+              "explanation": "Reading local attraction price lists to determine admission fees and costs.",
+              "keywords": "料金表"
+            }
+          ]
+        },
+        {
+          "id": "EX-03",
+          "title": "Writing short messages after trips",
+          "priority": "P2",
+          "description": "Sending safe-arrival messages and thank-you notes after outings.",
+          "sourcePage": "入門 L17-14 s.d. L17-15",
+          "pdfPage": 465,
+          "panelImages": [
+            {
+              "panelName": "Contoh tangkapan layar pesan setelah bepergian",
+              "fileName": "EX-03_01_PDF_465.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-03_01_PDF_465.jpg",
+              "pdfPage": 465,
+              "sourceLabel": "入門 L17-14 s.d. L17-15"
+            }
+          ],
+          "granularAssetTotal": 2,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12347.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12353.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L17-A05",
+              "lesson": 17,
+              "actNum": 5,
+              "japanesePhrase": "今、家に着きました",
+              "indonesianTitle": "Messaging travel companions afterwards",
+              "explanation": "Writing brief messages to travel companions to confirm safe arrival or share thoughts after a trip.",
+              "keywords": "今、家に着きました"
+            }
+          ]
+        },
+        {
+          "id": "EX-04",
+          "title": "Holiday plans, wishes, and travel",
+          "priority": "P2",
+          "description": "Discussing holiday plans, sightseeing goals, and travel aspirations in Japan.",
+          "sourcePage": "入門 L18-1 s.d. L18-13",
+          "pdfPage": 478,
+          "panelImages": [
+            {
+              "panelName": "Ilustrasi rencana kegiatan dan perjalanan",
+              "fileName": "EX-04_01_PDF_478.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-04_01_PDF_478.jpg",
+              "pdfPage": 478,
+              "sourceLabel": "入門 L18-1 s.d. L18-13"
+            }
+          ],
+          "granularAssetTotal": 23,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12400.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12401.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12402.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_13511.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12421_with_alpha.png",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12422.png"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L18-A01",
+              "lesson": 18,
+              "actNum": 1,
+              "japanesePhrase": "ゴールデンウィークの予定は？",
+              "indonesianTitle": "Discussing holiday plans",
+              "explanation": "Asking and answering about upcoming holiday plans or things one wishes to do.",
+              "keywords": "ゴールデンウィークの予定は？"
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A04",
+              "lesson": 18,
+              "actNum": 4,
+              "japanesePhrase": "はじめて露天風呂に入りました",
+              "indonesianTitle": "Sharing travel experiences",
+              "explanation": "Briefly recounting what one did while traveling and how the experience felt.",
+              "keywords": "はじめて露天風呂に入りました"
+            }
+          ]
+        },
+        {
+          "id": "EX-05",
+          "title": "Cultural notes on travel destinations",
+          "priority": "P2",
+          "description": "Exploring cultural background and tips for famous Japanese travel spots.",
+          "sourcePage": "入門 L18-22 s.d. L18-27",
+          "pdfPage": 499,
+          "panelImages": [
+            {
+              "panelName": "Foto suasana Golden Week",
+              "fileName": "EX-05_01_PDF_499.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-05_01_PDF_499.jpg",
+              "pdfPage": 499,
+              "sourceLabel": "入門 L18-22 s.d. L18-27"
+            },
+            {
+              "panelName": "Foto Tokyo Disney Resort",
+              "fileName": "EX-05_02_PDF_499.jpg",
+              "assetPath": "Assets/Modules/Utsuru_Irodori_Panel_Ilustrasi_39_Materi/EX-05_02_PDF_499.jpg",
+              "pdfPage": 499,
+              "sourceLabel": "入門 L18-22 s.d. L18-27"
+            }
+          ],
+          "granularAssetTotal": 16,
+          "granularAssetSamples": [
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12519.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12521.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12527.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12529.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12531.jpg",
+            "Assets/Modules/Utsuru_Irodori_Aset_Visual_Lengkap/bitmap_assets_display/xref_12536.jpg"
+          ],
+          "activities": [
+            {
+              "activityId": "IR-A1-T09-L18-A01",
+              "lesson": 18,
+              "actNum": 1,
+              "japanesePhrase": "ゴールデンウィークの予定は？",
+              "indonesianTitle": "Discussing holiday plans",
+              "explanation": "Asking and answering about upcoming holiday plans or things one wishes to do.",
+              "keywords": "ゴールデンウィークの予定は？"
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A02",
+              "lesson": 18,
+              "actNum": 2,
+              "japanesePhrase": "日本で何がしたい？",
+              "indonesianTitle": "Expressing desires in Japan",
+              "explanation": "Giving simple answers when asked about what activities or sights you want to experience in Japan.",
+              "keywords": "日本で何がしたい？"
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A03",
+              "lesson": 18,
+              "actNum": 3,
+              "japanesePhrase": "船に乗りました",
+              "indonesianTitle": "Posting about vacation activities",
+              "explanation": "Writing short posts about vacation activities, such as boat cruises or sightseeing outings.",
+              "keywords": "船に乗りました"
+            },
+            {
+              "activityId": "IR-A1-T09-L18-A04",
+              "lesson": 18,
+              "actNum": 4,
+              "japanesePhrase": "はじめて露天風呂に入りました",
+              "indonesianTitle": "Sharing travel experiences",
+              "explanation": "Briefly recounting what one did while traveling and how the experience felt.",
+              "keywords": "はじめて露天風呂に入りました"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

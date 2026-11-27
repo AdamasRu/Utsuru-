@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5191700269811079721}
   - component: {fileID: 5191700269827444353}
-  - component: {fileID: 2790996118295433455}
+  - component: {fileID: 7962619586782275833}
+  - component: {fileID: 5799562703092379756}
   m_Layer: 0
   m_Name: AE_House_09
   m_TagString: Untagged
@@ -58,7 +59,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 5191700269809178827}
   m_Enabled: 1
---- !u!114 &2790996118295433455
+--- !u!114 &7962619586782275833
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,6 +72,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
   objectid: ICK-72
+--- !u!64 &5799562703092379756
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5191700269811107337}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &5191700269811107339
 GameObject:
   m_ObjectHideFlags: 0

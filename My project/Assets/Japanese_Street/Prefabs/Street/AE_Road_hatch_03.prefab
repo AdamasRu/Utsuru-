@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 5883480503951216265}
   - component: {fileID: 5883480503950216265}
   - component: {fileID: 4040106876755329573}
-  - component: {fileID: 3033125687092158711}
+  - component: {fileID: 8928051094346006027}
+  - component: {fileID: 3990538072842641372}
   m_Layer: 0
   m_Name: AE_Road_hatch_03
   m_TagString: Untagged
@@ -112,7 +113,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 5883480503950216265}
   m_Enabled: 1
---- !u!114 &3033125687092158711
+--- !u!114 &8928051094346006027
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,3 +126,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
   objectid: ICK-31
+--- !u!64 &3990538072842641372
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5883480503947956873}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: f3bd25c3e20b5da4786d163fc976954d, type: 3}

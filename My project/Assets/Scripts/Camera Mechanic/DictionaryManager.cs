@@ -1,0 +1,360 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Utsuru.Capture
+{
+    /// <summary>Album foto (tbl_album di DPPL).</summary>
+    [Serializable]
+    public class AlbumRecord
+    {
+        public int albumId;
+        public string albumName;
+        public string createdAt; // ISO 8601
+    }
+
+    /// <summary>Seluruh data Dictionary milik pemain yang disimpan lewat IDataStorage.</summary>
+    [Serializable]
+    public class DictionaryData
+    {
+        public List<string> discoveredObjectIds = new List<string>();
+        public List<int> discoveredVocabularyIds = new List<int>();
+        public List<AlbumRecord> albums = new List<AlbumRecord>();
+        public List<PhotoRecord> photos = new List<PhotoRecord>();
+        public int activeAlbumId;
+        public int nextAlbumId = 1;
+    }
+
+    /// <summary>
+    /// DictionaryManager (DPPL): mencatat objek/kosakata yang sudah ditemukan,
+    /// album, dan foto. Data tersimpan otomatis setiap ada perubahan.
+    /// </summary>
+    public class DictionaryManager : MonoBehaviour
+    {
+        public static DictionaryManager Instance { get; private set; }
+
+        [Tooltip("Sementara tetap. Nanti diganti ID akun dari sistem login.")]
+        [SerializeField] private string accountId = "player1";
+
+        [SerializeField] private string defaultAlbumName = "Album Utama";
+
+        [Tooltip("Referensi database objek (opsional, auto-resolve bila kosong).")]
+        [SerializeField] private ObjectDatabaseProvider database;
+
+        private const string SaveKey = "dictionary";
+
+        private IDataStorage storage;
+        private DictionaryData data;
+        private readonly HashSet<string> discoveredObjects = new HashSet<string>();
+
+        /// <summary>Dipicu setiap data Dictionary berubah (untuk refresh UI).</summary>
+        public event Action OnDictionaryChanged;
+
+        public int ActiveAlbumId => data.activeAlbumId;
+        public IReadOnlyList<AlbumRecord> Albums => data.albums;
+        public IReadOnlyList<PhotoRecord> Photos => data.photos;
+        public IReadOnlyList<int> DiscoveredVocabularyIds => data != null ? data.discoveredVocabularyIds : null;
+        public IReadOnlyList<string> DiscoveredObjectIds => data != null ? data.discoveredObjectIds : null;
+        public int DiscoveredVocabularyCount => data.discoveredVocabularyIds.Count;
+        public ObjectDatabaseProvider Database => database;
+
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else if (Instance != this) Debug.LogWarning("[DictionaryManager] Ditemukan duplikat instance.");
+
+            if (database == null) database = FindFirstObjectByType<ObjectDatabaseProvider>();
+
+            storage = new LocalStorage();
+
+            string activeAccount = ResolveAccountId();
+            if (!storage.TryLoad<DictionaryData>(activeAccount, SaveKey, out data) || data == null)
+                data = new DictionaryData();
+
+            foreach (string id in data.discoveredObjectIds) discoveredObjects.Add(id);
+
+            EnsureDefaultAlbum();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
+        /// <summary>
+        /// Menentukan akun aktif secara dinamis: jika pengguna login via SessionManager,
+        /// gunakan Username/ProfileId-nya; jika tidak, fallback ke accountId ("player1").
+        /// </summary>
+        public string ResolveAccountId()
+        {
+            if (Utsuru.Authentication.SessionManager.Instance != null && Utsuru.Authentication.SessionManager.Instance.IsLoggedIn)
+            {
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.Username))
+                    return Utsuru.Authentication.SessionManager.Instance.Username;
+                if (!string.IsNullOrEmpty(Utsuru.Authentication.SessionManager.Instance.LocalProfileId))
+                    return Utsuru.Authentication.SessionManager.Instance.LocalProfileId;
+            }
+            return string.IsNullOrEmpty(accountId) ? "player1" : accountId;
+        }
+
+        public bool IsObjectDiscovered(string objectId)
+        {
+            return discoveredObjects.Contains(objectId);
+        }
+
+        /// <summary>Cek apakah objek ini sudah memiliki foto yang tersimpan di Dictionary.</summary>
+        public bool HasSavedPhotoForObject(string objectId)
+        {
+            if (string.IsNullOrEmpty(objectId) || data == null || data.photos == null)
+                return false;
+
+            return data.photos.Exists(p => p != null && string.Equals(p.objectId, objectId, StringComparison.Ordinal));
+        }
+
+        public bool IsVocabularyDiscovered(int vocabularyId)
+        {
+            return data.discoveredVocabularyIds.Contains(vocabularyId);
+        }
+
+        /// <summary>Catat objek/kosakata sebagai Discovered (terjadi saat shutter, walau foto tidak disimpan).</summary>
+        public void MarkDiscovered(string objectId, int vocabularyId)
+        {
+            if (discoveredObjects.Add(objectId)) data.discoveredObjectIds.Add(objectId);
+            if (!data.discoveredVocabularyIds.Contains(vocabularyId)) data.discoveredVocabularyIds.Add(vocabularyId);
+            Persist();
+        }
+
+        /// <summary>Simpan foto ke album aktif atau overwrite foto lama jika objectId sudah ada di Dictionary.</summary>
+        public void AddPhoto(PhotoRecord record)
+        {
+            SaveOrOverwritePhoto(record);
+        }
+
+        /// <summary>
+        /// Menyimpan foto baru ke Dictionary. Jika objectId sudah pernah disimpan,
+        /// foto lama (PNG & record) diganti dengan foto baru sambil mempertahankan status albumId, isLiked, dan isFavorite.
+        /// Mengembalikan true jika menimpa foto lama.
+        /// </summary>
+        public bool SaveOrOverwritePhoto(PhotoRecord record)
+        {
+            if (record == null) return false;
+
+            bool overwritten = false;
+            if (!string.IsNullOrEmpty(record.objectId))
+            {
+                for (int i = data.photos.Count - 1; i >= 0; i--)
+                {
+                    PhotoRecord existing = data.photos[i];
+                    if (existing != null && string.Equals(existing.objectId, record.objectId, StringComparison.Ordinal))
+                    {
+                        if (!overwritten)
+                        {
+                            record.albumId = existing.albumId;
+                            record.isLiked = existing.isLiked;
+                            record.isFavorite = existing.isFavorite;
+                            overwritten = true;
+                        }
+
+                        PhotoFileStore.Delete(existing.imagePath);
+                        data.photos.RemoveAt(i);
+                    }
+                }
+            }
+
+            // Simpan dengan urutan Stack (elemen terbaru di indeks 0)
+            data.photos.Insert(0, record);
+            Persist();
+            return overwritten;
+        }
+
+        /// <summary>Ubah status favorit foto (bintang).</summary>
+        public void ToggleFavorite(string photoId)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null)
+            {
+                photo.isFavorite = !photo.isFavorite;
+                Persist();
+            }
+        }
+
+        /// <summary>Ubah status like foto (hati).</summary>
+        public void ToggleLike(string photoId)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null)
+            {
+                photo.isLiked = !photo.isLiked;
+                Persist();
+            }
+        }
+
+        public void SetFavorite(string photoId, bool favorite)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null && photo.isFavorite != favorite)
+            {
+                photo.isFavorite = favorite;
+                Persist();
+            }
+        }
+
+        public void SetLike(string photoId, bool liked)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null && photo.isLiked != liked)
+            {
+                photo.isLiked = liked;
+                Persist();
+            }
+        }
+
+        /// <summary>Pindahkan foto ke album lain.</summary>
+        public bool MovePhoto(string photoId, int targetAlbumId)
+        {
+            var photo = data.photos.Find(p => p.photoId == photoId);
+            if (photo != null && data.albums.Exists(a => a.albumId == targetAlbumId))
+            {
+                photo.albumId = targetAlbumId;
+                Persist();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>Hapus foto individual dari album dan hapus berkas PNG fisiknya.</summary>
+        public bool DeletePhoto(string photoId)
+        {
+            int idx = data.photos.FindIndex(p => p.photoId == photoId);
+            if (idx >= 0)
+            {
+                var photo = data.photos[idx];
+                PhotoFileStore.Delete(photo.imagePath);
+                data.photos.RemoveAt(idx);
+                Persist();
+                return true;
+            }
+            return false;
+        }
+
+        public AlbumRecord CreateAlbum(string albumName)
+        {
+            var album = new AlbumRecord
+            {
+                albumId = data.nextAlbumId++,
+                albumName = string.IsNullOrWhiteSpace(albumName) ? "Album Baru" : albumName.Trim(),
+                createdAt = DateTime.Now.ToString("o")
+            };
+            data.albums.Add(album);
+            if (data.activeAlbumId == 0) data.activeAlbumId = album.albumId;
+
+            Persist();
+            return album;
+        }
+
+        public void RenameAlbum(int albumId, string newName)
+        {
+            var album = data.albums.Find(a => a.albumId == albumId);
+            if (album != null && !string.IsNullOrWhiteSpace(newName))
+            {
+                album.albumName = newName.Trim();
+                Persist();
+            }
+        }
+
+        public bool DeleteAlbum(int albumId)
+        {
+            if (data.albums.Count <= 1) return false; // Minimal harus ada 1 album tersisa
+
+            var album = data.albums.Find(a => a.albumId == albumId);
+            if (album == null) return false;
+
+            // Hapus semua foto fisik yang terdaftar di album ini
+            var photosToDelete = data.photos.FindAll(p => p.albumId == albumId);
+            foreach (var p in photosToDelete)
+            {
+                PhotoFileStore.Delete(p.imagePath);
+            }
+            data.photos.RemoveAll(p => p.albumId == albumId);
+            data.albums.Remove(album);
+
+            if (data.activeAlbumId == albumId)
+            {
+                data.activeAlbumId = data.albums[0].albumId;
+            }
+
+            Persist();
+            return true;
+        }
+
+        public void SetActiveAlbum(int albumId)
+        {
+            data.activeAlbumId = albumId;
+            Persist();
+        }
+
+        /// <summary>Mendapatkan seluruh daftar katalog objek & kosakata dari database.</summary>
+        public IReadOnlyList<ObjectInfo> GetAllCatalogObjects()
+        {
+            if (database == null) database = FindFirstObjectByType<ObjectDatabaseProvider>();
+            return database != null ? database.GetAllObjects() : new List<ObjectInfo>();
+        }
+
+        // Foto selalu butuh album aktif, jadi pastikan minimal ada satu album.
+        private void EnsureDefaultAlbum()
+        {
+            if (data.albums.Count == 0)
+            {
+                CreateAlbum(defaultAlbumName);
+                return;
+            }
+
+            bool activeExists = data.albums.Exists(a => a.albumId == data.activeAlbumId);
+            if (!activeExists)
+            {
+                data.activeAlbumId = data.albums[0].albumId;
+                Persist();
+            }
+        }
+
+        private void Persist()
+        {
+            storage.Save(ResolveAccountId(), SaveKey, data);
+            OnDictionaryChanged?.Invoke();
+        }
+
+        /// <summary>Menu klik kanan di Inspector untuk mereset seluruh progres kata dan album saat testing.</summary>
+        [ContextMenu("Reset Save Data (Hapus Progres)")]
+        public void ResetSaveData()
+        {
+            discoveredObjects.Clear();
+            data = new DictionaryData();
+            EnsureDefaultAlbum();
+            if (storage == null) storage = new LocalStorage();
+            Persist();
+            Debug.Log("[DictionaryManager] Data progres berhasil direset!");
+        }
+
+        /// <summary>Menu klik kanan di Inspector untuk menghapus seluruh foto Polaroid di Dictionary beserta berkas fisiknya.</summary>
+        [ContextMenu("Hapus Semua Foto Polaroid (Clear Photos)")]
+        public void ClearAllPhotos()
+        {
+            if (data == null)
+            {
+                if (storage == null) storage = new LocalStorage();
+                storage.TryLoad<DictionaryData>(accountId, SaveKey, out data);
+            }
+
+            if (data != null && data.photos != null)
+            {
+                foreach (var p in data.photos)
+                {
+                    PhotoFileStore.Delete(p.imagePath);
+                }
+                data.photos.Clear();
+                Persist();
+                Debug.Log("[DictionaryManager] Seluruh foto Polaroid berhasil dihapus dari Dictionary!");
+            }
+        }
+    }
+}

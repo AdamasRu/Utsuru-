@@ -607,9 +607,15 @@ namespace Bozo.ModularCharacters
         {
             if (value == muteHeightChange) return;
 
-            foreach (AnimatorControllerParameter param in animator.parameters)
+            if (animator != null)
             {
-                animator.SetFloat("HeelHeight", heeledHeight);
+                foreach (AnimatorControllerParameter param in animator.parameters)
+                {
+                    if (param.name == "HeelHeight")
+                    {
+                        animator.SetFloat("HeelHeight", heeledHeight);
+                    }
+                }
             }
 
             muteHeightChange = value;

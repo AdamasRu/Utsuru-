@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3902692034410302914}
   - component: {fileID: 3902692034410302913}
   - component: {fileID: 5396603604974252875}
-  - component: {fileID: 3996089173922803586}
+  - component: {fileID: 5524880487395176667}
   m_Layer: 0
   m_Name: AE_Curbstone_04
   m_TagString: Untagged
@@ -133,7 +133,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.17391336, y: 0.31354165, z: 2}
   m_Center: {x: 0, y: 0.05677083, z: 0}
---- !u!114 &3996089173922803586
+--- !u!114 &5524880487395176667
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bff38a5049fa9f458031b5bfc5ed89c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataVocabularyObject
-  objectid: ICK-10
+  objectid: ICK-36

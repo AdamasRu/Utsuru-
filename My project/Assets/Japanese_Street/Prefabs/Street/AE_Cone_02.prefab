@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6524942184183720052}
   - component: {fileID: 1249742742094139818}
   - component: {fileID: 7687612621497322703}
-  - component: {fileID: 9002360757913297710}
+  - component: {fileID: 4758816995651632258}
   m_Layer: 0
   m_Name: AE_Cone_02
   m_TagString: Untagged
@@ -133,7 +133,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.41773367, y: 0.5848148, z: 0.41773367}
   m_Center: {x: 0.00008650869, y: 0.28807962, z: -0.00020950288}
---- !u!114 &9002360757913297710
+--- !u!114 &4758816995651632258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
