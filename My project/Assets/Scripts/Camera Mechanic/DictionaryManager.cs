@@ -50,12 +50,12 @@ namespace Utsuru.Capture
         /// <summary>Dipicu setiap data Dictionary berubah (untuk refresh UI).</summary>
         public event Action OnDictionaryChanged;
 
-        public int ActiveAlbumId => data.activeAlbumId;
-        public IReadOnlyList<AlbumRecord> Albums => data.albums;
-        public IReadOnlyList<PhotoRecord> Photos => data.photos;
+        public int ActiveAlbumId => data != null ? data.activeAlbumId : 0;
+        public IReadOnlyList<AlbumRecord> Albums => data != null ? data.albums : null;
+        public IReadOnlyList<PhotoRecord> Photos => data != null ? data.photos : null;
         public IReadOnlyList<int> DiscoveredVocabularyIds => data != null ? data.discoveredVocabularyIds : null;
         public IReadOnlyList<string> DiscoveredObjectIds => data != null ? data.discoveredObjectIds : null;
-        public int DiscoveredVocabularyCount => data.discoveredVocabularyIds.Count;
+        public int DiscoveredVocabularyCount => data != null && data.discoveredVocabularyIds != null ? data.discoveredVocabularyIds.Count : 0;
         public ObjectDatabaseProvider Database => database;
 
         private void Awake()

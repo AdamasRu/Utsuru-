@@ -230,12 +230,9 @@ namespace Utsuru.DictionaryUI
             if (playAgainButton != null)
                 playAgainButton.onClick.AddListener(StartQuizSession);
 
+            isDemoPracticeMode = false;
             if (demoPracticeButton != null)
-                demoPracticeButton.onClick.AddListener(() =>
-                {
-                    isDemoPracticeMode = true;
-                    StartQuizSession();
-                });
+                demoPracticeButton.gameObject.SetActive(false);
         }
 
         private void SetupChoiceListeners(QuizPageSlotUI slot, bool isLeftPage)
@@ -365,14 +362,14 @@ namespace Utsuru.DictionaryUI
                 cardRt.anchorMin = new Vector2(0.5f, 0.5f);
                 cardRt.anchorMax = new Vector2(0.5f, 0.5f);
                 cardRt.pivot = new Vector2(0.5f, 0.5f);
-                cardRt.sizeDelta = new Vector2(530f, 440f);
-                cardRt.anchoredPosition = new Vector2(0f, -15f);
+                cardRt.sizeDelta = new Vector2(500f, 340f);
+                cardRt.anchoredPosition = new Vector2(0f, -10f);
             }
 
             var vlg = emptyCardTr.GetComponent<VerticalLayoutGroup>();
             if (vlg != null)
             {
-                vlg.padding = new RectOffset(40, 40, 36, 36);
+                vlg.padding = new RectOffset(36, 36, 36, 36);
                 vlg.spacing = 18f;
                 vlg.childAlignment = TextAnchor.MiddleCenter;
                 vlg.childControlWidth = true;
@@ -381,69 +378,132 @@ namespace Utsuru.DictionaryUI
                 vlg.childForceExpandHeight = false;
             }
 
-            ConfigureEmptyChildLayout(emptyCardTr.Find("Title"), 450f, 46f);
-            ConfigureEmptyChildLayout(emptyCardTr.Find("Description"), 450f, 92f);
-            ConfigureEmptyChildLayout(emptyCardTr.Find("ProgressText"), 450f, 38f);
-            ConfigureEmptyChildLayout(emptyCardTr.Find("DemoPracticeButton"), 330f, 56f);
+            ConfigureEmptyTextElement(
+                emptyCardTr.Find("Title"),
+                428f,
+                48f,
+                "Mini Quiz Challenge");
+            ConfigureEmptyTextElement(
+                emptyCardTr.Find("Description"),
+                428f,
+                118f,
+                "Discover and photograph at least 4 vocabulary objects in town to unlock this interactive quiz!");
+            ConfigureEmptyTextElement(
+                emptyCardTr.Find("ProgressText"),
+                428f,
+                56f,
+                null);
+
+            Transform demoBtnTr = emptyCardTr.Find("DemoPracticeButton");
+            if (demoBtnTr != null)
+                demoBtnTr.gameObject.SetActive(false);
+            if (demoPracticeButton != null)
+                demoPracticeButton.gameObject.SetActive(false);
 
             if (cardRt != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(cardRt);
 
-            // 2. RightEmptyPage berisi logo Utsuru selaras dengan ResultSummaryRoot
-            Sprite logoSprite = FindUtsuruLogoSprite();
+            // 2. RightEmptyPage berisi logo Utsuru identik posisi, ukuran, dan opacity dengan ResultSummaryRoot
+            Image sourceLogoImg = FindUtsuruLogoImage();
+            Sprite logoSprite = sourceLogoImg != null ? sourceLogoImg.sprite : FindFallbackUtsuruLogoSprite();
             if (logoSprite != null)
             {
                 GameObject rightEmptyGo = new GameObject("RightEmptyPage", typeof(RectTransform));
                 rightEmptyGo.layer = emptyStateRoot.layer;
                 rightEmptyGo.transform.SetParent(emptyStateRoot.transform, false);
                 RectTransform rightRt = rightEmptyGo.GetComponent<RectTransform>();
-                rightRt.anchorMin = new Vector2(0.5f, 0.5f);
-                rightRt.anchorMax = new Vector2(0.5f, 0.5f);
-                rightRt.pivot = new Vector2(0f, 0.5f);
-                rightRt.sizeDelta = new Vector2(740f, 820f);
-                rightRt.anchoredPosition = Vector2.zero;
-                rightRt.localScale = Vector3.one;
+
+                RectTransform sourceParentRt = sourceLogoImg != null ? sourceLogoImg.transform.parent as RectTransform : null;
+                if (sourceParentRt != null)
+                {
+                    rightRt.anchorMin = sourceParentRt.anchorMin;
+                    rightRt.anchorMax = sourceParentRt.anchorMax;
+                    rightRt.pivot = sourceParentRt.pivot;
+                    rightRt.sizeDelta = sourceParentRt.sizeDelta;
+                    rightRt.anchoredPosition = sourceParentRt.anchoredPosition;
+                    rightRt.localScale = sourceParentRt.localScale;
+                }
+                else
+                {
+                    rightRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    rightRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    rightRt.pivot = new Vector2(0f, 0.5f);
+                    rightRt.sizeDelta = new Vector2(740f, 820f);
+                    rightRt.anchoredPosition = Vector2.zero;
+                    rightRt.localScale = Vector3.one;
+                }
 
                 GameObject logoGo = new GameObject("UtsuruLogo", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
                 logoGo.layer = emptyStateRoot.layer;
                 logoGo.transform.SetParent(rightEmptyGo.transform, false);
                 RectTransform logoRt = logoGo.GetComponent<RectTransform>();
-                logoRt.anchorMin = new Vector2(0.5f, 0.5f);
-                logoRt.anchorMax = new Vector2(0.5f, 0.5f);
-                logoRt.pivot = new Vector2(0.5f, 0.5f);
-                logoRt.sizeDelta = new Vector2(480f, 260f);
-                logoRt.anchoredPosition = new Vector2(-10f, 15f);
+                RectTransform sourceLogoRt = sourceLogoImg != null ? sourceLogoImg.rectTransform : null;
+
+                if (sourceLogoRt != null)
+                {
+                    logoRt.anchorMin = sourceLogoRt.anchorMin;
+                    logoRt.anchorMax = sourceLogoRt.anchorMax;
+                    logoRt.pivot = sourceLogoRt.pivot;
+                    logoRt.sizeDelta = sourceLogoRt.sizeDelta;
+                    logoRt.anchoredPosition = sourceLogoRt.anchoredPosition;
+                    logoRt.localScale = sourceLogoRt.localScale;
+                }
+                else
+                {
+                    logoRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    logoRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    logoRt.pivot = new Vector2(0.5f, 0.5f);
+                    logoRt.sizeDelta = new Vector2(480f, 260f);
+                    logoRt.anchoredPosition = new Vector2(25.56f, 23.8f);
+                    logoRt.localScale = Vector3.one;
+                }
 
                 Image logoImg = logoGo.GetComponent<Image>();
                 logoImg.sprite = logoSprite;
-                logoImg.preserveAspect = true;
-                logoImg.color = Color.white;
+                logoImg.preserveAspect = sourceLogoImg != null ? sourceLogoImg.preserveAspect : true;
+                logoImg.color = sourceLogoImg != null ? sourceLogoImg.color : new Color(1f, 1f, 1f, 0.41960785f);
                 logoImg.raycastTarget = false;
             }
         }
 
-        private static void ConfigureEmptyChildLayout(Transform child, float prefWidth, float prefHeight)
+        private static void ConfigureEmptyTextElement(Transform child, float maxWidth, float prefHeight, string overrideText)
         {
             if (child == null) return;
             var le = child.GetComponent<LayoutElement>() ?? child.gameObject.AddComponent<LayoutElement>();
-            le.preferredWidth = prefWidth;
+            le.minWidth = maxWidth;
+            le.preferredWidth = maxWidth;
             le.preferredHeight = prefHeight;
-        }
+            le.flexibleWidth = 0f;
 
-        private Sprite FindUtsuruLogoSprite()
-        {
-            if (resultSummaryRoot != null)
+            var tmp = child.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
             {
-                foreach (var img in resultSummaryRoot.GetComponentsInChildren<Image>(true))
+                tmp.textWrappingMode = TextWrappingModes.Normal;
+                tmp.overflowMode = TextOverflowModes.Overflow;
+                if (!string.IsNullOrEmpty(overrideText))
                 {
-                    if (img != null && img.sprite != null &&
-                        (img.gameObject.name.Contains("Logo") || img.sprite.name.IndexOf("utsuru", StringComparison.OrdinalIgnoreCase) >= 0))
-                    {
-                        return img.sprite;
-                    }
+                    tmp.text = overrideText;
                 }
             }
+        }
 
+        private Image FindUtsuruLogoImage()
+        {
+            if (resultSummaryRoot == null) return null;
+
+            foreach (var img in resultSummaryRoot.GetComponentsInChildren<Image>(true))
+            {
+                if (img != null && img.sprite != null &&
+                    (img.gameObject.name.Contains("Logo") || img.sprite.name.IndexOf("utsuru", StringComparison.OrdinalIgnoreCase) >= 0))
+                {
+                    return img;
+                }
+            }
+            return null;
+        }
+
+        private static Sprite FindFallbackUtsuruLogoSprite()
+        {
             foreach (var spr in Resources.FindObjectsOfTypeAll<Sprite>())
             {
                 if (spr != null && spr.name.IndexOf("logoutsuru", StringComparison.OrdinalIgnoreCase) >= 0)

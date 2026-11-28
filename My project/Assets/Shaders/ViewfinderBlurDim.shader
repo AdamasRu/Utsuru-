@@ -42,11 +42,6 @@ Shader "UI/ViewfinderBlurDim"
         Blend SrcAlpha OneMinusSrcAlpha
         ColorMask [_ColorMask]
 
-        GrabPass
-        {
-            "_CameraViewfinderGrab"
-        }
-
         Pass
         {
             Name "ViewfinderBlurDim"
@@ -54,7 +49,7 @@ Shader "UI/ViewfinderBlurDim"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma target 3.0
+            #pragma target 2.0
 
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
@@ -71,15 +66,12 @@ Shader "UI/ViewfinderBlurDim"
             {
                 float4 vertex : SV_POSITION;
                 fixed4 color : COLOR;
-                float4 grabPos : TEXCOORD0;
-                float2 uv : TEXCOORD1;
+                float2 uv : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
+            sampler2D _MainTex;
             fixed4 _TintColor;
-            float _BlurSize;
-            sampler2D _CameraViewfinderGrab;
-            float4 _CameraViewfinderGrab_TexelSize;
 
             v2f vert(appdata_t v)
             {
@@ -88,7 +80,6 @@ Shader "UI/ViewfinderBlurDim"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.texcoord;
                 o.color = v.color;
                 return o;
@@ -96,29 +87,9 @@ Shader "UI/ViewfinderBlurDim"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float2 uv = i.grabPos.xy / i.grabPos.w;
-                float2 texel = _CameraViewfinderGrab_TexelSize.xy * _BlurSize;
-
-                // 9-tap Gaussian distribution blur
-                half4 col = half4(0, 0, 0, 0);
-
-                col += tex2D(_CameraViewfinderGrab, uv + float2(-texel.x, -texel.y)) * 0.075;
-                col += tex2D(_CameraViewfinderGrab, uv + float2(0.0,      -texel.y)) * 0.125;
-                col += tex2D(_CameraViewfinderGrab, uv + float2( texel.x, -texel.y)) * 0.075;
-
-                col += tex2D(_CameraViewfinderGrab, uv + float2(-texel.x,  0.0))     * 0.125;
-                col += tex2D(_CameraViewfinderGrab, uv + float2(0.0,       0.0))     * 0.200;
-                col += tex2D(_CameraViewfinderGrab, uv + float2( texel.x,  0.0))     * 0.125;
-
-                col += tex2D(_CameraViewfinderGrab, uv + float2(-texel.x,  texel.y)) * 0.075;
-                col += tex2D(_CameraViewfinderGrab, uv + float2(0.0,       texel.y)) * 0.125;
-                col += tex2D(_CameraViewfinderGrab, uv + float2( texel.x,  texel.y)) * 0.075;
-
-                // Combine with tint and UI vertex color
+                fixed4 texCol = tex2D(_MainTex, i.uv);
                 fixed4 finalTint = _TintColor * i.color;
-                col.rgb = lerp(col.rgb, finalTint.rgb, finalTint.a);
-
-                return fixed4(col.rgb, i.color.a);
+                return fixed4(finalTint.rgb, finalTint.a * texCol.a);
             }
             ENDCG
         }

@@ -119,8 +119,10 @@ public class SettingsManager : MonoBehaviour
     private float curMusicVol = 100f;
     private float curVoiceVol = 75f;
 
-    private float lastVoicePreviewTime = 0f;
+    private bool isInitialized = false;
+#if !UNITY_EDITOR
     private Coroutine displayApplyCoroutine;
+#endif
 
     // Visual colors
     private readonly Color activeTabColor = new Color32(106, 67, 47, 255);    // #6A432F
@@ -147,6 +149,23 @@ public class SettingsManager : MonoBehaviour
         SetupListeners();
         SwitchTab(0); // Default Gameplay tab
         ApplySettings();
+        isInitialized = true;
+    }
+
+    private void OnEnable()
+    {
+        if (isInitialized)
+        {
+            LoadSettings();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (isInitialized)
+        {
+            LoadSettings();
+        }
     }
 
     private void OnDestroy()
@@ -233,146 +252,102 @@ public class SettingsManager : MonoBehaviour
         text.fontStyle = FontStyles.Normal; // Tetap Normal agar font Baloo tidak rusak/terdistorsi saat dipilih
     }
 
-    // --- State Handlers ---
+    // --- State Handlers (Draft until Apply is clicked) ---
 
     private void CycleCharSet(int dir)
     {
         curCharSetIndex = (curCharSetIndex + dir + charSetOptions.Length) % charSetOptions.Length;
         if (charSetValueText != null) charSetValueText.text = charSetOptions[curCharSetIndex];
-        PlayerPrefs.SetInt("Setting_CharacterSet", curCharSetIndex);
-        Debug.Log($"[SettingsManager] Character Set diubah ke: {charSetOptions[curCharSetIndex]}");
     }
 
     private void ToggleHideEnglish()
     {
         curHideEnglish = !curHideEnglish;
         UpdateToggleDot(hideEnglishDotImg, curHideEnglish);
-        PlayerPrefs.SetInt("Setting_HideEnglish", curHideEnglish ? 1 : 0);
-        if (DialogueManager.Instance != null)
-        {
-            DialogueManager.HideEnglishTranslation = curHideEnglish;
-            DialogueManager.Instance.UpdateSettingsVisibility();
-        }
     }
 
     private void OnFovChanged(float val)
     {
         curFov = Mathf.Round(val);
         if (fovValueText != null) fovValueText.text = curFov.ToString("0");
-        PlayerPrefs.SetFloat("Setting_FOV", curFov);
-        ApplyFOV(curFov);
     }
 
     private void ToggleDisableOutline()
     {
         curDisableOutline = !curDisableOutline;
         UpdateToggleDot(disableOutlineDotImg, curDisableOutline);
-        PlayerPrefs.SetInt("Setting_DisableOutline", curDisableOutline ? 1 : 0);
     }
 
     private void OnSensitivityChanged(float val)
     {
         curSensitivity = Mathf.Round(val);
         if (sensitivityValueText != null) sensitivityValueText.text = curSensitivity.ToString("0");
-        PlayerPrefs.SetFloat("Setting_Sensitivity", curSensitivity);
-        ApplyControlsSettings();
     }
 
     private void ToggleInvertX()
     {
         curInvertX = !curInvertX;
         UpdateToggleDot(invertXDotImg, curInvertX);
-        PlayerPrefs.SetInt("Setting_InvertX", curInvertX ? 1 : 0);
-        ApplyControlsSettings();
     }
 
     private void ToggleInvertY()
     {
         curInvertY = !curInvertY;
         UpdateToggleDot(invertYDotImg, curInvertY);
-        PlayerPrefs.SetInt("Setting_InvertY", curInvertY ? 1 : 0);
-        ApplyControlsSettings();
     }
 
     private void CycleDisplayMode(int dir)
     {
         curDisplayModeIndex = (curDisplayModeIndex + dir + displayModeOptions.Length) % displayModeOptions.Length;
         if (displayModeValueText != null) displayModeValueText.text = displayModeOptions[curDisplayModeIndex];
-        PlayerPrefs.SetInt("Setting_DisplayMode", curDisplayModeIndex);
-        ApplyDisplayAndResolution();
     }
 
     private void CycleResolution(int dir)
     {
         curResolutionIndex = (curResolutionIndex + dir + resolutionOptions.Length) % resolutionOptions.Length;
         if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
-        PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
-        ApplyDisplayAndResolution();
     }
 
     private void CycleQuality(int dir)
     {
         curQualityIndex = (curQualityIndex + dir + qualityOptions.Length) % qualityOptions.Length;
         if (qualityValueText != null) qualityValueText.text = qualityOptions[curQualityIndex];
-        PlayerPrefs.SetInt("Setting_Quality", curQualityIndex);
-        ApplyGraphicsQuality();
     }
 
     private void CycleFpsLimit(int dir)
     {
         curFpsLimitIndex = (curFpsLimitIndex + dir + fpsLimitOptions.Length) % fpsLimitOptions.Length;
         if (fpsLimitValueText != null) fpsLimitValueText.text = fpsLimitOptions[curFpsLimitIndex];
-        PlayerPrefs.SetInt("Setting_FPSLimit", curFpsLimitIndex);
-        Application.targetFrameRate = fpsLimitValues[curFpsLimitIndex];
     }
 
     private void CycleAA(int dir)
     {
         curAaIndex = (curAaIndex + dir + aaOptions.Length) % aaOptions.Length;
         if (aaValueText != null) aaValueText.text = aaOptions[curAaIndex];
-        PlayerPrefs.SetInt("Setting_AA", curAaIndex);
-        ApplyGraphicsQuality();
     }
 
     private void ToggleVsync()
     {
         curVsync = !curVsync;
         UpdateToggleDot(vsyncDotImg, curVsync);
-        PlayerPrefs.SetInt("Setting_VSync", curVsync ? 1 : 0);
-        QualitySettings.vSyncCount = curVsync ? 1 : 0;
     }
 
     private void OnMasterVolChanged(float val)
     {
         curMasterVol = Mathf.Round(val);
         if (masterVolValueText != null) masterVolValueText.text = curMasterVol.ToString("0");
-        PlayerPrefs.SetFloat("Setting_MasterVol", curMasterVol);
-        AudioListener.volume = curMasterVol / 100f;
     }
 
     private void OnMusicVolChanged(float val)
     {
         curMusicVol = Mathf.Round(val);
         if (musicVolValueText != null) musicVolValueText.text = curMusicVol.ToString("0");
-        PlayerPrefs.SetFloat("Setting_MusicVol", curMusicVol);
-        Utsuru.Sound.BGMManager.Instance?.RefreshVolume();
     }
 
     private void OnVoiceVolChanged(float val)
     {
         curVoiceVol = Mathf.Round(val);
         if (voiceVolValueText != null) voiceVolValueText.text = curVoiceVol.ToString("0");
-        PlayerPrefs.SetFloat("Setting_VoiceVol", curVoiceVol);
-
-        if (DialogueManager.Instance != null && DialogueManager.Instance.VoiceAudioSource != null)
-        {
-            DialogueManager.Instance.VoiceAudioSource.volume = curVoiceVol / 100f;
-            if (Time.unscaledTime - lastVoicePreviewTime > 0.2f && DialogueManager.Instance.VoiceAudioSource.clip != null)
-            {
-                lastVoicePreviewTime = Time.unscaledTime;
-                DialogueManager.Instance.VoiceAudioSource.PlayOneShot(DialogueManager.Instance.VoiceAudioSource.clip, curVoiceVol / 100f);
-            }
-        }
     }
 
     private void UpdateToggleDot(Image dot, bool isOn)
@@ -391,6 +366,8 @@ public class SettingsManager : MonoBehaviour
 
     public void OnBackClicked()
     {
+        LoadSettings();
+
         if (Utsuru.UI.HomeScreenUIManager.Instance != null)
         {
             Utsuru.UI.HomeScreenUIManager.Instance.ShowHomeScreen();
@@ -513,63 +490,7 @@ public class SettingsManager : MonoBehaviour
         if (curDisplayModeIndex == 1) mode = FullScreenMode.Windowed;
         else if (curDisplayModeIndex == 2) mode = FullScreenMode.FullScreenWindow;
 
-        int targetW = 1920;
-        int targetH = 1080;
-        ParseResolution(curResolutionIndex, out targetW, out targetH);
-
-        int sysW = Display.main != null && Display.main.systemWidth > 0 ? Display.main.systemWidth : Screen.currentResolution.width;
-        int sysH = Display.main != null && Display.main.systemHeight > 0 ? Display.main.systemHeight : Screen.currentResolution.height;
-
-        if (mode == FullScreenMode.FullScreenWindow)
-        {
-            // Borderless selalu memakai resolusi native monitor agar tidak ter-stretch / nge-zoom
-            if (sysW > 0 && sysH > 0)
-            {
-                targetW = sysW;
-                targetH = sysH;
-            }
-        }
-        else if (mode == FullScreenMode.Windowed)
-        {
-            // Pastikan jendela Windowed muat nyaman di desktop (tidak melebihi layar sehingga terpotong/zoom)
-            int maxWinW = Mathf.Max(800, sysW - 40);
-            int maxWinH = Mathf.Max(600, sysH - 80);
-            if (targetW > maxWinW || targetH > maxWinH)
-            {
-                int bestIdx = FindLargestFittingResolutionIndex(maxWinW, maxWinH);
-                if (bestIdx >= 0)
-                {
-                    curResolutionIndex = bestIdx;
-                    ParseResolution(curResolutionIndex, out targetW, out targetH);
-                    if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
-                    PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
-                }
-                else
-                {
-                    targetW = Mathf.Min(1280, maxWinW);
-                    targetH = Mathf.Min(720, maxWinH);
-                }
-            }
-        }
-        else // ExclusiveFullScreen
-        {
-            if (sysW > 0 && sysH > 0 && (targetW > sysW || targetH > sysH))
-            {
-                int bestIdx = FindLargestFittingResolutionIndex(sysW, sysH);
-                if (bestIdx >= 0)
-                {
-                    curResolutionIndex = bestIdx;
-                    ParseResolution(curResolutionIndex, out targetW, out targetH);
-                    if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
-                    PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
-                }
-                else
-                {
-                    targetW = sysW;
-                    targetH = sysH;
-                }
-            }
-        }
+        ParseResolution(curResolutionIndex, out int targetW, out int targetH);
 
         if (gameObject.activeInHierarchy)
         {
@@ -579,24 +500,19 @@ public class SettingsManager : MonoBehaviour
         else
         {
             Screen.SetResolution(targetW, targetH, mode);
+            Canvas.ForceUpdateCanvases();
         }
 #endif
     }
 
     private IEnumerator ApplyDisplayAndResolutionRoutine(int targetW, int targetH, FullScreenMode mode)
     {
-        bool changingFullScreenFlag = Screen.fullScreenMode != mode;
-        if (changingFullScreenFlag)
-        {
-            Screen.fullScreen = (mode != FullScreenMode.Windowed);
-            Screen.fullScreenMode = mode;
-            yield return null;
-        }
-
         Screen.SetResolution(targetW, targetH, mode);
         yield return null;
         Canvas.ForceUpdateCanvases();
+#if !UNITY_EDITOR
         displayApplyCoroutine = null;
+#endif
     }
 
     private void ParseResolution(int index, out int width, out int height)
@@ -611,22 +527,6 @@ public class SettingsManager : MonoBehaviour
             if (!int.TryParse(parts[0].Trim(), out width)) width = 1920;
             if (!int.TryParse(parts[1].Trim(), out height)) height = 1080;
         }
-    }
-
-    private int FindLargestFittingResolutionIndex(int maxW, int maxH)
-    {
-        int bestIdx = -1;
-        int bestArea = -1;
-        for (int i = 0; i < resolutionOptions.Length; i++)
-        {
-            ParseResolution(i, out int w, out int h);
-            if (w <= maxW && h <= maxH && (w * h) > bestArea)
-            {
-                bestArea = w * h;
-                bestIdx = i;
-            }
-        }
-        return bestIdx;
     }
 
     private void ApplyGraphicsQuality()

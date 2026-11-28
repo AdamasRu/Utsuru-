@@ -45018,7 +45018,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 0
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -119716,8 +119716,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Temukan dan foto minimal 4 objek kosakata di kota untuk membuka kuis interaktif
-    ini!
+  m_text: Discover and photograph at least 4 vocabulary objects in town to unlock
+    this interactive quiz!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f0483ef8ea860504fbf2dd2a0568ad34, type: 2}
   m_sharedMaterial: {fileID: 2339311515650230917, guid: f0483ef8ea860504fbf2dd2a0568ad34, type: 2}
@@ -119761,7 +119761,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 0
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -156155,7 +156155,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 0
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -285150,7 +285150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1654998705
 RectTransform:
   m_ObjectHideFlags: 0

@@ -126,6 +126,11 @@ namespace Utsuru.DictionaryUI
             RefreshDiscoveryProgress();
         }
 
+        private void Start()
+        {
+            RefreshDiscoveryProgress();
+        }
+
         private void OnDisable()
         {
             if (dictionaryManager != null)
