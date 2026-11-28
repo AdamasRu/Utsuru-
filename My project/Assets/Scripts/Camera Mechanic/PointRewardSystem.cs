@@ -65,6 +65,8 @@ namespace Utsuru.Capture
             {
                 ScoreManager.Instance.BindPointRewardSystem(this);
             }
+
+            Utsuru.CloudSync.SupabaseCloudSyncManager.EnsureInstance().SyncFromCloudIfLoggedIn();
         }
 
         private void OnDestroy()

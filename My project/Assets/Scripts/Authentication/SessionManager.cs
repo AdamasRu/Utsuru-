@@ -118,7 +118,9 @@ namespace Utsuru.Authentication
             playerEmail = session.Email;
             playerUsername = session.Username;
 
-            // Retain existing local_profile_id if it matches this auth_user_id, otherwise create new
+            // Maintain cache cleanup for cloud sync when session changes
+            Utsuru.CloudSync.SupabaseCloudSyncManager.Instance?.ResetSessionSyncFlag();
+
             LocalProfileData existing = LocalAccountStorage.LoadProfile();
             if (existing != null && existing.auth_user_id == session.UserId && !string.IsNullOrEmpty(existing.local_profile_id))
             {
@@ -243,6 +245,8 @@ namespace Utsuru.Authentication
             {
                 AuthManager.Instance.ClearSession();
             }
+
+            Utsuru.CloudSync.SupabaseCloudSyncManager.Instance?.ResetSessionSyncFlag();
 
             Debug.Log("[SessionManager] Logout complete. User returned to logged-out state.");
         }

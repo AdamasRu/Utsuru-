@@ -82,6 +82,13 @@ namespace Utsuru.Store
             return string.IsNullOrEmpty(fallbackAccountId) ? "player1" : fallbackAccountId;
         }
 
+        public void ReloadFromStorage()
+        {
+            LoadThemes();
+            OnActiveThemeChanged?.Invoke(ActiveThemeId);
+            OnThemesUpdated?.Invoke();
+        }
+
         public void LoadThemes()
         {
             if (storage == null) storage = new LocalStorage();

@@ -315,6 +315,8 @@ namespace Utsuru.DictionaryUI
 
         private void ShowEmptyState(int currentCount)
         {
+            ConfigureEmptyStateLayout();
+
             if (activeQuizRoot != null) activeQuizRoot.SetActive(false);
             if (resultSummaryRoot != null) resultSummaryRoot.SetActive(false);
             if (emptyStateRoot != null) emptyStateRoot.SetActive(true);
@@ -323,6 +325,133 @@ namespace Utsuru.DictionaryUI
             {
                 emptyProgressText.text = $"Discovered: <b>{currentCount}</b> / {MinDiscoveredRequired} Required Vocabulary";
             }
+        }
+
+        private void ConfigureEmptyStateLayout()
+        {
+            if (emptyStateRoot == null) return;
+            if (emptyStateRoot.transform.Find("LeftEmptyPage") != null) return;
+
+            Transform emptyCardTr = emptyStateRoot.transform.Find("EmptyCard");
+            if (emptyCardTr == null) return;
+
+            // Pastikan EmptyStateRoot stretch penuh dalam QuizSpreadRoot
+            RectTransform emptyRootRt = emptyStateRoot.GetComponent<RectTransform>();
+            if (emptyRootRt != null)
+            {
+                emptyRootRt.anchorMin = Vector2.zero;
+                emptyRootRt.anchorMax = Vector2.one;
+                emptyRootRt.offsetMin = Vector2.zero;
+                emptyRootRt.offsetMax = Vector2.zero;
+                emptyRootRt.pivot = new Vector2(0.5f, 0.5f);
+            }
+
+            // 1. LeftEmptyPage agar tidak bertabrakan dengan spine/ring tengah buku
+            GameObject leftEmptyGo = new GameObject("LeftEmptyPage", typeof(RectTransform));
+            leftEmptyGo.layer = emptyStateRoot.layer;
+            leftEmptyGo.transform.SetParent(emptyStateRoot.transform, false);
+            RectTransform leftRt = leftEmptyGo.GetComponent<RectTransform>();
+            leftRt.anchorMin = new Vector2(0f, 0.5f);
+            leftRt.anchorMax = new Vector2(0f, 0.5f);
+            leftRt.pivot = new Vector2(0f, 0.5f);
+            leftRt.sizeDelta = new Vector2(740f, 820f);
+            leftRt.anchoredPosition = new Vector2(17f, 0f);
+            leftRt.localScale = Vector3.one;
+
+            emptyCardTr.SetParent(leftEmptyGo.transform, false);
+            RectTransform cardRt = emptyCardTr.GetComponent<RectTransform>();
+            if (cardRt != null)
+            {
+                cardRt.anchorMin = new Vector2(0.5f, 0.5f);
+                cardRt.anchorMax = new Vector2(0.5f, 0.5f);
+                cardRt.pivot = new Vector2(0.5f, 0.5f);
+                cardRt.sizeDelta = new Vector2(530f, 440f);
+                cardRt.anchoredPosition = new Vector2(0f, -15f);
+            }
+
+            var vlg = emptyCardTr.GetComponent<VerticalLayoutGroup>();
+            if (vlg != null)
+            {
+                vlg.padding = new RectOffset(40, 40, 36, 36);
+                vlg.spacing = 18f;
+                vlg.childAlignment = TextAnchor.MiddleCenter;
+                vlg.childControlWidth = true;
+                vlg.childControlHeight = true;
+                vlg.childForceExpandWidth = false;
+                vlg.childForceExpandHeight = false;
+            }
+
+            ConfigureEmptyChildLayout(emptyCardTr.Find("Title"), 450f, 46f);
+            ConfigureEmptyChildLayout(emptyCardTr.Find("Description"), 450f, 92f);
+            ConfigureEmptyChildLayout(emptyCardTr.Find("ProgressText"), 450f, 38f);
+            ConfigureEmptyChildLayout(emptyCardTr.Find("DemoPracticeButton"), 330f, 56f);
+
+            if (cardRt != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(cardRt);
+
+            // 2. RightEmptyPage berisi logo Utsuru selaras dengan ResultSummaryRoot
+            Sprite logoSprite = FindUtsuruLogoSprite();
+            if (logoSprite != null)
+            {
+                GameObject rightEmptyGo = new GameObject("RightEmptyPage", typeof(RectTransform));
+                rightEmptyGo.layer = emptyStateRoot.layer;
+                rightEmptyGo.transform.SetParent(emptyStateRoot.transform, false);
+                RectTransform rightRt = rightEmptyGo.GetComponent<RectTransform>();
+                rightRt.anchorMin = new Vector2(0.5f, 0.5f);
+                rightRt.anchorMax = new Vector2(0.5f, 0.5f);
+                rightRt.pivot = new Vector2(0f, 0.5f);
+                rightRt.sizeDelta = new Vector2(740f, 820f);
+                rightRt.anchoredPosition = Vector2.zero;
+                rightRt.localScale = Vector3.one;
+
+                GameObject logoGo = new GameObject("UtsuruLogo", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                logoGo.layer = emptyStateRoot.layer;
+                logoGo.transform.SetParent(rightEmptyGo.transform, false);
+                RectTransform logoRt = logoGo.GetComponent<RectTransform>();
+                logoRt.anchorMin = new Vector2(0.5f, 0.5f);
+                logoRt.anchorMax = new Vector2(0.5f, 0.5f);
+                logoRt.pivot = new Vector2(0.5f, 0.5f);
+                logoRt.sizeDelta = new Vector2(480f, 260f);
+                logoRt.anchoredPosition = new Vector2(-10f, 15f);
+
+                Image logoImg = logoGo.GetComponent<Image>();
+                logoImg.sprite = logoSprite;
+                logoImg.preserveAspect = true;
+                logoImg.color = Color.white;
+                logoImg.raycastTarget = false;
+            }
+        }
+
+        private static void ConfigureEmptyChildLayout(Transform child, float prefWidth, float prefHeight)
+        {
+            if (child == null) return;
+            var le = child.GetComponent<LayoutElement>() ?? child.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = prefWidth;
+            le.preferredHeight = prefHeight;
+        }
+
+        private Sprite FindUtsuruLogoSprite()
+        {
+            if (resultSummaryRoot != null)
+            {
+                foreach (var img in resultSummaryRoot.GetComponentsInChildren<Image>(true))
+                {
+                    if (img != null && img.sprite != null &&
+                        (img.gameObject.name.Contains("Logo") || img.sprite.name.IndexOf("utsuru", StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        return img.sprite;
+                    }
+                }
+            }
+
+            foreach (var spr in Resources.FindObjectsOfTypeAll<Sprite>())
+            {
+                if (spr != null && spr.name.IndexOf("logoutsuru", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return spr;
+                }
+            }
+            return null;
         }
 
         public void StartQuizSession()

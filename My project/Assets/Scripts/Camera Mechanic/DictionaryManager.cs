@@ -76,6 +76,26 @@ namespace Utsuru.Capture
             EnsureDefaultAlbum();
         }
 
+        public void ReloadFromStorage()
+        {
+            if (storage == null) storage = new LocalStorage();
+            string activeAccount = ResolveAccountId();
+            if (!storage.TryLoad<DictionaryData>(activeAccount, SaveKey, out data) || data == null)
+                data = new DictionaryData();
+
+            discoveredObjects.Clear();
+            if (data.discoveredObjectIds != null)
+            {
+                foreach (string id in data.discoveredObjectIds)
+                {
+                    if (!string.IsNullOrEmpty(id)) discoveredObjects.Add(id);
+                }
+            }
+
+            EnsureDefaultAlbum();
+            OnDictionaryChanged?.Invoke();
+        }
+
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;

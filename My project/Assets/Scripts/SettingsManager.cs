@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -119,6 +120,7 @@ public class SettingsManager : MonoBehaviour
     private float curVoiceVol = 75f;
 
     private float lastVoicePreviewTime = 0f;
+    private Coroutine displayApplyCoroutine;
 
     // Visual colors
     private readonly Color activeTabColor = new Color32(106, 67, 47, 255);    // #6A432F
@@ -141,6 +143,7 @@ public class SettingsManager : MonoBehaviour
         }
 
         LoadSettings();
+        EnsureSceneCanvasScalers();
         SetupListeners();
         SwitchTab(0); // Default Gameplay tab
         ApplySettings();
@@ -296,6 +299,7 @@ public class SettingsManager : MonoBehaviour
         curDisplayModeIndex = (curDisplayModeIndex + dir + displayModeOptions.Length) % displayModeOptions.Length;
         if (displayModeValueText != null) displayModeValueText.text = displayModeOptions[curDisplayModeIndex];
         PlayerPrefs.SetInt("Setting_DisplayMode", curDisplayModeIndex);
+        ApplyDisplayAndResolution();
     }
 
     private void CycleResolution(int dir)
@@ -303,6 +307,7 @@ public class SettingsManager : MonoBehaviour
         curResolutionIndex = (curResolutionIndex + dir + resolutionOptions.Length) % resolutionOptions.Length;
         if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
         PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
+        ApplyDisplayAndResolution();
     }
 
     private void CycleQuality(int dir)
@@ -482,21 +487,146 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
+    private void EnsureSceneCanvasScalers()
+    {
+        CanvasScaler[] scalers = UnityEngine.Object.FindObjectsByType<CanvasScaler>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < scalers.Length; i++)
+        {
+            CanvasScaler cs = scalers[i];
+            if (cs == null) continue;
+            if (cs.uiScaleMode == CanvasScaler.ScaleMode.ConstantPixelSize)
+            {
+                cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                cs.referenceResolution = new Vector2(1920f, 1080f);
+                cs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                cs.matchWidthOrHeight = 0.5f;
+            }
+        }
+    }
+
     private void ApplyDisplayAndResolution()
     {
+        EnsureSceneCanvasScalers();
+
 #if !UNITY_EDITOR
-        FullScreenMode mode = FullScreenMode.FullScreenWindow;
+        FullScreenMode mode = FullScreenMode.ExclusiveFullScreen;
         if (curDisplayModeIndex == 1) mode = FullScreenMode.Windowed;
         else if (curDisplayModeIndex == 2) mode = FullScreenMode.FullScreenWindow;
-        else mode = FullScreenMode.ExclusiveFullScreen;
 
-        string resStr = resolutionOptions[curResolutionIndex];
-        string[] parts = resStr.Split('x');
-        if (parts.Length == 2 && int.TryParse(parts[0].Trim(), out int w) && int.TryParse(parts[1].Trim(), out int h))
+        int targetW = 1920;
+        int targetH = 1080;
+        ParseResolution(curResolutionIndex, out targetW, out targetH);
+
+        int sysW = Display.main != null && Display.main.systemWidth > 0 ? Display.main.systemWidth : Screen.currentResolution.width;
+        int sysH = Display.main != null && Display.main.systemHeight > 0 ? Display.main.systemHeight : Screen.currentResolution.height;
+
+        if (mode == FullScreenMode.FullScreenWindow)
         {
-            Screen.SetResolution(w, h, mode);
+            // Borderless selalu memakai resolusi native monitor agar tidak ter-stretch / nge-zoom
+            if (sysW > 0 && sysH > 0)
+            {
+                targetW = sysW;
+                targetH = sysH;
+            }
+        }
+        else if (mode == FullScreenMode.Windowed)
+        {
+            // Pastikan jendela Windowed muat nyaman di desktop (tidak melebihi layar sehingga terpotong/zoom)
+            int maxWinW = Mathf.Max(800, sysW - 40);
+            int maxWinH = Mathf.Max(600, sysH - 80);
+            if (targetW > maxWinW || targetH > maxWinH)
+            {
+                int bestIdx = FindLargestFittingResolutionIndex(maxWinW, maxWinH);
+                if (bestIdx >= 0)
+                {
+                    curResolutionIndex = bestIdx;
+                    ParseResolution(curResolutionIndex, out targetW, out targetH);
+                    if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
+                    PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
+                }
+                else
+                {
+                    targetW = Mathf.Min(1280, maxWinW);
+                    targetH = Mathf.Min(720, maxWinH);
+                }
+            }
+        }
+        else // ExclusiveFullScreen
+        {
+            if (sysW > 0 && sysH > 0 && (targetW > sysW || targetH > sysH))
+            {
+                int bestIdx = FindLargestFittingResolutionIndex(sysW, sysH);
+                if (bestIdx >= 0)
+                {
+                    curResolutionIndex = bestIdx;
+                    ParseResolution(curResolutionIndex, out targetW, out targetH);
+                    if (resolutionValueText != null) resolutionValueText.text = resolutionOptions[curResolutionIndex];
+                    PlayerPrefs.SetInt("Setting_Resolution", curResolutionIndex);
+                }
+                else
+                {
+                    targetW = sysW;
+                    targetH = sysH;
+                }
+            }
+        }
+
+        if (gameObject.activeInHierarchy)
+        {
+            if (displayApplyCoroutine != null) StopCoroutine(displayApplyCoroutine);
+            displayApplyCoroutine = StartCoroutine(ApplyDisplayAndResolutionRoutine(targetW, targetH, mode));
+        }
+        else
+        {
+            Screen.SetResolution(targetW, targetH, mode);
         }
 #endif
+    }
+
+    private IEnumerator ApplyDisplayAndResolutionRoutine(int targetW, int targetH, FullScreenMode mode)
+    {
+        bool changingFullScreenFlag = Screen.fullScreenMode != mode;
+        if (changingFullScreenFlag)
+        {
+            Screen.fullScreen = (mode != FullScreenMode.Windowed);
+            Screen.fullScreenMode = mode;
+            yield return null;
+        }
+
+        Screen.SetResolution(targetW, targetH, mode);
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        displayApplyCoroutine = null;
+    }
+
+    private void ParseResolution(int index, out int width, out int height)
+    {
+        width = 1920;
+        height = 1080;
+        if (index < 0 || index >= resolutionOptions.Length) return;
+
+        string[] parts = resolutionOptions[index].Split('x');
+        if (parts.Length == 2)
+        {
+            if (!int.TryParse(parts[0].Trim(), out width)) width = 1920;
+            if (!int.TryParse(parts[1].Trim(), out height)) height = 1080;
+        }
+    }
+
+    private int FindLargestFittingResolutionIndex(int maxW, int maxH)
+    {
+        int bestIdx = -1;
+        int bestArea = -1;
+        for (int i = 0; i < resolutionOptions.Length; i++)
+        {
+            ParseResolution(i, out int w, out int h);
+            if (w <= maxW && h <= maxH && (w * h) > bestArea)
+            {
+                bestArea = w * h;
+                bestIdx = i;
+            }
+        }
+        return bestIdx;
     }
 
     private void ApplyGraphicsQuality()

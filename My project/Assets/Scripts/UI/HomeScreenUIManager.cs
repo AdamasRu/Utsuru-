@@ -92,6 +92,8 @@ namespace Utsuru.UI
 
             InitializeVisualEffects();
             ShowHomeScreen();
+
+            Utsuru.CloudSync.SupabaseCloudSyncManager.EnsureInstance().SyncFromCloudIfLoggedIn();
         }
 
         private void InitializeVisualEffects()

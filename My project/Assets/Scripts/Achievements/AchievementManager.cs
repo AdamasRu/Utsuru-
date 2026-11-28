@@ -131,6 +131,12 @@ namespace Utsuru.Achievements
             }
         }
 
+        public void ReloadAndEvaluate()
+        {
+            LoadProgress();
+            EvaluateAll();
+        }
+
         public bool IsUnlocked(string achievementId)
         {
             return !string.IsNullOrEmpty(achievementId) && unlockedIds.Contains(achievementId);
