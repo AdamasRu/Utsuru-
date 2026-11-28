@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -48,28 +50,39 @@ namespace Utsuru.Sound
         [SerializeField] private AudioClip[] cardFlipClips;
         [SerializeField] private AudioClip tabSwitchClip;
 
+        private const string PrefabResourcePath = "Audio/DictionarySoundManager";
+
         private Utsuru.DictionaryUI.DictionaryUIController _dictController;
+        private readonly HashSet<int> _boundButtonIds = new HashSet<int>();
         private bool _wasOpen = false;
         private bool _justPlayedClose = false;
-        private bool _buttonsBound = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoInitializeAtRuntime()
         {
-            if (Instance == null)
-            {
-                var existing = FindFirstObjectByType<DictionarySoundManager>();
-                if (existing != null)
-                {
-                    Instance = existing;
-                    return;
-                }
+            if (Instance != null) return;
 
-                var soundObj = new GameObject("[Auto_DictionarySoundManager]");
-                var mgr = soundObj.AddComponent<DictionarySoundManager>();
-                DontDestroyOnLoad(soundObj);
-                Debug.Log("<color=cyan>[DictionarySoundManager] Otomatis aktif & siap memutar SFX Dictionary!</color>");
+            var existing = FindFirstObjectByType<DictionarySoundManager>(FindObjectsInactive.Include);
+            if (existing != null)
+            {
+                Instance = existing;
+                DontDestroyOnLoad(existing.gameObject);
+                return;
             }
+
+            GameObject prefab = Resources.Load<GameObject>(PrefabResourcePath);
+            if (prefab != null)
+            {
+                GameObject instanceGo = Instantiate(prefab);
+                instanceGo.name = "[Auto_DictionarySoundManager]";
+                DontDestroyOnLoad(instanceGo);
+                return;
+            }
+
+            var soundObj = new GameObject("[Auto_DictionarySoundManager]");
+            soundObj.AddComponent<DictionarySoundManager>();
+            DontDestroyOnLoad(soundObj);
+            Debug.Log("<color=cyan>[DictionarySoundManager] Otomatis aktif & siap memutar SFX Dictionary!</color>");
         }
 
         private void Awake()
@@ -77,6 +90,7 @@ namespace Utsuru.Sound
             if (Instance == null)
             {
                 Instance = this;
+                DontDestroyOnLoad(gameObject);
             }
             else if (Instance != this)
             {
@@ -105,6 +119,26 @@ namespace Utsuru.Sound
 #endif
         }
 
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            _dictController = null;
+            _wasOpen = false;
+            _justPlayedClose = false;
+            _boundButtonIds.Clear();
+            BindAllDictionaryUI();
+        }
+
         private void Start()
         {
             BindAllDictionaryUI();
@@ -114,10 +148,10 @@ namespace Utsuru.Sound
         {
             if (_dictController == null)
             {
-                _dictController = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryUIController>();
+                _dictController = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryUIController>(FindObjectsInactive.Include);
                 if (_dictController == null) return;
                 _wasOpen = _dictController.IsOpen;
-                if (!_buttonsBound) BindAllDictionaryUI();
+                BindAllDictionaryUI();
             }
 
             bool isOpen = _dictController.IsOpen;
@@ -165,7 +199,7 @@ namespace Utsuru.Sound
         {
             if (_dictController == null)
             {
-                _dictController = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryUIController>();
+                _dictController = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryUIController>(FindObjectsInactive.Include);
             }
 
             if (_dictController != null)
@@ -186,7 +220,7 @@ namespace Utsuru.Sound
             }
 
             // 2. Klik Balik Halaman Buku Kiri/Kanan & Kartu Polaroid
-            var bookSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryBookSpreadUI>();
+            var bookSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryBookSpreadUI>(FindObjectsInactive.Include);
             if (bookSpread != null)
             {
                 BindButton(bookSpread, "leftPageClickArea", () => PlaySound(UISoundType.PageTurn));
@@ -214,32 +248,14 @@ namespace Utsuru.Sound
                 if (card != null) BindPolaroidCard(card);
             }
 
-            // 3. Paginasi Tab Album
-            var albumTab = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryAlbumTabUI>();
-            if (albumTab != null)
-            {
-                BindButton(albumTab, "prevPageButton", () => PlaySound(UISoundType.PageTurn));
-                BindButton(albumTab, "nextPageButton", () => PlaySound(UISoundType.PageTurn));
-            }
-
-            // 4. Paginasi Tab Vocabulary
-            var vocabTab = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryVocabularyTabUI>();
-            if (vocabTab != null)
-            {
-                BindButton(vocabTab, "prevPageButton", () => PlaySound(UISoundType.PageTurn));
-                BindButton(vocabTab, "nextPageButton", () => PlaySound(UISoundType.PageTurn));
-            }
-
-            // 5. Sub-tab Lembar Kana
-            var kanaSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryKanaSpreadUI>();
+            // 3. Sub-tab Lembar Kana
+            var kanaSpread = FindFirstObjectByType<Utsuru.DictionaryUI.DictionaryKanaSpreadUI>(FindObjectsInactive.Include);
             if (kanaSpread != null)
             {
                 BindButtonArray(kanaSpread, "tabGojuonButtons", () => PlaySound(UISoundType.TabSwitch));
                 BindButtonArray(kanaSpread, "tabDakuonButtons", () => PlaySound(UISoundType.TabSwitch));
                 BindButtonArray(kanaSpread, "tabYoonButtons", () => PlaySound(UISoundType.TabSwitch));
             }
-
-            _buttonsBound = true;
         }
 
         private void BindPolaroidCard(Utsuru.DictionaryUI.DictionaryPolaroidCardUI card)
@@ -256,7 +272,7 @@ namespace Utsuru.Sound
             if (field == null) return;
 
             var btn = field.GetValue(target) as Button;
-            if (btn != null)
+            if (btn != null && _boundButtonIds.Add(btn.GetInstanceID()))
             {
                 btn.onClick.AddListener(() => onPlaySound?.Invoke());
             }
@@ -273,7 +289,10 @@ namespace Utsuru.Sound
             {
                 foreach (var btn in btns)
                 {
-                    if (btn != null) btn.onClick.AddListener(() => onPlaySound?.Invoke());
+                    if (btn != null && _boundButtonIds.Add(btn.GetInstanceID()))
+                    {
+                        btn.onClick.AddListener(() => onPlaySound?.Invoke());
+                    }
                 }
             }
         }

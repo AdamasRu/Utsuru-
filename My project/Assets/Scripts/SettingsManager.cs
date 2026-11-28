@@ -480,12 +480,6 @@ public class SettingsManager : MonoBehaviour
         {
             Utsuru.Capture.CameraModeController.Instance.SetNormalFov(fov);
         }
-
-        var zoomAdapters = UnityEngine.Object.FindObjectsByType<Utsuru.Capture.CinemachineZoomAdapter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < zoomAdapters.Length; i++)
-        {
-            if (zoomAdapters[i] != null) zoomAdapters[i].SetNormalFov(fov);
-        }
     }
 
     private void ApplyDisplayAndResolution()

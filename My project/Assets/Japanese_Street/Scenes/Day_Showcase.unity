@@ -119883,7 +119883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 271f547a8105d974d8acad3dfb9cfde2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightManager
-  durationInMinutes: 0.3
+  durationInMinutes: 1.5
   currentState: 0
   cutsceneUI: {fileID: 1276468270}
   playerController: {fileID: 4496757404770652536}
@@ -252973,7 +252973,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1447144264}
-  - component: {fileID: 1447144263}
   m_Layer: 5
   m_Name: ViewfinderRoot
   m_TagString: Untagged
@@ -252981,30 +252980,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1447144263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447144262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 240e2bfbf4cf831428d7488cd5dcac2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Utsuru.Capture.ViewfinderCorners
-  buildProceduralOverlay: 0
-  frameColor: {r: 1, g: 1, b: 1, a: 0.85}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.5}
-  margin: 60
-  armLength: 90
-  thickness: 6
-  idleFocusColor: {r: 1, g: 1, b: 1, a: 0.75}
-  lockedFocusColor: {r: 0.2, g: 1, b: 0.5, a: 0.95}
-  focusBoxSize: 70
-  focusArmLength: 16
-  focusThickness: 2.5
-  showCameraOSD: 1
 --- !u!224 &1447144264
 RectTransform:
   m_ObjectHideFlags: 0

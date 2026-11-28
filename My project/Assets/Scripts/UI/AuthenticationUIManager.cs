@@ -108,7 +108,9 @@ namespace Utsuru.UI
                 return;
             }
 
+#if UNITY_EDITOR
             AutoAssignReferences();
+#endif
             CacheButtonTexts();
             SetupButtonListeners();
             InitializeVisualEffects();

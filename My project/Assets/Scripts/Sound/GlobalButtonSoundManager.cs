@@ -174,16 +174,12 @@ namespace Utsuru.Sound
 
         private static bool IsExcludedButton(Button btn)
         {
-            // 1. Tombol yang sudah memakai UIButtonSound khusus
-            if (btn.GetComponent<UIButtonSound>() != null)
-                return true;
-
-            // 2. Seluruh tombol di dalam Dictionary (sudah memiliki DictionarySoundManager sendiri)
+            // 1. Seluruh tombol di dalam Dictionary (sudah memiliki DictionarySoundManager sendiri)
             if (btn.GetComponentInParent<Utsuru.DictionaryUI.DictionaryUIController>(true) != null ||
                 HasAncestorNamed(btn.transform, "Dictionary"))
                 return true;
 
-            // 3. Tombol kamera / pemutar voice & kosakata / backdrop dimmer
+            // 2. Tombol kamera / pemutar voice & kosakata / backdrop dimmer
             string n = btn.name;
             if (n == "BtnAudio" ||
                 n == "ReplayAudioButton" ||
